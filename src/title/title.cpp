@@ -84,8 +84,6 @@ struct RECT {
 #ifdef PAL
 #include "mainselect.hpp"
 #endif
-#define PI 3.14159265358979323846
-
 class OBJ_ANIME_SEQ {
 public:
     char          name[16];  /**< Name of the frame the animation drives. */
@@ -240,7 +238,7 @@ CCharacter    Spark[9];
    emitting nothing reaches. */
 
 void DataLoad() {
-    if (CScript.load_no != -1) {
+    if (CScript.load_no != RUSH_SCENE_NONE) {
     load_wait:
         if (ReadBGSync()) {
             goto load_wait;
@@ -248,43 +246,43 @@ void DataLoad() {
     }
 
     switch (CScript.load_no) {
-        case 0: {
+        case RUSH_SCENE_A: {
             void *buffer = read_buffer;
             LoadFile("rmdat/rmdat1.pak", buffer, 0);
             break;
         }
-        case 1:
+        case RUSH_SCENE_B:
             LoadFileBG("rmdat/rmdat2.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 2:
+        case RUSH_SCENE_C:
             LoadFileBG("rmdat/rmdat3.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 3:
+        case RUSH_SCENE_D:
             LoadFileBG("rmdat/rmdat4.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 4:
+        case RUSH_SCENE_E:
             LoadFileBG("rmdat/rmdat5.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 5:
+        case RUSH_SCENE_F:
             LoadFileBG("rmdat/rmdat6.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 6:
+        case RUSH_SCENE_G:
             LoadFileBG("rmdat/rmdat7.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 7:
+        case RUSH_SCENE_H:
             LoadFileBG("rmdat/rmdat8.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 8:
+        case RUSH_SCENE_I:
             LoadFileBG("rmdat/rmdat9.pak", (u_long128 *) read_buffer, 0);
             break;
-        case 9:
+        case RUSH_SCENE_TITLE:
             LoadFileBG("rmdat/title.pak", (u_long128 *) read_buffer, 0);
             break;
     }
 
-    CScript.load_no = -1;
+    CScript.load_no = RUSH_SCENE_NONE;
 
-    if (CScript.init_no != -1) {
+    if (CScript.init_no != RUSH_SCENE_NONE) {
         while (ReadBGSync())
             ;
 
@@ -292,39 +290,39 @@ void DataLoad() {
     }
 
     switch (CScript.init_no) {
-        case 0:
+        case RUSH_SCENE_A:
             InitProcA();
             break;
-        case 1:
+        case RUSH_SCENE_B:
             InitProcB();
             break;
-        case 2:
+        case RUSH_SCENE_C:
             InitProcC();
             break;
-        case 3:
+        case RUSH_SCENE_D:
             InitProcD();
             break;
-        case 4:
+        case RUSH_SCENE_E:
             InitProcE();
             break;
-        case 5:
+        case RUSH_SCENE_F:
             InitProcF();
             break;
-        case 6:
+        case RUSH_SCENE_G:
             InitProcG();
             break;
-        case 7:
+        case RUSH_SCENE_H:
             InitProcH();
             break;
-        case 8:
+        case RUSH_SCENE_I:
             InitProcI();
             break;
-        case 9:
+        case RUSH_SCENE_TITLE:
             InitProcTitle();
             break;
     }
 
-    CScript.init_no = -1;
+    CScript.init_no = RUSH_SCENE_NONE;
 }
 
 /**
@@ -355,25 +353,25 @@ static void InitProcA() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[2].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[2].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[2].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[2].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -413,7 +411,7 @@ static void InitProcA() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 1.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -431,7 +429,7 @@ static void InitProcA() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.blend_step = 0.05f;
         Chara__3[j].motion_type.state.motion_no = 0;
@@ -459,7 +457,7 @@ static void InitProcA() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s1402.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -563,7 +561,7 @@ void DrawProcA() {
             StartLightning = 1;
             col = 254;
             lightning = 4;
-            SndSePlay(74, -1, 0);
+            SndSePlay(SE_THUNDER_CLAP, -1, 0);
         }
     }
 
@@ -720,25 +718,25 @@ static void InitProcB() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -782,7 +780,7 @@ static void InitProcB() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -806,7 +804,7 @@ static void InitProcB() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4201.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1035,25 +1033,25 @@ static void InitProcC() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[4].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -1080,7 +1078,7 @@ static void InitProcC() {
 
     CFrameAttr attr;
 
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     Chara__3[0].frame->SetAttr(attr, 1, 4);
     Chara__3[0].motion_type.state.time = 10.0f;
     Chara__3[0].motion_type.state.blend_step = 0.05f;
@@ -1090,7 +1088,7 @@ static void InitProcC() {
     Chara__3[0].wind = (int) &Wind__4;
 
     Chara__3[8].LoadPackData(read_buffer, "pat.cfg", &CharaDataBuffer, 0);
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     Chara__3[8].frame->SetAttr(attr, 1, 4);
     Chara__3[8].motion_type.state.time = 1.0f;
     Chara__3[8].motion_type.state.blend_step = 0.05f;
@@ -1136,7 +1134,7 @@ static void InitProcC() {
     for (int i = 0; i < 26; i++) {
         map = LoadMDSFile(GetPackFile(read_buffer, norn[i].name, 0), &MapDataBuffer, 2, 0, 0);
 
-        map_attr.fog_enable = 1;
+        map_attr.fog_enable = true;
         map->SetAttr(map_attr, 1, 64);
         SetFrameAttr(map, 1);
 
@@ -1147,7 +1145,7 @@ static void InitProcC() {
         OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].category_no = 0;
         object.SetPosition(CVector3_f_(norn[i].position[0], norn[i].position[1], norn[i].position[2]));
-        object.SetRotation(CVector3_f_(0.0f, (float) (PI * norn[i].rotation / 180), 0.0f));
+        object.SetRotation(CVector3_f_(0.0f, (float) (PI_D * norn[i].rotation / 180), 0.0f));
     }
 
     PathDataBuffer.Reset();
@@ -1268,25 +1266,25 @@ static void InitProcD() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -1323,7 +1321,7 @@ static void InitProcD() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -1349,7 +1347,7 @@ static void InitProcD() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s44g01_0.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1445,25 +1443,25 @@ static void InitProcE() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -1499,7 +1497,7 @@ static void InitProcE() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -1522,7 +1520,7 @@ static void InitProcE() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4501.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1610,25 +1608,25 @@ static void InitProcF() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -1671,7 +1669,7 @@ static void InitProcF() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -1699,7 +1697,7 @@ static void InitProcF() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4601.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1808,25 +1806,25 @@ static void InitProcG() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -1858,7 +1856,7 @@ static void InitProcG() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 1.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -1884,7 +1882,7 @@ static void InitProcG() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4701.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -1981,25 +1979,25 @@ static void InitProcH() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -2027,7 +2025,7 @@ static void InitProcH() {
 
     CFrameAttr attr;
 
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     Chara__3[0].frame->SetAttr(attr, 1, 4);
     Chara__3[0].motion_type.state.time = 10.0f;
     Chara__3[0].motion_type.state.blend_step = 0.05f;
@@ -2036,7 +2034,7 @@ static void InitProcH() {
     Chara__3[0].FootSoundEnable(0);
 
     Chara__3[1].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     Chara__3[1].frame->SetAttr(attr, 1, 4);
     Chara__3[1].motion_type.state.time = 70.0f;
     Chara__3[1].motion_type.state.blend_step = 0.05f;
@@ -2044,7 +2042,7 @@ static void InitProcH() {
     Chara__3[1].motion_type.state.playing_no = 0;
 
     Chara__3[2].LoadPackData(read_buffer, "f_boll_2.cfg", &CharaDataBuffer, 0);
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     Chara__3[2].frame->SetAttr(attr, 1, 4);
     Chara__3[2].motion_type.state.time = 20.0f;
     Chara__3[2].motion_type.state.blend_step = 0.05f;
@@ -2052,7 +2050,7 @@ static void InitProcH() {
     Chara__3[2].motion_type.state.playing_no = 0;
 
     Chara__3[3].LoadPackData(read_buffer, "rm16yuka.cfg", &CharaDataBuffer, 0);
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     Chara__3[3].frame->SetAttr(attr, 1, 4);
     Chara__3[3].motion_type.state.time = 2.0f;
     Chara__3[3].motion_type.state.blend_step = 0.05f;
@@ -2073,7 +2071,7 @@ static void InitProcH() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s4801.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -2083,7 +2081,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4802.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(0, map, 0, 0);
@@ -2091,7 +2089,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4803.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(1, map, 0, 0);
@@ -2099,7 +2097,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4804.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(2, map, 0, 0);
@@ -2107,7 +2105,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4805.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(3, map, 0, 0);
@@ -2115,7 +2113,7 @@ static void InitProcH() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s4806.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(4, map, 0, 0);
@@ -2230,25 +2228,25 @@ static void InitProcI() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
@@ -2278,7 +2276,7 @@ static void InitProcI() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 1.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -2301,7 +2299,7 @@ static void InitProcI() {
 
     CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s24g01_0.mds", 0), &MapDataBuffer, 2, 0, 0);
 
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
 
@@ -2311,7 +2309,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s24g02_0.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(0, map, 0, 0);
@@ -2319,7 +2317,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s24g03_0.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(1, map, 0, 0);
@@ -2327,7 +2325,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "ship.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap.SetObject(2, map, 0, 0);
@@ -2335,7 +2333,7 @@ static void InitProcI() {
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s24g04_0.mds", 0), &MapDataBuffer, 2, 0, 0);
-    map_attr.fog_enable = 1;
+    map_attr.fog_enable = true;
     map->SetAttr(map_attr, 1, 64);
     SetFrameAttr(map, 1);
     object = OP_BuildingMap2.SetObject(0, map, 0, 0);

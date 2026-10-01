@@ -3,6 +3,16 @@
 #include "common.h"
 
 /**
+ * What a shot effect does when it ends, as BT_SHOT_EFFECT::end_effect holds it.
+ */
+// clang-format off
+enum ShotEndEffect {
+    SHOT_END_EFFECT_BOMB = 100, /**< Explodes. */
+};
+
+// clang-format on
+
+/**
  * Describes one projectile effect and the four phases it passes through.
  */
 struct BT_SHOT_EFFECT {
@@ -17,7 +27,7 @@ struct BT_SHOT_EFFECT {
     s32   hit_kind;       /**< Kind of hit recorded; 3 throws the target along the flight. */
     s32   target;         /**< Who the effect can hit, passed to the collision test and to its explosion. */
     s16   motion[4];      /**< Motion the model plays in each phase, or -1. */
-    s16   end_effect;     /**< Effect played when the shot ends; 100 sets off an explosion. */
+    s16   end_effect;     /**< Effect played when the shot ends. @see ShotEndEffect. */
     u8    unk_056[2];
     float bomb_scale;  /**< Scale of the explosion the shot ends in. */
     s32   bomb_damage; /**< Damage of the explosion the shot ends in. */

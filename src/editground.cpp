@@ -78,17 +78,17 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
     parts_id = -1;
 
     switch (source->subtype) {
-        case 3:
-        case 5:
+        case MAP_PARTS_SUBTYPE_BRIDGE:
+        case MAP_PARTS_SUBTYPE_ON_RIVER:
             // A bridge or a crossing replaces the river or road piece beneath it.
             parts_id = (*slot)->SearchPartsID(x, y, z);
 
             if (parts_id >= 0 && CheckDelete(area, source, x, y, z) == 0) {
-                if (parts[parts_id].subtype == 2 && parts[parts_id].handle == 1) {
+                if (parts[parts_id].subtype == MAP_PARTS_SUBTYPE_RIVER && parts[parts_id].handle == 1) {
                     target = &parts[parts_id];
                     rot_y = target->GetRotY();
 
-                    if (source->subtype != 5) {
+                    if (source->subtype != MAP_PARTS_SUBTYPE_ON_RIVER) {
                         source = &river_parts[6];
                     }
 
@@ -96,7 +96,7 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
                 } else {
                     return -1;
                 }
-            } else if (source->subtype != 1) {
+            } else if (source->subtype != MAP_PARTS_SUBTYPE_ROAD) {
                 return -1;
             }
 
@@ -133,7 +133,7 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
         }
     }
 
-    if (placeable != 0 && source->subtype != 1) {
+    if (placeable != 0 && source->subtype != MAP_PARTS_SUBTYPE_ROAD) {
         span[0] = source->GetWidth();
         span[1] = source->GetHeight();
 
@@ -174,7 +174,7 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
     target->area = area_no;
     (*slot)->SetMapParts(parts_id, parts, x, y, z, rot_y);
 
-    if (target->subtype == 2 && target->handle != 6) {
+    if (target->subtype == MAP_PARTS_SUBTYPE_RIVER && target->handle != 6) {
         SetRiverParts(x, y, z, 0, 0);
         SetRiverParts(x, y, z, 1, 0);
         SetRiverParts(x, y, z, 0, 1);
@@ -182,7 +182,7 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
         SetRiverParts(x, y, z, 0, -1);
     }
 
-    if (target->subtype == 1) {
+    if (target->subtype == MAP_PARTS_SUBTYPE_ROAD) {
         SetRoadParts(x, y, z, 0, 0);
         SetRoadParts(x, y, z, 1, 0);
         SetRoadParts(x, y, z, 0, 1);
@@ -252,11 +252,11 @@ int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int r
     CMapParts *object = &parts[parts_id];
     int        subtype = object->subtype;
 
-    if ((subtype != 2 && subtype != 3 && subtype != 5) || river_parts == NULL) {
+    if ((subtype != MAP_PARTS_SUBTYPE_RIVER && subtype != MAP_PARTS_SUBTYPE_BRIDGE && subtype != MAP_PARTS_SUBTYPE_ON_RIVER) || river_parts == NULL) {
         return 0;
     }
 
-    if (subtype == 3 || subtype == 5) {
+    if (subtype == MAP_PARTS_SUBTYPE_BRIDGE || subtype == MAP_PARTS_SUBTYPE_ON_RIVER) {
         area->GetPos(&position, cell.x, cell.y, cell.z);
         DeleteMapParts(&deleted_parts_no, &deleted_rot_y, position.x + 1.0f, position.y, position.z + 1.0f);
     }
@@ -317,7 +317,7 @@ int CEditGround::SetRoadParts(float x, float y, float z, int column_step, int ro
 
     CMapParts *object = &parts[parts_id];
 
-    if (object->subtype != 1 || road_parts == NULL) {
+    if (object->subtype != MAP_PARTS_SUBTYPE_ROAD || road_parts == NULL) {
         return 0;
     }
 
@@ -372,7 +372,7 @@ int CEditGround::DeleteMapParts(int *out_parts_no, int *out_rot_y, float x, floa
         return -1;
     }
 
-    if (target->subtype == 3 || target->subtype == 5) {
+    if (target->subtype == MAP_PARTS_SUBTYPE_BRIDGE || target->subtype == MAP_PARTS_SUBTYPE_ON_RIVER) {
         // A bridge or a crossing leaves the plain river piece behind.
         sceVu0FVECTOR position;
         int           rot_y = target->GetRotY();
@@ -391,7 +391,7 @@ int CEditGround::DeleteMapParts(int *out_parts_no, int *out_rot_y, float x, floa
                 info->placed--;
 
                 if (info->placed < 0) {
-                    info->placed = 0;
+                    info->placed = false;
                 }
             }
         }
@@ -406,7 +406,7 @@ int CEditGround::DeleteMapParts(int *out_parts_no, int *out_rot_y, float x, floa
             info->placed--;
 
             if (info->placed < 0) {
-                info->placed = 0;
+                info->placed = false;
             }
         }
     }
@@ -415,14 +415,14 @@ int CEditGround::DeleteMapParts(int *out_parts_no, int *out_rot_y, float x, floa
     parts[parts_id].GetPosition(position);
     area->DeleteMapParts(parts_id, parts, (float) (1.0f + position[0]), position[1], (float) (1.0f + position[2]));
 
-    if (parts[parts_id].subtype == 2) {
+    if (parts[parts_id].subtype == MAP_PARTS_SUBTYPE_RIVER) {
         SetRiverParts(position[0], position[1], position[2], 1, 0);
         SetRiverParts(position[0], position[1], position[2], 0, 1);
         SetRiverParts(position[0], position[1], position[2], -1, 0);
         SetRiverParts(position[0], position[1], position[2], 0, -1);
     }
 
-    if (parts[parts_id].subtype == 1) {
+    if (parts[parts_id].subtype == MAP_PARTS_SUBTYPE_ROAD) {
         SetRoadParts(position[0], position[1], position[2], 1, 0);
         SetRoadParts(position[0], position[1], position[2], 0, 1);
         SetRoadParts(position[0], position[1], position[2], -1, 0);
@@ -513,7 +513,7 @@ void CEditGround::SetBuildEffect(int parts_id) {
         return;
     }
 
-    if (parts[parts_id].subtype != 0) {
+    if (parts[parts_id].subtype != MAP_PARTS_SUBTYPE_NONE) {
         return;
     }
 
@@ -742,7 +742,7 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
     }
 
     switch (map_no) {
-        case 1:
+        case TOWN_MATATAKI:
             if (dists[0] > dists[2]) {
                 if (area_visible[2]) {
                     area_visible[0] = 0;
@@ -767,7 +767,7 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
             }
 
             break;
-        case 2:
+        case TOWN_QUEENS:
             for (int k = 0; k < 4; k++) {
                 if (areas[k] == NULL) {
                     break;
@@ -946,7 +946,7 @@ EPARTS_FUNC_DATA *CEditGround::GetPeoplePos(int villager, float *out_position) {
     for (int i = 0; i < people_count; i++) {
         EPARTS_FUNC_DATA *marker = people[i];
 
-        if (marker->kind != 1 || marker->link_id != villager) {
+        if (marker->kind != EPARTS_FUNC_VILLAGER || marker->link_id != villager) {
             continue;
         }
 
@@ -1171,13 +1171,13 @@ void CEditGround::DrawWater(int pass) {
         object->GetPosition(position);
 
         switch (object->subtype) {
-            case 2:
-            case 5:
-            case 3:
+            case MAP_PARTS_SUBTYPE_RIVER:
+            case MAP_PARTS_SUBTYPE_ON_RIVER:
+            case MAP_PARTS_SUBTYPE_BRIDGE:
                 water->SetPosition(position);
                 water->Draw();
                 break;
-            case 4:
+            case MAP_PARTS_SUBTYPE_LAKE:
                 if (object->area < 0) {
                     break;
                 }
@@ -1420,7 +1420,7 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     fits = area->CheckParts(source, position[0], position[1], position[2], rot_y);
     occupant = area->SearchPartsID(position[0], position[1], position[2]);
 
-    if (source->subtype == 5) {
+    if (source->subtype == MAP_PARTS_SUBTYPE_ON_RIVER) {
         if (CheckDelete(area, source, position[0], position[1], position[2]) != 0) {
             fits = 0;
         }
@@ -1503,10 +1503,10 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     if (source->category_no == area_no) {
         subtype = source->subtype;
 
-        if (preview != NULL && subtype != 2 && subtype != 3) {
+        if (preview != NULL && subtype != MAP_PARTS_SUBTYPE_RIVER && subtype != MAP_PARTS_SUBTYPE_BRIDGE) {
             model = NULL;
 
-            if (subtype == 5) {
+            if (subtype == MAP_PARTS_SUBTYPE_ON_RIVER) {
                 model = preview->SearchFrame("kawa");
 
                 if (model != NULL) {
@@ -1656,9 +1656,9 @@ void CEditGround::Load(char *data) {
 
         int kind = plot_parts[parts_id].subtype;
 
-        if (kind == 3 || kind == 5) {
+        if (kind == MAP_PARTS_SUBTYPE_BRIDGE || kind == MAP_PARTS_SUBTYPE_ON_RIVER) {
             for (int j = 0; j < 24; j++) {
-                if (plot_parts[j].subtype == 2) {
+                if (plot_parts[j].subtype == MAP_PARTS_SUBTYPE_RIVER) {
                     SetMapParts(j, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->rot_y);
                     break;
                 }
@@ -1678,8 +1678,8 @@ void CEditGround::Load(char *data) {
         }
 
         switch (plot_parts[parts_id].subtype) {
-            case 3:
-            case 5:
+            case MAP_PARTS_SUBTYPE_BRIDGE:
+            case MAP_PARTS_SUBTYPE_ON_RIVER:
                 SetMapParts(parts_id, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->rot_y);
                 break;
         }
@@ -1716,9 +1716,9 @@ void CEditGround::Save(int town, CSaveData *save) {
         int kind = object->subtype;
 
         switch (kind) {
-            case 1:
-            case 2:
-            case 3:
+            case MAP_PARTS_SUBTYPE_ROAD:
+            case MAP_PARTS_SUBTYPE_RIVER:
+            case MAP_PARTS_SUBTYPE_BRIDGE:
                 for (j = 0; j < 24; j++) {
                     if (kind == plot_parts[j].subtype) {
                         parts_id = plot_parts[j].handle;
@@ -1798,7 +1798,7 @@ int CEditGround::PickUpPoly(CCPoly *out_polygons, CBoxVu0 box, int flags) {
             continue;
         }
 
-        if (flags != 0 && object->subtype == 0) {
+        if (flags != 0 && object->subtype == MAP_PARTS_SUBTYPE_NONE) {
             continue;
         }
 
@@ -1944,7 +1944,7 @@ void CEditGround::Clear() {
         parts_info->Clear();
     }
 
-    if (map_no == 1) {
+    if (map_no == TOWN_MATATAKI) {
         CVector3_f_     position;
         EDITPARTS_INFO *info = parts_info->GetPartsInfo(16);
         int             saved = info->obtained;
@@ -1963,14 +1963,14 @@ void CEditGround::Clear() {
         SetMapParts(16, position.x, position.y, position.z, 0);
         areas[2]->GetPos(&position, 3, 0, 7);
         SetMapParts(16, position.x, position.y, position.z, 0);
-        info->placed = 0;
+        info->placed = false;
         info->stock -= 6;
         info->obtained = saved;
     }
 }
 
 void CEditGround::Initialize() {
-    map_no = 0;
+    map_no = TOWN_NORUNE;
     plot_parts = NULL;
     river_parts = NULL;
     road_parts = NULL;
@@ -1992,7 +1992,7 @@ void CEditGround::Initialize() {
     }
 
     for (i = 0; i < 4; i++) {
-        water_surfaces[i].draw = 0;
+        water_surfaces[i].draw = false;
     }
 
     for (i = 0; i < 128; i++) {
@@ -2000,7 +2000,7 @@ void CEditGround::Initialize() {
     }
 
     people_count = 0;
-    suppress_water = 0;
+    suppress_water = false;
     Clear();
     clip_plane[3] = -1.0f;
 }
@@ -2038,8 +2038,8 @@ static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, floa
     int kind = parts->subtype;
 
     switch (area->GetMapNo()) {
-        case 1:
-            if (kind == 3) {
+        case TOWN_MATATAKI:
+            if (kind == MAP_PARTS_SUBTYPE_BRIDGE) {
                 break;
             }
 
@@ -2144,7 +2144,7 @@ void CPartsCursor::Draw(float *position, int width, int height) {
             }
 
             pieces[piece]->SetPosition(cell);
-            pieces[piece]->SetRotation(0.0f, 1.5707964f * turn, 0.0f);
+            pieces[piece]->SetRotation(0.0f, HALF_PI * turn, 0.0f);
             float scale = unit_size / 100.0f;
             pieces[piece]->SetScale(scale, scale, scale);
             MGDraw(pieces[piece]);
@@ -2179,19 +2179,19 @@ void CEditGround::RequestCheck() {
     }
 
     switch (map_no) {
-        case 0:
+        case TOWN_NORUNE:
             NornRequest(placed);
             break;
-        case 1:
+        case TOWN_MATATAKI:
             MatatagiRequest(placed);
             break;
-        case 2:
+        case TOWN_QUEENS:
             QueensRequest(placed);
             break;
-        case 3:
+        case TOWN_MUSKA_LACKA:
             MuskaRequest(placed);
             break;
-        case 4:
+        case TOWN_YELLOW_DROPS:
             YellowRequest(placed);
             break;
     }

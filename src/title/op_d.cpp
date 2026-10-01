@@ -33,9 +33,21 @@
 #include "visual.hpp"
 #include "wind.hpp"
 
-/* Spelled here rather than reached through a header because the image holds it only as an
-   anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
-#define PI 3.14159265358979323846
+/**
+ * Sprite cues the script raises during the spirit king and meadow scenes, as CScript::sprite holds them.
+ */
+// clang-format off
+enum OpDSprite {
+    OPD_SPRITE_NONE         = 0, /**< No cue. */
+    OPD_SPRITE_HALL_LIGHT   = 1, /**< Raise the hall's ambient light. */
+    OPD_SPRITE_RUIN_STILL_1 = 2, /**< First still of the ruined village. */
+    OPD_SPRITE_RUIN_STILL_2 = 3, /**< Second still of the ruined village. */
+    OPD_SPRITE_RUIN_STILL_3 = 4, /**< Third still of the ruined village. */
+    OPD_SPRITE_CAPTION_1    = 5, /**< First explanation caption. */
+    OPD_SPRITE_CAPTION_2    = 6, /**< Second explanation caption. */
+};
+
+// clang-format on
 
 /* The rectangle a texture transfer takes, declared here rather than reached through rect.h for the
    reason op_b.cpp and op_c.cpp declare their own: rect.h's four-argument constructor assigns h, w,
@@ -223,7 +235,7 @@ void FaceChange(int actor_no) {
             }
         } else {
             CScript__2.obj[actor_no].mouth = 0;
-            CScript__2.obj[actor_no].talk = 0;
+            CScript__2.obj[actor_no].talk = false;
         }
     }
 
@@ -250,7 +262,7 @@ void OpD_LoadDataBG() {
         ;
 
     LoadFileBG("opdat/norn4/seirei.pak", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 void OpD_LoadDataBG2() {
@@ -261,7 +273,7 @@ void OpD_LoadDataBG2() {
 
     LoadFileBG("opdat/norn4/seirei2.pak", (u_long128 *) read_buffer, &size);
     SndBgmLoadBG(0, (u_int *) ((u_long128 *) read_buffer + (size >> 4) + 1), 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 /* The set-up for the first of the scene's two halves, the spirit king's hall. Every texture block
@@ -303,17 +315,17 @@ void OpD_InitProcess() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     tex[0].block_no = 1;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
     tex[1].block_no = 1;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(1, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c03c01.img", 0);
     tex[0].block_no = 2;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(2, tex);
@@ -343,7 +355,7 @@ void OpD_InitProcess() {
 
     CFrameAttr attr8;
 
-    attr8.clip_enable = 0;
+    attr8.clip_enable = false;
     Chara__3[8].frame->SetAttr(attr8, 1, 4);
     Chara__3[8].motion_type.state.time = 60.0f;
     Chara__3[8].motion_type.state.blend_step = 0.05f;
@@ -351,7 +363,7 @@ void OpD_InitProcess() {
     Chara__3[8].motion_type.state.playing_no = 0;
     CharaTex__2[8] = 1;
     Chara__3[11].LoadPackData(read_buffer, "05c01e.cfg", &CharaDataBuffer__2[6], 0);
-    attr8.clip_enable = 0;
+    attr8.clip_enable = false;
     Chara__3[11].frame->SetAttr(attr8, 1, 4);
     Chara__3[11].motion_type.state.time = 75.0f;
     Chara__3[11].motion_type.state.blend_step = 0.05f;
@@ -362,7 +374,7 @@ void OpD_InitProcess() {
 
     CFrameAttr attr21;
 
-    attr21.clip_enable = 0;
+    attr21.clip_enable = false;
     Chara__3[21].frame->SetAttr(attr21, 1, 4);
     Chara__3[21].motion_type.state.time = 1.0f;
     Chara__3[21].motion_type.state.blend_step = 0.05f;
@@ -373,7 +385,7 @@ void OpD_InitProcess() {
 
     CFrameAttr effect_attr;
 
-    effect_attr.clip_enable = 0;
+    effect_attr.clip_enable = false;
     Effect.frame->SetAttr(effect_attr, 1, 4);
     Effect.motion_type.state.time = 1.0f;
     Effect.motion_type.state.blend_step = 1.0f;
@@ -382,10 +394,10 @@ void OpD_InitProcess() {
     CSnd.SetReverb(0, 4, 50);
     CSnd.SetReverb(1, 2, 5);
     CSnd.LoadSoundFileFromPack("o04a.txt", read_buffer);
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
 
     LOADTEXTURE_INFO img[] = {
         {"opdat/norn4/i00002.img", 5, 0},
@@ -459,13 +471,13 @@ void OpD_InitProcess2() {
     CFrameVu1 *frame;
     int        i;
 
-    attr.fog_enable = 1;
+    attr.fog_enable = true;
 
     for (i = 1; i < 11; i++) {
         frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, map[i - 1].name, 0), &MapDataBuffer, 2, 0, 0);
 
         if (i == 7) {
-            attr.use_color = 1;
+            attr.use_color = true;
             frame->SetAttr(attr, 512, 0);
         }
 
@@ -494,14 +506,14 @@ void OpD_InitProcess2() {
         }
 
         object.SetPosition(CVector3_f_(10.0f * map[i - 1].position[0], 10.0f * map[i - 1].position[1], 10.0f * map[i - 1].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * map[i - 1].rotation[0] / 180), (float) (PI * map[i - 1].rotation[1] / 180), (float) (PI * map[i - 1].rotation[2] / 180)));
+        object.SetRotation(CVector3_f_((float) (PI_D * map[i - 1].rotation[0] / 180), (float) (PI_D * map[i - 1].rotation[1] / 180), (float) (PI_D * map[i - 1].rotation[2] / 180)));
     }
 
     Chara__3[22].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr22;
 
-    attr22.clip_enable = 0;
+    attr22.clip_enable = false;
     Chara__3[22].frame->SetAttr(attr22, 1, 4);
     Chara__3[22].motion_type.state.time = 1.0f;
     Chara__3[22].motion_type.state.blend_step = 0.05f;
@@ -509,7 +521,7 @@ void OpD_InitProcess2() {
     Chara__3[22].motion_type.state.playing_no = 0;
     CharaTex__2[22] = 3;
     Chara__3[5].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer__2[6], 0);
-    attr22.clip_enable = 0;
+    attr22.clip_enable = false;
     Chara__3[5].frame->SetAttr(attr22, 1, 4);
     Chara__3[5].motion_type.state.time = 1.0f;
     Chara__3[5].motion_type.state.blend_step = 0.05f;
@@ -519,10 +531,10 @@ void OpD_InitProcess2() {
     CSnd.SetReverb(0, 4, 30);
     CSnd.SetReverb(1, 2, 5);
     CSnd.LoadSoundFileFromPack("o04b.txt", read_buffer);
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
     CScript__2.init_no = 0;
 }
 
@@ -701,13 +713,13 @@ void OpD_SoundProcess() {
 
         if (CScript__2.camera_start == 111) {
             if (!se) {
-                OpPlayVolSE(14, 40, 42, 1.0f);
-                OpPlayVolSE(14, 40, 44, 1.0f);
-                OpPlayVolSE(14, 40, 49, 1.0f);
-                OpPlayVolSE(14, 40, 51, 1.0f);
-                OpPlayVolSE(14, 40, 45, 1.0f);
-                OpPlayVolSE(14, 40, 47, 1.0f);
-                OpPlayVolSE(14, 40, 48, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 42, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 44, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 49, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 51, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 45, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 47, 1.0f);
+                OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 48, 1.0f);
                 se = 1;
             }
         } else {
@@ -722,7 +734,7 @@ void OpD_SoundProcess() {
             if (CScript__2.mes_no == 101) {
                 if (!mus) {
                     OpBgmPlay();
-                    CSnd.SQ_Play(1, 0);
+                    CSnd.SQ_Play(MIDI_PORT_AMBIENT, 0);
                     mus = 1;
                 }
             }
@@ -736,7 +748,7 @@ void OpD_SoundProcess() {
 
         if (CScript__2.camera_start == 110) {
             if (!se) {
-                CSnd.Fade(0, -1.0f, 0);
+                CSnd.Fade(MIDI_PORT_BGM, -1.0f, 0);
                 se = 1;
             }
         } else {
@@ -750,7 +762,7 @@ void OpD_SoundProcess() {
         if (CScript__2.camera_start == 115) {
             if (!mus) {
                 OpBgmPlay();
-                CSnd.SQ_Play(1, 0);
+                CSnd.SQ_Play(MIDI_PORT_AMBIENT, 0);
                 mus = 1;
             }
         } else {
@@ -763,7 +775,7 @@ void OpD_SoundProcess() {
 
         if (CScript__2.camera_start == 118) {
             if (!se) {
-                CSnd.Fade(0, -1.0f, 0);
+                CSnd.Fade(MIDI_PORT_BGM, -1.0f, 0);
                 se = 1;
             }
         } else {
@@ -777,21 +789,21 @@ void OpD_SoundProcess() {
         if (CScript__2.camera_start == 123) {
             if (!mus) {
                 SndStopAllSe();
-                CSnd.Stop(0);
+                CSnd.Stop(MIDI_PORT_BGM);
                 CSnd.StopVoice(0);
                 CSnd.SetReverb(0, 4, 30);
                 CSnd.SetReverb(1, 2, 5);
                 CSnd.LoadSoundFileFromPack("o04c.txt", read_buffer);
-                CSnd.SetVol(15, 256);
-                CSnd.SetVol(14, 256);
-                CSnd.SetVol(13, 256);
-                CSnd.SetVol(12, 256);
+                CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+                CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+                CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+                CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
 
                 while (SndSyncBG())
                     ;
 
                 SndBgmPlay(0);
-                CSnd.SQ_Play(1, 0);
+                CSnd.SQ_Play(MIDI_PORT_AMBIENT, 0);
                 mus = 1;
             }
         } else {
@@ -809,10 +821,10 @@ void OpD_SoundProcess() {
 
         if (wait == 0) {
             if (motion_frame > 43.0f && motion_frame < 45.0f) {
-                OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 20);
+                OpPlayVolPanSE(position, 50.0f, 300.0f, MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
             } else if (motion_frame > 53.0f && motion_frame < 55.0f) {
-                OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 21);
+                OpPlayVolPanSE(position, 50.0f, 300.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
         } else {
@@ -854,7 +866,7 @@ void OpD_DrawProcess() {
     if (CScript__2.camera_start < 115) {
         TexManager.ReloadTexture(Vif1Packet, 11);
 
-        if (CScript__2.sprite == 1 && amb3 < 127) {
+        if (CScript__2.sprite == OPD_SPRITE_HALL_LIGHT && amb3 < 127) {
             amb3 = amb3 + 1;
         }
 
@@ -982,13 +994,13 @@ void OpD_DrawProcess() {
     static int fade2 = 0;
     static int fade3 = 0;
 
-    if (CScript__2.sprite == 2) {
+    if (CScript__2.sprite == OPD_SPRITE_RUIN_STILL_1) {
         fade1 = 128;
     } else if (fade1 > 0) {
         fade1 = fade1 - 2;
     }
 
-    if (CScript__2.sprite == 3) {
+    if (CScript__2.sprite == OPD_SPRITE_RUIN_STILL_2) {
         if (fade2 < 128) {
             fade2 = fade2 + 2;
         }
@@ -996,7 +1008,7 @@ void OpD_DrawProcess() {
         fade2 = fade2 - 2;
     }
 
-    if (CScript__2.sprite == 4) {
+    if (CScript__2.sprite == OPD_SPRITE_RUIN_STILL_3) {
         if (fade3 < 128) {
             fade3 = fade3 + 2;
         }
@@ -1020,8 +1032,8 @@ void OpD_DrawProcess() {
     }
 
     switch (CScript__2.sprite) {
-        case 5:
-        case 6:
+        case OPD_SPRITE_CAPTION_1:
+        case OPD_SPRITE_CAPTION_2:
             TexManager.ReloadTexture(Vif1Packet, 7);
             Setsumei();
             break;
@@ -1380,7 +1392,7 @@ static void Setsumei() {
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 188, 117, 60), CRect<int>(0, 325, 117, 56), (u_char) fadeA1);
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 188, 117, 60), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
 
-    if (CScript__2.sprite == 5) {
+    if (CScript__2.sprite == OPD_SPRITE_CAPTION_1) {
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(6, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(184, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(362, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
@@ -1558,7 +1570,7 @@ static void Setsumei() {
 
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x2, (int) y2, 210, 221), CRect<int>(0, 0, 210, 206), (u_char) alpha2);
 
-    if (CScript__2.sprite == 6) {
+    if (CScript__2.sprite == OPD_SPRITE_CAPTION_2) {
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(40, 193, 463, 221), CRect<int>(177, 206, 463, 242), (u_char) fadeA1);
     }
 }
@@ -1666,7 +1678,7 @@ static void Setsumei() {
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 175, 117, 56), CRect<int>(0, 325, 117, 56), (u_char) fadeA1);
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 175, 117, 56), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
 
-    if (CScript__2.sprite == 5) {
+    if (CScript__2.sprite == OPD_SPRITE_CAPTION_1) {
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(6, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(184, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(362, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
@@ -1844,7 +1856,7 @@ static void Setsumei() {
 
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x2, (int) y2, 210, 206), CRect<int>(0, 0, 210, 206), (u_char) alpha2);
 
-    if (CScript__2.sprite == 6) {
+    if (CScript__2.sprite == OPD_SPRITE_CAPTION_2) {
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(40, 180, 463, 206), CRect<int>(177, 206, 463, 242), (u_char) fadeA1);
     }
 }
@@ -1877,23 +1889,23 @@ static void HamonProcess() {
             if (!se[i]) {
                 switch (i) {
                     case 0:
-                        OpPlayVolSE(14, 40, 46, 1.0f);
+                        OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 46, 1.0f);
                         break;
 
                     case 1:
-                        OpPlayVolSE(14, 40, 46, 0.85f);
+                        OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 46, 0.85f);
                         break;
 
                     case 2:
-                        OpPlayVolSE(14, 40, 46, 0.6f);
+                        OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 46, 0.6f);
                         break;
 
                     case 3:
-                        OpPlayVolSE(14, 40, 46, 0.45f);
+                        OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 46, 0.45f);
                         break;
 
                     case 4:
-                        OpPlayVolSE(14, 40, 46, 0.3f);
+                        OpPlayVolSE(MIDI_PORT_SE_DEFAULT, 40, 46, 0.3f);
                         break;
                 }
 

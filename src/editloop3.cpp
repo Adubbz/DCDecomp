@@ -61,6 +61,31 @@
 
 /* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
 
+/**
+ * Visibility commands an event queues for one villager, as VILLAGER_APPEAR_STATE::action holds them.
+ */
+// clang-format off
+enum VillagerAppearAction {
+    VILLAGER_APPEAR_DEFAULT = 0, /**< No command; the villager follows its schedule. */
+    VILLAGER_APPEAR_IN      = 1, /**< Villager enters: left off the map but let in. */
+    VILLAGER_APPEAR_OUT     = 2, /**< Villager leaves: put on the map but not let back in. */
+    VILLAGER_APPEAR_OFF     = 3, /**< Villager is kept off the map. */
+    VILLAGER_APPEAR_ON      = 4, /**< Villager is put on the map. */
+};
+
+// clang-format on
+
+/**
+ * Steps of a villager conversation, as EdTalkMode's talk_mode holds them.
+ */
+// clang-format off
+enum TalkModeState {
+    TALK_MODE_SELECT  = 0, /**< Choice prompt is shown with its cursor. */
+    TALK_MODE_MESSAGE = 1, /**< Plain message is shown until it is closed. */
+};
+
+// clang-format on
+
 ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function, ED_EVENT_POINT *points, int count) {
     ED_EVENT_POINT *point = GetNewEventPoint(points, count);
 
@@ -69,7 +94,7 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function, E
         return NULL;
     }
 
-    point->enabled = 1;
+    point->enabled = true;
 
     if (parts->parts_no >= 0) {
         point->map_object = NULL;
@@ -108,11 +133,11 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
 
         ED_EVENT_POINT *point = &points[point_index];
 
-        if (point->event_type != 1) {
+        if (point->event_type != ED_EVENT_POINT_DOOR) {
             continue;
         }
 
-        point->enabled = 1;
+        point->enabled = true;
 
         if (parts->parts_no >= 0) {
             point->map_object = NULL;
@@ -128,10 +153,10 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
         for (int j = 0; j < function_count; j++, function++) {
             int kind = function->kind;
 
-            if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
+            if (kind != EPARTS_FUNC_DOOR_EXTENT && kind != EPARTS_FUNC_DOOR_SIDE_B && kind != EPARTS_FUNC_DOOR_SIDE_A && kind != EPARTS_FUNC_DOOR) {
                 kind = function->kind;
             } else if (function->link_id == points[point_index].map_no) {
-                if (kind == 2) {
+                if (kind == EPARTS_FUNC_DOOR) {
                     sceVu0CopyVector(point->position, function->position);
                     sceVu0CopyVector(point->rotation, function->rotation);
                     point->trigger_range[2] = 10.0f;
@@ -152,20 +177,20 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     }
                 }
 
-                if (function->kind == 16) {
+                if (function->kind == EPARTS_FUNC_DOOR_EXTENT) {
                     sceVu0CopyVector(point->extent, function->position);
                     has_extent = 1;
                 }
 
-                if (function->kind == 10) {
+                if (function->kind == EPARTS_FUNC_DOOR_SIDE_A) {
                     point->side = 1;
                 }
 
-                if (function->kind == 11) {
+                if (function->kind == EPARTS_FUNC_DOOR_SIDE_B) {
                     point->side = -1;
                 }
 
-                if (function->kind == 10 || function->kind == 11) {
+                if (function->kind == EPARTS_FUNC_DOOR_SIDE_A || function->kind == EPARTS_FUNC_DOOR_SIDE_B) {
                     point->linked_value = (int) function->values[0];
                 }
             }
@@ -179,11 +204,11 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
         ED_EVENT_POINT *point = NULL;
 
         switch (function->kind) {
-            case 17:
+            case EPARTS_FUNC_ITEM_BOX:
                 point = GetNewEventPoint(parts, function, points, point_count);
 
                 if (point != NULL) {
-                    point->event_type = 2;
+                    point->event_type = ED_EVENT_POINT_ITEM_BOX;
                     point->trigger_range[2] = 15.0f;
                     point->trigger_range[1] = 15.0f;
                     point->trigger_range[0] = 15.0f;
@@ -194,12 +219,12 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 }
 
                 break;
-            case 18:
+            case EPARTS_FUNC_EVENT:
                 if ((int) function->values[0] > 0) {
                     point = GetNewEventPoint(parts, function, points, point_count);
 
                     if (point != NULL) {
-                        point->event_type = 3;
+                        point->event_type = ED_EVENT_POINT_EVENT;
                         sceVu0CopyVector(point->trigger_range, function->parameters);
                         point->side = (int) function->values[0];
                         point->linked_value = (int) function->values[1];
@@ -207,11 +232,11 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 }
 
                 break;
-            case 19:
+            case EPARTS_FUNC_LADDER_BOTTOM:
                 point = GetNewEventPoint(parts, function, points, point_count);
 
                 if (point != NULL) {
-                    point->event_type = 4;
+                    point->event_type = ED_EVENT_POINT_LADDER_BOTTOM;
                     point->trigger_range[2] = 6.0f;
                     point->trigger_range[1] = 6.0f;
                     point->trigger_range[0] = 6.0f;
@@ -221,7 +246,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
 
-                        if (other->kind == 20 && other->link_id == function->link_id) {
+                        if (other->kind == EPARTS_FUNC_LADDER_TOP && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
                             point->linked_value = (int) other->values[1];
                             break;
@@ -230,11 +255,11 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 }
 
                 break;
-            case 20:
+            case EPARTS_FUNC_LADDER_TOP:
                 point = GetNewEventPoint(parts, function, points, point_count);
 
                 if (point != NULL) {
-                    point->event_type = 5;
+                    point->event_type = ED_EVENT_POINT_LADDER_TOP;
                     point->trigger_range[2] = 6.0f;
                     point->trigger_range[1] = 6.0f;
                     point->trigger_range[0] = 6.0f;
@@ -244,7 +269,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
 
-                        if (other->kind == 19 && other->link_id == function->link_id) {
+                        if (other->kind == EPARTS_FUNC_LADDER_BOTTOM && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
                             point->side = (int) other->values[1];
                             break;
@@ -306,7 +331,7 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
 
         float distance;
 
-        if (point->event_type == 2) {
+        if (point->event_type == ED_EVENT_POINT_ITEM_BOX) {
             sceVu0FVECTOR delta;
             sceVu0SubVector(delta, event_position, position);
             delta[1] = 0.0f;
@@ -325,14 +350,14 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
             selected = 1;
 
             switch (point->event_type) {
-                case 4:
-                case 1:
+                case ED_EVENT_POINT_LADDER_BOTTOM:
+                case ED_EVENT_POINT_DOOR:
                     if (AngleCmp(rotation[1], event_rotation[1], 0.8f)) {
                         selected = 0;
                     }
 
                     break;
-                case 5:
+                case ED_EVENT_POINT_LADDER_TOP:
                     if (AngleCmp(AngleLimit(rotation[1] - 3.14f), event_rotation[1], 0.8f)) {
                         selected = 0;
                     }
@@ -378,8 +403,8 @@ void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time) {
     static float    roty = 0.0f;
     roty += 0.05f;
 
-    if (roty > 3.141592f) {
-        roty -= 6.2831855f;
+    if (roty > PI_SHORT) {
+        roty -= TWO_PI;
     }
 
     static float sys_eff_sc = 0.0f;
@@ -403,9 +428,9 @@ void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time) {
         }
 
         switch (point->event_type) {
-            case 2:
+            case ED_EVENT_POINT_ITEM_BOX:
                 break;
-            case 3:
+            case ED_EVENT_POINT_EVENT:
                 if (point->linked_value <= 0) {
                     continue;
                 }
@@ -433,13 +458,13 @@ void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time) {
             GetPosRot(object, position, rotation);
         }
 
-        if (point->event_type == 2 && marker != NULL) {
+        if (point->event_type == ED_EVENT_POINT_ITEM_BOX && marker != NULL) {
             marker->SetPosition(position);
             marker->SetRotation(0.0f, rotation[1], 0.0f);
             MGDraw(marker);
         }
 
-        if (point->event_type == 3) {
+        if (point->event_type == ED_EVENT_POINT_EVENT) {
             sceVu0CopyVector(effect->position, position);
             effect->half_width = 2.0f * sys_eff_sc;
             effect->half_height = sys_eff_sc;
@@ -457,7 +482,7 @@ int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPol
     int found = 0;
 
     for (i = 0; i < count; i++, points++) {
-        if (points->event_type == 2 && CheckEventPoint(points, time)) {
+        if (points->event_type == ED_EVENT_POINT_ITEM_BOX && CheckEventPoint(points, time)) {
             sceVu0FVECTOR event_position;
             sceVu0FVECTOR event_rotation;
             sceVu0CopyVector(event_position, points->position);
@@ -639,7 +664,7 @@ static VILLAGER_APPEAR_STATE appear[16];
 
 void EdInitVillagerControl() {
     for (int i = 0; i < 16; i++) {
-        appear[i].action = 0;
+        appear[i].action = VILLAGER_APPEAR_DEFAULT;
         appear[i].destination = -1;
         appear[i].priority = -1;
     }
@@ -698,7 +723,7 @@ void EdVillagerAppearOut(int index, int priority) {
         return;
     }
 
-    appear[index].action = 2;
+    appear[index].action = VILLAGER_APPEAR_OUT;
     appear[index].priority = priority;
 }
 
@@ -711,7 +736,7 @@ void EdVillagerAppearIn(int index, int priority) {
         return;
     }
 
-    appear[index].action = 1;
+    appear[index].action = VILLAGER_APPEAR_IN;
     appear[index].priority = priority;
 }
 
@@ -724,7 +749,7 @@ void EdVillagerAppearOff(int index, int priority) {
         return;
     }
 
-    appear[index].action = 3;
+    appear[index].action = VILLAGER_APPEAR_OFF;
     appear[index].priority = priority;
 }
 
@@ -737,7 +762,7 @@ void EdVillagerAppearOn(int index, int priority) {
         return;
     }
 
-    appear[index].action = 4;
+    appear[index].action = VILLAGER_APPEAR_ON;
     appear[index].priority = priority;
 }
 
@@ -782,7 +807,7 @@ int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_i
     for (i = 0; i < 16 && selected_count < 6; i++) {
         int action = appear[i].action;
 
-        if (action == 4 || action == 2) {
+        if (action == VILLAGER_APPEAR_ON || action == VILLAGER_APPEAR_OUT) {
             select_table[selected_count++] = i;
         }
     }
@@ -798,7 +823,7 @@ int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_i
 
         int action = appear[index].action;
 
-        if (action == 3 || action == 1) {
+        if (action == VILLAGER_APPEAR_OFF || action == VILLAGER_APPEAR_IN) {
             continue;
         }
 
@@ -827,7 +852,7 @@ int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_i
             villagers[i] = map_info->villagers[index];
             VILLAGER_APPEAR_STATE *state = &appear[select_table[i]];
 
-            if (state->action != 0 && state->destination >= 0) {
+            if (state->action != VILLAGER_APPEAR_DEFAULT && state->destination >= 0) {
                 villagers[i].initial_motion = state->destination;
             }
 
@@ -848,16 +873,16 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villager) {
     }
 
     switch (appear[index].action) {
-        case 3:
-        case 2:
+        case VILLAGER_APPEAR_OFF:
+        case VILLAGER_APPEAR_OUT:
             return 0;
-        case 0:
+        case VILLAGER_APPEAR_DEFAULT:
             for (int i = 0; i < 10; i++) {
                 if (index == select_table[i]) {
                     return 0;
                 }
             }
-        case 1: {
+        case VILLAGER_APPEAR_IN: {
             int parts_no = villager->character_no;
 
             if (parts_no < 0) {
@@ -967,7 +992,7 @@ void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *ground, u_long128 *buf
 
     for (i = 0; i < 10; i++) {
         info[i] = &villagers[i];
-        villagers[i].placed = 0;
+        villagers[i].placed = false;
         EdVillager[i].Initialize();
         EdVillager[i].texture_block = i + 54;
         strcpy(EdVillager[i].resource_name, info[i]->name);
@@ -1001,17 +1026,17 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
 
     if (villager->frame != NULL) {
         CFrameAttr attr;
-        attr.clip_enable = 0;
-        attr.fog_enable = 1;
+        attr.clip_enable = false;
+        attr.fog_enable = true;
         villager->frame->SetAttr(attr, 1, 4);
     }
 
-    villager->initialized = 1;
+    villager->initialized = true;
     villager->alpha_step = 8;
 
     if (MapNo > 10) {
-        villager->initialized = 1;
-        villager->draw_enabled = 1;
+        villager->initialized = true;
+        villager->draw_enabled = true;
         villager->event_status = 0;
         villager->ambient_offset[3] = 128.0f;
         sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -1050,7 +1075,7 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers, CEd
         VILLAGER_INFO *villager = &villagers[i];
 
         if (villager->placed != 0) {
-            int draw = 0;
+            int draw = false;
             int parts_no = villager->character_no;
 
             if (parts_no >= 0 && characters[i].villager_id >= 0) {
@@ -1060,16 +1085,16 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers, CEd
                     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(villager->character_no);
 
                     if (parts->obtained > 0 && parts->elements[villager->model_no].enabled != 0) {
-                        draw = 1;
+                        draw = true;
                     }
 
                     if (EditPartsInfo.CheckComplete(villager->character_no) != 0 && EditPartsInfo.GetCompEvent(villager->character_no) == 0 && villager->hide_when_complete != 0) {
-                        draw = 0;
+                        draw = false;
                     }
                 }
             } else {
                 characters[i].map_parts_no = parts_no;
-                draw = 1;
+                draw = true;
             }
 
             characters[i].draw_enabled = draw;
@@ -1084,7 +1109,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
         RestoreVillagerInfo(info);
 
         for (i = 0; i < 10; i++) {
-            int draw = 1;
+            int draw = true;
 
             if (info[i].index >= 0) {
                 VILLAGER_INFO *entry = &info[i];
@@ -1097,12 +1122,12 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                     rotation[0] = 0.0f;
                     rotation[1] = people_position[3];
                     people_position[3] = 1.0f;
-                    entry->placed = 1;
+                    entry->placed = true;
                     sceVu0CopyVector(position, people_position);
                     sceVu0CopyVector(entry->position, position);
                     sceVu0CopyVector(entry->rotation, rotation);
                 } else {
-                    draw = 0;
+                    draw = false;
                 }
 
                 villagers[i].ClearSeq();
@@ -1129,7 +1154,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
     int random_state = rand();
 
     for (i = 0; i < 10; i++) {
-        info[i].placed = 0;
+        info[i].placed = false;
     }
 
     while (info[villager_count].name[0] != '\0') {
@@ -1141,7 +1166,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
     for (i = 0; i < 10; i++) {
         if (info[i].placed == 0 && info[i].initial_motion == 0) {
             stationary_count++;
-            info[i].placed = 1;
+            info[i].placed = true;
 
             if (stationary_count >= stationary_target) {
                 break;
@@ -1151,7 +1176,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
 
     while (stationary_count < stationary_target) {
         int index = GetRandomVillager(info);
-        info[index].placed = 1;
+        info[index].placed = true;
         info[index].initial_motion = 0;
         stationary_count++;
     }
@@ -1165,7 +1190,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
             break;
         }
 
-        info[selected].placed = 1;
+        info[selected].placed = true;
         info[selected].initial_motion = 1;
         int           failed = 0;
         int           avoid_count = 0;
@@ -1217,7 +1242,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
         }
 
         if (failed != 0) {
-            info[selected].placed = 0;
+            info[selected].placed = false;
         }
 
         moving_count++;
@@ -1226,7 +1251,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
     int selected = GetRandomVillager(info);
 
     while (selected >= 0) {
-        info[selected].placed = 1;
+        info[selected].placed = true;
         info[selected].initial_motion = 0;
         selected = GetRandomVillager(info);
     }
@@ -1239,7 +1264,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
             sceVu0FVECTOR rotation;
             sceVu0CopyVector(position, entry->position);
             sceVu0CopyVector(rotation, entry->rotation);
-            int draw = 0;
+            int draw = false;
             int parts_no = entry->character_no;
 
             if (parts_no >= 0) {
@@ -1249,16 +1274,16 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(entry->character_no);
 
                     if (parts->obtained > 0 && parts->elements[entry->model_no].enabled != 0) {
-                        draw = 1;
+                        draw = true;
                     }
 
                     if (EditPartsInfo.CheckComplete(entry->character_no) != 0 && EditPartsInfo.GetCompEvent(entry->character_no) == 0 && entry->hide_when_complete != 0) {
-                        draw = 0;
+                        draw = false;
                     }
                 }
             } else {
                 villagers[i].map_parts_no = parts_no;
-                draw = 1;
+                draw = true;
             }
 
             if (entry->initial_motion == 0) {
@@ -1273,7 +1298,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                     sceVu0CopyVector(entry->position, position);
                     sceVu0CopyVector(entry->rotation, rotation);
                 } else {
-                    draw = 0;
+                    draw = false;
                 }
             }
 
@@ -1308,7 +1333,7 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
         distances[i] = -1.0f;
 
         if (villagers[i].near_camera != 0) {
-            villagers[i].near_camera = 0;
+            villagers[i].near_camera = false;
             villagers[i].GetPosition(villager_position);
             sceVu0SubVector(camera_offset, villager_position, camera_position);
 
@@ -1364,7 +1389,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         sceVu0FVECTOR rotation;
         offset = i * (int) sizeof(CNPCharacter);
         near_camera = (s32 *) ((char *) &EdVillager->near_camera + offset);
-        *near_camera = 0;
+        *near_camera = false;
         VILLAGER_INFO *info = &villagers[i];
 
         if (info->placed == 0) {
@@ -1385,11 +1410,11 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
                 continue;
             }
 
-            *near_camera = 1;
+            *near_camera = true;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         } else {
-            *near_camera = 1;
+            *near_camera = true;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         }
@@ -1427,7 +1452,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         }
 
         if (distances[j] < 150.0f) {
-            EdVillager[indices[j]].near_camera = 1;
+            EdVillager[indices[j]].near_camera = true;
         }
     }
 
@@ -1490,12 +1515,12 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
 
     for (i = 0; i < 10; i++) {
         if (EdVillager[i].villager_id >= 0) {
-            EdVillager[i].near_camera = 0;
+            EdVillager[i].near_camera = false;
             EdVillager[i].SetPosition(villagers[i].position);
             EdVillager[i].SetRotation(villagers[i].rotation);
 
             if (EdVillager[i].frame != NULL) {
-                EdVillager[i].near_camera = 1;
+                EdVillager[i].near_camera = true;
             }
         }
     }
@@ -1510,13 +1535,13 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
         }
 
         if (distances[i] < 150.0f) {
-            EdVillager[indices[i]].near_camera = 1;
+            EdVillager[indices[i]].near_camera = true;
         }
     }
 
     for (i = 0; i < 10; i++) {
         if (EdVillager[i].villager_id < 0) {
-            EdVillager[i].near_camera = 1;
+            EdVillager[i].near_camera = true;
         }
 
         EdVillager[i].Step();
@@ -1570,11 +1595,11 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
 
     int facing = 0;
 
-    if (rotation[1] >= -0.785398f && rotation[1] < 0.785398f) {
+    if (rotation[1] >= -QUARTER_PI_SHORT && rotation[1] < QUARTER_PI_SHORT) {
         facing = 0;
     }
 
-    if (rotation[1] >= 0.785398f && rotation[1] < 2.356194f) {
+    if (rotation[1] >= QUARTER_PI_SHORT && rotation[1] < 2.356194f) {
         facing = 1;
     }
 
@@ -1582,7 +1607,7 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
         facing = 2;
     }
 
-    if (rotation[1] >= -2.356194f && rotation[1] < -0.785398f) {
+    if (rotation[1] >= -2.356194f && rotation[1] < -QUARTER_PI_SHORT) {
         facing = 3;
     }
 
@@ -1638,7 +1663,7 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
                     weights[i] = weight;
                 }
 
-                if (next_parts != NULL && (next_parts->subtype == 1 || (current_parts != NULL && current_parts->subtype != 3 && next_parts->subtype == 3))) {
+                if (next_parts != NULL && (next_parts->subtype == MAP_PARTS_SUBTYPE_ROAD || (current_parts != NULL && current_parts->subtype != MAP_PARTS_SUBTYPE_BRIDGE && next_parts->subtype == MAP_PARTS_SUBTYPE_BRIDGE))) {
                     total += weight;
                     weights[i] = weight;
                 }
@@ -1703,19 +1728,19 @@ int EdGetTime(float time) {
     period = (int) (time / 3.0f);
 
     if (EdCheckTime(time, 11.5f, 2.5f) != 0) {
-        period = 0;
+        period = ED_TIME_DAY;
     }
 
     if (EdCheckTime(time, 2.5f, 5.5f) != 0) {
-        period = 1;
+        period = ED_TIME_EVENING;
     }
 
     if (EdCheckTime(time, 5.5f, 8.5f) != 0) {
-        period = 2;
+        period = ED_TIME_NIGHT;
     }
 
     if (EdCheckTime(time, 8.5f, 11.5f) != 0) {
-        period = 3;
+        period = ED_TIME_MORNING;
     }
 
     return period;
@@ -1874,13 +1899,13 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
         adjusted_clock = clock - 12.0f;
     }
 
-    float sun_rotation = 3.141592f * ((2.0f + adjusted_clock) / 6.0f) - 1.5707964f;
+    float sun_rotation = PI_SHORT * ((2.0f + adjusted_clock) / 6.0f) - HALF_PI;
 
-    if (sun_rotation > 3.141592f) {
-        sun_rotation -= 6.283184f;
+    if (sun_rotation > PI_SHORT) {
+        sun_rotation -= TWO_PI_SHORT;
     }
 
-    float moon_rotation = 1.2f * (3.141592f * ((clock - 4.0f) / 6.0f) - 1.5707964f);
+    float moon_rotation = 1.2f * (PI_SHORT * ((clock - 4.0f) / 6.0f) - HALF_PI);
 
     if (sun_index != 2) {
         float absolute_rotation = sun_rotation < 0.0f ? -sun_rotation : sun_rotation;
@@ -2068,7 +2093,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
         return;
     }
 
-    mgPickZBuff->enable = 1;
+    mgPickZBuff->enable = true;
     mgPickZBuff->x = screen[0];
     mgPickZBuff->y = screen[1];
 
@@ -2628,7 +2653,7 @@ static OBJ_ANIME_SEQ *GetObjAnime(int index) {
 static void ClearObjAnime(int index) {
     if (index < 0) {
         for (int i = 0; i < 16; i++) {
-            obj_anime[i].property = -1;
+            obj_anime[i].property = OBJ_ANIME_PROPERTY_NONE;
         }
 
         return;
@@ -2637,7 +2662,7 @@ static void ClearObjAnime(int index) {
     OBJ_ANIME_SEQ *anime = GetObjAnime(index);
 
     if (anime != NULL) {
-        anime->property = -1;
+        anime->property = OBJ_ANIME_PROPERTY_NONE;
     }
 }
 
@@ -3213,7 +3238,7 @@ void turn_chara(CCharacter *character, float *position, float speed) {
     sceVu0SubVector(direction, position, current_position);
     float  angle = atan2f(direction[0], direction[2]);
     float *yaw = &rotation[1];
-    *yaw = AngleInterpolate(*yaw, angle, speed, 0);
+    *yaw = AngleInterpolate(*yaw, angle, speed, INTERPOLATE_STEP);
     character->SetRotation(rotation);
 }
 
@@ -3296,12 +3321,12 @@ static void GetWorldPos(float *out, float *position) {
 static float GetWorldRotY(float rotation) {
     rotation += world_rot[1];
 
-    if (rotation > 3.141592f) {
-        rotation -= 6.283184f;
+    if (rotation > PI_SHORT) {
+        rotation -= TWO_PI_SHORT;
     }
 
-    if (rotation < -3.141592f) {
-        rotation += 6.283184f;
+    if (rotation < -PI_SHORT) {
+        rotation += TWO_PI_SHORT;
     }
 
     return rotation;
@@ -3325,12 +3350,12 @@ static void GetLocalPos(float *out, float *position) {
 static float GetLocalRotY(float rotation) {
     rotation -= world_rot[1];
 
-    if (rotation > 3.141592f) {
-        rotation -= 6.283184f;
+    if (rotation > PI_SHORT) {
+        rotation -= TWO_PI_SHORT;
     }
 
-    if (rotation < -3.141592f) {
-        rotation += 6.283184f;
+    if (rotation < -PI_SHORT) {
+        rotation += TWO_PI_SHORT;
     }
 
     return rotation;
@@ -3480,7 +3505,7 @@ static int _GOTO_INTERIOR(RS_STACKDATA *stack, int argument_count) {
         EdEventInfo.interior_start_event = -1;
     }
 
-    return EdEventInfo.return_code = 4;
+    return EdEventInfo.return_code = ED_EVENT_RETURN_INTERIOR;
 }
 
 static int _SET_WORLD_COORD(RS_STACKDATA *stack, int argument_count) {
@@ -3516,7 +3541,7 @@ static int _EXIT_CODE(RS_STACKDATA *stack, int argument_count) {
 }
 
 static int _DRAW_EXCLAMATION_MARK(RS_STACKDATA *stack, int argument_count) {
-    EdEventInfo.draw_exclamation_mark = 1;
+    EdEventInfo.draw_exclamation_mark = true;
     return 1;
 }
 
@@ -3538,13 +3563,13 @@ static int _GOTO_USE_ITEM(RS_STACKDATA *stack, int argument_count) {
     items[i] = -1;
     EdUseItemInit();
     EdSetUseItem(items);
-    menu_mode = 5;
+    menu_mode = ED_MENU_USE_ITEM;
     return 1;
 }
 
 static int _NAME_REGISTRY(RS_STACKDATA *stack, int argument_count) {
     EdSetNameRegChara(GetStackInt(stack));
-    menu_mode = 6;
+    menu_mode = ED_MENU_NAME_REGISTRY;
     return 1;
 }
 
@@ -3554,7 +3579,7 @@ static int _WORLD_MAP(RS_STACKDATA *stack, int argument_count) {
     }
 
     p_jump_map_no = stack->i;
-    menu_mode = 7;
+    menu_mode = ED_MENU_WORLD_MAP;
     return 1;
 }
 
@@ -3565,7 +3590,7 @@ static int _SKIP(RS_STACKDATA *stack, int argument_count) {
 
 static int _GOTO_OUTSIDE(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.outside_map_no = GetStackInt(stack);
-    EdEventInfo.return_code = 7;
+    EdEventInfo.return_code = ED_EVENT_RETURN_OUTSIDE;
     return 1;
 }
 
@@ -3583,7 +3608,7 @@ static int _MAP_JUMP(RS_STACKDATA *stack, int argument_count) {
     }
 
     MapJump(map, event);
-    EdEventInfo.return_code = 8;
+    EdEventInfo.return_code = ED_EVENT_RETURN_MAP_JUMP;
     return 1;
 }
 
@@ -3618,12 +3643,12 @@ static int _MAP_JUMP_BGM_PLAY(RS_STACKDATA *stack, int argument_count) {
 }
 
 static int _GOTO_FP_CHANGE(RS_STACKDATA *stack, int argument_count) {
-    menu_mode = 8;
+    menu_mode = ED_MENU_FISHING_EXCHANGE;
     return 1;
 }
 
 static int _GOTO_FISH_RANKING(RS_STACKDATA *stack, int argument_count) {
-    menu_mode = 10;
+    menu_mode = ED_MENU_FISH_RANKING;
     return 1;
 }
 
@@ -3633,10 +3658,10 @@ static int _GOTO_CHANGE_ESA(RS_STACKDATA *stack, int argument_count) {
     }
 
     p_use_item = stack->s;
-    int items[32] = {193, 197, 199, 166, 167, 168, 169, 170, 186, 187, 188, 189, 190, -1};
+    int items[32] = {ITEM_EVY, ITEM_MIMI, ITEM_PRICKLY, ITEM_THROBBING_CHERRY, ITEM_GOOEY_PEACH, ITEM_BOMB_NUTS, ITEM_POISONOUS_APPLE, ITEM_MELLOW_BANANA, ITEM_CARROT, ITEM_POTATO_CAKE, ITEM_MINON, ITEM_BATTAN, ITEM_PETITE_FISH, -1};
     EdUseItemInit();
     EdSetUseItem(items);
-    menu_mode = 9;
+    menu_mode = ED_MENU_CHANGE_ESA;
     return 1;
 }
 
@@ -3758,13 +3783,13 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int argument_count) {
     CDataAlloc2<1> *second = get_buffer();
     npc->LoadPackData2(pack, name, first, EdEventInfo.npc_texture_block + index, second, 0);
     npc->texture_block = EdEventInfo.npc_texture_block + index;
-    npc->initialized = 1;
-    npc->draw_enabled = 1;
-    npc->near_camera = 1;
+    npc->initialized = true;
+    npc->draw_enabled = true;
+    npc->near_camera = true;
     npc->ambient_offset[3] = 128.0f;
     CFrameAttr attr;
-    attr.clip_enable = 0;
-    attr.fog_enable = 1;
+    attr.clip_enable = false;
+    attr.fog_enable = true;
     EdEventInfo.npc_draw[index] = 1;
     EdEventInfo.npc_shadow_draw[index] = 1;
     npc->SetMotionCamera(EdEventInfo.camera);
@@ -3806,7 +3831,7 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = block;
-            textures[i].mipmap = 0;
+            textures[i].mipmap = false;
             textures[i].name = (char *) copy;
         }
     }
@@ -3836,7 +3861,7 @@ static int _LOAD_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = 45;
-            textures[i].mipmap = 0;
+            textures[i].mipmap = false;
             textures[i].name = (char *) copy;
         }
     }
@@ -3865,7 +3890,7 @@ static int _LOAD_BG_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = 46;
-            textures[i].mipmap = 0;
+            textures[i].mipmap = false;
             textures[i].name = (char *) copy;
         }
     }
@@ -3900,7 +3925,7 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = block;
-            textures[i].mipmap = 0;
+            textures[i].mipmap = false;
             textures[i].name = (char *) copy;
         }
     }
@@ -3946,9 +3971,9 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         npc->villager_id = villager->index;
     }
 
-    npc->near_camera = 1;
-    npc->initialized = 1;
-    npc->draw_enabled = 1;
+    npc->near_camera = true;
+    npc->initialized = true;
+    npc->draw_enabled = true;
     npc->event_status = 1;
     npc->ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -4000,9 +4025,9 @@ static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         villager->index = -1;
     }
 
-    npc->near_camera = 1;
-    npc->initialized = 1;
-    npc->draw_enabled = 1;
+    npc->near_camera = true;
+    npc->initialized = true;
+    npc->draw_enabled = true;
     npc->event_status = 0;
     npc->ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -4308,7 +4333,7 @@ static int _LOAD_ITEM(RS_STACKDATA *stack, int argument_count) {
     memcpy(copy, source, size);
     LOADTEXTURE_INFO2 textures[2];
     textures[0].block_no = 40;
-    textures[0].mipmap = 0;
+    textures[0].mipmap = false;
     textures[0].name = (char *) copy;
     textures[1].name = NULL;
     TexManager.DeleteTextureBlock(40);
@@ -4749,7 +4774,7 @@ static int _SET_NPC_ANIME(RS_STACKDATA *stack, int argument_count) {
     }
 
     int animation = GetStackInt(stack++);
-    int enable = 1;
+    int enable = true;
 
     if (argument_count == 3) {
         enable = GetStackInt(stack);
@@ -5168,7 +5193,7 @@ static int _MES_CLOSE(RS_STACKDATA *stack, int argument_count) {
 
     message->text_rate = message->text_rate_set;
     message->mes_made = -1;
-    message->fade_in = 0;
+    message->fade_in = false;
     return 1;
 }
 
@@ -5315,7 +5340,7 @@ static int _CHECK_MES_COMPLETE(RS_STACKDATA *stack, int argument_count) {
         return 0;
     }
 
-    SetStack(result, message->State() == 3);
+    SetStack(result, message->State() == CLSMES_SHOWN);
     return 1;
 }
 
@@ -5331,7 +5356,7 @@ static int _CHECK_MES_WAIT(RS_STACKDATA *stack, int argument_count) {
         return 0;
     }
 
-    SetStack(result, message->State() == 5);
+    SetStack(result, message->State() == CLSMES_PAGE_WAIT);
     return 1;
 }
 
@@ -5347,7 +5372,7 @@ static int _CHECK_MES(RS_STACKDATA *stack, int argument_count) {
         return 0;
     }
 
-    SetStack(result, message->State() == 0);
+    SetStack(result, message->State() == CLSMES_CLOSED);
     return 1;
 }
 
@@ -6314,7 +6339,7 @@ static int _GET_CAMERA_ROTATE(RS_STACKDATA *stack, int argument_count) {
  */
 static int _RESET_CAMERA(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.reset_camera_angle = GetStackInt(stack);
-    EdEventInfo.reset_camera_yaw = 3.141592f;
+    EdEventInfo.reset_camera_yaw = PI_SHORT;
     return 1;
 }
 
@@ -6562,7 +6587,7 @@ static int _SCREEN_FILTER(RS_STACKDATA *stack, int argument_count) {
     int red = GetStackInt(stack++);
 
     if (red < 0) {
-        EdEventInfo.screen_filter = 0;
+        EdEventInfo.screen_filter = false;
         return 1;
     }
 
@@ -6571,11 +6596,11 @@ static int _SCREEN_FILTER(RS_STACKDATA *stack, int argument_count) {
     int alpha = GetStackInt(stack);
 
     if (alpha < 0) {
-        EdEventInfo.screen_filter = 0;
+        EdEventInfo.screen_filter = false;
         return 1;
     }
 
-    EdEventInfo.screen_filter = 1;
+    EdEventInfo.screen_filter = true;
     EdEventInfo.screen_filter_color[0] = red;
     EdEventInfo.screen_filter_color[1] = green;
     EdEventInfo.screen_filter_color[2] = blue;
@@ -6589,7 +6614,7 @@ static int _DRAW_THUNDER(RS_STACKDATA *stack, int argument_count) {
 }
 
 static int _SET_LIGHT(RS_STACKDATA *stack, int argument_count) {
-    EdEventInfo.lighting_override = 1;
+    EdEventInfo.lighting_override = true;
     int index = GetStackInt(stack++);
 
     if (index < 0 || index > 3) {
@@ -6616,7 +6641,7 @@ static int _SET_LIGHT(RS_STACKDATA *stack, int argument_count) {
 }
 
 static int _SET_LIGHT_COLOR(RS_STACKDATA *stack, int argument_count) {
-    EdEventInfo.lighting_override = 1;
+    EdEventInfo.lighting_override = true;
     int index = GetStackInt(stack++);
 
     if (index < 0 || index > 3) {
@@ -6630,7 +6655,7 @@ static int _SET_LIGHT_COLOR(RS_STACKDATA *stack, int argument_count) {
 }
 
 static int _SET_AMBIENT(RS_STACKDATA *stack, int argument_count) {
-    EdEventInfo.lighting_override = 1;
+    EdEventInfo.lighting_override = true;
     EdEventInfo.ambient_color[0] = GetStackFloat(stack++);
     EdEventInfo.ambient_color[1] = GetStackFloat(stack++);
     EdEventInfo.ambient_color[2] = GetStackFloat(stack++);
@@ -6714,7 +6739,7 @@ static int _SP_SET_TEX(RS_STACKDATA *stack, int argument_count) {
         return 0;
     }
 
-    sprite->enabled = 1;
+    sprite->enabled = true;
     char *name = GetStackString(stack++);
     sprite->source_x = GetStackInt(stack++);
     sprite->source_y = GetStackInt(stack++);
@@ -6786,7 +6811,7 @@ static int _SP_SET_ROT(RS_STACKDATA *stack, int argument_count) {
         return 0;
     }
 
-    sprite->rotated = 1;
+    sprite->rotated = true;
     sprite->rotation_x = GetStackInt(arguments++);
     sprite->rotation_y = GetStackInt(arguments++);
     sprite->rotation = GetStackFloat(arguments);
@@ -7117,7 +7142,7 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
         return 0;
     }
 
-    int enable = 1;
+    int enable = true;
     int start = 0;
     int end = 0;
     int animation = GetStackInt(stack++);
@@ -7188,9 +7213,9 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     offset[2] = GetStackFloat(stack++);
 
     if (angle_mode == 0) {
-        offset[0] = 180.0f * offset[0] / 3.141592f;
-        offset[1] = 180.0f * offset[1] / 3.141592f;
-        offset[2] = 180.0f * offset[2] / 3.141592f;
+        offset[0] = 180.0f * offset[0] / PI_SHORT;
+        offset[1] = 180.0f * offset[1] / PI_SHORT;
+        offset[2] = 180.0f * offset[2] / PI_SHORT;
     }
 
     if (argument_count >= 10) {
@@ -7199,9 +7224,9 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
         range[2] = GetStackFloat(stack++);
 
         if (angle_mode == 0) {
-            range[0] = 180.0f * range[0] / 3.141592f;
-            range[1] = 180.0f * range[1] / 3.141592f;
-            range[2] = 180.0f * range[2] / 3.141592f;
+            range[0] = 180.0f * range[0] / PI_SHORT;
+            range[1] = 180.0f * range[1] / PI_SHORT;
+            range[2] = 180.0f * range[2] / PI_SHORT;
         }
     }
 
@@ -7211,9 +7236,9 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
         speed[2] = GetStackFloat(stack);
 
         if (angle_mode == 0) {
-            speed[0] = 180.0f * speed[0] / 3.141592f;
-            speed[1] = 180.0f * speed[1] / 3.141592f;
-            speed[2] = 180.0f * speed[2] / 3.141592f;
+            speed[0] = 180.0f * speed[0] / PI_SHORT;
+            speed[1] = 180.0f * speed[1] / PI_SHORT;
+            speed[2] = 180.0f * speed[2] / PI_SHORT;
         }
     }
 
@@ -7911,7 +7936,7 @@ static int _GOTO_FISHING(RS_STACKDATA *stack, int argument_count) {
         FishLineInit(position);
     }
 
-    EdEventInfo.return_code = 11;
+    EdEventInfo.return_code = ED_EVENT_RETURN_FISHING;
     return 1;
 }
 
@@ -8327,9 +8352,9 @@ int EdInitEventParamSimple() {
     EdEventInfo.fadeout_event_no = -1;
     EdEventInfo.interior_entrance = -1;
     EdEventInfo.projection = -1.0f;
-    EdEventInfo.return_code = 0;
+    EdEventInfo.return_code = ED_EVENT_RETURN_NONE;
     motion_stop_flag = 0;
-    menu_mode = 0;
+    menu_mode = ED_MENU_NONE;
     CurrentDir[0] = '\0';
     actv_file = 0;
     actv_buffer = 0;
@@ -8340,11 +8365,11 @@ int EdInitEventParamSimple() {
     sync_camera_ref_offset[0] = 0.0f;
     sync_camera_ref_offset[1] = 0.0f;
     sync_camera_ref_offset[2] = 0.0f;
-    EdEventInfo.player_collision = 0;
-    EdEventInfo.player_draw = 1;
-    EdEventInfo.player_shadow_draw = 1;
+    EdEventInfo.player_collision = false;
+    EdEventInfo.player_draw = true;
+    EdEventInfo.player_shadow_draw = true;
     EdEventInfo.player_foot_sound = 1;
-    EdEventInfo.player_stop = 0;
+    EdEventInfo.player_stop = false;
 
     for (i = 0; i < 16; i++) {
         EdEventInfo.npc_collision[i] = 0;
@@ -8462,9 +8487,9 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         message->text_width = 0;
         message->text_height = 0;
         message->fade = 0.0f;
-        message->fade_in = 1;
+        message->fade_in = true;
         message->text_rate = message->text_rate_set;
-        message->waiting = 0;
+        message->waiting = false;
         message->text_at = 0.0f;
         message->text_no = 0;
         message->text_from = 0;
@@ -8486,14 +8511,14 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         }
 
         message->value = 0;
-        message->value_signed = 0;
-        message->value_show = 1;
-        message->value_narrow = 0;
+        message->value_signed = false;
+        message->value_show = true;
+        message->value_narrow = false;
         message->space_width = -1;
         message->space_area = -1;
         message->cursor_row = -1;
         message->cursor_y = 0;
-        message->cursor_lit = 0;
+        message->cursor_lit = false;
 
         for (int j = 0; j < 10; j++) {
             message->line_pos[j].x = -1;
@@ -8502,19 +8527,19 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
     }
 
     EdEventScript.reload((RS_PROG_HEADER *) program);
-    EdEventInfo.return_code = 0;
+    EdEventInfo.return_code = ED_EVENT_RETURN_NONE;
     EdEventInfo.event_no = event_number;
     EdEventInfo.exit_code = 0;
-    EdEventInfo.draw_exclamation_mark = 0;
+    EdEventInfo.draw_exclamation_mark = false;
     EdEventInfo.reset_camera_angle = 0;
     EdEventInfo.outside_map_no = -1;
-    EdEventInfo.suppress_background = 0;
-    EdEventInfo.screen_filter = 0;
-    EdEventInfo.lighting_override = 0;
-    EdEventInfo.suppress_shadows = 0;
-    EdEventInfo.return_code = 0;
-    EdEventInfo.map_jump_bgm_stop = 1;
-    EdEventInfo.map_jump_bgm_play = 1;
+    EdEventInfo.suppress_background = false;
+    EdEventInfo.screen_filter = false;
+    EdEventInfo.lighting_override = false;
+    EdEventInfo.suppress_shadows = false;
+    EdEventInfo.return_code = ED_EVENT_RETURN_NONE;
+    EdEventInfo.map_jump_bgm_stop = true;
+    EdEventInfo.map_jump_bgm_play = true;
     MGGetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
     MGGetAmbient(EdEventInfo.ambient_color);
 
@@ -8623,10 +8648,10 @@ int EdEventAllClear() {
 }
 
 int EdEventFinish() {
-    EdEventInfo.suppress_background = 0;
-    EdEventInfo.suppress_shadows = 0;
-    EdEventInfo.screen_filter = 0;
-    EdEventInfo.lighting_override = 0;
+    EdEventInfo.suppress_background = false;
+    EdEventInfo.suppress_shadows = false;
+    EdEventInfo.screen_filter = false;
+    EdEventInfo.lighting_override = false;
     EdEventInfo.wind[3] = -1.0f;
     EdEventInfo.main_character->frame->DeleteReference();
     CFrame *shadow = EdEventInfo.main_character->shadow_frame;
@@ -8650,11 +8675,11 @@ int EdEventMode(CCameraFollow *camera, int kind) {
 
 #ifdef PAL
     // Debug builds toggle the event debugger with one button and pause the event with another.
-    if (DebugMode != 0 && GamePad.Down(0x400) != 0) {
+    if (DebugMode != 0 && GamePad.Down(PAD_R3) != 0) {
         EdEventStopPlay();
     }
 
-    if (DebugMode != 0 && menu_mode == 0 && GamePad.Down(0x800) != 0) {
+    if (DebugMode != 0 && menu_mode == ED_MENU_NONE && GamePad.Down(PAD_START) != 0) {
         if (EdCheckEventPause() == 0) {
             SndBgmPause();
         } else {
@@ -8701,7 +8726,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
                 camera->SetRef(reference);
                 break;
             case 2:
-                if (GamePad.Down(0x2000) != 0) {
+                if (GamePad.Down(PAD_RIGHT) != 0) {
                     select_chara++;
 
                     if (select_chara >= EdEventInfo.npc_count) {
@@ -8709,7 +8734,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
                     }
                 }
 
-                if (GamePad.Down(0x8000) != 0) {
+                if (GamePad.Down(PAD_LEFT) != 0) {
                     select_chara--;
 
                     if (select_chara < -1) {
@@ -8723,7 +8748,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
                     EdDMoveChara(&EdEventInfo.npcs[select_chara], camera);
                 }
 
-                if (GamePad.Down(0x40) != 0) {
+                if (GamePad.Down(PAD_CROSS) != 0) {
                     *collision = !*collision;
                 }
 
@@ -8769,15 +8794,15 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         EdDPrint(text);
         EdDCheck();
 
-        if (GamePad.Down(0x100) != 0) {
+        if (GamePad.Down(PAD_SELECT) != 0) {
             EdOutPutFile();
         }
 
-        if (GamePad.Down(0x1000) != 0) {
+        if (GamePad.Down(PAD_UP) != 0) {
             mode--;
         }
 
-        if (GamePad.Down(0x4000) != 0) {
+        if (GamePad.Down(PAD_DOWN) != 0) {
             mode++;
         }
 
@@ -8807,7 +8832,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         ObjAnimeAllStop();
         CCamera::StopCamera = 1;
 
-        if (GamePad.Down2(0x40) != 0 && menu_mode == 0) {
+        if (GamePad.Down2(PAD_CROSS) != 0 && menu_mode == ED_MENU_NONE) {
             SndBgmRePlay();
             BreakReadBG();
             EdEventSkip();
@@ -8822,7 +8847,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
             MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1], EdEventInfo.background_color[2], 128.0f);
         }
 
-        if (GamePad.Down(0x20) != 0) {
+        if (GamePad.Down(PAD_CIRCLE) != 0) {
             SndBgmRePlay();
             EdEventPause();
         }
@@ -8867,15 +8892,15 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         SceneData.Step();
     }
 
-    if (menu_mode == 0) {
+    if (menu_mode == ED_MENU_NONE) {
         menu_mode_status = -1;
         EdResumeEvent();
 
-        if (menu_mode != 0) {
+        if (menu_mode != ED_MENU_NONE) {
             menu_mode_status = 0;
 
             if (EdInitMenu(menu_mode) == 0) {
-                menu_mode = 0;
+                menu_mode = ED_MENU_NONE;
             }
 
             motion_stop_flag = 1;
@@ -8898,8 +8923,8 @@ int EdEventMode(CCameraFollow *camera, int kind) {
 
                 if (EdMenuMode() != 0) {
                     switch (menu_mode) {
-                        case 5:
-                        case 9: {
+                        case ED_MENU_USE_ITEM:
+                        case ED_MENU_CHANGE_ESA: {
                             int item = EdGetUseItem();
 
                             if (p_use_item != NULL) {
@@ -8909,9 +8934,9 @@ int EdEventMode(CCameraFollow *camera, int kind) {
                             p_use_item = NULL;
                             break;
                         }
-                        case 6:
+                        case ED_MENU_NAME_REGISTRY:
                             break;
-                        case 7:
+                        case ED_MENU_WORLD_MAP:
                             if (p_jump_map_no != 0) {
                                 ((RS_STACKDATA *) p_jump_map_no)->i = MenuMapJumpMode + 1;
                             }
@@ -8920,7 +8945,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
                             break;
                     }
 
-                    menu_mode = 0;
+                    menu_mode = ED_MENU_NONE;
                     EdDrawOnAll();
                     EdExitMenu();
                 }
@@ -9119,7 +9144,7 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
             continue;
         }
 
-        npcs[i].talk_target = 0;
+        npcs[i].talk_target = false;
         character->GetPosition(character_position);
         npcs[i].GetPosition(npc_position);
         float height = character_position[1] - npc_position[1];
@@ -9149,7 +9174,7 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
         npcs[i].GetRotation(npc_rotation);
         int talk_direction = EdEventInfo.villagers[npcs[i].villager_id].talk_direction;
 
-        if (AngleCmp(npc_angle, npc_rotation[1], 1.570796f) != 0 && talk_direction == 0 && npcs[i].event_status == 0) {
+        if (AngleCmp(npc_angle, npc_rotation[1], HALF_PI_SHORT) != 0 && talk_direction == 0 && npcs[i].event_status == 0) {
             continue;
         }
 
@@ -9199,7 +9224,7 @@ int EdTalkModeInit(CNPCharacter *villager, int character_info_id) {
         talk_chara_info_id = character_info_id;
     }
 
-    talk_mode = 0;
+    talk_mode = TALK_MODE_SELECT;
     TalkMesMake = 1;
     TalkMesNo = 0;
     talk_camera = 0;
@@ -9228,16 +9253,16 @@ int EdNowTalkCharaInfoID() {
 static inline void EdCloseTalkMes() {
     EditMes1.text_rate = EditMes1.text_rate_set;
     EditMes1.mes_made = -1;
-    EditMes1.fade_in = 0;
+    EditMes1.fade_in = false;
     EditMes1.text_columns = MES_WIN_COLUMNS;
     EditMes1.text_rows = 0xA;
     EditMes1.text_len = 0;
     EditMes1.text_width = 0;
     EditMes1.text_height = 0;
     EditMes1.fade = 0.0f;
-    EditMes1.fade_in = 1;
+    EditMes1.fade_in = true;
     EditMes1.text_rate = EditMes1.text_rate_set;
-    EditMes1.waiting = 0;
+    EditMes1.waiting = false;
     EditMes1.text_at = 0.0f;
     EditMes1.text_no = 0;
     EditMes1.text_from = 0;
@@ -9259,14 +9284,14 @@ static inline void EdCloseTalkMes() {
     }
 
     EditMes1.value = 0;
-    EditMes1.value_signed = 0;
-    EditMes1.value_show = 1;
-    EditMes1.value_narrow = 0;
+    EditMes1.value_signed = false;
+    EditMes1.value_show = true;
+    EditMes1.value_narrow = false;
     EditMes1.space_width = -1;
     EditMes1.space_area = -1;
     EditMes1.cursor_row = -1;
     EditMes1.cursor_y = 0;
-    EditMes1.cursor_lit = 0;
+    EditMes1.cursor_lit = false;
 
     for (int i = 0; i < 10; i++) {
         EditMes1.line_pos[i].x = -1;
@@ -9301,7 +9326,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     EditMes1.Step();
 
     CNPCharacter *villager = talk_villager__2;
-    villager->near_camera = 1;
+    villager->near_camera = true;
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR villager_position;
     sceVu0FVECTOR player_rotation;
@@ -9314,9 +9339,9 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     sceVu0SubVector(direction, villager_position, player_position);
     float player_yaw = atan2f(direction[0], direction[2]);
     float villager_yaw = atan2f(-direction[0], -direction[2]);
-    player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.1f, 0);
+    player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.1f, INTERPOLATE_STEP);
     player->SetRotation(player_rotation);
-    villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.1f, 0);
+    villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.1f, INTERPOLATE_STEP);
 
     if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0) {
         villager->SetRotation(villager_rotation);
@@ -9352,7 +9377,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     }
 
     if (EdEventInfo.talk_select_prompt < 0) {
-        talk_mode = 1;
+        talk_mode = TALK_MODE_MESSAGE;
         TalkMesNo = EdEventInfo.talk_messages[0];
     } else {
         TalkMesNo = EdEventInfo.talk_select_message;
@@ -9371,9 +9396,9 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
 
     switch (talk_mode) {
-        case 1:
-            if (GamePad.Down(0x60) != 0) {
-                if (EditMes1.State() == 3) {
+        case TALK_MODE_MESSAGE:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                if (EditMes1.State() == CLSMES_SHOWN) {
                     EdCloseTalkMes();
 
                     if (camera != NULL) {
@@ -9386,7 +9411,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                     return 1;
                 }
 
-                if (EditMes1.State() == 5) {
+                if (EditMes1.State() == CLSMES_PAGE_WAIT) {
                     EditMes1.GoNextPage();
                 } else {
                     EditMes1.text_rate = 0.0f;
@@ -9396,8 +9421,8 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
             EditMes1.cursor_row = -1;
             villager->SetMotion(3, 0);
             break;
-        case 0:
-            if (GamePad.Down(0x1000) != 0) {
+        case TALK_MODE_SELECT:
+            if (GamePad.Down(PAD_UP) != 0) {
                 talk_select--;
 
                 if (talk_select < 0) {
@@ -9405,7 +9430,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                 }
             }
 
-            if (GamePad.Down(0x4000) != 0) {
+            if (GamePad.Down(PAD_DOWN) != 0) {
                 talk_select++;
 
                 if (talk_select > choice_count - 1) {
@@ -9413,9 +9438,9 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                 }
             }
 
-            if (GamePad.Down(0x40) != 0) {
-                if (EditMes1.State() == 3) {
-                    talk_mode = 1;
+            if (GamePad.Down(PAD_CROSS) != 0) {
+                if (EditMes1.State() == CLSMES_SHOWN) {
+                    talk_mode = TALK_MODE_MESSAGE;
                     TalkMesMake = 1;
                     TalkMesNo = EdEventInfo.talk_messages[talk_select];
 
@@ -9483,7 +9508,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                 }
             }
 
-            if (GamePad.Down(0x20) != 0) {
+            if (GamePad.Down(PAD_CIRCLE) != 0) {
                 GamePad.AutoRepeatOff();
                 GamePad.MenuModeOff();
                 EdCloseTalkMes();
@@ -9503,30 +9528,30 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
 
     int talk_position[4];
 
-    if (talk_mode == 0) {
+    if (talk_mode == TALK_MODE_SELECT) {
         if (mode != 0) {
-            EditMes1.tail_on = 0;
-            EditMes1.auto_pos = 8;
+            EditMes1.tail_on = false;
+            EditMes1.auto_pos = MES_POS_BOTTOM;
         }
 
         EditMes1.AutoSetSub(player, villager, talk_position);
         EditMes1.AutoSet(talk_position);
     } else {
-        EditMes1.tail_on = 1;
-        EditMes1.auto_pos = 0;
+        EditMes1.tail_on = true;
+        EditMes1.auto_pos = MES_POS_AUTO;
         EditMes1.AutoSetSub(villager, player, talk_position);
         EditMes1.AutoSet(talk_position);
     }
 
     switch (talk_mode) {
-        case 0:
+        case TALK_MODE_SELECT:
             if (TalkMesMake != 0) {
                 EditMes1.text_rate = 0.0f;
                 TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
             }
 
             break;
-        case 1:
+        case TALK_MODE_MESSAGE:
             if (TalkMesMake != 0) {
                 TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
             }

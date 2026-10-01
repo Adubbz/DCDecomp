@@ -4,6 +4,34 @@
 
 #include "frame.hpp"
 
+/**
+ * State of a held or thrown item model slot.
+ */
+// clang-format off
+enum MainItemModelState {
+    ITEM_MODEL_FREE   = -1, /**< Free. */
+    ITEM_MODEL_LOADED = 0,  /**< Loaded. */
+    ITEM_MODEL_HAND   = 1,  /**< In the hand. */
+    ITEM_MODEL_THROWN = 2,  /**< Thrown. */
+    ITEM_MODEL_UNK_3  = 3,  /**< Drawn on its own frame like a thrown item; never set. */
+};
+
+// clang-format on
+
+/**
+ * How an active item is used, as CActiveItemPack::CheckStatusType reports it.
+ */
+// clang-format off
+enum ActiveItemUseType {
+    ACTIVE_ITEM_NONE    = 0, /**< Not usable. */
+    ACTIVE_ITEM_ACTION  = 1, /**< Used as an action. */
+    ACTIVE_ITEM_DRINK   = 2, /**< Drunk. */
+    ACTIVE_ITEM_FEATHER = 3, /**< Feather. */
+    ACTIVE_ITEM_EAT     = 4, /**< Eaten. */
+};
+
+// clang-format on
+
 class CMainItemModel {
 public:
     u_int *cash[6];        /**< Model data each cache slot holds, or zero where the slot is free. */

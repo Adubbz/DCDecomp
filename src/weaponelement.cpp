@@ -423,8 +423,8 @@ void CWeaponElement::Init_Wind(float *position) {
         sceVu0CopyVector(velocity[i], offset[i]);
         sceVu0Normalize(velocity[i], velocity[i]);
         sceVu0ScaleVector(velocity[i], velocity[i], 0.3f * rand() / 2147483648.0f);
-        spin[i] = 2.0f * (3.141592f * rand()) / 2147483648.0f - 3.141592f;
-        spin_speed[i] = 0.09817475f + 0.1963495f * rand() / 2147483648.0f;
+        spin[i] = 2.0f * (PI_SHORT * rand()) / 2147483648.0f - PI_SHORT;
+        spin_speed[i] = 0.09817475f + SIXTEENTH_PI_SHORT * rand() / 2147483648.0f;
         frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
     }
 }
@@ -459,8 +459,8 @@ void CWeaponElement::Step_Wind() {
 
             spin[i] += spin_speed[i];
 
-            if (!(spin[i] <= 3.141592f)) {
-                spin[i] -= 6.283184f;
+            if (!(spin[i] <= PI_SHORT)) {
+                spin[i] -= TWO_PI_SHORT;
             }
 
             offset[i][0] += velocity[i][0];
@@ -493,8 +493,8 @@ void CWeaponElement::Step_Wind() {
                     sceVu0CopyVector(velocity[i], offset[i]);
                     sceVu0Normalize(velocity[i], velocity[i]);
                     sceVu0ScaleVector(velocity[i], velocity[i], 0.3f * rand() / 2147483648.0f);
-                    spin[i] = 2.0f * (3.141592f * rand()) / 2147483648.0f - 3.141592f;
-                    spin_speed[i] = 0.09817475f + 0.1963495f * rand() / 2147483648.0f;
+                    spin[i] = 2.0f * (PI_SHORT * rand()) / 2147483648.0f - PI_SHORT;
+                    spin_speed[i] = 0.09817475f + SIXTEENTH_PI_SHORT * rand() / 2147483648.0f;
                     frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
                     spawn_delay = (int) ((float) spawn_delay_max * rand() / 2147483648.0f) + 1;
                     break;

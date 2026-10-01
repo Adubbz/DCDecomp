@@ -14,11 +14,11 @@
 
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
-    this->active = 1;
+    this->active = true;
 
     for (int i = 0; i < 32; i++) {
         this->radius[i] = 3.0f + 6.0f * (float) rand() / 2.1474836e9f;
-        this->angle[i] = 6.2831855f * (float) rand() / 2.1474836e9f - 3.1415927f;
+        this->angle[i] = TWO_PI * (float) rand() / 2.1474836e9f - PI;
         this->angular_velocity[i] = 0.034906585f * (5.0f * (float) rand() / 2.1474836e9f);
         this->size[i] = 0.4f + 0.6f * (float) rand() / 2.1474836e9f;
         this->alpha[i] = 0.0f;
@@ -37,7 +37,7 @@ void CHealEffect::Step() {
         int           expired = 0;
 
         for (int i = 0; i < 32; i++) {
-            if (this->phase[i] < 3.1415927f) {
+            if (this->phase[i] < PI) {
                 // The phase runs a half sine, so the particle rises and fades once.
                 float rise = sinf(this->phase[i]);
 
@@ -50,12 +50,12 @@ void CHealEffect::Step() {
 
                 this->angle[i] += this->angular_velocity[i];
 
-                if (this->angle[i] > 3.1415927f) {
-                    this->angle[i] -= 6.2831855f;
+                if (this->angle[i] > PI) {
+                    this->angle[i] -= TWO_PI;
                 }
 
-                if (this->angle[i] < -3.1415927f) {
-                    this->angle[i] += 6.2831855f;
+                if (this->angle[i] < -PI) {
+                    this->angle[i] += TWO_PI;
                 }
 
                 offset[0] = 0.0f;
@@ -69,7 +69,7 @@ void CHealEffect::Step() {
                 expired++;
 
                 if (expired == 32) {
-                    this->active = 0;
+                    this->active = false;
                     printf("emd!!\n");
                 }
             }
@@ -87,7 +87,7 @@ void CHealEffect::Draw() {
         sceVu0CopyVector(this->position, CharaMain.pos);
 
         for (int i = 0; i < 32; i++) {
-            if (this->phase[i] < 3.1415927f) {
+            if (this->phase[i] < PI) {
                 world[0] = this->position[0] + this->particle_offset[i][0];
                 world[1] = this->position[1] + this->particle_offset[i][1];
                 world[2] = this->position[2] + this->particle_offset[i][2];

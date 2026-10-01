@@ -12,7 +12,7 @@ void CMenuItemStep::Initialize() {
     frame = 0;
     last_item = -1;
     last_slot = -1;
-    enabled = 1;
+    enabled = true;
     pending_volume = 0;
 
     for (int i = 0; i < 4; i++) {

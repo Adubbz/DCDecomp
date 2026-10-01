@@ -5,20 +5,127 @@
 #include "menu_draw.hpp"
 
 /**
+ * Steps of the save menu, indexing SaveMenuFunc, as SAVE_MENU_STATE::key_no holds them.
+ */
+// clang-format off
+enum SaveMenuKey {
+    SAVE_KEY_FADE_IN            = 0,  /**< Fading in. */
+    SAVE_KEY_FADE_OUT           = 1,  /**< Fading out. */
+    SAVE_KEY_MODE_SELECT        = 2,  /**< Choosing load or save. */
+    SAVE_KEY_MC_SELECT          = 3,  /**< Choosing a memory card slot. */
+    SAVE_KEY_CHECK_MC_TYPE      = 4,  /**< Checking the card type. */
+    SAVE_KEY_CHECK_MC           = 5,  /**< Checking the card. */
+    SAVE_KEY_LOAD_CONFIG        = 6,  /**< Loading the configuration. */
+    SAVE_KEY_FILE_SELECT        = 7,  /**< Choosing a save file. */
+    SAVE_KEY_SAVE_CHECK         = 8,  /**< Checking before a save. */
+    SAVE_KEY_SAVE_DECIDE        = 9,  /**< Confirming a save. */
+    SAVE_KEY_SAVE               = 10, /**< Saving. */
+    SAVE_KEY_END_SAVE           = 11, /**< Save finished. */
+    SAVE_KEY_LOAD_DECIDE        = 12, /**< Confirming a load. */
+    SAVE_KEY_LOAD               = 13, /**< Loading. */
+    SAVE_KEY_ALERT              = 14, /**< Alert shown. */
+    SAVE_KEY_NEW_DIR            = 15, /**< Creating the save directory. */
+    SAVE_KEY_NEW_DIR_SELECT     = 16, /**< Confirming the save directory. */
+    SAVE_KEY_FORMAT             = 17, /**< Formatting. */
+    SAVE_KEY_UNFORMAT           = 18, /**< Card unformatted. */
+    SAVE_KEY_DIF_VERSION        = 19, /**< Save from another version. */
+    SAVE_KEY_DELETE             = 20, /**< Deleting. */
+    SAVE_KEY_COPY               = 21, /**< Copying. */
+    SAVE_KEY_AFTER_ENDING       = 22, /**< Asking to save after the ending. */
+    SAVE_KEY_SAVE_ENDING        = 23, /**< Saving after the ending. */
+    SAVE_KEY_SAVE_DECIDE_ENDING = 24, /**< Confirming a save after the ending. */
+    SAVE_KEY_END_SAVE_ENDING    = 25, /**< Save after the ending finished. */
+};
+
+// clang-format on
+
+/**
+ * Screen that opened the save menu, as SAVE_MENU_STATE::mode holds it.
+ */
+// clang-format off
+enum SaveMenuMode {
+    SAVE_MENU_MODE_LOAD            = 0, /**< Load from the title. */
+    SAVE_MENU_MODE_SAVE            = 1, /**< Save. */
+    SAVE_MENU_MODE_ENDING          = 2, /**< Save after the ending. */
+    SAVE_MENU_MODE_ENDING_NO_CLEAR = 3, /**< Save after the ending without marking the game cleared. */
+};
+
+// clang-format on
+
+/**
+ * Card access a save file is chosen for, as SAVE_MENU_STATE::access_kind holds it.
+ */
+// clang-format off
+enum SaveAccessKind {
+    SAVE_ACCESS_LOAD = 1, /**< Load. */
+    SAVE_ACCESS_SAVE = 2, /**< Save. */
+};
+
+// clang-format on
+
+/**
+ * Alerts the save menu shows, as SAVE_MENU_STATE::alert_no holds them.
+ */
+// clang-format off
+enum SaveMenuAlert {
+    SAVE_ALERT_NONE          = 0,  /**< No alert. */
+    SAVE_ALERT_NO_CARD       = 1,  /**< No PS2 memory card. */
+    SAVE_ALERT_CARD_FULL     = 2,  /**< The card is full. */
+    SAVE_ALERT_UNK_3         = 3,  /**< Shows no message; never set. */
+    SAVE_ALERT_UNK_4         = 4,  /**< Shows no message; never set. */
+    SAVE_ALERT_UNK_5         = 5,  /**< Shows no message; never set. */
+    SAVE_ALERT_CARD_ERROR    = 6,  /**< The card failed or was changed. */
+    SAVE_ALERT_FORMAT_FAILED = 7,  /**< Formatting failed. */
+    SAVE_ALERT_SAVE_FAILED   = 8,  /**< Saving failed. */
+    SAVE_ALERT_LOAD_FAILED   = 9,  /**< Loading failed. */
+    SAVE_ALERT_NO_SPACE_DIR  = 10, /**< Too little space for a new save directory. */
+    SAVE_ALERT_NO_SPACE_FILE = 11, /**< Too little space for a new save file. */
+    SAVE_ALERT_NO_SAVE_DATA  = 12, /**< No save data to load. */
+    SAVE_ALERT_CARD_MISSING  = 14, /**< The card was removed or is not a PS2 card. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the event item menu, as MINI_MENU_INFO::state holds them.
+ */
+// clang-format off
+enum MiniMenuState {
+    MINI_MENU_CHOOSING = 0, /**< Choosing. */
+    MINI_MENU_REFUSED  = 1, /**< Refusal shown. */
+    MINI_MENU_FADE_IN  = 2, /**< Fading in. */
+    MINI_MENU_FADE_OUT = 3, /**< Fading out. */
+};
+
+// clang-format on
+
+/**
+ * What SaveEnableCheck reports.
+ */
+// clang-format off
+enum SaveEnableResult {
+    SAVE_ENABLE_NO_SPACE = -1, /**< No card has room for a new save. */
+    SAVE_ENABLE_NO_CARD  = 0,  /**< No usable PS2 memory card. */
+    SAVE_ENABLE_OK       = 1,  /**< A card can take a save. */
+};
+
+// clang-format on
+
+/**
  * Holds the save menu's current step and the arguments its steps pass to
  * each other.
  */
 struct SAVE_MENU_STATE {
-    s32 mode;          /**< Screen that opened the menu: 0 load from the title, 1 save, 2 save after the ending. */
-    s32 key_no;        /**< Index of the step run next, into SaveMenuFunc. */
+    s32 mode;          /**< Screen that opened the menu. @see SaveMenuMode. */
+    s32 key_no;        /**< Index of the step run next, into SaveMenuFunc. @see SaveMenuKey. */
     s32 return_key_no; /**< Step to go back to once a card operation finishes, or -1. */
     s32 file_no;       /**< Save slot the current step works on. */
     s32 board_y;       /**< Scroll position of the save boards, eased toward the selected slot. */
-    s8  result;        /**< How the screen ended: 0 while it runs, 1 after a load, 2 otherwise. */
+    s8  result;        /**< How the screen ended. @see MenuSaveResult. */
     u8  unk_15[3];
     s32 loaded;      /**< Whether a save file has been loaded. */
-    s32 access_kind; /**< Card operation the menu performs: 1 load, 2 save. */
-    s32 alert_no;    /**< Alert the alert step shows, which picks its message. */
+    s32 access_kind; /**< Card operation the menu performs. @see SaveAccessKind. */
+    s32 alert_no;    /**< Alert the alert step shows, which picks its message. @see SaveMenuAlert. */
     u8  unk_24[4];
     s32 step_time;     /**< Frames spent in the current fade step. */
     s32 block_no;      /**< Texture block the save board's textures load into. */
@@ -48,7 +155,7 @@ struct MINI_MENU_INFO {
     s8  usable_num;     /**< Number of items the event accepts. */
     u8  unk_46[2];
     s32 vanish; /**< Whether the item picked is used up. */
-    s16 state;  /**< 0 while choosing, 1 while a refusal shows, 2 fading in, 3 fading out. */
+    s16 state;  /**< Step of the event item menu. @see MiniMenuState. */
     u8  unk_4E[2];
     s32 state_time; /**< Frames spent in the current state. */
 };

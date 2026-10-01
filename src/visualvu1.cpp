@@ -19,7 +19,7 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     int          width = head->image_width;
     int          height = head->image_height;
     int          bpp;
-    int          psm = 0;
+    int          psm = SCE_GS_PSMCT32;
     u_char      *clut;
     u_char      *image;
     int          tw;
@@ -29,23 +29,23 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     int          tbw;
 
     switch (head->image_type) {
-        case 1:
-            psm = 2;
+        case TIM2_RGB16:
+            psm = SCE_GS_PSMCT16;
             bpp = 2;
             break;
-        case 2:
-            psm = 1;
+        case TIM2_RGB24:
+            psm = SCE_GS_PSMCT24;
             bpp = 3;
             break;
-        case 3:
+        case TIM2_RGB32:
             bpp = 4;
             break;
-        case 4:
-            psm = 20;
+        case TIM2_IDTEX4:
+            psm = SCE_GS_PSMT4;
             bpp = 0;
             break;
-        case 5:
-            psm = 19;
+        case TIM2_IDTEX8:
+            psm = SCE_GS_PSMT8;
             bpp = 1;
             break;
     }
@@ -371,7 +371,7 @@ u_int *CVisualMDTVu1::GetMDTDataAddress() {
  */
 void CVisualMDTVu1::Initialize() {
     CVisualVu1::Initialize();
-    copy_on_draw = 0;
+    copy_on_draw = false;
     data = NULL;
     vu_data_buffer[1] = NULL;
     vu_data_buffer[0] = NULL;

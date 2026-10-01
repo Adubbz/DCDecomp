@@ -41,9 +41,9 @@ void CCloth::Draw() {
 
     CFrameAttr attr;
 
-    attr.fog_enable = 0;
+    attr.fog_enable = false;
     attr.program_option = 0;
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     float origin = 0.0f;
 
     draw_frame.SetAttr(attr, 1, 0);
@@ -519,7 +519,7 @@ int CCloth::CreateVUData(u_int *packet) {
     cloth_material.ambient[3] = 0.0f;
     *(u_long128 *) cloth_material.diffuse = *(u_long128 *) one;
     *(u_long128 *) cloth_material.specular = *(u_long128 *) one;
-    started = 0;
+    started = false;
     word += SetMaterial(&packet[word], &cloth_material);
     texture = TexManager.GetTexture(material.texture, -1);
 
@@ -586,7 +586,7 @@ int CCloth::CreateVUData(u_int *packet) {
 
         if (started == 0) {
             *(u_long128 *) &packet[word] = *(u_long128 *) first_kick;
-            started = 1;
+            started = true;
         } else {
             *(u_long128 *) &packet[word] = *(u_long128 *) kick;
         }
@@ -632,8 +632,8 @@ void CCloth::InitParam() {
     gravity[1] = -0.1f;
     gravity[2] = 0.0f;
     normal_scale = 1.0f;
-    stop = 0;
-    floor_on = 1;
+    stop = false;
+    floor_on = true;
     sceVu0FVECTOR zero = {0.0f, 0.0f, 0.0f, 0.0f};
 
     for (int i = 0; i < num_i; i++) {

@@ -47,7 +47,7 @@ CSprite::CSprite() {
     }
 
     angle = 2.57f;
-    started = 0;
+    started = false;
 }
 
 void CSprite::Init() {
@@ -59,7 +59,7 @@ void CSprite::Init() {
     }
 
     angle = 2.57f;
-    started = 0;
+    started = false;
 }
 
 void CSprite::Move() {
@@ -69,7 +69,7 @@ void CSprite::Move() {
     int   i;
 
     if (started == 0) {
-        started = 1;
+        started = true;
     }
 
     for (i = 0; i < 11; i++) {

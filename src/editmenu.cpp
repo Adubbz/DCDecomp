@@ -355,15 +355,15 @@ static void DrawMoveMenuIcon() {
     icon_max = GetEditMenuMax();
 
     for (i = 0; i < icon_max; i++) {
-        if (EditSwitch == 2) {
+        if (EditSwitch == EDIT_MENU_SELECT) {
             brightness = 0x80;
         }
 
-        if (EditSwitch >= 9 && EditSwitch < 0x10) {
+        if (EditSwitch >= EDIT_MENU_ATORA_IN && EditSwitch < EDIT_MENU_ATORA_OUT) {
             brightness = 0x80 - EdEffectCt * 8;
         }
 
-        if (EditSwitch >= 0x10 && EditSwitch < 0x16) {
+        if (EditSwitch >= EDIT_MENU_ATORA_OUT && EditSwitch < EDIT_MENU_OUT_END) {
             brightness = EdEffectCt * 8;
         }
 
@@ -418,7 +418,7 @@ static int CalMoveFromMenuIcon() {
     for (int i = 0; i < icon_max; i++) {
         int arrived_axes = 0;
 
-        if (i != EditSwitch - 9) {
+        if (i != EditSwitch - EDIT_MENU_ATORA_IN) {
             x = target[12];
             y = (int) MenuIconPos[i][1];
         } else {
@@ -508,7 +508,7 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
     EdMenuExTextureBlock2 = texture_blocks[3];
     StayTex = TexManager.GetTexture("stayframe", -1);
     GamePad.MenuModeOn(0x78);
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 9);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 9);
     CommonMenuMes2.mes_made = -1;
     CommonMenuMes3.mes_made = -1;
     MakeWin2Flag = 1;
@@ -517,7 +517,7 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
     EdMenuHelpWinAlpha = 0;
     EdEffectCt = 0;
     CursorVibeCnt = 0;
-    EdMenuEffectFlag = 0;
+    EdMenuEffectFlag = ED_MENU_ICON_STILL;
     EdMenuEffectCt = 0;
     ItemVolumeStep.CheckItemVolume();
 
@@ -529,9 +529,9 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
         int blocks[2] = {0, 0};
         blocks[0] = EdMenuTextureBlock;
         blocks[1] = EdMenuExTextureBlock;
-        InitMenuAtora1(2, NowEditMap, blocks, EdMenuWorkBuf);
+        InitMenuAtora1(ATORA_OPEN_PLACE, NowEditMap, blocks, EdMenuWorkBuf);
         InitMenuAtoraSelect(NowEditMap);
-        EditSwitch = 3;
+        EditSwitch = EDIT_MENU_ATORA;
         CommonMenuMes2.edge_alpha = 0x80;
         CommonMenuMes3.edge_alpha = 0x80;
         return;
@@ -540,7 +540,7 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
     CommonMenuMes2.edge_alpha = 0;
     CommonMenuMes3.edge_alpha = 0;
     EdCur.selection = 0;
-    EditSwitch = 1;
+    EditSwitch = EDIT_MENU_START;
     EdMenuRGB = 0x80;
     WindowPos[1] = 325.0f;
     GetMainMenuRightHelpWinLangOffset(WindowPos[0], WindowPos[1], EditMenuWinW, EditMenuWinH);
@@ -583,8 +583,8 @@ static void EditMenuExit() {
  * @size 0x64
  */
 static int GetDrawHelpWindow(int draw) {
-    if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {
-        draw = 0;
+    if ((EditSwitch == EDIT_MENU_ATORA_IN || EditSwitch == EDIT_MENU_ATORA || EditSwitch == EDIT_MENU_ATORA_OUT) && GetMenuAtraEventFlag()) {
+        draw = false;
     }
 
     return draw;
@@ -597,42 +597,42 @@ int EditMenuLoop() {
     result = 0;
 
     switch (EditSwitch) {
-        case 2:
+        case EDIT_MENU_SELECT:
             result = EditMenuSelect();
             break;
-        case 11:
+        case EDIT_MENU_ANALYZE_IN:
             ToAnalyzeEdit();
             break;
-        case 4:
+        case EDIT_MENU_ATORA_MOVE:
             result = AtoraMove();
             break;
-        case 5:
+        case EDIT_MENU_ANALYZE:
             result = AnalyzeEdit();
             break;
-        case 3:
-        case 9:
-        case 16:
+        case EDIT_MENU_ATORA:
+        case EDIT_MENU_ATORA_IN:
+        case EDIT_MENU_ATORA_OUT:
             result = AtoraSelect();
             break;
-        case 18:
+        case EDIT_MENU_ANALYZE_OUT:
             FromAnalyzeEdit();
             break;
-        case 6:
-        case 12:
-        case 19:
+        case EDIT_MENU_SAVE:
+        case EDIT_MENU_SAVE_IN:
+        case EDIT_MENU_SAVE_OUT:
             EditSaveKey();
             break;
-        case 7:
-        case 13:
-        case 20:
+        case EDIT_MENU_OPTION:
+        case EDIT_MENU_OPTION_IN:
+        case EDIT_MENU_OPTION_OUT:
             EdOptionSelect();
             break;
-        case 8:
-        case 14:
-        case 21:
+        case EDIT_MENU_MANUAL:
+        case EDIT_MENU_MANUAL_IN:
+        case EDIT_MENU_MANUAL_OUT:
             EdMenuManualKey();
             break;
-        case 15:
+        case EDIT_MENU_EXIT:
             result = EditMenuToExit();
             break;
     }
@@ -650,45 +650,45 @@ void EditMenuDraw() {
     FrameImageDraw(EdMenuRGB, 0x80);
 
     switch (EditSwitch) {
-        case 1:
+        case EDIT_MENU_START:
             EditMenuStart();
             break;
-        case 2:
+        case EDIT_MENU_SELECT:
             EditMenuSelectDraw();
             break;
-        case 11:
+        case EDIT_MENU_ANALYZE_IN:
             ToAnalyzeEditDraw();
             break;
-        case 4:
+        case EDIT_MENU_ATORA_MOVE:
             AtoraMoveDraw();
             break;
-        case 5:
+        case EDIT_MENU_ANALYZE:
             AnalyzeEditDraw();
             break;
-        case 18:
+        case EDIT_MENU_ANALYZE_OUT:
             FromAnalyzeEditDraw();
             break;
-        case 3:
-        case 9:
-        case 16:
+        case EDIT_MENU_ATORA:
+        case EDIT_MENU_ATORA_IN:
+        case EDIT_MENU_ATORA_OUT:
             AtoraSelectDraw();
             break;
-        case 6:
-        case 12:
-        case 19:
+        case EDIT_MENU_SAVE:
+        case EDIT_MENU_SAVE_IN:
+        case EDIT_MENU_SAVE_OUT:
             EditSaveDraw();
             break;
-        case 7:
-        case 13:
-        case 20:
+        case EDIT_MENU_OPTION:
+        case EDIT_MENU_OPTION_IN:
+        case EDIT_MENU_OPTION_OUT:
             OptionDraw();
             break;
-        case 8:
-        case 14:
-        case 21:
+        case EDIT_MENU_MANUAL:
+        case EDIT_MENU_MANUAL_IN:
+        case EDIT_MENU_MANUAL_OUT:
             EdMenuManualDraw();
             break;
-        case 15:
+        case EDIT_MENU_EXIT:
             EditMenuToExitDraw();
             break;
     }
@@ -707,7 +707,7 @@ void EditMenuDraw() {
 
     if (EdMenuTextureReadEndFlag != 0) {
         switch (EditSwitch) {
-            case 15:
+            case EDIT_MENU_EXIT:
                 EdMenuHelpWinAlpha -= 8;
 
                 if (EdMenuHelpWinAlpha < 0) {
@@ -820,14 +820,14 @@ static int EditMenuStart() {
         VillageName = TexManager.GetTexture("vilname", -1);
         VillageBar = TexManager.GetTexture("viltag", -1);
         GetAtraMsgReadBuf = (s16 *) GetPackFile((u_int *) file->buffer, "atrames.bin", NULL);
-        InitMenuMesSet(0, (s16 *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+        InitMenuMesSet(MENU_MES_SET_ALLMENU, (s16 *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
         EdMenuTextureReadEndFlag = 1;
     }
 
     EdEffectCt++;
 
     if (EdEffectCt >= 17 && EdMenuTextureReadEndFlag != 0) {
-        EditSwitch = 2;
+        EditSwitch = EDIT_MENU_SELECT;
         EdCur.selection = 0;
         EdEffectCt = 0;
     }
@@ -870,7 +870,7 @@ static void EditMenuSelectDraw() {
     DrawMenuWaku(x + 18.0f, y - 15.0f, width, 0x28, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) EdCur.x, (int) EdCur.y, 1, 0x40);
 
-    CommonMenuMes2.stay_frame = 0;
+    CommonMenuMes2.stay_frame = false;
 
     if (CommonMenuMes2.mes_made != info->help_mes_no) {
         CommonMenuMes2.MakeMesWin(info->help_mes_no);
@@ -881,7 +881,7 @@ static int EditMenuSelect() {
     int icon_max = GetEditMenuMax();
     int previous = EdCur.selection;
 
-    if (GamePad.Down(0x9000) != 0) {
+    if (GamePad.Down(PAD_UP | PAD_LEFT) != 0) {
         EdCur.selection--;
 
         if (EdCur.selection < 0) {
@@ -889,7 +889,7 @@ static int EditMenuSelect() {
         }
     }
 
-    if (GamePad.Down(0x6000) != 0) {
+    if (GamePad.Down(PAD_RIGHT | PAD_DOWN) != 0) {
         EdCur.selection++;
 
         if (icon_max - 1 <= EdCur.selection - 1) {
@@ -898,23 +898,23 @@ static int EditMenuSelect() {
     }
 
     if (previous != EdCur.selection) {
-        ComMenuSePlay(0);
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 
-    if (GamePad.Down(0x20) != 0) {
-        ComMenuSePlay(2);
-        EditSwitch = 15;
+    if (GamePad.Down(PAD_CIRCLE) != 0) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
+        EditSwitch = EDIT_MENU_EXIT;
         EdEffectCt = 0;
-    } else if (GamePad.Down(0x40) != 0) {
-        int next[6] = {9, 10, 11, 12, 13, 14};
+    } else if (GamePad.Down(PAD_CROSS) != 0) {
+        int next[6] = {EDIT_MENU_ATORA_IN, EDIT_MENU_ATORA_MOVE_IN, EDIT_MENU_ANALYZE_IN, EDIT_MENU_SAVE_IN, EDIT_MENU_OPTION_IN, EDIT_MENU_MANUAL_IN};
         EditSwitch = next[EdCur.selection];
-        ComMenuSePlay(1);
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         EdEffectCt = 0;
         CommonMenuMes2.mes_made = -1;
         u_long128 *work = EdMenuWorkBuf;
 
         switch (EditSwitch) {
-            case 9: {
+            case EDIT_MENU_ATORA_IN: {
                 int blocks[2] = {0, 0};
                 blocks[0] = EdMenuTextureBlock;
                 blocks[1] = EdMenuExTextureBlock;
@@ -925,17 +925,17 @@ static int EditMenuSelect() {
                 }
 
                 printf("now atra load area = %d\n", area);
-                InitMenuAtora1(2, NowEditMap, blocks, work);
+                InitMenuAtora1(ATORA_OPEN_PLACE, NowEditMap, blocks, work);
                 InitMenuAtoraSelect(NowEditMap);
-                EdMenuEffectFlag = 1;
+                EdMenuEffectFlag = ED_MENU_ICON_MOVE_FROM;
                 EdMenuEffectCt = 0;
                 EdMenuMesMake2 = 1;
                 break;
             }
-            case 10:
-                EditSwitch = 4;
+            case EDIT_MENU_ATORA_MOVE_IN:
+                EditSwitch = EDIT_MENU_ATORA_MOVE;
                 break;
-            case 11:
+            case EDIT_MENU_ANALYZE_IN:
                 CommonMenuAtoraInfo = &EditPartsInfo;
 
                 if (CommonMenuAtoraInfo == NULL) {
@@ -953,20 +953,20 @@ static int EditMenuSelect() {
                 AnalyzeSelect = 0;
                 MakeWin2Flag = 0;
                 break;
-            case 12:
+            case EDIT_MENU_SAVE_IN:
                 MakeWin2Flag = 0;
-                EdMenuEffectFlag = 1;
+                EdMenuEffectFlag = ED_MENU_ICON_MOVE_FROM;
                 EdMenuMesMake2 = 1;
-                InitMenuSave(1, EdMenuExTextureBlock, work);
+                InitMenuSave(SAVE_MENU_MODE_SAVE, EdMenuExTextureBlock, work);
                 break;
-            case 13:
+            case EDIT_MENU_OPTION_IN:
                 EdMenuMesMake2 = 1;
-                EdMenuEffectFlag = 1;
-                InitMenuOption(1, EdMenuExTextureBlock, work);
+                EdMenuEffectFlag = ED_MENU_ICON_MOVE_FROM;
+                InitMenuOption(OPTION_OPEN_GAME_MENU, EdMenuExTextureBlock, work);
                 break;
-            case 14: {
+            case EDIT_MENU_MANUAL_IN: {
                 MakeWin2Flag = 0;
-                EdMenuEffectFlag = 1;
+                EdMenuEffectFlag = ED_MENU_ICON_MOVE_FROM;
                 int blocks[3] = {0, 0, 0};
                 blocks[0] = EdMenuExTextureBlock1;
                 blocks[1] = EdMenuExTextureBlock;
@@ -1014,7 +1014,7 @@ static int EditMenuToExit() {
 
     if (EdEffectCt > 0x15) {
         EdEffectCt = 0;
-        EditMenuStatus.mode = -1;
+        EditMenuStatus.mode = EDIT_MENU_MODE_CLOSED;
         EditMenuStatus.parts = -1;
         EditMenuExit();
         return 1;
@@ -1034,8 +1034,8 @@ static void AtoraSelectDraw() {
     DrawMenuAtoraSelect();
 
     switch (EdMenuEffectFlag) {
-        case 1:
-        case 2:
+        case ED_MENU_ICON_MOVE_FROM:
+        case ED_MENU_ICON_MOVE_TO:
             DrawMoveMenuIcon();
             break;
         default:
@@ -1054,17 +1054,17 @@ static int AtoraSelect() {
     int result = 0;
 
     switch (EdMenuEffectFlag) {
-        case 1:
+        case ED_MENU_ICON_MOVE_FROM:
             if (CalMoveFromMenuIcon()) {
-                EditSwitch = 3;
-                EdMenuEffectFlag = 0;
+                EditSwitch = EDIT_MENU_ATORA;
+                EdMenuEffectFlag = ED_MENU_ICON_STILL;
                 EdMenuEffectCt = 0.0f;
             }
 
             break;
-        case 2:
+        case ED_MENU_ICON_MOVE_TO:
             if (CalMoveToMenuIcon()) {
-                EditSwitch = 2;
+                EditSwitch = EDIT_MENU_SELECT;
                 EdCur.selection = 0;
                 EdCur.x = EdCur.selection * 16 + 0x30;
                 EdCur.y = EdCur.selection * 40 + 0x4C;
@@ -1073,23 +1073,23 @@ static int AtoraSelect() {
             break;
         default:
             switch (MenuAtoraSelectKey()) {
-                case 0x6E:
-                case 10:
+                case ATORA_SELECT_PLACE_EXIT:
+                case ATORA_SELECT_PLACE:
                     result = 1;
                     break;
-                case 0x64:
-                    EditSwitch = 0x10;
-                    EdMenuEffectFlag = 2;
+                case ATORA_SELECT_CLOSE:
+                    EditSwitch = EDIT_MENU_ATORA_OUT;
+                    EdMenuEffectFlag = ED_MENU_ICON_MOVE_TO;
                     EdMenuEffectCt = 0.0f;
                     break;
-                case 0:
+                case ATORA_SELECT_NONE:
                     break;
             }
 
             break;
     }
 
-    if (EdMenuEffectFlag != 0) {
+    if (EdMenuEffectFlag != ED_MENU_ICON_STILL) {
         EdMenuEffectCt += 1.0f;
         EdEffectCt++;
     } else {
@@ -1107,7 +1107,7 @@ static void AtoraMoveDraw() {}
  */
 static int AtoraMove() {
     EditMenuExit();
-    EditMenuStatus.mode = 3;
+    EditMenuStatus.mode = EDIT_MENU_MODE_MOVE;
     return 1;
 }
 
@@ -1437,7 +1437,7 @@ static void ToAnalyzeEditDraw() {
     if (done == 1) {
         EdEffectCt = 0;
         AnalyzeSelect = 0;
-        EditSwitch = 5;
+        EditSwitch = EDIT_MENU_ANALYZE;
     }
 }
 
@@ -1494,9 +1494,9 @@ static void AnalyzeEditDraw() {
 }
 
 static int AnalyzeEdit() {
-    if (GamePad.Down(0x60)) {
-        ComMenuSePlay(2);
-        EditSwitch = 0x12;
+    if (GamePad.Down(PAD_CIRCLE | PAD_CROSS)) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
+        EditSwitch = EDIT_MENU_ANALYZE_OUT;
         AnalyzeSelect = 2;
     }
 
@@ -1529,7 +1529,7 @@ static void FromAnalyzeEdit() {
         EdCur.selection = 2;
         EdCur.x = EdCur.selection * 16 + 0x30;
         EdCur.y = EdCur.selection * 40 + 0x4C;
-        EditSwitch = 2;
+        EditSwitch = EDIT_MENU_SELECT;
     }
 }
 
@@ -1541,8 +1541,8 @@ static void EditSaveDraw() {
     setbilinear(0);
 
     switch (EdMenuEffectFlag) {
-        case 1:
-        case 2:
+        case ED_MENU_ICON_MOVE_FROM:
+        case ED_MENU_ICON_MOVE_TO:
             DrawMoveMenuIcon();
             break;
         default:
@@ -1555,21 +1555,21 @@ static void EditSaveKey() {
     int arrived;
 
     switch (EdMenuEffectFlag) {
-        case 1:
+        case ED_MENU_ICON_MOVE_FROM:
             arrived = CalMoveFromMenuIcon();
 
             if (arrived) {
-                EdMenuEffectFlag = 0;
+                EdMenuEffectFlag = ED_MENU_ICON_STILL;
                 EdMenuEffectCt = 0.0f;
             }
 
             break;
-        case 2:
+        case ED_MENU_ICON_MOVE_TO:
             arrived = CalMoveToMenuIcon();
             break;
     }
 
-    if (EdMenuEffectFlag != 0) {
+    if (EdMenuEffectFlag != ED_MENU_ICON_STILL) {
         EdMenuEffectCt += 1.0f;
     } else {
         EdMenuEffectCt = 0.0f;
@@ -1578,11 +1578,11 @@ static void EditSaveKey() {
     MenuSaveKey();
 
     if (SaveMenuEffectFadeOut()) {
-        EdMenuEffectFlag = 2;
+        EdMenuEffectFlag = ED_MENU_ICON_MOVE_TO;
 
         if (arrived) {
             EdEffectCt = 0;
-            EditSwitch = 2;
+            EditSwitch = EDIT_MENU_SELECT;
             MakeWin2Flag = 1;
         }
     }
@@ -1596,8 +1596,8 @@ static void OptionDraw() {
     setbilinear(0);
 
     switch (EdMenuEffectFlag) {
-        case 1:
-        case 2:
+        case ED_MENU_ICON_MOVE_FROM:
+        case ED_MENU_ICON_MOVE_TO:
             DrawMoveMenuIcon();
             break;
         default:
@@ -1607,25 +1607,25 @@ static void OptionDraw() {
 }
 
 static void EdOptionSelect() {
-    int arrived = 0;
+    int arrived = false;
     int key;
 
     switch (EdMenuEffectFlag) {
-        case 1:
+        case ED_MENU_ICON_MOVE_FROM:
             arrived = CalMoveFromMenuIcon();
 
             if (arrived) {
-                EdMenuEffectFlag = 0;
+                EdMenuEffectFlag = ED_MENU_ICON_STILL;
                 EdMenuEffectCt = 0.0f;
             }
 
             break;
-        case 2:
+        case ED_MENU_ICON_MOVE_TO:
             arrived = CalMoveToMenuIcon();
             break;
     }
 
-    if (EdMenuEffectFlag != 0) {
+    if (EdMenuEffectFlag != ED_MENU_ICON_STILL) {
         EdMenuEffectCt += 1.0f;
     } else {
         EdMenuEffectCt = 0.0f;
@@ -1634,36 +1634,36 @@ static void EdOptionSelect() {
     key = MenuOptionKey();
 
     if (OptionMenuFadeOutStart()) {
-        EdMenuEffectFlag = 2;
+        EdMenuEffectFlag = ED_MENU_ICON_MOVE_TO;
 
         if (arrived && key) {
             EdEffectCt = 0;
-            EditSwitch = 2;
+            EditSwitch = EDIT_MENU_SELECT;
             MakeWin2Flag = 1;
         }
     }
 }
 
 static int EdMenuManualKey() {
-    int arrived = 0;
+    int arrived = false;
     int key;
 
     switch (EdMenuEffectFlag) {
-        case 1:
+        case ED_MENU_ICON_MOVE_FROM:
             arrived = CalMoveFromMenuIcon();
 
             if (arrived) {
-                EdMenuEffectFlag = 0;
+                EdMenuEffectFlag = ED_MENU_ICON_STILL;
                 EdMenuEffectCt = 0.0f;
             }
 
             break;
-        case 2:
+        case ED_MENU_ICON_MOVE_TO:
             arrived = CalMoveToMenuIcon();
             break;
     }
 
-    if (EdMenuEffectFlag != 0) {
+    if (EdMenuEffectFlag != ED_MENU_ICON_STILL) {
         EdMenuEffectCt += 1.0f;
     } else {
         EdMenuEffectCt = 0.0f;
@@ -1671,12 +1671,12 @@ static int EdMenuManualKey() {
 
     key = MenuManualKey();
 
-    if (GetNowManualMenuMode() == 1) {
-        EdMenuEffectFlag = 2;
+    if (GetNowManualMenuMode() == MANUAL_MODE_CLOSING) {
+        EdMenuEffectFlag = ED_MENU_ICON_MOVE_TO;
 
         if (arrived && key) {
             EdEffectCt = 0;
-            EditSwitch = 2;
+            EditSwitch = EDIT_MENU_SELECT;
             MakeWin2Flag = 1;
         }
     }
@@ -1692,8 +1692,8 @@ static void EdMenuManualDraw() {
     setbilinear(0);
 
     switch (EdMenuEffectFlag) {
-        case 1:
-        case 2:
+        case ED_MENU_ICON_MOVE_FROM:
+        case ED_MENU_ICON_MOVE_TO:
             DrawMoveMenuIcon();
             break;
         default:

@@ -48,6 +48,23 @@
 #include "texture.hpp"
 #include "water.hpp"
 
+/**
+ * Phases of the interior loop, as GameMode holds them.
+ */
+// clang-format off
+enum EdInMode {
+    ED_IN_MODE_WALK      = 0, /**< Player walks the interior. */
+    ED_IN_MODE_DOOR_OPEN = 1, /**< Door opening before the player leaves. */
+    ED_IN_MODE_LEAVE     = 2, /**< Leaves the interior once the door has opened. */
+    ED_IN_MODE_TALK      = 3, /**< Player talks to a villager. */
+    ED_IN_MODE_EVENT     = 4, /**< Event script runs. */
+    ED_IN_MODE_PAUSE     = 5, /**< Pause menu is open. */
+    ED_IN_MODE_MENU_INIT = 6, /**< Menu is being set up. */
+    ED_IN_MODE_MENU      = 7, /**< Menu runs. */
+};
+
+// clang-format on
+
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
     u8            unk_000[0x60];
@@ -264,8 +281,8 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
 
     LoadMDSFileLOD(frames, data, alloc, 1);
     CFrameAttr attr;
-    attr.fog_enable = 1;
-    attr.clip_enable = 0;
+    attr.fog_enable = true;
+    attr.clip_enable = false;
     attr.alpha_ref = 0x40;
 
     for (i = 1; i < 4; i++) {
@@ -276,7 +293,7 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
     }
 
     attr.clip_depth = 100.0f;
-    attr.clip_enable = 1;
+    attr.clip_enable = true;
     frames[0]->SetAttr(attr, 1, 0);
     SetFrameAttr(frames[0], 1);
 
@@ -516,7 +533,7 @@ int EditInInit(float time, char *name) {
 
     EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
     door_open_cnt = 0;
-    GameMode = 0;
+    GameMode = ED_IN_MODE_WALK;
     Chara->wind = 0;
     Chara->SetPosition(0.0f, 0.0f, 0.0f);
     Chara->SetRotation(0.0f, 0.0f, 0.0f);
@@ -550,7 +567,7 @@ int EditInInit(float time, char *name) {
     InitWorkBuffer();
     printf("buffer %d\n", EdWorkBuffer.limit - EdWorkBuffer.used);
     EdSaveFrameImageInit();
-    EdInitMenu(-1);
+    EdInitMenu(ED_MENU_RESET);
     EdInitSoundSrc();
     return 0;
 }
@@ -589,9 +606,9 @@ int EditInLoop() {
     Chara->GetPosition(position);
 
     switch (GameMode) {
-        case 6:
-        case 7:
-        case 5:
+        case ED_IN_MODE_MENU_INIT:
+        case ED_IN_MODE_MENU:
+        case ED_IN_MODE_PAUSE:
             break;
         default:
             int            i;
@@ -609,14 +626,14 @@ int EditInLoop() {
             break;
     }
 
-    if (fix_camera != 0 && camera_num > 0 && GameMode == 0) {
+    if (fix_camera != 0 && camera_num > 0 && GameMode == ED_IN_MODE_WALK) {
         SetCameraPos((CFrame *) InteriorParts[0].frame[0], &MainCamera, Chara);
     }
 
     EdSetCharaCursor(0);
 
     switch (GameMode) {
-        case 0:
+        case ED_IN_MODE_WALK:
             if (loop_counter > 0) {
                 MoveCharacter();
             }
@@ -636,30 +653,30 @@ int EditInLoop() {
             }
 
             break;
-        case 4: {
+        case ED_IN_MODE_EVENT: {
             NowCamera = &EventCamera;
             Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
             EdEventInfo.current_time = NowTime;
             int result = EdEventMode(&EventCamera, 0);
 
             if (result != 0) {
-                GameMode = 0;
+                GameMode = ED_IN_MODE_WALK;
                 NowCamera = &MainCamera;
 
-                if (result == 7) {
-                    if (MapNo == 3 && strcmp(EdInteriorName, "i04h04") == 0) {
+                if (result == ED_EVENT_RETURN_OUTSIDE) {
+                    if (MapNo == TOWN_MUSKA_LACKA && strcmp(EdInteriorName, "i04h04") == 0) {
                         EdInteriorDoorSound = -1;
                     }
 
                     return 1;
                 }
 
-                if (result == 8) {
+                if (result == ED_EVENT_RETURN_MAP_JUMP) {
                     return 99;
                 }
 
-                if (result == 9) {
-                    GameMode = 3;
+                if (result == ED_EVENT_RETURN_TALK) {
+                    GameMode = ED_IN_MODE_TALK;
                 }
 
                 if (EdEventInfo.reset_camera_angle < 0) {
@@ -679,7 +696,7 @@ int EditInLoop() {
             goto_return_menu = 0;
             break;
         }
-        case 1: {
+        case ED_IN_MODE_DOOR_OPEN: {
             NowCamera = &MainCamera;
             CVector3_f_ velocity(0.0f, 0.0f, 0.0f);
             Chara->SetVelocity(velocity);
@@ -705,12 +722,12 @@ int EditInLoop() {
 
             if (door_open_cnt < 0) {
                 door_open_cnt = 0;
-                GameMode = 2;
+                GameMode = ED_IN_MODE_LEAVE;
             }
 
             break;
         }
-        case 2:
+        case ED_IN_MODE_LEAVE:
             NowCamera = &MainCamera;
             EdStopSoundSrc();
 
@@ -721,7 +738,7 @@ int EditInLoop() {
             }
 
             return 1;
-        case 3: {
+        case ED_IN_MODE_TALK: {
             sceVu0FVECTOR direction;
             NowCamera = &MainCamera;
 
@@ -748,8 +765,8 @@ int EditInLoop() {
             float yaw = atan2f(direction[0], direction[2]);
             float view_h = EdAGetViewAngleH();
             float view_v = EdAGetViewAngleV();
-            view_h = AngleInterpolate(view_h, yaw, 0.05f, 0);
-            view_v = AngleInterpolate(view_v, pitch, 0.03f, 0);
+            view_h = AngleInterpolate(view_h, yaw, 0.05f, INTERPOLATE_STEP);
+            view_v = AngleInterpolate(view_v, pitch, 0.03f, INTERPOLATE_STEP);
             EdASetViewAngle(view_h, view_v);
             EdEyeCamera(&ViewCamera__2, Chara);
 
@@ -761,24 +778,24 @@ int EditInLoop() {
 
                 if (result != 0) {
                     if (result == 2) {
-                        goto_menu = 3;
+                        goto_menu = ED_MENU_SHOP;
                     }
 
                     if (result == 3) {
-                        goto_menu = 4;
+                        goto_menu = ED_MENU_UNK_4;
                     }
 
                     if (result == 4 && event_no > 0) {
                         RunEvent(event_no, NowCamera);
                     }
 
-                    GameMode = 0;
+                    GameMode = ED_IN_MODE_WALK;
                 }
             }
 
             break;
         }
-        case 6:
+        case ED_IN_MODE_MENU_INIT:
             Chara->SetMotion(Chara->motion_no, 1);
             Chara->Step();
             Chara->ShadowStep();
@@ -790,11 +807,11 @@ int EditInLoop() {
             }
 
             break;
-        case 7:
+        case ED_IN_MODE_MENU:
             MenuMapJumpMode = -1;
 
             if (EdMenuMode() != 0) {
-                GameMode = 0;
+                GameMode = ED_IN_MODE_WALK;
                 EdExitMenu();
 
                 if (GetInteriorOutFlag() != 0) {
@@ -834,20 +851,20 @@ int EditInLoop() {
 
     EdSetSoundSrcVol(NowTime, parts, parts_num, eye, dir);
 
-    if (GameMode != 7) {
+    if (GameMode != ED_IN_MODE_MENU) {
         MainDraw();
     } else {
         EdFadeInOut();
     }
 
-    if (GameMode == 6 && EdInitModeFinish(NowCamera, TexManager.GetTexture("frame_image", -1)) != 0) {
-        GameMode = 7;
+    if (GameMode == ED_IN_MODE_MENU_INIT && EdInitModeFinish(NowCamera, TexManager.GetTexture("frame_image", -1)) != 0) {
+        GameMode = ED_IN_MODE_MENU;
     }
 
     EdSaveFrameImageTask();
 
-    if (GameMode == 0 && ((EdPadDown(0x10, 1) != 0 && loop_counter >= 2) || goto_menu != 0 || (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
-        int menu = 2;
+    if (GameMode == ED_IN_MODE_WALK && ((EdPadDown(0x10, 1) != 0 && loop_counter >= 2) || goto_menu != 0 || (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
+        int menu = ED_MENU_BATTLE;
 
         if (goto_menu != 0) {
             menu = goto_menu;
@@ -856,14 +873,14 @@ int EditInLoop() {
         }
 
         if (EdInitMenu(menu) != 0) {
-            SndSePlay(1, -1, 0);
-            GameMode = 6;
+            SndSePlay(MENU_SOUND_CONFIRM, -1, 0);
+            GameMode = ED_IN_MODE_MENU_INIT;
         }
     }
 
     static int event_text = 0;
 
-    if (GamePad.Down2(0x80) != 0) {
+    if (GamePad.Down2(PAD_SQUARE) != 0) {
         event_text = 4;
         EdEventAllClear();
         simple_event = 0;
@@ -879,7 +896,7 @@ int EditInLoop() {
         start_event_no = 150;
     }
 
-    if (GameMode != 4 && ((CMainChara *) Chara)->move_info.landed != 0) {
+    if (GameMode != ED_IN_MODE_EVENT && ((CMainChara *) Chara)->move_info.landed != 0) {
         int ground_event = ((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind;
 
         if (ground_event > 0) {
@@ -891,14 +908,14 @@ int EditInLoop() {
         if (start_system_event > 0) {
             if (EdEventInit(start_system_event, &EdNPCBuffer, (char *) EdSystemEventData) != 0) {
                 EdInitMesParam();
-                GameMode = 4;
+                GameMode = ED_IN_MODE_EVENT;
             }
         } else if (EdEventInit(start_event_no, &EdNPCBuffer, (char *) EdEventData) != 0) {
             EdInitMesParam();
-            GameMode = 4;
-        } else if (EdEventInfo.return_code == 9) {
+            GameMode = ED_IN_MODE_EVENT;
+        } else if (EdEventInfo.return_code == ED_EVENT_RETURN_TALK) {
             EdInitMesParam();
-            GameMode = 3;
+            GameMode = ED_IN_MODE_TALK;
             simple_event = 0;
         }
 
@@ -910,13 +927,13 @@ int EditInLoop() {
 
     static int old_mode;
 
-    if (GameMode == 5 && GamePad.Down(0x800) != 0) {
+    if (GameMode == ED_IN_MODE_PAUSE && GamePad.Down(PAD_START) != 0) {
         GameMode = old_mode;
         EdSePlay((ED_SOUND_ID) 2, -1);
         PlayTimeCountFlag(1);
-    } else if (GameMode != 4 && goto_return_menu != 0 && loop_counter > 1 && GameMode == 0) {
+    } else if (GameMode != ED_IN_MODE_EVENT && goto_return_menu != 0 && loop_counter > 1 && GameMode == ED_IN_MODE_WALK) {
         old_mode = GameMode;
-        GameMode = 5;
+        GameMode = ED_IN_MODE_PAUSE;
         EdSePlay((ED_SOUND_ID) 1, -1);
         PlayTimeCountFlag(0);
     }
@@ -929,7 +946,7 @@ int EditInLoop() {
         key_counter = 0;
     }
 
-    if (DebugMode && GamePad.On(0x100) && GamePad.On(0x800) && end_count == 0) {
+    if (DebugMode && GamePad.On(PAD_SELECT) && GamePad.On(PAD_START) && end_count == 0) {
         float zero = 0.0f;
 
         end_count = 100;
@@ -976,7 +993,7 @@ static void MainDraw() {
         return;
     }
 
-    if (GameMode == 5) {
+    if (GameMode == ED_IN_MODE_PAUSE) {
         CTextureAnime::stop_anime = 1;
     } else {
         CTextureAnime::stop_anime = 0;
@@ -1016,11 +1033,11 @@ static void MainDraw() {
     DrawWaterSurface(NowCamera);
     MGSetGsZBUF(&mgZBuffer);
 
-    if (GameMode == 4) {
+    if (GameMode == ED_IN_MODE_EVENT) {
         EdEventBackSpriteDraw();
     }
 
-    if (GameMode == 4) {
+    if (GameMode == ED_IN_MODE_EVENT) {
         EdDrawItem();
     }
 
@@ -1033,7 +1050,7 @@ static void MainDraw() {
         detail = 0;
     }
 
-    if (GameMode == 2) {
+    if (GameMode == ED_IN_MODE_LEAVE) {
         marks = NULL;
     } else {
         for (i = 0; i < 10; i++) {
@@ -1041,7 +1058,7 @@ static void MainDraw() {
         }
     }
 
-    if (GameMode == 4) {
+    if (GameMode == ED_IN_MODE_EVENT) {
         event = &EdEventInfo;
         detail = 3;
     }
@@ -1050,7 +1067,7 @@ static void MainDraw() {
     TexManager.ReloadTexture(GetVif1Packet(), 0x18);
     sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
 
-    if (GameMode != 5 || EdPauseFlag == 0) {
+    if (GameMode != ED_IN_MODE_PAUSE || EdPauseFlag == 0) {
         EditEffectStep();
         EffectMacroStep(wind);
         EdEffectGroup.Step(1);
@@ -1082,7 +1099,7 @@ static void MainDraw() {
     TexManager.ReloadTexture(Vif1Packet, 0x14);
     EdDrawSysCursor(EdInInfo->event_points, 32);
 
-    if (GameMode == 4) {
+    if (GameMode == ED_IN_MODE_EVENT) {
         EdEventSpriteDraw();
     }
 
@@ -1090,13 +1107,13 @@ static void MainDraw() {
         TexManager.ReloadTexture(Vif1Packet, EditMes1.tex_block);
         EditMes1.DrawMesWin();
 
-        if (GameMode == 4) {
+        if (GameMode == ED_IN_MODE_EVENT) {
             EditEventMes1.DrawMesWin();
             EditSystemMes.DrawMesWin();
         }
     }
 
-    if (GameMode == 0) {
+    if (GameMode == ED_IN_MODE_WALK) {
         MonsterNameDraw();
     } else {
         MonsterNameMake(-1);
@@ -1109,7 +1126,7 @@ static void MainDraw() {
 
 #ifdef PAL
     if (DebugMode) {
-        if (GamePad.Down(0x200)) {
+        if (GamePad.Down(PAD_L3)) {
             debug_flag = !debug_flag;
         }
 
@@ -1117,7 +1134,7 @@ static void MainDraw() {
             GamePad.KeyLock(0);
             EdDebugMenu();
 
-            if (GamePad.Down(0x400) || EdDebugRunEventNo > 0) {
+            if (GamePad.Down(PAD_R3) || EdDebugRunEventNo > 0) {
                 debug_menu_mode = 0;
                 GamePad.AutoRepeatOff();
                 RunEvent(EdDebugRunEventNo, NowCamera);
@@ -1125,9 +1142,9 @@ static void MainDraw() {
                 GamePad.KeyLock(1);
             }
         } else {
-            if (GameMode != 4 && GamePad.Down(0x400)) {
-                GamePad.SetAutoRepeat(0xF000, 25, 3);
-                GamePad.SetAutoRepeat(12, 25, 3);
+            if (GameMode != ED_IN_MODE_EVENT && GamePad.Down(PAD_R3)) {
+                GamePad.SetAutoRepeat(PAD_DPAD, 25, 3);
+                GamePad.SetAutoRepeat(PAD_L1 | PAD_R1, 25, 3);
                 debug_menu_mode = 1;
                 debug_flag = 0;
             }
@@ -1143,7 +1160,7 @@ static void MainDraw() {
     if (EdDebugParamDrawOff == 0) {
         char pause_texture[] = "pause";
 
-        if (GameMode == 5 || EdPauseFlag != 0) {
+        if (GameMode == ED_IN_MODE_PAUSE || EdPauseFlag != 0) {
             TexManager.ReloadTexture(GetVif1Packet(), 0x14);
             CRect_i_ fade;
             fade.x = 0;
@@ -1277,17 +1294,17 @@ static void MoveCharacter() {
     EdMoveCharaInfo.time = NowTime;
     EdMoveCharaInfo.camera = &MainCamera;
     EdMoveCharaInfo.view_camera = &ViewCamera__2;
-    EdMoveCharaInfo.key_lock = 0;
+    EdMoveCharaInfo.key_lock = false;
     EdMoveCharaInfo.chara = Chara;
-    EdMoveCharaInfo.interior = 1;
+    EdMoveCharaInfo.interior = true;
     EdMoveCharaInfo.parts = InteriorParts;
     EdMoveCharaInfo.parts_count = parts_num;
     EdMoveCharaInfo.points = EdInInfo->event_points;
     EdMoveCharaInfo.point_count = 32;
-    EdMoveCharaInfo.acted = 0;
+    EdMoveCharaInfo.acted = false;
     EdMoveChara();
 
-    if (EdDebugCameraFlag != 0 && GamePad.Down(0x20) != 0) {
+    if (EdDebugCameraFlag != 0 && GamePad.Down(PAD_CIRCLE) != 0) {
         fix_camera = !fix_camera;
         MainCamera.GetPos(fix_pos);
     }
@@ -1322,7 +1339,7 @@ static void MoveCharacter() {
 #ifdef PAL
         jump = NULL;
 
-        if ((DebugMode && GamePad.Down(0x100)) || (jump = SearchMapJump(position, rotation))) {
+        if ((DebugMode && GamePad.Down(PAD_SELECT)) || (jump = SearchMapJump(position, rotation))) {
 #else
         if (jump = SearchMapJump(position, rotation)) {
 #endif
@@ -1343,7 +1360,7 @@ static void MoveCharacter() {
             Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
             Chara->Step();
             Chara->ClothStep(-1);
-            GameMode = 1;
+            GameMode = ED_IN_MODE_DOOR_OPEN;
             EdFadeOut(100, 0.0f, 0.0f, 0.0f);
         }
     }
@@ -1370,17 +1387,17 @@ static void MoveCamera(CCameraFollow *camera) {
 
     camera->AddAngle(0.04f * -horizontal);
 
-    if (GamePad.On(8) != 0) {
-        camera->AddAngle(-0.017453292f);
+    if (GamePad.On(PAD_R1) != 0) {
+        camera->AddAngle(-DEG_TO_RAD);
     }
 
-    if (GamePad.On(4) != 0) {
-        camera->AddAngle(0.017453292f);
+    if (GamePad.On(PAD_L1) != 0) {
+        camera->AddAngle(DEG_TO_RAD);
     }
 
     camera->SetDistance(camera_distance[camera_dist_mode]);
 
-    if (GamePad.Down(0x10) != 0) {
+    if (GamePad.Down(PAD_TRIANGLE) != 0) {
         camera_dist_mode++;
     }
 
@@ -1402,7 +1419,7 @@ EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
     EPARTS_FUNC_DATA *point = func_point;
 
     for (i = 0; i < func_num; i++, point++) {
-        if (point->kind == 2) {
+        if (point->kind == EPARTS_FUNC_DOOR) {
             CFrame *frame = (CFrame *) point->parts;
             point->position[3] = 1.0f;
             frame->GetWorldPosition(world, point->position);
@@ -1428,10 +1445,10 @@ void GetMapJumpPos(CCharacter *chara) {
     EPARTS_FUNC_DATA *point = func_point;
 
     for (int i = 0; i < func_num; i++, point++) {
-        if (point->kind == 2 && point->link_id == EdInteriorJumpID) {
+        if (point->kind == EPARTS_FUNC_DOOR && point->link_id == EdInteriorJumpID) {
             chara->SetPosition(point->position[0], point->position[1], point->position[2]);
             printf("%f %f %f\n", point->position[0], point->position[1], point->position[2]);
-            chara->SetRotation(0.0f, AngleLimit(3.141592f + point->rotation[1]), 0.0f);
+            chara->SetRotation(0.0f, AngleLimit(PI_SHORT + point->rotation[1]), 0.0f);
             return;
         }
     }
@@ -1448,12 +1465,12 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *door_s
     EPARTS_FUNC_DATA *point = func_point;
 
     for (int i = 0; i < func_num; i++, point++) {
-        if ((point->kind == 10 || point->kind == 11) && point->link_id == door_no) {
+        if ((point->kind == EPARTS_FUNC_DOOR_SIDE_A || point->kind == EPARTS_FUNC_DOOR_SIDE_B) && point->link_id == door_no) {
             sceVu0CopyVector(position, point->position);
             sceVu0CopyVector(rotation, point->rotation);
             *door_sound = point->values[0];
-            *motion = EdGetDoorMotion(*door_sound, point->kind == 10);
-            return point->kind == 11;
+            *motion = EdGetDoorMotion(*door_sound, point->kind == EPARTS_FUNC_DOOR_SIDE_A);
+            return point->kind == EPARTS_FUNC_DOOR_SIDE_B;
         }
     }
 
@@ -1481,7 +1498,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
     count = 0;
 
     for (i = 0; i < func_num; i++, point++) {
-        if (point->kind == 7) {
+        if (point->kind == EPARTS_FUNC_CAMERA) {
             entry = &cameras[count];
             entry->link_id = point->link_id;
             CFrame *owner = (CFrame *) point->parts;
@@ -1859,7 +1876,7 @@ void LoadData() {
     EPARTS_FUNC_DATA *point = func_point;
 
     for (int i = 0; i < func_num; i++, point++) {
-        if (point->kind == 7) {
+        if (point->kind == EPARTS_FUNC_CAMERA) {
             camera_num++;
         }
     }
@@ -1878,7 +1895,7 @@ void LoadData() {
     }
 
     for (int i = 0; i < 1; i++) {
-        Water[i].draw = 0;
+        Water[i].draw = false;
     }
 
     for (int i = 0; i < 1; i++) {
@@ -1897,7 +1914,7 @@ void LoadData() {
         sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_b[2], 1.0f};
         sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_b[2], 1.0f};
 
-        surface->draw = 1;
+        surface->draw = true;
         strcpy(surface->name, info->name);
         surface->parts_no = info->parts_no;
         sceVu0CopyVector(surface->offset, info->corner_c);

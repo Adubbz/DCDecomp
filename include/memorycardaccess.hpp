@@ -3,6 +3,22 @@
 #include "common.h"
 #include "sce/libmc.h"
 
+/**
+ * Errors MC_ERROR_INFO::code records.
+ */
+// clang-format off
+enum MC_ERROR_CODE {
+    MC_ERROR_NONE        = 0, /**< No error. */
+    MC_ERROR_VERSION     = 1, /**< The save was written by another version. */
+    MC_ERROR_UNK_2       = 2, /**< Never set. */
+    MC_ERROR_SHORT_READ  = 3, /**< Fewer bytes were read than the file holds. */
+    MC_ERROR_FULL        = 4, /**< The card is full. */
+    MC_ERROR_UNFORMATTED = 6, /**< The card is unformatted. */
+    MC_ERROR_NOT_CARD    = 7, /**< No memory card, or a read or write failed. */
+};
+
+// clang-format on
+
 class CSaveData;
 struct SV_CONFIG_SYS;
 
@@ -99,6 +115,7 @@ enum MC_OPERATION {
     MC_OPERATION_SAVE                   = 5,
     MC_OPERATION_LOAD                   = 6,
     MC_OPERATION_DELETE                 = 7,
+    MC_OPERATION_UNK_8                  = 8,
     MC_OPERATION_FORMAT                 = 9,
     MC_OPERATION_UNFORMAT               = 10,
     MC_OPERATION_WRITE_TEST             = 12,
@@ -113,7 +130,7 @@ enum MC_OPERATION {
  * Records what stopped the last memory card operation.
  */
 struct MC_ERROR_INFO {
-    s32 code;        /**< Kind of error that stopped the last operation, zero while none did. */
+    s32 code;        /**< Kind of error that stopped the last operation. @see MC_ERROR_CODE. */
     s32 func_no;     /**< Operation that the class was running when the error came. */
     s32 file_no;     /**< Save file that the class was working on when the error came. */
     s32 step;        /**< Step that the operation had reached when the error came. */

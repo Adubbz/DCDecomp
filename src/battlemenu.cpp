@@ -114,17 +114,17 @@ SYS_CHARA_INFO SysChara[6] = {
     {5, 0, {0, 0}, 0.0f, 0.0f},
 };
 
-s16 MenuDefaultWeaponNo[7] = {257, 299, 314, 331, 347, 363, 81};
+s16 MenuDefaultWeaponNo[7] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN, 81};
 
 s16 MenuCharaWeaponMax[6] = {42, 15, 17, 16, 16, 14};
 
 MENU_WEP_POLY_OFFSET MenuWepPolyOffset[6] = {
-    {{0.0f, 0.0f, 0.0f},  1.0f, {-1.5707964f, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
-    {{-0.3f, 0.5f, 0.0f}, 1.4f, {-1.5707964f, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
-    {{0.0f, 0.0f, 0.0f},  0.8f, {-1.5707964f, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
-    {{-1.4f, 2.1f, 0.0f}, 4.2f, {-1.5707964f, -0.16453463f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
-    {{-0.8f, 0.7f, 0.0f}, 0.7f, {-1.5707964f, -0.8005375f, 0.62831855f},  {0.0f, 0.028559932f, 0.0f}},
-    {{-0.4f, 0.5f, 0.0f}, 1.0f, {-1.5707964f, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
+    {{0.0f, 0.0f, 0.0f},  1.0f, {-HALF_PI, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
+    {{-0.3f, 0.5f, 0.0f}, 1.4f, {-HALF_PI, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
+    {{0.0f, 0.0f, 0.0f},  0.8f, {-HALF_PI, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
+    {{-1.4f, 2.1f, 0.0f}, 4.2f, {-HALF_PI, -0.16453463f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+    {{-0.8f, 0.7f, 0.0f}, 0.7f, {-HALF_PI, -0.8005375f, 0.62831855f},  {0.0f, 0.028559932f, 0.0f}},
+    {{-0.4f, 0.5f, 0.0f}, 1.0f, {-HALF_PI, 0.0f, 0.62831855f},         {0.0f, 0.028559932f, 0.0f}},
 };
 
 GRADATION_COLOR_INFO2 MenuColorInfo2[26] = {
@@ -161,10 +161,10 @@ s16 BtlMenuNowLang = 1;
 #else
 s32 BtlMenuNowLang = 1;
 #endif
-s32   BattleMenuFlag = -1;
+s32   BattleMenuFlag = BTLMENU_STATE_APPEAR;
 float chara_r_long = 118.0f;
 s16   TrushMoveMax[3] = {3, 1, 3};
-s32   BtlEffectFlag = -1;
+s32   BtlEffectFlag = BTLEFFECT_NONE;
 
 s32             MenuMapJumpMode;
 CSaveData      *BtlMenuSaveDataPt;
@@ -283,14 +283,14 @@ static WEAPON_HAVE *GetNowSelectWeapon() {
  * @size 0x5C
  */
 static int EscapeDungeonMode() {
-    int mode = 0;
+    int mode = ESCAPE_DNG_PAY;
 
     if (BtlMenuStatusPt->SearchItemIndexNo(ITEM_ESCAPE_POWDER) >= 0) {
-        mode = 1;
+        mode = ESCAPE_DNG_POWDER;
     }
 
     if (NowMonstorUnit->GetMonstorNum() <= 0) {
-        mode = 2;
+        mode = ESCAPE_DNG_FREE;
     }
 
     return mode;
@@ -342,10 +342,10 @@ static int GetMenuModeMax() {
     int icon_count;
 
     switch (BtlMenuMode) {
-        case 0:
+        case BATTLE_MENU_MODE_DUNGEON:
             icon_count = 7;
             break;
-        case 1:
+        case BATTLE_MENU_MODE_TOWN:
             icon_count = 8;
             break;
     }
@@ -387,18 +387,18 @@ static void BtlMenuMekeIconInfo(int *icons, int menu_mode) {
         icons[i] = BtlDrawTbl[BtlMenuMode][i];
     }
 
-    if (BtlMenuMode != 0) {
+    if (BtlMenuMode != BATTLE_MENU_MODE_DUNGEON) {
         int special_icon;
 
         switch (NowGetGameFlagForBtlMenu(BtlMenuMode)) {
-            case 11:
-            case 10:
+            case MENU_MOVE_LOCKED:
+            case MENU_MOVE_FIRST_DUNGEON:
                 special_icon = 9;
                 break;
-            case 1:
+            case MENU_MOVE_WORLD_MAP:
                 special_icon = 8;
                 break;
-            case 2:
+            case MENU_MOVE_INTERIOR_OUT:
                 special_icon = 0xC;
                 break;
         }
@@ -425,7 +425,7 @@ static void DrawBtlMenuBar() {
     int selected;
     int y;
 
-    if (BtlEffectFlag == 0 || BattleMenuFlag == -1) {
+    if (BtlEffectFlag == BTLEFFECT_PAGE_CLOSE || BattleMenuFlag == BTLMENU_STATE_APPEAR) {
         alpha = 10.0f * BtlEffectCt;
 
         if (alpha >= 128) {
@@ -433,7 +433,7 @@ static void DrawBtlMenuBar() {
         }
     }
 
-    if (BtlEffectFlag == 1 || BattleMenuFlag == 28) {
+    if (BtlEffectFlag == BTLEFFECT_PAGE_OPEN || BattleMenuFlag == BTLMENU_STATE_EXIT) {
         alpha = 128.0f - 10.0f * BtlEffectCt;
 
         if (alpha < 0) {
@@ -458,7 +458,7 @@ static void DrawBtlMenuBar() {
 
         menu_flag = BattleMenuFlag;
 
-        if (0 < menu_flag && menu_flag < 9) {
+        if (BTLMENU_STATE_MAIN < menu_flag && menu_flag < BTLMENU_STATE_ITEM_OPEN) {
             icon_alpha = 0;
         }
 
@@ -470,7 +470,7 @@ static void DrawBtlMenuBar() {
         y = 1.0f + lowered_y;
 
         if (i == MenuSelect[1]) {
-            if ((menu_flag == -1 || menu_flag == 28) && menu_flag == 13) {
+            if ((menu_flag == BTLMENU_STATE_APPEAR || menu_flag == BTLMENU_STATE_EXIT) && menu_flag == BTLMENU_STATE_MOVE_OPEN) {
                 icon_alpha = alpha;
             }
 
@@ -490,21 +490,21 @@ int GetLimmitMsg() {
     int message;
 
     switch (BtlMenuStatusPt->res_limit_zone_current) {
-        case -1:
+        case RES_LIMIT_ZONE_NONE:
             message = -1;
             break;
-        case 10:
+        case RES_LIMIT_ZONE_NO_WEAPON_CHANGE:
             message = 0x19E;
             break;
-        case 11:
+        case RES_LIMIT_ZONE_THIRST:
             message = 0x19F;
             break;
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
+        case RES_LIMIT_ZONE_TOAN:
+        case RES_LIMIT_ZONE_XIAO:
+        case RES_LIMIT_ZONE_GORO:
+        case RES_LIMIT_ZONE_RUBY:
+        case RES_LIMIT_ZONE_UNGAGA:
+        case RES_LIMIT_ZONE_OSMOND:
             message = 0x1A0;
             break;
     }
@@ -528,21 +528,21 @@ void DrawBattleMain() {
 
     if (MenuSelect[1] == 4) {
         switch (NowGetGameFlagForBtlMenu(BtlMenuMode)) {
-            case 0: {
+            case MENU_MOVE_DUNGEON_ESCAPE: {
                 s16 escape[3] = {0x1B, 0x1C, 0x0F};
                 mes_no = escape[GetEscapeDngFlag()];
                 break;
             }
-            case 11:
+            case MENU_MOVE_LOCKED:
                 mes_no = 0x1D;
                 break;
-            case 10:
+            case MENU_MOVE_FIRST_DUNGEON:
                 mes_no = 0x12;
                 break;
-            case 1:
+            case MENU_MOVE_WORLD_MAP:
                 mes_no = 0x11;
                 break;
-            case 2:
+            case MENU_MOVE_INTERIOR_OUT:
                 mes_no = 0x13;
                 break;
         }
@@ -552,7 +552,7 @@ void DrawBattleMain() {
         CommonMenuMes2.MakeMesWin(mes_no);
     }
 
-    if (BtlMenuMode == 0) {
+    if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
         int limit = GetLimmitMsg();
 
         if (CommonMenuMes1.mes_made != limit) {
@@ -562,7 +562,7 @@ void DrawBattleMain() {
         if (limit >= 0) {
             MenuTextureReload(CommonMenuMes1.tex_block);
 
-            if (BtlMenuNowLang > 0) {
+            if (BtlMenuNowLang > LANG_JAPANESE) {
                 CommonMenuMes1.text_x = 0x44;
 #ifdef PAL
                 CommonMenuMes1.text_y = 0x176;
@@ -578,7 +578,7 @@ void DrawBattleMain() {
 #endif
             }
 
-            CommonMenuMes1.stay_frame = 1;
+            CommonMenuMes1.stay_frame = true;
             CommonMenuMes1.Step();
             CommonMenuMes1.DrawMesWin();
         }
@@ -879,8 +879,8 @@ void BattleMenuTexEnter() {
     BtlMenuTexBlockEnter();
     GetAtraMsgReadBuf = (short *) GetPackFile((u_int *) file->buffer, "atrames.bin", NULL);
     short *mes = (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL);
-    InitMenuMesSet(0, mes);
-    CommonMenuMes2.stay_frame = 0;
+    InitMenuMesSet(MENU_MES_SET_ALLMENU, mes);
+    CommonMenuMes2.stay_frame = false;
     BtlMenuReadEndFlag = 1;
     MenuMes.SetBuffInfo(mes);
 }
@@ -906,8 +906,8 @@ void BattleMenuTexEnter() {
     BtlMenuTexBlockEnter();
     GetAtraMsgReadBuf = (short *) GetPackFile((u_int *) file->buffer, "atrames.bin", NULL);
     short *mes = (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL);
-    InitMenuMesSet(0, mes);
-    CommonMenuMes2.stay_frame = 0;
+    InitMenuMesSet(MENU_MES_SET_ALLMENU, mes);
+    CommonMenuMes2.stay_frame = false;
     BtlMenuReadEndFlag = 1;
     MenuMes.SetBuffInfo(mes);
 }
@@ -918,7 +918,7 @@ void ExitBattleMenu(int unused) {
     s16 *item = MenuItemPackPt->item;
 
     for (int i = 0; i < MenuItemPackPt->num; i++, item++) {
-        if (*item >= 0x84) {
+        if (*item >= ITEM_DUNGEON_START) {
             count++;
         } else {
             *item = -1;
@@ -928,7 +928,7 @@ void ExitBattleMenu(int unused) {
     item = MenuItemPackPt->quick_item_slot;
 
     for (int i = 0; i < 3; i++, item++) {
-        if (*item >= 0x84) {
+        if (*item >= ITEM_DUNGEON_START) {
             count += MenuItemPackPt->quick_item_qty[i];
         } else {
             *item = -1;
@@ -957,7 +957,7 @@ void ExitBattleMenu(int unused) {
     MenuWepLevelUp.CheckSnd();
 
     switch (BtlMenuMode) {
-        case 0: {
+        case BATTLE_MENU_MODE_DUNGEON: {
             LOADTEXTURE_INFO2 textures[2] = {
                 {"#frame_image0#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
                 {NULL,                                        0, 0}
@@ -986,11 +986,11 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuExtBlock = texture_blocks[5];
 #endif
     BtlMenuNowLang = GetMenuLangFlag();
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 
     switch (BtlMenuMode) {
-        case 0: {
+        case BATTLE_MENU_MODE_DUNGEON: {
             LOADTEXTURE_INFO2 texture[2] = {
                 {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
                 {NULL,                                       0, 0}
@@ -1026,7 +1026,7 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuReadBuf = MenuCalcBufAlignment(BtlMenuReadBuf);
     BtlMenuExReadFlag = 1;
     BtlMenuReadEndFlag = 0;
-    MenuExTextureReadFlag = 0;
+    MenuExTextureReadFlag = MENU_EX_TEX_UNREAD;
     MenuMes.InitMes();
     MenuMes.work_area = BtlMenuReadBuf;
     printf("msg work area\n");
@@ -1040,15 +1040,15 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuSaveDataPt = SaveData;
 
     switch (BtlMenuMode) {
-        case 0:
+        case BATTLE_MENU_MODE_DUNGEON:
             MenuMapJumpMode = 0;
             BtlMenuStatusPt = (CDngStatusData *) UserStatus;
             SetEscapeDngFlag(EscapeDungeonMode());
             break;
-        case 1:
+        case BATTLE_MENU_MODE_TOWN:
             MenuMapJumpMode = -1;
             BtlMenuStatusPt = SaveData->GetDngStatus();
-            SetEscapeDngFlag(0);
+            SetEscapeDngFlag(ESCAPE_DNG_PAY);
             break;
     }
 
@@ -1056,7 +1056,7 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     DngWepHavePt = BtlMenuStatusPt->chara_weapons[0];
     MenuItemPackPt = &BtlMenuStatusPt->item_pack;
     MenuChara.slot_count = 6;
-    PosAngle = 6.2831855f / MenuChara.slot_count;
+    PosAngle = TWO_PI / MenuChara.slot_count;
 
 #ifdef PAL
     // Debug builds hand the controlled character a place in the party along with a weapon.
@@ -1073,7 +1073,7 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     BtlHelpWinAlpha = 0;
     GetMainMenuRightHelpWinLangOffset(HelpWinHead[0], HelpWinHead[1], BtlHelpWinW, BtlHelpWinH);
     BtlWakuMake2 = 1;
-    MenuSelect[0] = 1;
+    MenuSelect[0] = BTLMENU_PAGE_ITEM;
     MenuSelect[1] = 0;
 
     for (int i = 0; i < 8; i++) {
@@ -1082,9 +1082,9 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     }
 
     if (CheckItemThrow(NULL, NULL) != 0) {
-        BattleMenuFlag = 25;
-        BtlEffectFlag = -1;
-        BtlMenuStatusPt->overflow_flag = 1;
+        BattleMenuFlag = BTLMENU_STATE_ITEM_TRUSH;
+        BtlEffectFlag = BTLEFFECT_NONE;
+        BtlMenuStatusPt->overflow_flag = true;
 
         for (int i = 1; i < 8; i++) {
             NorMenuIcon[i].x = -230.0f;
@@ -1093,11 +1093,11 @@ void BattleMenuInit(int *texture_blocks, int mode) {
         NorMenuIcon[0].x = 70.0f;
         NorMenuIcon[0].y = 28.0f;
     } else {
-        BattleMenuFlag = -1;
-        BtlEffectFlag = -1;
+        BattleMenuFlag = BTLMENU_STATE_APPEAR;
+        BtlEffectFlag = BTLEFFECT_NONE;
     }
 
-    MenuChara.state = 1;
+    MenuChara.state = MENU_CHARA_OPEN;
     MenuWepLevelUp.Initialize();
     BtlEffectCt = 0;
     MenuWarningMsgFlag = 0;
@@ -1112,11 +1112,11 @@ void BattleMenuInit(int *texture_blocks, int mode) {
  * @size 0x88
  */
 static int BtlMenuDrawSpecialFlag(int flag) {
-    if ((BattleMenuFlag == 12 || BattleMenuFlag == 4 || BattleMenuFlag == 20) && GetMenuAtraEventFlag() != 0) {
+    if ((BattleMenuFlag == BTLMENU_STATE_ATLA_OPEN || BattleMenuFlag == BTLMENU_STATE_ATLA || BattleMenuFlag == BTLMENU_STATE_ATLA_CLOSE) && GetMenuAtraEventFlag() != 0) {
         flag = 0;
     }
 
-    if (MenuChara.state == 4 || MenuChara.state == 5) {
+    if (MenuChara.state == MENU_CHARA_CHANGE_LOAD || MenuChara.state == MENU_CHARA_CHANGE_EXIT) {
         flag = 0;
     }
 
@@ -1145,7 +1145,7 @@ void BattleMenuDraw() {
     int bright = 0x40;
 
     switch (BattleMenuFlag) {
-        case -1:
+        case BTLMENU_STATE_APPEAR:
             bright = (int) (128.0f - 4.0f * BtlEffectCt);
 
             if (bright < 0x40) {
@@ -1153,7 +1153,7 @@ void BattleMenuDraw() {
             }
 
             break;
-        case 28:
+        case BTLMENU_STATE_EXIT:
             bright += 4.0f * BtlEffectCt;
 
             if (bright > 0x80) {
@@ -1166,48 +1166,48 @@ void BattleMenuDraw() {
     DrawMenu2DSprite(&frame, MenuDispRc, MenuDispRc, bright, bright, bright, 0x80);
 
     switch (BattleMenuFlag) {
-        case 0:
+        case BTLMENU_STATE_MAIN:
             DrawBattleMain();
             break;
-        case 3:
-        case 11:
-        case 19:
-        case 26:
+        case BTLMENU_STATE_CHARA:
+        case BTLMENU_STATE_CHARA_OPEN:
+        case BTLMENU_STATE_CHARA_CLOSE:
+        case BTLMENU_STATE_UNK_1A:
             DrawCharaSelect();
             break;
-        case 2:
-        case 10:
-        case 18:
+        case BTLMENU_STATE_WEAPON:
+        case BTLMENU_STATE_WEAPON_OPEN:
+        case BTLMENU_STATE_WEAPON_CLOSE:
             WeaponMenuDraw();
             break;
-        case 1:
-        case 9:
-        case 17:
+        case BTLMENU_STATE_ITEM:
+        case BTLMENU_STATE_ITEM_OPEN:
+        case BTLMENU_STATE_ITEM_CLOSE:
             ItemMenuModeDraw();
             break;
-        case 4:
-        case 12:
-        case 20:
+        case BTLMENU_STATE_ATLA:
+        case BTLMENU_STATE_ATLA_OPEN:
+        case BTLMENU_STATE_ATLA_CLOSE:
             DrawBtlAtoraSelect();
             break;
-        case 5:
-        case 13:
-        case 21:
+        case BTLMENU_STATE_MOVE:
+        case BTLMENU_STATE_MOVE_OPEN:
+        case BTLMENU_STATE_MOVE_CLOSE:
             DrawMenuMove();
             break;
-        case 6:
-        case 14:
-        case 22:
+        case BTLMENU_STATE_OPTION:
+        case BTLMENU_STATE_OPTION_OPEN:
+        case BTLMENU_STATE_OPTION_CLOSE:
             BtlDrawOption();
             break;
-        case 7:
-        case 15:
-        case 23:
+        case BTLMENU_STATE_SAVE:
+        case BTLMENU_STATE_SAVE_OPEN:
+        case BTLMENU_STATE_SAVE_CLOSE:
             BtlDrawSave();
             break;
-        case 8:
-        case 16:
-        case 24:
+        case BTLMENU_STATE_MANUAL:
+        case BTLMENU_STATE_MANUAL_OPEN:
+        case BTLMENU_STATE_MANUAL_CLOSE:
             BattleManualDraw();
             break;
     }
@@ -1222,7 +1222,7 @@ void BattleMenuDraw() {
 
     if (BtlMenuReadEndFlag != 0) {
         switch (BattleMenuFlag) {
-            case 28:
+            case BTLMENU_STATE_EXIT:
                 BtlHelpWinAlpha -= 8;
 
                 if (BtlHelpWinAlpha < 0) {
@@ -1251,7 +1251,7 @@ void BattleMenuDraw() {
     CommonMenuMes2.text_y = (int) (HelpWinHead[1] + text_y);
 
     if (BtlMenuReadEndFlag != 0 && draw_help != 0) {
-        CommonMenuMes2.stay_frame = 0;
+        CommonMenuMes2.stay_frame = false;
         CommonMenuMes2.edge_alpha = BtlHelpWinAlpha;
         CommonMenuMes2.Step();
         CommonMenuMes2.DrawMesWin();
@@ -1264,7 +1264,7 @@ void BattleMenuDraw() {
         DrawBtlMenuBar();
     }
 
-    if (WepMenu.mode != 5) {
+    if (WepMenu.mode != WEP_MENU_BUILDUP_SELECT) {
         MenuWepLevelUp.Step();
         MenuWepLevelUp.Draw();
     }
@@ -1293,57 +1293,57 @@ int BattleMenuCursor() {
     result = 1;
 
     switch (BattleMenuFlag) {
-        case -1:
+        case BTLMENU_STATE_APPEAR:
             BattleMenuAppear();
             break;
-        case 28:
+        case BTLMENU_STATE_EXIT:
             result = BattleMenuExit();
             break;
-        case 0:
+        case BTLMENU_STATE_MAIN:
             result = BattleMenuSelect();
             break;
-        case 2:
-        case 10:
-        case 18:
+        case BTLMENU_STATE_WEAPON:
+        case BTLMENU_STATE_WEAPON_OPEN:
+        case BTLMENU_STATE_WEAPON_CLOSE:
             WeaponMenuSelect();
             break;
-        case 25:
+        case BTLMENU_STATE_ITEM_TRUSH:
             InitItemTrushStart();
             break;
-        case 1:
-        case 9:
-        case 17:
+        case BTLMENU_STATE_ITEM:
+        case BTLMENU_STATE_ITEM_OPEN:
+        case BTLMENU_STATE_ITEM_CLOSE:
             ItemMenuMainKey();
             break;
-        case 3:
-        case 11:
-        case 19:
-        case 26:
+        case BTLMENU_STATE_CHARA:
+        case BTLMENU_STATE_CHARA_OPEN:
+        case BTLMENU_STATE_CHARA_CLOSE:
+        case BTLMENU_STATE_UNK_1A:
             result = BattleMenuCharaKey();
             break;
-        case 4:
-        case 12:
-        case 20:
+        case BTLMENU_STATE_ATLA:
+        case BTLMENU_STATE_ATLA_OPEN:
+        case BTLMENU_STATE_ATLA_CLOSE:
             BattleMenuAtoraKey();
             break;
-        case 5:
-        case 13:
-        case 21:
+        case BTLMENU_STATE_MOVE:
+        case BTLMENU_STATE_MOVE_OPEN:
+        case BTLMENU_STATE_MOVE_CLOSE:
             result = MenuMoveKey();
             break;
-        case 6:
-        case 14:
-        case 22:
+        case BTLMENU_STATE_OPTION:
+        case BTLMENU_STATE_OPTION_OPEN:
+        case BTLMENU_STATE_OPTION_CLOSE:
             BattleMenuOptionKey();
             break;
-        case 7:
-        case 15:
-        case 23:
+        case BTLMENU_STATE_SAVE:
+        case BTLMENU_STATE_SAVE_OPEN:
+        case BTLMENU_STATE_SAVE_CLOSE:
             BattleMenuSaveKey();
             break;
-        case 8:
-        case 16:
-        case 24:
+        case BTLMENU_STATE_MANUAL:
+        case BTLMENU_STATE_MANUAL_OPEN:
+        case BTLMENU_STATE_MANUAL_CLOSE:
             BattleManualKey();
             break;
     }
@@ -1351,7 +1351,7 @@ int BattleMenuCursor() {
     MenuWepLevelUp.StepSnd();
 
     switch (BtlMenuMode) {
-        case 0:
+        case BATTLE_MENU_MODE_DUNGEON:
             SetEscapeDngFlag(EscapeDungeonMode());
             break;
     }
@@ -1367,7 +1367,7 @@ int BattleMenuCursor() {
  * @size 0x17C
  */
 static void BattleMenuAppear() {
-    int arrived = 0;
+    int arrived = false;
     int i;
     int position[2];
 
@@ -1396,9 +1396,9 @@ static void BattleMenuAppear() {
         BattleMenuTexEnter();
         BtlMenuReadEndFlag = 1;
         BtlEffectCt = 0.0f;
-        BtlEffectFlag = -1;
-        BattleMenuFlag = 0;
-        MenuSelect[0] = 1;
+        BtlEffectFlag = BTLEFFECT_NONE;
+        BattleMenuFlag = BTLMENU_STATE_MAIN;
+        MenuSelect[0] = BTLMENU_PAGE_ITEM;
         MenuSelect[1] = 0;
         SysCur[0] = 64.0f;
         SysCur[1] = 54.0f;
@@ -1431,7 +1431,7 @@ static int BattleMenuExit() {
 
 int BattleMenuSelect() {
     if (MenuWarningMsgFlag != 0) {
-        if (GamePad.Down(0x60) != 0) {
+        if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
             MenuWarningMsgFlag = 0;
         }
 
@@ -1441,7 +1441,7 @@ int BattleMenuSelect() {
     int old = MenuSelect[1];
     int max = GetMenuModeMax();
 
-    if (GamePad.Down(0x9000) != 0) {
+    if (GamePad.Down(PAD_UP | PAD_LEFT) != 0) {
         MenuSelect[1]--;
 
         if (MenuSelect[1] < 0) {
@@ -1449,7 +1449,7 @@ int BattleMenuSelect() {
         }
     }
 
-    if (GamePad.Down(0x6000) != 0) {
+    if (GamePad.Down(PAD_RIGHT | PAD_DOWN) != 0) {
         MenuSelect[1]++;
 
         if (MenuSelect[1] > max - 1) {
@@ -1458,47 +1458,47 @@ int BattleMenuSelect() {
     }
 
     if (old != MenuSelect[1]) {
-        ComMenuSePlay(0);
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 
-    if (GamePad.Down(0x40) != 0) {
+    if (GamePad.Down(PAD_CROSS) != 0) {
         int pages[2][8] = {
-            {1, 2, 3, 4, 5, 6, 8, 0},
-            {1, 2, 3, 4, 5, 7, 6, 8}
+            {BTLMENU_PAGE_ITEM, BTLMENU_PAGE_WEAPON, BTLMENU_PAGE_CHARA, BTLMENU_PAGE_ATLA, BTLMENU_PAGE_MOVE, BTLMENU_PAGE_OPTION, BTLMENU_PAGE_MANUAL, BTLMENU_PAGE_NONE  },
+            {BTLMENU_PAGE_ITEM, BTLMENU_PAGE_WEAPON, BTLMENU_PAGE_CHARA, BTLMENU_PAGE_ATLA, BTLMENU_PAGE_MOVE, BTLMENU_PAGE_SAVE,   BTLMENU_PAGE_OPTION, BTLMENU_PAGE_MANUAL}
         };
         MenuSelect[0] = pages[BtlMenuMode][MenuSelect[1]];
-        CommonMenuMes1.stay_frame = 0;
+        CommonMenuMes1.stay_frame = false;
         CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
         int          chara = status->cur_chara;
         u_long128   *buffer = BtlMenuReadBuf;
 
         switch (MenuSelect[0]) {
-            case 3:
-                if (BtlMenuMode == 0) {
+            case BTLMENU_PAGE_CHARA:
+                if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
                     int zone = status->res_limit_zone_current;
 
                     if (zone < 6 && zone >= 0) {
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                         return 1;
                     }
                 }
 
                 InitMenuChara(buffer);
                 break;
-            case 2:
-                InitWeaponSelect(0, chara);
+            case BTLMENU_PAGE_WEAPON:
+                InitWeaponSelect(WEP_OPEN_FROM_BAR, chara);
                 break;
-            case 1:
+            case BTLMENU_PAGE_ITEM:
                 InitItemMode(0, chara);
                 break;
-            case 4: {
+            case BTLMENU_PAGE_ATLA: {
                 int blocks[2] = {0, 0};
                 blocks[0] = BtlMenuReadBlock;
                 blocks[1] = MenuExtendReadBlock;
                 int map = 0;
 
                 switch (BtlMenuMode) {
-                    case 0:
+                    case BATTLE_MENU_MODE_DUNGEON:
                         map = status->cur_georama;
 
                         if (map < 0) {
@@ -1510,7 +1510,7 @@ int BattleMenuSelect() {
                         }
 
                         break;
-                    case 1:
+                    case BATTLE_MENU_MODE_TOWN:
                         map = GetNowMapTransAtraMap(MapNo);
 
                         if (map < 0 || map > 5) {
@@ -1524,18 +1524,18 @@ int BattleMenuSelect() {
                 InitMenuAtoraSelect(map);
                 break;
             }
-            case 5: {
+            case BTLMENU_PAGE_MOVE: {
                 int flag = NowGetGameFlagForBtlMenu(BtlMenuMode);
 
                 switch (flag) {
-                    case 11:
-                        ComMenuSePlay(2);
+                    case MENU_MOVE_LOCKED:
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                         return 1;
                     default:
-                    case 1:
-                    case 10:
-                    case 2:
-                    case 0:
+                    case MENU_MOVE_WORLD_MAP:
+                    case MENU_MOVE_FIRST_DUNGEON:
+                    case MENU_MOVE_INTERIOR_OUT:
+                    case MENU_MOVE_DUNGEON_ESCAPE:
                         InitMenuMove(flag, MenuExtendReadBlock, buffer);
                         BtlWakuMake2 = 0;
                         break;
@@ -1543,14 +1543,14 @@ int BattleMenuSelect() {
 
                 break;
             }
-            case 6:
-                InitMenuOption(1, MenuExtendReadBlock, buffer);
+            case BTLMENU_PAGE_OPTION:
+                InitMenuOption(OPTION_OPEN_GAME_MENU, MenuExtendReadBlock, buffer);
                 break;
-            case 7:
+            case BTLMENU_PAGE_SAVE:
                 BtlWakuMake2 = 0;
-                InitMenuSave(1, MenuExtendReadBlock, buffer);
+                InitMenuSave(SAVE_MENU_MODE_SAVE, MenuExtendReadBlock, buffer);
                 break;
-            case 8: {
+            case BTLMENU_PAGE_MANUAL: {
                 BtlWakuMake2 = 0;
                 int blocks[3] = {0, 0, 0};
                 blocks[0] = MenuExtendReadBlock;
@@ -1561,13 +1561,13 @@ int BattleMenuSelect() {
             }
         }
 
-        BattleMenuFlag = MenuSelect[0] + 8;
-        BtlEffectFlag = 1;
+        BattleMenuFlag = MenuSelect[0] + BTLMENU_STATE_OPEN_OFFSET;
+        BtlEffectFlag = BTLEFFECT_PAGE_OPEN;
         BtlEffectCt = 0;
-        ComMenuSePlay(1);
-    } else if (GamePad.Down(0x20) != 0) {
-        ComMenuSePlay(2);
-        BattleMenuFlag = 28;
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
+    } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
+        BattleMenuFlag = BTLMENU_STATE_EXIT;
     }
 
     return 1;
@@ -1592,20 +1592,20 @@ int ToFromSelect(int out) {
 #ifdef PAL
     float hide_x = -240.0f;
 
-    if (BtlMenuNowLang > 0) {
+    if (BtlMenuNowLang > LANG_JAPANESE) {
         hide_x = -264.0f;
     }
 
 #else
     float hide_x = -224.0f;
 
-    if (BtlMenuNowLang > 0) {
+    if (BtlMenuNowLang > LANG_JAPANESE) {
         hide_x = -258.0f;
     }
 
 #endif
     int done = 0;
-    int arrived = 0;
+    int arrived = false;
 
     for (int i = 0; i < GetMenuModeMax(); i++) {
         int axes = 0;
@@ -1658,10 +1658,10 @@ static void ForBackMenu() {
     int position[2];
 
     BtlEffectCt = 0.0f;
-    BtlEffectFlag = -1;
+    BtlEffectFlag = BTLEFFECT_NONE;
     BtlWakuMake2 = 1;
     CommonMenuMes1.mes_made = -1;
-    CommonMenuMes1.auto_pos = -1;
+    CommonMenuMes1.auto_pos = MES_POS_NONE;
     CommonMenuMes1.edge_alpha = 128;
 
     for (int i = 0; i < 10; i++) {
@@ -1669,7 +1669,7 @@ static void ForBackMenu() {
         CommonMenuMes1.values[i] = -1;
     }
 
-    MenuSelect[0] = BattleMenuFlag - 16;
+    MenuSelect[0] = BattleMenuFlag - BTLMENU_STATE_CLOSE_OFFSET;
     GetMenuIconPos(MenuSelect[1], position);
     SysCur[0] = position[0] - 40;
     SysCur[1] = position[1] + 20;
@@ -1687,7 +1687,7 @@ static void InitMenuChara(u_long128 *buffer) {
     LoadFileBGMenuData("charatex.img", buffer);
     ReadBG();
     BtlMenuExReadFlag = 0;
-    MenuChara.state = 1;
+    MenuChara.state = MENU_CHARA_OPEN;
     MenuChara.timer = 0.0f;
     chara_r_long = 118.0f;
     BtlEffectCt = 0.0f;
@@ -1723,7 +1723,7 @@ static void InitMenuChara(u_long128 *buffer) {
 
 int BattleMenuCharaKey() {
     switch (MenuChara.state) {
-        case 4:
+        case MENU_CHARA_CHANGE_LOAD:
             MenuChara.change_counter++;
 
             if (ReadBGSync() == 0 && MenuChara.change_counter > 20) {
@@ -1731,11 +1731,11 @@ int BattleMenuCharaKey() {
                 BreakReadBG();
                 StartReadBG();
                 CharaChangeInitToGL2(1);
-                MenuChara.state = 5;
+                MenuChara.state = MENU_CHARA_CHANGE_EXIT;
             }
 
             break;
-        case 5:
+        case MENU_CHARA_CHANGE_EXIT:
             MenuChara.change_counter++;
 
             if (ReadBGSync() == 0 && MenuChara.change_counter > 20) {
@@ -1746,7 +1746,7 @@ int BattleMenuCharaKey() {
             }
 
             break;
-        case 1: {
+        case MENU_CHARA_OPEN: {
             if (BtlMenuExReadFlag == 0) {
                 if (ReadBGSync() == 0) {
                     LOADTEXTURE_INFO2 texture[3] = {
@@ -1793,14 +1793,14 @@ int BattleMenuCharaKey() {
 
             if (!(MenuChara.timer < 20.0f) && done == 1 && BtlMenuExReadFlag != 0) {
                 MenuCharaMove = 0.0f;
-                MenuChara.state = 0;
+                MenuChara.state = MENU_CHARA_SELECT;
                 MenuChara.timer = 0.0f;
-                BattleMenuFlag = 3;
+                BattleMenuFlag = BTLMENU_STATE_CHARA;
             }
 
             break;
         }
-        case 2: {
+        case MENU_CHARA_CLOSE: {
             int done = ToFromSelect(1);
             MenuChara.timer += 1.0f;
 
@@ -1813,12 +1813,12 @@ int BattleMenuCharaKey() {
                 BtlMenuTexBlockEnter();
                 MenuCharaFace = TexManager.GetTexture("charaface", BtlMenuReadBlock);
                 BtStatus = TexManager.GetTexture("btstatus2", BtlMenuReadBlock);
-                BattleMenuFlag = 0;
+                BattleMenuFlag = BTLMENU_STATE_MAIN;
             }
 
             break;
         }
-        case 3:
+        case MENU_CHARA_TURN:
             MenuChara.timer += 1.0f;
 
             if (!(MenuChara.timer < 21.0f)) {
@@ -1855,25 +1855,25 @@ int BattleMenuCharaKey() {
                     }
                 }
 
-                MenuChara.state = 0;
+                MenuChara.state = MENU_CHARA_SELECT;
                 MenuChara.timer = 0.0f;
                 MenuCharaMove = 0.0f;
             }
 
             break;
-        case 6:
-            if (GamePad.Down(0x60) != 0) {
-                MenuChara.state = 0;
-                ComMenuSePlay(1);
+        case MENU_CHARA_MESSAGE:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                MenuChara.state = MENU_CHARA_SELECT;
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
             }
 
             break;
-        case 0: {
+        case MENU_CHARA_SELECT: {
             int old = MenuChara.chara;
 
-            if (GamePad.On(0x3000) != 0) {
+            if (GamePad.On(PAD_UP | PAD_RIGHT) != 0) {
                 MenuCharaMove = PosAngle / 20.0f;
-                MenuChara.state = 3;
+                MenuChara.state = MENU_CHARA_TURN;
                 MenuChara.timer = 0.0f;
                 MenuChara.chara--;
 
@@ -1881,10 +1881,10 @@ int BattleMenuCharaKey() {
                     MenuChara.chara = 5;
                 }
 
-                ComMenuSePlay(0);
-            } else if (GamePad.On(0xC000) != 0) {
+                ComMenuSePlay(MENU_SOUND_CURSOR);
+            } else if (GamePad.On(PAD_DOWN | PAD_LEFT) != 0) {
                 MenuCharaMove = -PosAngle / 20.0f;
-                MenuChara.state = 3;
+                MenuChara.state = MENU_CHARA_TURN;
                 MenuChara.timer = 0.0f;
                 MenuChara.chara++;
 
@@ -1892,17 +1892,17 @@ int BattleMenuCharaKey() {
                     MenuChara.chara = 0;
                 }
 
-                ComMenuSePlay(0);
-            } else if (GamePad.Down(0x20) != 0) {
-                BattleMenuFlag = 19;
-                MenuChara.state = 2;
+                ComMenuSePlay(MENU_SOUND_CURSOR);
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                BattleMenuFlag = BTLMENU_STATE_CHARA_CLOSE;
+                MenuChara.state = MENU_CHARA_CLOSE;
                 MenuChara.timer = 0.0f;
-                BtlEffectFlag = 0;
+                BtlEffectFlag = BTLEFFECT_PAGE_CLOSE;
                 BtlEffectCt = 0;
-                ComMenuSePlay(2);
-            } else if (GamePad.Down(0x40) != 0) {
+                ComMenuSePlay(MENU_SOUND_REFUSE);
+            } else if (GamePad.Down(PAD_CROSS) != 0) {
                 switch (BtlMenuMode) {
-                    case 0: {
+                    case BATTLE_MENU_MODE_DUNGEON: {
                         int             i;
                         CDngStatusData *status = BtlMenuStatusPt;
                         s8              cur;
@@ -1911,7 +1911,7 @@ int BattleMenuCharaKey() {
 
                         if (cur == CHARA_OSMOND && BtActStatus.ground_kind == 10) {
                             CommonMenuMes1.MakeMesWin(0x1A1);
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
                             for (i = 0; i < MenuChara.slot_count; i++) {
                                 if (SysChara[i].place != 0) {
@@ -1921,22 +1921,22 @@ int BattleMenuCharaKey() {
                                 int chara = SysChara[i].chara;
 
                                 if (status->party_size - 1 < chara) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                     return 1;
                                 }
 
                                 s16 hp = status->hp[chara];
                                 int condition = status->GetActiveCharaStatus(chara);
 
-                                if (hp <= 0 || (condition & 2)) {
-                                    ComMenuSePlay(2);
+                                if (hp <= 0 || (condition & AILMENT_KNOCKED_OUT)) {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                     return 1;
                                 }
 
                                 if (chara != (s8) cur) {
                                     *active = chara;
-                                    ComMenuSePlay(1);
-                                    MenuChara.state = 4;
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
+                                    MenuChara.state = MENU_CHARA_CHANGE_LOAD;
                                     MenuChara.change_counter = 0;
                                     return 1;
                                 }
@@ -1946,12 +1946,12 @@ int BattleMenuCharaKey() {
                         break;
                     }
                     default:
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                         break;
                 }
             }
 
-            if (old != MenuChara.chara && MenuChara.chara < BtlMenuStatusPt->party_size && BtlMenuCharaChangeBuf != NULL && BtlMenuMode == 0) {
+            if (old != MenuChara.chara && MenuChara.chara < BtlMenuStatusPt->party_size && BtlMenuCharaChangeBuf != NULL && BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
                 BreakReadBG();
                 CharaChangeInitToGL(BtlMenuCharaChangeBuf, MenuChara.chara);
             }
@@ -1959,7 +1959,7 @@ int BattleMenuCharaKey() {
 #ifdef PAL
             // Debug builds raise the front party member's maximum life and add or remove party members.
             if (DebugMode) {
-                if (GamePad.On(0xA) != 0) {
+                if (GamePad.On(PAD_R2 | PAD_R1) != 0) {
                     for (int i = 0; i < MenuChara.slot_count; i++) {
                         if (SysChara[i].place == 0) {
                             int raised = BtlMenuStatusPt->max_hp[i] + 1;
@@ -1971,7 +1971,7 @@ int BattleMenuCharaKey() {
                     }
                 }
 
-                if (GamePad.Down2(0x40) != 0 && BtlMenuStatusPt->party_size < 6) {
+                if (GamePad.Down2(PAD_CROSS) != 0 && BtlMenuStatusPt->party_size < 6) {
                     BtlMenuStatusPt->party_size++;
                     BtlMenuStatusPt->GetItem(GetDefaultWeaponNo(BtlMenuStatusPt->party_size - 1) + 1, 0);
                     int chara = BtlMenuStatusPt->party_size - 1;
@@ -1980,7 +1980,7 @@ int BattleMenuCharaKey() {
                     NameDefaultSet(BtlMenuStatusPt->party_size - 1);
                 }
 
-                if (GamePad.Down2(0x20) != 0 && BtlMenuStatusPt->party_size > 1) {
+                if (GamePad.Down2(PAD_CIRCLE) != 0 && BtlMenuStatusPt->party_size > 1) {
                     BtlMenuStatusPt->party_size--;
                 }
             }
@@ -2007,16 +2007,16 @@ void DrawCharaSelect() {
     int panel_alpha;
 
     switch (MenuChara.state) {
-        case 1:
+        case MENU_CHARA_OPEN:
             bright = (int) (10.0f * MenuChara.timer);
             ring_alpha = bright;
             break;
-        case 2:
+        case MENU_CHARA_CLOSE:
             bright = (int) (128.0f - 12.0f * MenuChara.timer);
             ring_alpha = bright;
             break;
-        case 4:
-        case 5:
+        case MENU_CHARA_CHANGE_LOAD:
+        case MENU_CHARA_CHANGE_EXIT:
             bright = 0x80 - MenuChara.change_counter * 3;
             ring_alpha = 0x80 - MenuChara.change_counter * 10;
             break;
@@ -2045,31 +2045,31 @@ void DrawCharaSelect() {
     MGSetGsALPHA(NULL);
 
     switch (MenuChara.state) {
-        case 1:
+        case MENU_CHARA_OPEN:
             for (int i = 0; i < MenuChara.slot_count; i++) {
                 float radius = chara_r_long / 20.0f * MenuChara.timer;
-                float angle = 3.1415927f + (PosAngle * (SysChara[i].place - 1.0f) + PosAngle / 20.0f * MenuChara.timer);
+                float angle = PI + (PosAngle * (SysChara[i].place - 1.0f) + PosAngle / 20.0f * MenuChara.timer);
                 SysChara[i].x = radius * cosf(angle);
                 SysChara[i].y = radius * sinf(angle);
             }
 
             break;
-        case 3:
+        case MENU_CHARA_TURN:
             for (int i = 0; i < MenuChara.slot_count; i++) {
                 float radius = chara_r_long;
-                float angle = 3.1415927f + (PosAngle * SysChara[i].place + MenuCharaMove * MenuChara.timer);
+                float angle = PI + (PosAngle * SysChara[i].place + MenuCharaMove * MenuChara.timer);
                 SysChara[i].x = radius * cos(angle);
                 SysChara[i].y = radius * sin(angle);
             }
 
             break;
-        case 5:
-        case 4:
+        case MENU_CHARA_CHANGE_EXIT:
+        case MENU_CHARA_CHANGE_LOAD:
             chara_r_long += MenuChara.change_counter;
 
             for (int i = 0; i < MenuChara.slot_count; i++) {
                 float radius = chara_r_long;
-                float angle = 3.1415927f + (PosAngle * SysChara[i].place + MenuCharaMove * MenuChara.change_counter);
+                float angle = PI + (PosAngle * SysChara[i].place + MenuCharaMove * MenuChara.change_counter);
                 SysChara[i].x = radius * cos(angle);
                 SysChara[i].y = radius * sin(angle);
             }
@@ -2113,15 +2113,15 @@ void DrawCharaSelect() {
             if (move == 0.0f) {
                 face_alpha = 0x80;
                 panel_alpha = 0x80;
-            } else if (MenuChara.state == 3) {
+            } else if (MenuChara.state == MENU_CHARA_TURN) {
                 panel_alpha = (int) (128.0f - 10.0f * time);
             }
 
             switch (MenuChara.state) {
-                case 5:
-                case 4:
-                case 1:
-                case 2:
+                case MENU_CHARA_CHANGE_EXIT:
+                case MENU_CHARA_CHANGE_LOAD:
+                case MENU_CHARA_OPEN:
+                case MENU_CHARA_CLOSE:
                     size += grow;
                     draw_x -= grow;
                     status_alpha = 0;
@@ -2183,7 +2183,7 @@ void DrawCharaSelect() {
         s16 hp = BtlMenuStatusPt->hp[i];
         int condition = BtlMenuStatusPt->GetActiveCharaStatus(i);
 
-        if (hp <= 0 || (condition & 2)) {
+        if (hp <= 0 || (condition & AILMENT_KNOCKED_OUT)) {
             shade = 0x50;
         }
 
@@ -2213,7 +2213,7 @@ void DrawCharaSelect() {
             face_alpha = 0;
         }
 
-        if (MenuChara.state == 5 || MenuChara.state == 4) {
+        if (MenuChara.state == MENU_CHARA_CHANGE_EXIT || MenuChara.state == MENU_CHARA_CHANGE_LOAD) {
             face_alpha = 0x80 - MenuChara.change_counter * 2;
 
             if (face_alpha < 0) {
@@ -2226,24 +2226,24 @@ void DrawCharaSelect() {
         }
     }
 
-    CommonMenuMes1.auto_pos = -1;
-    CommonMenuMes1.stay_frame = 0;
+    CommonMenuMes1.auto_pos = MES_POS_NONE;
+    CommonMenuMes1.stay_frame = false;
 
     switch (MenuChara.state) {
-        case 6:
+        case MENU_CHARA_MESSAGE:
             AllFadeForMenu(0x40);
-            CommonMenuMes1.auto_pos = 5;
-            CommonMenuMes1.stay_frame = 1;
+            CommonMenuMes1.auto_pos = MES_POS_CENTRE;
+            CommonMenuMes1.stay_frame = true;
             CommonMenuMes1.Step();
             CommonMenuMes1.DrawMesWin();
             break;
-        case 1:
-        case 2:
-        case 4:
-        case 5:
+        case MENU_CHARA_OPEN:
+        case MENU_CHARA_CLOSE:
+        case MENU_CHARA_CHANGE_LOAD:
+        case MENU_CHARA_CHANGE_EXIT:
             break;
         default: {
-            float angle = 3.1415927f;
+            float angle = PI;
             float waku_x = 394.0f + chara_r_long * cosf(angle) - 184.0f;
             face_y = 120.0f + chara_r_long * sinf(angle) - 26.0f;
             int width = 0x102;
@@ -2447,13 +2447,13 @@ static void WeaponNameDraw(int y, int selected_only, int alpha) {
     }
 
     int x = 22.0f + WeaponPos + slot * 0xD6;
-    AtoraNameMes.value_signed = 1;
+    AtoraNameMes.value_signed = true;
 
     for (int i = 0; i < 3; i++) {
         int mes_no;
         int level = 0;
 
-        if (x < -140 || x > 630 || (selected_only == 1 && slot != WepMenu.weapon_slot) || slot < 0 || slot > 9 || ((WepMenu.state == 8 || WepMenu.state == 9) && slot == WepMenu.weapon_slot) || (WepMenu.mode > 0 && slot != WepMenu.weapon_slot) || (WepMenu.state != 10 && WepMenu.state >= 8 && WepMenu.state < 11) || (WepMenu.state == 7 && slot != WepMenu.weapon_slot)) {
+        if (x < -140 || x > 630 || (selected_only == 1 && slot != WepMenu.weapon_slot) || slot < 0 || slot > 9 || ((WepMenu.state == WEP_STATE_STATUS_BREAK_EFFECT || WepMenu.state == WEP_STATE_BUILDUP_EFFECT) && slot == WepMenu.weapon_slot) || (WepMenu.mode > WEP_MENU_LIST && slot != WepMenu.weapon_slot) || (WepMenu.state != WEP_STATE_REPAIR_EFFECT && WepMenu.state >= WEP_STATE_STATUS_BREAK_EFFECT && WepMenu.state < WEP_STATE_WARNING) || (WepMenu.state == WEP_STATE_LEVELUP_EFFECT && slot != WepMenu.weapon_slot)) {
             mes_no = 999;
         } else {
             mes_no = GetWeaponMsgNo(&DngWepHavePt[slot]);
@@ -2505,7 +2505,7 @@ static void WeaponNameDraw(int y, int selected_only, int alpha) {
     AtoraNameMes.Step();
     AtoraNameMes.DrawMesWin();
 
-    if (WepMenu.mode == 0 && WepMenu.state == 0) {
+    if (WepMenu.mode == WEP_MENU_LIST && WepMenu.state == WEP_STATE_IDLE) {
         CTexture *frame = TexManager.GetTexture("frame_image", -1);
 
         if (frame != NULL) {
@@ -2584,7 +2584,7 @@ static void DrawLimmitMax(int x, int y, int alpha) {
 
 void DrawBtlMenuLRCursor(int x, int y, int width, int alpha) {
     int      count = CursorVibeCnt % 79;
-    double   pi = 3.1415927f;
+    double   pi = PI;
     int      draw_y = (int) ((float) y + 4.0f * sinf((float) (pi * ((double) count - 40.0) / 40.0)));
     CRect_i_ source(0x62, 0x14, 0x1A, 0x18);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, draw_y, source.width, source.height), source, alpha);
@@ -2905,7 +2905,7 @@ static void DrawWeaponTagBoard(int x, int y, WEAPON_HAVE *weapon, int build, int
             }
         }
 
-        if (WepMenu.mode == 2 && tag != 1) {
+        if (WepMenu.mode == WEP_MENU_ELEMENT && tag != WEP_TAG_ELEMENT) {
             brightness = 64;
         }
 
@@ -2916,13 +2916,13 @@ static void DrawWeaponTagBoard(int x, int y, WEAPON_HAVE *weapon, int build, int
 
     if (weapon != NULL) {
         switch (page) {
-            case 0:
+            case WEP_TAG_STATUS:
                 DrawWeaponStatusTag(x, y, weapon, build, weapon_no, alpha);
                 break;
-            case 1:
+            case WEP_TAG_ELEMENT:
                 DrawWeaponElemTag(x, y, weapon, build, weapon_no, alpha);
                 break;
-            case 2:
+            case WEP_TAG_VS_MONSTER:
                 DrawWeaponVsMonster(x, y, weapon, build, weapon_no, alpha);
                 break;
         }
@@ -2944,13 +2944,13 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         if (equipped != 0) {
             position[1] = -1.3f + sinf(WepFrameRate);
             WepFrameRate += 0.34906587f;
-            float limit = 3.1415927f;
+            float limit = PI;
 
             if (limit <= WepFrameRate) {
                 WepFrameRate = limit;
             }
 
-            if (3.1415927f != WepFrameRate) {
+            if (PI != WepFrameRate) {
                 spin = 0.0f;
             }
         }
@@ -2963,27 +2963,27 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         model->SetScale(scale, scale, scale);
 
         if (selected != 0) {
-            spin = (float) (3.141592653589793 * (CursorVibeCnt % 219 - 110) / 110);
+            spin = (float) (PI_D * (CursorVibeCnt % 219 - 110) / 110);
         }
 
-        if (MenuWepLevelUp.operation_kind == -1 || MenuWepLevelUp.operation_kind == 3 || MenuWepLevelUp.operation_kind == 2) {
-            float rot_x = -1.5707964f;
+        if (MenuWepLevelUp.operation_kind == WEP_EFFECT_NONE || MenuWepLevelUp.operation_kind == WEP_EFFECT_RECOVER || MenuWepLevelUp.operation_kind == WEP_EFFECT_BUILDUP) {
+            float rot_x = -HALF_PI;
 
-            if (rot_x > 3.141592653589793) {
-                rot_x -= 3.1415927f;
+            if (rot_x > PI_D) {
+                rot_x -= PI;
             }
 
             float rot_y = 0.0f;
             spin = rot_y + spin;
 
-            if (spin > 3.141592653589793) {
-                spin -= 3.1415927f;
+            if (spin > PI_D) {
+                spin -= PI;
             }
 
             float rot_z = 0.62831855f;
 
-            if (rot_z > 3.141592653589793) {
-                rot_z -= 3.1415927f;
+            if (rot_z > PI_D) {
+                rot_z -= PI;
             }
 
             model->SetRotation(rot_x, spin, rot_z);
@@ -3000,22 +3000,22 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
 
 #endif
     switch (WepMenu.mode) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
+        case WEP_MENU_LIST:
+        case WEP_MENU_ACTION:
+        case WEP_MENU_ELEMENT:
+        case WEP_MENU_LEVELUP_CONFIRM:
+        case WEP_MENU_STATUS_BREAK_CONFIRM:
+        case WEP_MENU_BUILDUP_SELECT:
+        case WEP_MENU_BUILDUP_CONFIRM:
+        case WEP_MENU_BUILDUP_PREVIEW:
             draw_x = x + 2;
             DrawWepStatus(draw_x, y + 0x66, weapon, equipped, alpha);
             DrawWepVolumeDisplay(x, y + 0x14, weapon, alpha);
             break;
-        case 8:
-        case 9:
-        case 10:
-        case 11:
+        case WEP_MENU_ATTACH_WEAPON:
+        case WEP_MENU_ATTACH_SOCKETS:
+        case WEP_MENU_ATTACH_BOARD:
+        case WEP_MENU_ATTACH_TAGS:
             break;
     }
 
@@ -3048,7 +3048,7 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
     width *= hole_scale[selected];
     draw_x = (int) ((float) (x + 0x52) - width);
 
-    if (WepMenu.mode >= 8) {
+    if (WepMenu.mode >= WEP_MENU_ATTACH_WEAPON) {
         DrawWepHole(draw_x, 0xB8, weapon, selected, alpha);
         MenuTextureReload(MenuShadowReadBlock);
         DrawWepAttach(draw_x + 0xE, 0xBE, weapon, selected, alpha);
@@ -3093,7 +3093,7 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
     for (int i = 0; i < 10; i++, x += 0xD6, depth += 16.0f) {
         int draw_alpha = alpha;
 
-        if (x < -0x60 || (WepMenu.mode >= 8 && i != cursor)) {
+        if (x < -0x60 || (WepMenu.mode >= WEP_MENU_ATTACH_WEAPON && i != cursor)) {
             continue;
         }
 
@@ -3116,9 +3116,9 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
 
         if (is_selected != 0) {
             switch (WepMenu.state) {
-                case 8:
+                case WEP_STATE_STATUS_BREAK_EFFECT:
                     switch (MenuWepLevelUp.effect_state) {
-                        case 5:
+                        case WEP_EFFECT_STATE_BREAK_PLAY:
                             draw_alpha = (int) (128.0f - 4.0f * MenuWepLevelUp.effect_timer);
 
                             if (draw_alpha < 0) {
@@ -3126,7 +3126,7 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
                             }
 
                             break;
-                        case 6:
+                        case WEP_EFFECT_STATE_BREAK_DONE:
                             if (MenuWepLevelUp.lost_default_weapon != 0) {
                                 draw_alpha = 0;
                             } else {
@@ -3145,17 +3145,17 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
 
             MenuMes.alpha = draw_alpha;
         } else {
-            if (WepMenu.mode > 0) {
+            if (WepMenu.mode > WEP_MENU_LIST) {
                 draw_alpha = 0;
                 continue;
             }
 
-            if (WepMenu.state >= 7) {
+            if (WepMenu.state >= WEP_STATE_LEVELUP_EFFECT) {
                 draw_alpha = 0;
                 continue;
             }
 
-            if (WepMenu.state >= 7 && WepMenu.state < 15) {
+            if (WepMenu.state >= WEP_STATE_LEVELUP_EFFECT && WepMenu.state < 15) {
                 draw_alpha = 0;
             }
         }
@@ -3163,11 +3163,11 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         bright[3] = draw_alpha;
         MGSetAmbient(bright);
 
-        if (MenuExTextureReadFlag != 2) {
+        if (MenuExTextureReadFlag != MENU_EX_TEX_READY) {
             continue;
         }
 
-        if (weapon->item_no >= 0x101) {
+        if (weapon->item_no >= ITEM_WEAPON_START) {
             CCharacter *frame = NULL;
 
             switch (GetNowTestNo()) {
@@ -3200,29 +3200,29 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
             MenuTextureReload(BtlMenuReadBlock);
 
 #endif
-            if (is_selected == 0 || WepMenu.state != 8) {
+            if (is_selected == 0 || WepMenu.state != WEP_STATE_STATUS_BREAK_EFFECT) {
                 DrawMenuNothing(x - 4, 0x82, 0xB4, 0x96, "wepstatus", 0, draw_alpha);
             }
         }
 
-        MenuMes.mode = 0;
+        MenuMes.mode = MENU_CLSMES_OFF;
 
         switch (WepMenu.mode) {
-            case 11:
-            case 9:
-            case 10:
-            case 8:
+            case WEP_MENU_ATTACH_TAGS:
+            case WEP_MENU_ATTACH_SOCKETS:
+            case WEP_MENU_ATTACH_BOARD:
+            case WEP_MENU_ATTACH_WEAPON:
                 MenuTextureReload(BtlMenuReadBlock);
                 DrawBtlMenuLRCursor(x - 0x1C, 0xE6, 0xD4, draw_alpha);
 #ifdef PAL
                 MenuTextureReload(BtlMenuExtBlock);
 #endif
                 DrawWeaponTagBoard(x - 0xC, 0xF0, weapon, 0, 0, draw_alpha);
-            case 0:
+            case WEP_MENU_LIST:
                 WeaponOptionStatusDraw(weapon, x + 0x50, 0x8E, draw_alpha);
                 break;
             default:
-                MenuMes.mode = 1;
+                MenuMes.mode = MENU_CLSMES_OPTIONS;
                 break;
         }
     }
@@ -3230,14 +3230,14 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
     MGSetPLight(light_dir, light_col);
     MGSetAmbient(ambient);
 
-    if (MenuExTextureReadFlag == 2) {
+    if (MenuExTextureReadFlag == MENU_EX_TEX_READY) {
         int tags = 0;
 
         switch (WepMenu.mode) {
-            case 11:
-            case 8:
-            case 9:
-            case 10:
+            case WEP_MENU_ATTACH_TAGS:
+            case WEP_MENU_ATTACH_WEAPON:
+            case WEP_MENU_ATTACH_SOCKETS:
+            case WEP_MENU_ATTACH_BOARD:
                 tags = 1;
                 break;
         }
@@ -3246,15 +3246,15 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
     }
 
     switch (WepMenu.mode) {
-        case 11:
-        case 9:
-        case 10:
-        case 8:
+        case WEP_MENU_ATTACH_TAGS:
+        case WEP_MENU_ATTACH_SOCKETS:
+        case WEP_MENU_ATTACH_BOARD:
+        case WEP_MENU_ATTACH_WEAPON:
             break;
         default: {
             int dim = 0;
 
-            if (WepMenu.mode != 0) {
+            if (WepMenu.mode != WEP_MENU_LIST) {
                 dim = 1;
             }
 
@@ -3263,7 +3263,7 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         }
     }
 
-    if (WepMenu.state != 8) {
+    if (WepMenu.state != WEP_STATE_STATUS_BREAK_EFFECT) {
         MenuMes.Step();
         MenuMes.Draw1(MenuMes.draw_x, MenuMes.draw_y, MenuMes.alpha);
     }
@@ -3283,7 +3283,7 @@ static int NowWeaponStatusValue(WEAPON_HAVE *weapon) {
 
     int status = 0;
 
-    if (weapon->experience >= GetWeaponMaxExp(weapon) || GetNowItemNum(0xB2, MenuItemPackPt) > 0) {
+    if (weapon->experience >= GetWeaponMaxExp(weapon) || GetNowItemNum(ITEM_POWERUP_POWDER, MenuItemPackPt) > 0) {
         status |= 2;
     }
 
@@ -3358,7 +3358,7 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
 
     if (weapon->best_elem == elem) {
         if (EnableWeaponElemNone(weapon->item_no) != 0) {
-            WepMenu.state = 11;
+            WepMenu.state = WEP_STATE_WARNING;
             WepMenu.warning_no = 9;
             refused = 1;
         } else {
@@ -3367,7 +3367,7 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
     } else if (attachment->elem[elem] > 0) {
         weapon->best_elem = elem;
     } else {
-        WepMenu.state = 11;
+        WepMenu.state = WEP_STATE_WARNING;
         WepMenu.warning_no = 0;
         refused = 1;
     }
@@ -3386,7 +3386,7 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
 void DrawWeaponSelectDialog(int x, int y, int alpha) {
     s8 shift = 0;
 
-    if (BtlMenuNowLang > 0) {
+    if (BtlMenuNowLang > LANG_JAPANESE) {
         shift = 2;
     }
 
@@ -3394,12 +3394,12 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     int          top = y + shift;
     int          bright;
     WEAPON_HAVE *weapon = GetNowSelectWeapon();
-    int          repair_items = GetNowItemNum(0xB1, MenuItemPackPt);
+    int          repair_items = GetNowItemNum(ITEM_REPAIR_POWDER, MenuItemPackPt);
     int          options = NowWeaponStatusValue(weapon);
     int          title_v = 0x68;
 
     switch (WepMenu.state) {
-        case 5:
+        case WEP_STATE_EQUIP:
             title_v += 0xA0;
             break;
     }
@@ -3410,7 +3410,7 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     source.y += 0x20;
     int build_x = left;
 
-    if (WepMenu.mode == 2) {
+    if (WepMenu.mode == WEP_MENU_ELEMENT) {
         build_x = left + 0x28;
     }
 
@@ -3466,8 +3466,8 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     }
 
     switch (WepMenu.state) {
-        case 12:
-        case 13:
+        case WEP_STATE_SCRAP_PROMPT:
+        case WEP_STATE_SCRAP_CONFIRM:
             DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x64, y + 0x33, 0x60, 0x1F), CRect_i_(0, 0x80, 0x60, 0x20), 0x80);
             break;
     }
@@ -3481,31 +3481,31 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
  * @size 0x3CC
  */
 static void InitWeaponSelect(int mode, int chara) {
-    InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &WepMenu.board, 1, 2);
+    InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &WepMenu.board, PERSONAL_BOARD_WEAPON_ATTACH, BOARD_PAGE_ATTACH);
     WepMenu.open_mode = mode;
-    WepMenu.mode = 0;
+    WepMenu.mode = WEP_MENU_LIST;
     WepMenu.chara = chara;
 
     switch (mode) {
-        case 0:
-            WepMenu.state = 1;
+        case WEP_OPEN_FROM_BAR:
+            WepMenu.state = WEP_STATE_OPEN;
             BtlHaveItemPt = &WepMenu.board.held_item;
             break;
-        case 1:
-            WepMenu.state = 0;
+        case WEP_OPEN_IN_PLACE:
+            WepMenu.state = WEP_STATE_IDLE;
             break;
-        case 2:
+        case WEP_OPEN_VIEW_ONLY:
             break;
     }
 
     WepMenu.counter = 0;
     StartReadWepMDS(BtlMenuReadBuf, chara);
-    MenuExTextureReadFlag = 0;
+    MenuExTextureReadFlag = MENU_EX_TEX_UNREAD;
     CDngStatusData *status = BtlMenuStatusPt;
     DngWepHavePt = status->chara_weapons[chara];
 
     for (int i = 0; i < 10; i++) {
-        if (DngWepHavePt[i].item_no < 257) {
+        if (DngWepHavePt[i].item_no < ITEM_WEAPON_START) {
             memset(&DngWepHavePt[i], 0, sizeof(WEAPON_HAVE));
             DngWepHavePt[i].item_no = -1;
         }
@@ -3528,17 +3528,17 @@ static void InitWeaponSelect(int mode, int chara) {
 
     WeaponPos = 0xE8 - WepMenu.weapon_slot * 0xD6;
     WepPolyPos = 2.0f + 16.0f * -WepMenu.weapon_slot;
-    WepFrameRate = 3.1415927f;
+    WepFrameRate = PI;
     WepMenu.warning_no = -1;
     MenuWepLevelUp.buildup_complete = 0;
-    CommonMenuMes3.Preset(1);
+    CommonMenuMes3.Preset(MES_PRESET_SYSTEM);
     CommonMenuMes3.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
-    CommonMenuMes3.style = 0;
-    AtoraNameMes.value_show = 0;
-    AtoraNameMes.value_narrow = 0;
+    CommonMenuMes3.style = MES_EDGE_NONE;
+    AtoraNameMes.value_show = false;
+    AtoraNameMes.value_narrow = false;
     AtoraNameMes.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
-    AtoraNameMes.style = 0;
-    AtoraNameMes.narrow_gaiji = 1;
+    AtoraNameMes.style = MES_EDGE_NONE;
+    AtoraNameMes.narrow_gaiji = true;
     memset(AtoraNameMes.tex_buff, 0, 0x100);
 
     for (int i = 0; i < 10; i++) {
@@ -3547,7 +3547,7 @@ static void InitWeaponSelect(int mode, int chara) {
     }
 
     AtoraNameMes.columns = 16;
-    AtoraNameMes.Preset(4);
+    AtoraNameMes.Preset(MES_PRESET_NAME);
     AtoraNameMes.mes_made = -1;
     MenuMes.InitData();
     MenuMes.message->unk_02C = 0x10;
@@ -3564,23 +3564,23 @@ static void InitWeaponSelect(int mode, int chara) {
 static void ExitWeaponMenuSelect() {
     int chara = BtlMenuStatusPt->cur_chara;
 
-    if (BtlMenuMode == 0 && chara == WepMenu.chara) {
+    if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && chara == WepMenu.chara) {
         DngWeaponEquipModelBuild(chara, MenuExtendReadBlock, BtlMenuReadBuf);
     }
 
     TexManager.DeleteTextureBlock(MenuExtendReadBlock);
     TexManager.CleanUpTextureList();
     BtlMenuTexBlockEnter();
-    BattleMenuFlag = 18;
+    BattleMenuFlag = BTLMENU_STATE_WEAPON_CLOSE;
     CommonMenuMes3.text_columns = MES_WIN_COLUMNS;
     CommonMenuMes3.text_rows = 10;
     CommonMenuMes3.text_len = 0;
     CommonMenuMes3.text_width = 0;
     CommonMenuMes3.text_height = 0;
     CommonMenuMes3.fade = 0.0f;
-    CommonMenuMes3.fade_in = 1;
+    CommonMenuMes3.fade_in = true;
     CommonMenuMes3.text_rate = CommonMenuMes3.text_rate_set;
-    CommonMenuMes3.waiting = 0;
+    CommonMenuMes3.waiting = false;
     CommonMenuMes3.text_at = 0.0f;
     CommonMenuMes3.text_no = 0;
     CommonMenuMes3.text_from = 0;
@@ -3602,41 +3602,41 @@ static void ExitWeaponMenuSelect() {
     }
 
     CommonMenuMes3.value = 0;
-    CommonMenuMes3.value_signed = 0;
-    CommonMenuMes3.value_show = 1;
-    CommonMenuMes3.value_narrow = 0;
+    CommonMenuMes3.value_signed = false;
+    CommonMenuMes3.value_show = true;
+    CommonMenuMes3.value_narrow = false;
     CommonMenuMes3.space_width = -1;
     CommonMenuMes3.space_area = -1;
     CommonMenuMes3.cursor_row = -1;
     CommonMenuMes3.cursor_y = 0;
-    CommonMenuMes3.cursor_lit = 0;
+    CommonMenuMes3.cursor_lit = false;
 
     for (int line = 0; line < 10; line++) {
         CommonMenuMes3.line_pos[line].x = -1;
         CommonMenuMes3.line_pos[line].y = -1;
     }
 
-    CommonMenuMes3.Preset(1);
+    CommonMenuMes3.Preset(MES_PRESET_SYSTEM);
     CommonMenuMes3.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
     CommonMenuMes3.char_height = 22;
-    CommonMenuMes3.value_narrow = 0;
-    AtoraNameMes.value_show = 1;
-    AtoraNameMes.value_narrow = 0;
-    AtoraNameMes.narrow_gaiji = 0;
+    CommonMenuMes3.value_narrow = false;
+    AtoraNameMes.value_show = true;
+    AtoraNameMes.value_narrow = false;
+    AtoraNameMes.narrow_gaiji = false;
     AtoraNameMes.char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
-    CommonMenuMes1.value_narrow = 0;
+    CommonMenuMes1.value_narrow = false;
     ForBackMenu();
-    BattleMenuFlag = 0;
+    BattleMenuFlag = BTLMENU_STATE_MAIN;
 }
 
 void WeaponMenuSelect() {
     int direction = -1;
 
     switch (WepMenu.state) {
-        case 1:
+        case WEP_STATE_OPEN:
             direction = 0;
             break;
-        case 2:
+        case WEP_STATE_CLOSE:
             direction = 1;
             break;
     }
@@ -3644,10 +3644,10 @@ void WeaponMenuSelect() {
     int done = ToFromSelect(direction);
 
     switch (MenuExTextureReadFlag) {
-        case 0:
+        case MENU_EX_TEX_UNREAD:
             if (MenuWepLevelUp.buildup_complete == 0) {
                 if (ReadBGSync() == 0) {
-                    if (MenuExTextureReadFlag != 0) {
+                    if (MenuExTextureReadFlag != MENU_EX_TEX_UNREAD) {
                         break;
                     }
 
@@ -3668,46 +3668,46 @@ void WeaponMenuSelect() {
             }
 
             break;
-        case 1:
+        case MENU_EX_TEX_BUILDING:
             BtlMDSBuildCnt++;
 
             if (BtlMDSBuildCnt > 3) {
-                MenuExTextureReadFlag = 2;
+                MenuExTextureReadFlag = MENU_EX_TEX_READY;
             }
 
             break;
     }
 
-    if (WepMenu.state != 0) {
+    if (WepMenu.state != WEP_STATE_IDLE) {
         WepMenu.counter++;
     } else {
         WepMenu.counter = 0;
     }
 
     switch (WepMenu.state) {
-        case 1:
-            if (!((float) WepMenu.counter <= 18.0f) && done != 0 && MenuExTextureReadFlag != 0) {
-                BattleMenuFlag = 2;
-                WepMenu.state = 0;
+        case WEP_STATE_OPEN:
+            if (!((float) WepMenu.counter <= 18.0f) && done != 0 && MenuExTextureReadFlag != MENU_EX_TEX_UNREAD) {
+                BattleMenuFlag = BTLMENU_STATE_WEAPON;
+                WepMenu.state = WEP_STATE_IDLE;
                 WepMenu.counter = 0;
             }
 
             break;
-        case 2:
+        case WEP_STATE_CLOSE:
             if (WepMenu.counter > 20 && done != 0) {
                 ExitWeaponMenuSelect();
             }
 
             break;
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-            if (MenuWepLevelUp.effect_active == 0 && GamePad.Down(0x60) != 0 && (MenuWepLevelUp.effect_state == 6 || MenuWepLevelUp.effect_state == 3 || MenuWepLevelUp.effect_state == 9 || MenuWepLevelUp.effect_state == 11)) {
+        case WEP_STATE_LEVELUP_EFFECT:
+        case WEP_STATE_STATUS_BREAK_EFFECT:
+        case WEP_STATE_BUILDUP_EFFECT:
+        case WEP_STATE_REPAIR_EFFECT:
+            if (MenuWepLevelUp.effect_active == 0 && GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0 && (MenuWepLevelUp.effect_state == WEP_EFFECT_STATE_BREAK_DONE || MenuWepLevelUp.effect_state == WEP_EFFECT_STATE_LEVELUP_DONE || MenuWepLevelUp.effect_state == WEP_EFFECT_STATE_BUILDUP_DONE || MenuWepLevelUp.effect_state == WEP_EFFECT_STATE_RECOVER_DONE)) {
                 WEAPON_HAVE *weapon = MenuWepLevelUp.weapon;
 
                 switch (WepMenu.state) {
-                    case 7:
+                    case WEP_STATE_LEVELUP_EFFECT:
                         MenuWepLevelUp.SetLevelUpWeaponData();
                         weapon->level++;
                         weapon->synthesis_count += MenuWepLevelUp.synthesis_count;
@@ -3717,119 +3717,119 @@ void WeaponMenuSelect() {
                         }
 
                         break;
-                    case 8: {
+                    case WEP_STATE_STATUS_BREAK_EFFECT: {
                         int equipped = BtlMenuStatusPt->GetEquipWeaponSlot(WepMenu.chara);
 
-                        if (WepMenu.weapon_slot == equipped || DngWepHavePt[equipped].item_no < 0x101) {
+                        if (WepMenu.weapon_slot == equipped || DngWepHavePt[equipped].item_no < ITEM_WEAPON_START) {
                             EquipDefaultWeapon(WepMenu.chara);
                         }
 
-                        MenuWepLevelUp.lost_default_weapon = 0;
+                        MenuWepLevelUp.lost_default_weapon = false;
                         break;
                     }
-                    case 9:
-                    case 10:
+                    case WEP_STATE_BUILDUP_EFFECT:
+                    case WEP_STATE_REPAIR_EFFECT:
                         break;
                 }
 
-                if (WepMenu.state != 10) {
+                if (WepMenu.state != WEP_STATE_REPAIR_EFFECT) {
                     MenuWepLevelUp.SetSnd(MenuWepLevelUp.snd_volume, MenuWepLevelUp.snd_from, 7);
                 }
 
                 MenuWepLevelUp.Initialize();
-                WepMenu.state = 0;
+                WepMenu.state = WEP_STATE_IDLE;
             }
 
             break;
-        case 11:
-            if (GamePad.Down(0x60) != 0) {
-                WepMenu.state = 0;
+        case WEP_STATE_WARNING:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                WepMenu.state = WEP_STATE_IDLE;
                 WepMenu.warning_no = -1;
             }
 
             break;
-        case 14:
-            if (GamePad.Down(0x60) != 0) {
-                WepMenu.state = 0;
+        case WEP_STATE_SCRAP_REFUSED:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                WepMenu.state = WEP_STATE_IDLE;
             }
 
             break;
-        case 12:
-            if (GamePad.Down(0x40) != 0) {
+        case WEP_STATE_SCRAP_PROMPT:
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
                 if (0 <= IsDefaultWeapon(weapon->item_no)) {
-                    ComMenuSePlay(2);
-                    WepMenu.state = 14;
-                } else if (weapon->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
-                    WepMenu.state = 14;
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    WepMenu.state = WEP_STATE_SCRAP_REFUSED;
+                } else if (weapon->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
+                    WepMenu.state = WEP_STATE_SCRAP_REFUSED;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 } else {
-                    WepMenu.state = 13;
-                    ComMenuSePlay(1);
+                    WepMenu.state = WEP_STATE_SCRAP_CONFIRM;
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
-            } else if (GamePad.Down(0x8020) != 0) {
-                WepMenu.state = 0;
-                ComMenuSePlay(0);
+            } else if (GamePad.Down(PAD_CIRCLE | PAD_LEFT) != 0) {
+                WepMenu.state = WEP_STATE_IDLE;
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (WepMenu.state == 0) {
+            if (WepMenu.state == WEP_STATE_IDLE) {
                 WepMenu.board.cursor = 0;
             }
 
             break;
-        case 13:
-            if (GamePad.Down(0x5000) != 0) {
+        case WEP_STATE_SCRAP_CONFIRM:
+            if (GamePad.Down(PAD_UP | PAD_DOWN) != 0) {
                 if (WepMenu.confirm[0] != 0) {
                     WepMenu.confirm[0] = 0;
                 } else {
                     WepMenu.confirm[0] = 1;
                 }
 
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (GamePad.Down(0x40) != 0) {
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 if (WepMenu.confirm[0] == 0) {
                     WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
                     if (0 <= IsDefaultWeapon(weapon->item_no)) {
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                     } else {
                         InitHaveWep(weapon);
-                        ComMenuSePlay(1);
-                        WepMenu.state = 0;
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
+                        WepMenu.state = WEP_STATE_IDLE;
 
                         if (WepMenu.weapon_slot == BtlMenuStatusPt->GetEquipWeaponSlot(WepMenu.chara)) {
                             EquipDefaultWeapon(WepMenu.chara);
                         }
 
-                        ComMenuSePlay(1);
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                     }
                 } else {
-                    WepMenu.state = 0;
-                    ComMenuSePlay(2);
+                    WepMenu.state = WEP_STATE_IDLE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
-            } else if (GamePad.Down(0x8020) != 0) {
-                WepMenu.state = 0;
-                ComMenuSePlay(0);
+            } else if (GamePad.Down(PAD_CIRCLE | PAD_LEFT) != 0) {
+                WepMenu.state = WEP_STATE_IDLE;
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (WepMenu.state == 0) {
+            if (WepMenu.state == WEP_STATE_IDLE) {
                 WepMenu.board.cursor = 0;
-                WepMenu.mode = 0;
+                WepMenu.mode = WEP_MENU_LIST;
             }
 
             break;
-        case 5:
-            if (!(WepFrameRate < 3.1415927f)) {
-                WepMenu.state = 0;
+        case WEP_STATE_EQUIP:
+            if (!(WepFrameRate < PI)) {
+                WepMenu.state = WEP_STATE_IDLE;
             }
-        case 4:
+        case WEP_STATE_CHARA_CHANGE:
             if (WepMenu.counter >= 26) {
-                WepMenu.state = 0;
+                WepMenu.state = WEP_STATE_IDLE;
             }
-        case 0: {
+        case WEP_STATE_IDLE: {
             int slot;
             int cursor;
             int chara;
@@ -3842,14 +3842,14 @@ void WeaponMenuSelect() {
             elem = WepMenu.element;
 
             switch (page) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
+                case WEP_MENU_LIST:
+                case WEP_MENU_ACTION:
+                case WEP_MENU_ELEMENT:
+                case WEP_MENU_LEVELUP_CONFIRM:
+                case WEP_MENU_STATUS_BREAK_CONFIRM:
+                case WEP_MENU_BUILDUP_SELECT:
+                case WEP_MENU_BUILDUP_CONFIRM:
+                case WEP_MENU_BUILDUP_PREVIEW:
                     if (GetMenuCharaEffectReadFlag() != 0) {
                         if (ReadBGSync() == 0) {
                             SetMenuCharaEffectReadFlag(0);
@@ -3859,16 +3859,16 @@ void WeaponMenuSelect() {
                     }
 
                     break;
-                case 8:
-                case 9:
-                case 10:
-                case 11:
+                case WEP_MENU_ATTACH_WEAPON:
+                case WEP_MENU_ATTACH_SOCKETS:
+                case WEP_MENU_ATTACH_BOARD:
+                case WEP_MENU_ATTACH_TAGS:
                     WeaponMenuAttachModeKey();
                     break;
             }
 
             if (slot != WepMenu.weapon_slot || (page == WepMenu.mode && cursor != WepMenu.board.cursor) || chara != WepMenu.chara || elem != WepMenu.element) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
             break;
@@ -3899,28 +3899,28 @@ void WeaponMenuSelect() {
     page_mes[11] = WepMenu.tag_row + ((WepMenu.tag_page + 2) * 10 + 100);
     mes_no = page_mes[WepMenu.mode];
 
-    if (WepMenu.mode >= 3 && WepMenu.mode < 8) {
+    if (WepMenu.mode >= WEP_MENU_LEVELUP_CONFIRM && WepMenu.mode < WEP_MENU_ATTACH_WEAPON) {
         s16 dialog[5] = {0x74, 0x76, 0x75, 0x77, 0x75};
-        help_no = dialog[WepMenu.mode - 3];
+        help_no = dialog[WepMenu.mode - WEP_MENU_LEVELUP_CONFIRM];
 
-        if (MenuWepLevelUp.operation_kind != -1) {
+        if (MenuWepLevelUp.operation_kind != WEP_EFFECT_NONE) {
             help_no = CommonMenuMes1.mes_made;
         }
     }
 
     switch (WepMenu.mode) {
-        case 1:
+        case WEP_MENU_ACTION:
             switch (WepMenu.state) {
-                case 12:
-                case 13:
-                case 14:
+                case WEP_STATE_SCRAP_PROMPT:
+                case WEP_STATE_SCRAP_CONFIRM:
+                case WEP_STATE_SCRAP_REFUSED:
                     mes_no = 0xA4;
                     break;
             }
 
             break;
-        case 5:
-        case 7:
+        case WEP_MENU_BUILDUP_SELECT:
+        case WEP_MENU_BUILDUP_PREVIEW:
             EnableBuildUpModel(builds, weapon);
             int i = 0;
 
@@ -3942,7 +3942,7 @@ void WeaponMenuSelect() {
                 }
             }
 
-            if (WepMenu.mode == 5) {
+            if (WepMenu.mode == WEP_MENU_BUILDUP_SELECT) {
                 s16 enabled;
 
                 if ((enabled = builds[WepMenu.board.cursor].enabled) != 0) {
@@ -3956,24 +3956,24 @@ void WeaponMenuSelect() {
             }
 
             break;
-        case 0: {
+        case WEP_MENU_LIST: {
             int item_no = weapon->item_no;
 
-            if (item_no >= 0x101) {
+            if (item_no >= ITEM_WEAPON_START) {
                 mes_no = GetWeaponMsgNo2(item_no) + 500;
                 value = weapon->level;
             }
 
             break;
         }
-        case 9: {
+        case WEP_MENU_ATTACH_SOCKETS: {
             int item_no = weapon->attach[WepMenu.board.cursor].item_no;
 
-            if (item_no >= 0x51) {
+            if (item_no >= ITEM_ATTACH_START) {
                 mes_no = item_no + 500;
                 value = GetAttachVolumeForMsg(&weapon->attach[WepMenu.board.cursor]);
 
-                if (item_no == 0x5A) {
+                if (item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                     name_mes = GetWeaponMsgNo2(weapon->attach[WepMenu.board.cursor].sphere_weapon_no);
                 }
             } else {
@@ -3988,39 +3988,39 @@ void WeaponMenuSelect() {
 
             break;
         }
-        case 2:
+        case WEP_MENU_ELEMENT:
             if (weapon->best_elem == WepMenu.element) {
                 mes_no += 0x15;
             }
 
             break;
-        case 11:
-            if (WepMenu.tag_page == 1 && weapon->best_elem == WepMenu.tag_row) {
+        case WEP_MENU_ATTACH_TAGS:
+            if (WepMenu.tag_page == WEP_TAG_ELEMENT && weapon->best_elem == WepMenu.tag_row) {
                 mes_no += 0x15;
             }
 
             break;
-        case 10:
+        case WEP_MENU_ATTACH_BOARD:
             switch (WepMenu.board.cursor_area) {
-                case 1: {
+                case PERSONAL_BOARD_AREA_CELLS: {
                     int held = BtlHaveItemPt->item_no;
 
-                    if (held >= 0x51) {
+                    if (held >= ITEM_ATTACH_START) {
                         mes_no = held + 500;
                         value = GetAttachVolumeForMsg(&WepMenu.board.held_attach);
 
-                        if (BtlHaveItemPt->item_no == 0x5A) {
+                        if (BtlHaveItemPt->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                             name_mes = GetWeaponMsgNo2(WepMenu.board.held_attach.sphere_weapon_no);
                         }
                     } else {
                         ATTACH_LIST *attach = &attachments[WepMenu.board.cursor];
                         int          item_no = attach->item_no;
 
-                        if (item_no >= 0x51) {
+                        if (item_no >= ITEM_ATTACH_START) {
                             mes_no = item_no + 500;
                             value = GetAttachVolumeForMsg(attach);
 
-                            if (attachments[WepMenu.board.cursor].item_no == 0x5A) {
+                            if (attachments[WepMenu.board.cursor].item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                                 name_mes = GetWeaponMsgNo2(attachments[WepMenu.board.cursor].sphere_weapon_no);
                             }
                         }
@@ -4028,7 +4028,7 @@ void WeaponMenuSelect() {
 
                     break;
                 }
-                case 2:
+                case PERSONAL_BOARD_AREA_TRASH:
                     mes_no = 0xBE;
                     break;
             }
@@ -4036,26 +4036,26 @@ void WeaponMenuSelect() {
             break;
     }
 
-    if (WepMenu.state == 11) {
+    if (WepMenu.state == WEP_STATE_WARNING) {
         s16 warnings[10] = {0xA1, 0xA2, 0xA3, 0x19B, 0x19C, 0x19D, 0xA8, 0xAA, 0xA9, 0xAB};
         help_no = warnings[WepMenu.warning_no];
     }
 
-    if (WepMenu.state == 13) {
+    if (WepMenu.state == WEP_STATE_SCRAP_CONFIRM) {
         help_no = 0xA5;
     }
 
-    if (WepMenu.state == 14) {
+    if (WepMenu.state == WEP_STATE_SCRAP_REFUSED) {
         help_no = 0xA6;
 
-        if (weapon->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+        if (weapon->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
             help_no = 0xA7;
         }
     }
 
     if (CommonMenuMes2.mes_made != mes_no || CommonMenuMes2.value != value || (CommonMenuMes2.mes_made == 0x24E && (CommonMenuMes2.mes_no[0] != name_mes + 100 || CommonMenuMes2.value != value))) {
-        CommonMenuMes2.value_signed = 1;
-        CommonMenuMes2.value_show = 0;
+        CommonMenuMes2.value_signed = true;
+        CommonMenuMes2.value_show = false;
 
         if (name_mes > 0) {
             CommonMenuMes2.mes_no[0] = name_mes + 100;
@@ -4068,7 +4068,7 @@ void WeaponMenuSelect() {
 
     int changed = 0;
 
-    if (WepMenu.mode == 5 || WepMenu.mode == 7) {
+    if (WepMenu.mode == WEP_MENU_BUILDUP_SELECT || WepMenu.mode == WEP_MENU_BUILDUP_PREVIEW) {
         s16 previous[3];
 
         for (int i = 0; i < 3; i++) {
@@ -4088,7 +4088,7 @@ void WeaponMenuSelect() {
                 CommonMenuMes1.mes_no[i] = -1;
             }
         }
-    } else if (MenuWepLevelUp.operation_kind == -1) {
+    } else if (MenuWepLevelUp.operation_kind == WEP_EFFECT_NONE) {
         for (int i = 0; i < 4; i++) {
             CommonMenuMes1.mes_no[i] = -1;
 
@@ -4099,12 +4099,12 @@ void WeaponMenuSelect() {
         }
     }
 
-    if ((CommonMenuMes1.mes_made != help_no && MenuWepLevelUp.operation_kind == -1) || ((WepMenu.mode == 5 || WepMenu.mode == 7) && changed != 0) || (CommonMenuMes1.mes_made != help_no && WepMenu.state == 11) || (CommonMenuMes1.mes_made != help_no && WepMenu.state == 13) || (CommonMenuMes1.mes_made != help_no && WepMenu.state == 14)) {
+    if ((CommonMenuMes1.mes_made != help_no && MenuWepLevelUp.operation_kind == WEP_EFFECT_NONE) || ((WepMenu.mode == WEP_MENU_BUILDUP_SELECT || WepMenu.mode == WEP_MENU_BUILDUP_PREVIEW) && changed != 0) || (CommonMenuMes1.mes_made != help_no && WepMenu.state == WEP_STATE_WARNING) || (CommonMenuMes1.mes_made != help_no && WepMenu.state == WEP_STATE_SCRAP_CONFIRM) || (CommonMenuMes1.mes_made != help_no && WepMenu.state == WEP_STATE_SCRAP_REFUSED)) {
         switch (WepMenu.state) {
-            case 11:
-            case 13:
-            case 14:
-                CommonMenuMes1.stay_frame = 1;
+            case WEP_STATE_WARNING:
+            case WEP_STATE_SCRAP_CONFIRM:
+            case WEP_STATE_SCRAP_REFUSED:
+                CommonMenuMes1.stay_frame = true;
                 break;
         }
 
@@ -4166,14 +4166,14 @@ static int WeaponSelectKey() {
     int prev_chara = WepMenu.chara;
 
     switch (WepMenu.mode) {
-        case 0: {
+        case WEP_MENU_LIST: {
             int done = 0;
 
-            if (GamePad.Down(0x8000) && 0 < WepMenu.weapon_slot) {
+            if (GamePad.Down(PAD_LEFT) && 0 < WepMenu.weapon_slot) {
                 WepMenu.weapon_slot--;
             }
 
-            if (GamePad.Down(0x2000) && WepMenu.weapon_slot < 9) {
+            if (GamePad.Down(PAD_RIGHT) && WepMenu.weapon_slot < 9) {
                 WepMenu.weapon_slot++;
             }
 
@@ -4183,17 +4183,17 @@ static int WeaponSelectKey() {
             if (DebugMode) {
                 WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
-                if (GamePad.Down2(0x40) && weapon->level < 99) {
+                if (GamePad.Down2(PAD_CROSS) && weapon->level < 99) {
                     weapon->level++;
                 }
 
-                if (GamePad.Down2(0xA)) {
+                if (GamePad.Down2(PAD_R2 | PAD_R1)) {
                     for (int i = 1; i <= 13; i++) {
                         weapon->flags |= 1 << i;
                     }
                 }
 
-                if (GamePad.Down2(0x10)) {
+                if (GamePad.Down2(PAD_TRIANGLE)) {
                     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
                     weapon->level = 99;
                     weapon->attack = data->attack_max;
@@ -4218,7 +4218,7 @@ static int WeaponSelectKey() {
                     }
                 }
 
-                if (GamePad.Down2(0x20)) {
+                if (GamePad.Down2(PAD_CIRCLE)) {
                     weapon->flags = 0;
                     weapon->flags = 0x36EA;
                 }
@@ -4226,7 +4226,7 @@ static int WeaponSelectKey() {
                 static int now = 0;
                 static int cnt = 0;
 
-                if (GamePad.Down2(0x80)) {
+                if (GamePad.Down2(PAD_SQUARE)) {
                     now++;
 
                     if (now >= 4) {
@@ -4282,40 +4282,40 @@ static int WeaponSelectKey() {
                     }
 
                     for (int i = 0; i < now; i++) {
-                        ComMenuSePlay(1);
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                     }
                 }
             }
 
 #endif
-            if (GamePad.Down(0x20)) {
-                ComMenuSePlay(2);
+            if (GamePad.Down(PAD_CIRCLE)) {
+                ComMenuSePlay(MENU_SOUND_REFUSE);
 
                 switch (WepMenu.open_mode) {
-                    case 2:
+                    case WEP_OPEN_VIEW_ONLY:
                         break;
-                    case 0:
-                        if (BtlMenuMode == 0) {
+                    case WEP_OPEN_FROM_BAR:
+                        if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
                             MenuTextureReload(MenuShadowReadBlock);
                             DngActiveWeaponTextureCopy();
                         }
 
-                        BattleMenuFlag = 18;
-                        WepMenu.state = 2;
+                        BattleMenuFlag = BTLMENU_STATE_WEAPON_CLOSE;
+                        WepMenu.state = WEP_STATE_CLOSE;
                         WepMenu.counter = 0;
                         break;
                 }
 
                 done = 1;
-            } else if (GamePad.Down(0x40)) {
+            } else if (GamePad.Down(PAD_CROSS)) {
                 switch (WepMenu.open_mode) {
-                    case 0:
+                    case WEP_OPEN_FROM_BAR:
                         if (GetDefaultWeaponNo(WepMenu.chara) > DngWepHavePt[WepMenu.weapon_slot].item_no) {
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
-                            WepMenu.mode = 1;
-                            WepMenu.board.cursor = 0;
-                            ComMenuSePlay(1);
+                            WepMenu.mode = WEP_MENU_ACTION;
+                            WepMenu.board.cursor = WEP_ACTION_EQUIP;
+                            ComMenuSePlay(MENU_SOUND_CONFIRM);
                         }
 
                         break;
@@ -4325,7 +4325,7 @@ static int WeaponSelectKey() {
             }
 
             if (!done) {
-                if (GamePad.Down(0xA)) {
+                if (GamePad.Down(PAD_R2 | PAD_R1)) {
                     WepMenu.chara++;
 
                     if (WepMenu.chara >= chara_num) {
@@ -4333,7 +4333,7 @@ static int WeaponSelectKey() {
                     }
                 }
 
-                if (GamePad.Down(5)) {
+                if (GamePad.Down(PAD_L2 | PAD_L1)) {
                     WepMenu.chara--;
 
                     if (WepMenu.chara < 0) {
@@ -4344,11 +4344,11 @@ static int WeaponSelectKey() {
 
             break;
         }
-        case 1: {
+        case WEP_MENU_ACTION: {
             WEAPON_HAVE *weapon = GetNowSelectWeapon();
             int          status = NowWeaponStatusValue(weapon);
 
-            if (GamePad.Down(0x1000)) {
+            if (GamePad.Down(PAD_UP)) {
                 if (0 < WepMenu.board.cursor && WepMenu.board.cursor < 5) {
                     WepMenu.board.cursor--;
                 } else {
@@ -4356,7 +4356,7 @@ static int WeaponSelectKey() {
                 }
             }
 
-            if (GamePad.Down(0x4000)) {
+            if (GamePad.Down(PAD_DOWN)) {
                 if (WepMenu.board.cursor >= 3) {
                     WepMenu.board.cursor = WeaponMenuKastumSelectDown(WepMenu.board.cursor + 1, status);
                 } else {
@@ -4364,73 +4364,73 @@ static int WeaponSelectKey() {
                 }
             }
 
-            if (GamePad.Down(0x2000) && WepMenu.board.cursor == 0) {
-                WepMenu.state = 12;
+            if (GamePad.Down(PAD_RIGHT) && WepMenu.board.cursor == WEP_ACTION_EQUIP) {
+                WepMenu.state = WEP_STATE_SCRAP_PROMPT;
                 WepMenu.confirm[0] = 1;
-                ComMenuSePlay(0);
-            } else if (GamePad.Down(0x40)) {
+                ComMenuSePlay(MENU_SOUND_CURSOR);
+            } else if (GamePad.Down(PAD_CROSS)) {
                 s8 slot = WepMenu.weapon_slot;
                 NowWeaponStatusValue(weapon);
 
                 switch (WepMenu.board.cursor) {
-                    case 0: {
+                    case WEP_ACTION_EQUIP: {
                         CDngStatusData *status_data = BtlMenuStatusPt;
                         int             zone;
 
-                        if (status_data->GetActiveCharaStatus(WepMenu.chara) & 0x20) {
-                            ComMenuSePlay(2);
-                            WepMenu.state = 11;
+                        if (status_data->GetActiveCharaStatus(WepMenu.chara) & AILMENT_CURSE) {
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 3;
-                        } else if ((zone = BtlMenuStatusPt->res_limit_zone_current) == 10) {
-                            WepMenu.state = 11;
+                        } else if ((zone = BtlMenuStatusPt->res_limit_zone_current) == RES_LIMIT_ZONE_NO_WEAPON_CHANGE) {
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 4;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else if (BtlMenuStatusPt->party_size <= WepMenu.chara) {
-                            WepMenu.state = 11;
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 2;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
                             BtlMenuStatusPt->equipped_weapon_slot[WepMenu.chara] = slot;
                             WepFrameRate = 0.0f;
-                            WepMenu.state = 5;
+                            WepMenu.state = WEP_STATE_EQUIP;
                             int chara = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
 
-                            if (BtlMenuMode == 0 && ((chara == 5 && WepMenu.chara == 5) || (chara == 3 && WepMenu.chara == 3))) {
+                            if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && ((chara == CHARA_OSMOND && WepMenu.chara == CHARA_OSMOND) || (chara == CHARA_RUBY && WepMenu.chara == CHARA_RUBY))) {
                                 StartReadBG();
                                 DngWepEffectReadStart();
                             }
 
-                            ComMenuSePlay(23);
+                            ComMenuSePlay(SE_WEAPON_EQUIP);
                         }
 
                         break;
                     }
-                    case 1: {
-                        WepMenu.mode = 10;
+                    case WEP_ACTION_ATTACH: {
+                        WepMenu.mode = WEP_MENU_ATTACH_BOARD;
                         WepMenu.board.cursor = 0;
-                        WepMenu.tag_page = 0;
+                        WepMenu.tag_page = WEP_TAG_STATUS;
                         SetOldEffectKind(weapon->best_elem);
                         int          holes = GetWeaponHoleNum(weapon->item_no);
                         CMenuCursor *cursor = SaveData->GetMenuCursor();
-                        int          max = PersonalRetMax(2);
+                        int          max = PersonalRetMax(BOARD_PAGE_ATTACH);
 
                         if (cursor->reset_pos == 0) {
                             WepMenu.mode = cursor->mode[2];
 
-                            if (WepMenu.mode < 8 || WepMenu.mode > 11) {
-                                WepMenu.mode = 10;
+                            if (WepMenu.mode < WEP_MENU_ATTACH_WEAPON || WepMenu.mode > WEP_MENU_ATTACH_TAGS) {
+                                WepMenu.mode = WEP_MENU_ATTACH_BOARD;
                             }
 
                             WepMenu.board.cursor = cursor->pos[2];
 
                             switch (WepMenu.mode) {
-                                case 9:
+                                case WEP_MENU_ATTACH_SOCKETS:
                                     if (holes - 1 < WepMenu.board.cursor) {
                                         WepMenu.board.cursor = holes - 1;
                                     }
 
                                     break;
-                                case 10:
+                                case WEP_MENU_ATTACH_BOARD:
                                     WepMenu.board.top_row = WepMenu.board.cursor / 5;
 
                                     if (max / 5 - 4 < WepMenu.board.top_row) {
@@ -4446,10 +4446,10 @@ static int WeaponSelectKey() {
                                     }
 
                                     break;
-                                case 8:
+                                case WEP_MENU_ATTACH_WEAPON:
                                     WepMenu.board.cursor = 0;
                                     break;
-                                case 11:
+                                case WEP_MENU_ATTACH_TAGS:
                                     break;
                             }
                         } else {
@@ -4469,9 +4469,9 @@ static int WeaponSelectKey() {
                         }
 
                         if (holes <= 0) {
-                            WepMenu.sockets_enabled = 0;
+                            WepMenu.sockets_enabled = false;
                         } else {
-                            WepMenu.sockets_enabled = 1;
+                            WepMenu.sockets_enabled = true;
                         }
 
                         if (WepMenu.board.cursor < 0) {
@@ -4481,142 +4481,142 @@ static int WeaponSelectKey() {
                         int pages = max / 5;
                         WepMenu.board.y = 127 - WepMenu.board.top_row * 40;
                         WepMenu.board.scroll = 140.0f + 114.0f * WepMenu.board.top_row / pages;
-                        ComMenuSePlay(1);
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                         break;
                     }
-                    case 2:
-                        WepMenu.mode = 2;
-                        WepMenu.tag_page = 1;
+                    case WEP_ACTION_ELEMENT:
+                        WepMenu.mode = WEP_MENU_ELEMENT;
+                        WepMenu.tag_page = WEP_TAG_ELEMENT;
                         WepMenu.element = weapon->best_elem;
 
                         if (WepMenu.element < 0 || WepMenu.element > 4) {
                             WepMenu.element = 0;
                         }
 
-                        ComMenuSePlay(1);
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                         break;
-                    case 3:
+                    case WEP_ACTION_REPAIR:
                         if (GetNowItemNum(ITEM_REPAIR_POWDER, MenuItemPackPt) <= 0) {
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
                             int          chara = WepMenu.chara;
                             CUserStatus *status_data = (CUserStatus *) BtlMenuStatusPt;
 
-                            if (ItemUseFunc(status_data, ITEM_REPAIR_POWDER, chara, 4, weapon) == 2) {
+                            if (ItemUseFunc(status_data, ITEM_REPAIR_POWDER, chara, ITEM_USE_ON_BOARD_WEAPON, weapon) == 2) {
                                 DeleteItemAfterUseItem(ITEM_REPAIR_POWDER, MenuItemPackPt);
-                                ComMenuSePlay(24);
+                                ComMenuSePlay(SE_WEAPON_REPAIR);
 
                                 if (IsDefaultWeapon(weapon->item_no) >= 0) {
                                     SetMenuWeaponModelReference(slot, 1, 1);
                                 }
 
                                 MenuWepLevelUp.WepRecover(weapon, &DngWeaponFrm[slot], WepMenuEffectReadBuf, BtlMenuExReadBlock);
-                                WepMenu.state = 10;
+                                WepMenu.state = WEP_STATE_REPAIR_EFFECT;
                             } else {
-                                ComMenuSePlay(2);
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             }
                         }
 
                         break;
-                    case 4: {
+                    case WEP_ACTION_LEVELUP: {
                         int item_no = weapon->item_no;
 
                         if (item_no == GetDefaultWeaponNo(WepMenu.chara)) {
-                            WepMenu.state = 11;
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 7;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else if (item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
-                            WepMenu.state = 11;
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 5;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else if (weapon->level >= 99) {
-                            WepMenu.state = 11;
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 8;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
-                            WepMenu.mode = 3;
+                            WepMenu.mode = WEP_MENU_LEVELUP_CONFIRM;
                             WepMenu.board.cursor = 1;
-                            ComMenuSePlay(1);
+                            ComMenuSePlay(MENU_SOUND_CONFIRM);
                         }
 
                         break;
                     }
-                    case 5: {
+                    case WEP_ACTION_STATUS_BREAK: {
                         int             count;
                         int             i;
                         DNG_CONSUMABLE *items = BtlMenuStatusPt->consumable_items;
                         count = 0;
 
                         for (i = 0; i < 40; i++) {
-                            if (items[i].id >= 81) {
+                            if (items[i].id >= ITEM_ATTACH_START) {
                                 count++;
                             }
                         }
 
                         if (count >= 40) {
-                            WepMenu.state = 11;
+                            WepMenu.state = WEP_STATE_WARNING;
                             WepMenu.warning_no = 1;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
-                            WepMenu.mode = 4;
+                            WepMenu.mode = WEP_MENU_STATUS_BREAK_CONFIRM;
                             WepMenu.board.cursor = 1;
-                            ComMenuSePlay(1);
+                            ComMenuSePlay(MENU_SOUND_CONFIRM);
                         }
 
                         break;
                     }
-                    case 6:
-                        WepMenu.mode = 5;
+                    case WEP_ACTION_BUILDUP:
+                        WepMenu.mode = WEP_MENU_BUILDUP_SELECT;
                         WepMenu.board.cursor = 0;
-                        ComMenuSePlay(1);
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                         break;
                 }
-            } else if (GamePad.Down(0x20)) {
-                WepMenu.mode = 0;
-                ComMenuSePlay(2);
+            } else if (GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.mode = WEP_MENU_LIST;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
         }
-        case 2:
-            WepMenu.tag_page = 1;
+        case WEP_MENU_ELEMENT:
+            WepMenu.tag_page = WEP_TAG_ELEMENT;
 
-            if (GamePad.Down(0xF)) {
-                ComMenuSePlay(2);
+            if (GamePad.Down(PAD_L2 | PAD_R2 | PAD_L1 | PAD_R1)) {
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
-            if (GamePad.Down(0x1000) && 0 < WepMenu.element) {
+            if (GamePad.Down(PAD_UP) && 0 < WepMenu.element) {
                 WepMenu.element--;
             }
 
-            if (GamePad.Down(0x4000) && WepMenu.element < 4) {
+            if (GamePad.Down(PAD_DOWN) && WepMenu.element < 4) {
                 WepMenu.element++;
             }
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 WEAPON_HAVE *weapon = GetNowSelectWeapon();
                 WEAPON_HAVE  total;
                 WeaponAllValueSet(weapon, &total, 0);
 
                 if (WeaponMenuCheckEnableSetElem(weapon, &total, WepMenu.element)) {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 } else {
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
-            } else if (GamePad.Down(0x20)) {
-                WepMenu.mode = 1;
+            } else if (GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.mode = WEP_MENU_ACTION;
 
-                if (BtlMenuMode == 0 && ((CUserStatus *) BtlMenuStatusPt)->cur_chara == 3 && WepMenu.chara == 3) {
+                if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && ((CUserStatus *) BtlMenuStatusPt)->cur_chara == CHARA_RUBY && WepMenu.chara == CHARA_RUBY) {
                     StartReadBG();
                     DngWepEffectReadStart();
                 }
 
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
-        case 3:
-            if (GamePad.Down(0x5000)) {
+        case WEP_MENU_LEVELUP_CONFIRM:
+            if (GamePad.Down(PAD_UP | PAD_DOWN)) {
                 if (WepMenu.board.cursor != 0) {
                     WepMenu.board.cursor = 0;
                 } else {
@@ -4624,7 +4624,7 @@ static int WeaponSelectKey() {
                 }
             }
 
-            if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
+            if (WepMenu.board.cursor == 0 && GamePad.Down(PAD_CROSS)) {
                 s8 slot = WepMenu.weapon_slot;
 
                 if (DngWepHavePt[slot].experience < GetWeaponMaxExp(&DngWepHavePt[slot])) {
@@ -4632,19 +4632,19 @@ static int WeaponSelectKey() {
                 }
 
                 MenuWepLevelUp.SetLevelUpValue(&DngWepHavePt[slot], &DngWeaponFrm[slot], WepMenuEffectReadBuf, BtlMenuExReadBlock);
-                WepMenu.state = 7;
-                WepMenu.mode = 0;
+                WepMenu.state = WEP_STATE_LEVELUP_EFFECT;
+                WepMenu.mode = WEP_MENU_LIST;
                 WepMenu.board.cursor = 0;
-                ComMenuSePlay(1);
-            } else if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40)) || GamePad.Down(0x20)) {
-                WepMenu.mode = 1;
-                WepMenu.board.cursor = 4;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
+            } else if ((WepMenu.board.cursor == 1 && GamePad.Down(PAD_CROSS)) || GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.mode = WEP_MENU_ACTION;
+                WepMenu.board.cursor = WEP_ACTION_LEVELUP;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
-        case 4:
-            if (GamePad.Down(0x5000)) {
+        case WEP_MENU_STATUS_BREAK_CONFIRM:
+            if (GamePad.Down(PAD_UP | PAD_DOWN)) {
                 if (WepMenu.board.cursor != 0) {
                     WepMenu.board.cursor = 0;
                 } else {
@@ -4652,33 +4652,33 @@ static int WeaponSelectKey() {
                 }
             }
 
-            if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40)) || GamePad.Down(0x20)) {
-                WepMenu.mode = 1;
-                WepMenu.board.cursor = 5;
-                ComMenuSePlay(2);
-            } else if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
+            if ((WepMenu.board.cursor == 1 && GamePad.Down(PAD_CROSS)) || GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.mode = WEP_MENU_ACTION;
+                WepMenu.board.cursor = WEP_ACTION_STATUS_BREAK;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
+            } else if (WepMenu.board.cursor == 0 && GamePad.Down(PAD_CROSS)) {
                 int             slot = WepMenu.weapon_slot;
                 CWeaponLevelUp *buffer = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
                 MenuWepLevelUp.SetStatusBreak(&DngWepHavePt[slot], &DngWeaponFrm[slot], buffer, BtlMenuExReadBlock);
-                WepMenu.state = 8;
-                WepMenu.mode = 0;
+                WepMenu.state = WEP_STATE_STATUS_BREAK_EFFECT;
+                WepMenu.mode = WEP_MENU_LIST;
                 WepMenu.board.cursor = 0;
-                ComMenuSePlay(1);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
             }
 
             break;
-        case 5: {
+        case WEP_MENU_BUILDUP_SELECT: {
             WEAPON_HAVE     *weapon = GetNowSelectWeapon();
             WEP_BUILDUP_INFO info[7];
             int              build_up;
             EnableBuildUpModel(info, weapon);
             int count = WeaponStatusBuildUp(weapon, build_up);
 
-            if (GamePad.Down(0x1000)) {
+            if (GamePad.Down(PAD_UP)) {
                 WepMenu.board.cursor--;
             }
 
-            if (GamePad.Down(0x4000)) {
+            if (GamePad.Down(PAD_DOWN)) {
                 WepMenu.board.cursor++;
             }
 
@@ -4690,14 +4690,14 @@ static int WeaponSelectKey() {
                 WepMenu.board.cursor = 0;
             }
 
-            if (GamePad.Down(0x20)) {
-                WepMenu.board.cursor = 6;
-                WepMenu.mode = 1;
-            } else if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.board.cursor = WEP_ACTION_BUILDUP;
+                WepMenu.mode = WEP_MENU_ACTION;
+            } else if (GamePad.Down(PAD_CROSS)) {
                 int attached = 0;
 
                 for (int i = 0; i < GetWeaponHoleNum(weapon->item_no); i++) {
-                    if (weapon->attach[i].item_no >= 81) {
+                    if (weapon->attach[i].item_no >= ITEM_ATTACH_START) {
                         attached++;
                     }
                 }
@@ -4707,21 +4707,21 @@ static int WeaponSelectKey() {
 
                 if (enabled == 1 && attached == 0) {
                     MenuWepLevelUp.buildup_weapon_no = weapon_no;
-                    WepMenu.mode = 6;
+                    WepMenu.mode = WEP_MENU_BUILDUP_CONFIRM;
                     WepMenu.board.cursor = 1;
                 } else if (enabled == 0) {
-                    WepMenu.mode = 7;
-                    WepMenu.tag_page = 0;
+                    WepMenu.mode = WEP_MENU_BUILDUP_PREVIEW;
+                    WepMenu.tag_page = WEP_TAG_STATUS;
                 } else {
-                    WepMenu.state = 11;
+                    WepMenu.state = WEP_STATE_WARNING;
                     WepMenu.warning_no = 6;
                 }
             }
 
             break;
         }
-        case 6:
-            if (GamePad.Down(0x5000)) {
+        case WEP_MENU_BUILDUP_CONFIRM:
+            if (GamePad.Down(PAD_UP | PAD_DOWN)) {
                 if (WepMenu.board.cursor != 0) {
                     WepMenu.board.cursor = 0;
                 } else {
@@ -4729,43 +4729,43 @@ static int WeaponSelectKey() {
                 }
             }
 
-            if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40)) || GamePad.Down(0x20)) {
-                WepMenu.mode = 1;
-                WepMenu.board.cursor = 6;
-                ComMenuSePlay(2);
-            } else if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
+            if ((WepMenu.board.cursor == 1 && GamePad.Down(PAD_CROSS)) || GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.mode = WEP_MENU_ACTION;
+                WepMenu.board.cursor = WEP_ACTION_BUILDUP;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
+            } else if (WepMenu.board.cursor == 0 && GamePad.Down(PAD_CROSS)) {
                 MenuWepLevelUp.SetBuildUp(&DngWepHavePt[WepMenu.weapon_slot], &DngWeaponFrm[WepMenu.weapon_slot], WepMenuEffectReadBuf, BtlMenuExReadBlock);
-                WepMenu.state = 9;
-                WepMenu.mode = 0;
+                WepMenu.state = WEP_STATE_BUILDUP_EFFECT;
+                WepMenu.mode = WEP_MENU_LIST;
                 WepMenu.board.cursor = 0;
-                ComMenuSePlay(1);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
             }
 
             break;
-        case 7:
-            if (GamePad.Down(5)) {
+        case WEP_MENU_BUILDUP_PREVIEW:
+            if (GamePad.Down(PAD_L2 | PAD_L1)) {
                 WepMenu.tag_page--;
 
                 if (WepMenu.tag_page < 0) {
-                    WepMenu.tag_page = 2;
+                    WepMenu.tag_page = WEP_TAG_VS_MONSTER;
                 }
 
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (GamePad.Down(0xA)) {
+            if (GamePad.Down(PAD_R2 | PAD_R1)) {
                 WepMenu.tag_page++;
 
-                if (WepMenu.tag_page > 2) {
-                    WepMenu.tag_page = 0;
+                if (WepMenu.tag_page > WEP_TAG_VS_MONSTER) {
+                    WepMenu.tag_page = WEP_TAG_STATUS;
                 }
 
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (GamePad.Down(0x20)) {
-                WepMenu.mode = 5;
-                ComMenuSePlay(2);
+            if (GamePad.Down(PAD_CIRCLE)) {
+                WepMenu.mode = WEP_MENU_BUILDUP_SELECT;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
@@ -4774,7 +4774,7 @@ static int WeaponSelectKey() {
     if (prev_chara != WepMenu.chara) {
         int chara = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
 
-        if (BtlMenuMode == 0 && chara == prev_chara) {
+        if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && chara == prev_chara) {
             DngWeaponEquipModelBuild(chara, MenuExtendReadBlock, BtlMenuReadBuf);
         }
 
@@ -4783,8 +4783,8 @@ static int WeaponSelectKey() {
         DngWepHavePt = status_data->chara_weapons[selected_chara];
 
         if (StartReadWepMDS(BtlMenuReadBuf, WepMenu.chara)) {
-            MenuExTextureReadFlag = 0;
-            WepMenu.state = 4;
+            MenuExTextureReadFlag = MENU_EX_TEX_UNREAD;
+            WepMenu.state = WEP_STATE_CHARA_CHANGE;
             WepMenu.counter = 0;
 
             if (abs(prev_chara - WepMenu.chara) > 1) {
@@ -4804,11 +4804,11 @@ static int WeaponSelectKey() {
 
             WeaponPos = 0xE8 - WepMenu.weapon_slot * 0xD6;
             WepPolyPos = 2.0f + 16.0f * -WepMenu.weapon_slot;
-            WepMenu.state = 0;
+            WepMenu.state = WEP_STATE_IDLE;
             WepMenu.counter = 0;
             result = 0;
         } else {
-            ComMenuSePlay(2);
+            ComMenuSePlay(MENU_SOUND_REFUSE);
         }
     }
 
@@ -4840,14 +4840,14 @@ static void WepAttachHaveCancel() {
     ATTACH_LIST *slot;
     s16          held = BtlHaveItemPt->item_no;
 
-    if (held >= 81) {
+    if (held >= ITEM_ATTACH_START) {
         switch (BtlHaveItemPt->from_page) {
-            case 10: {
+            case WEP_MENU_ATTACH_BOARD: {
                 ATTACH_LIST *items = (ATTACH_LIST *) BtlMenuStatusPt->consumable_items;
                 slot = &items[BtlHaveItemPt->from_slot];
                 break;
             }
-            case 9:
+            case WEP_MENU_ATTACH_SOCKETS:
                 slot = &DngWepHavePt[WepMenu.weapon_slot].attach[BtlHaveItemPt->from_slot];
                 break;
         }
@@ -4859,7 +4859,7 @@ static void WepAttachHaveCancel() {
             slot->item_no = held;
         }
 
-        if (BtlHaveItemPt->item_no < 81) {
+        if (BtlHaveItemPt->item_no < ITEM_ATTACH_START) {
             InitHaveData(BtlHaveItemPt);
         }
     } else {
@@ -4870,12 +4870,12 @@ static void WepAttachHaveCancel() {
             SetCursorPos(cursor, 2, WepMenu.board.cursor);
         }
 
-        WepMenu.mode = 1;
-        WepMenu.board.cursor = 1;
-        WepMenu.sockets_enabled = 0;
+        WepMenu.mode = WEP_MENU_ACTION;
+        WepMenu.board.cursor = WEP_ACTION_ATTACH;
+        WepMenu.sockets_enabled = false;
         GetNowSelectWeapon();
 
-        if (BtlMenuMode == 0 && BtlMenuStatusPt->cur_chara == 3 && WepMenu.chara == 3) {
+        if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && BtlMenuStatusPt->cur_chara == CHARA_RUBY && WepMenu.chara == CHARA_RUBY) {
             StartReadBG();
             DngWepEffectReadStart();
         }
@@ -4884,25 +4884,25 @@ static void WepAttachHaveCancel() {
 
 void WeaponMenuAttachModeKey() {
     switch (WepMenu.mode) {
-        case 11:
-        case 9:
-        case 10:
-        case 8: {
+        case WEP_MENU_ATTACH_TAGS:
+        case WEP_MENU_ATTACH_SOCKETS:
+        case WEP_MENU_ATTACH_BOARD:
+        case WEP_MENU_ATTACH_WEAPON: {
             int page = WepMenu.tag_page;
 
-            if (GamePad.Down(0xA) != 0) {
+            if (GamePad.Down(PAD_R2 | PAD_R1) != 0) {
                 WepMenu.tag_page++;
 
-                if (WepMenu.tag_page > 2) {
-                    WepMenu.tag_page = 0;
+                if (WepMenu.tag_page > WEP_TAG_VS_MONSTER) {
+                    WepMenu.tag_page = WEP_TAG_STATUS;
                 }
             }
 
-            if (GamePad.Down(5) != 0) {
+            if (GamePad.Down(PAD_L2 | PAD_L1) != 0) {
                 WepMenu.tag_page--;
 
                 if (WepMenu.tag_page < 0) {
-                    WepMenu.tag_page = 2;
+                    WepMenu.tag_page = WEP_TAG_VS_MONSTER;
                 }
             }
 
@@ -4913,7 +4913,7 @@ void WeaponMenuAttachModeKey() {
                     WepMenu.tag_row = rows[WepMenu.tag_page];
                 }
 
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
             break;
@@ -4925,22 +4925,22 @@ void WeaponMenuAttachModeKey() {
     WeaponMenuSelectKeyLockFlag = 0;
 
     switch (mode) {
-        case 8:
+        case WEP_MENU_ATTACH_WEAPON:
             WeaponMenuActWepKey();
             break;
-        case 11:
+        case WEP_MENU_ATTACH_TAGS:
             WeaponMenuTagKey();
             break;
-        case 9:
+        case WEP_MENU_ATTACH_SOCKETS:
             WeaponMenuAttachWepKey();
             break;
-        case 10:
+        case WEP_MENU_ATTACH_BOARD:
             WeaponMenuAttachKey();
             break;
     }
 
-    if ((row != WepMenu.tag_row || mode != WepMenu.mode) && GamePad.Down(0x20) == 0) {
-        ComMenuSePlay(0);
+    if ((row != WepMenu.tag_row || mode != WepMenu.mode) && GamePad.Down(PAD_CIRCLE) == 0) {
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 }
 
@@ -4952,14 +4952,14 @@ void WeaponMenuAttachModeKey() {
  * @size 0xCC
  */
 static void WeaponMenuActWepKey() {
-    if (GamePad.Down(0x2000) != 0) {
-        WepMenu.mode = 10;
+    if (GamePad.Down(PAD_RIGHT) != 0) {
+        WepMenu.mode = WEP_MENU_ATTACH_BOARD;
         WepMenu.board.cursor = WepMenu.board.top_row * 5 + 10;
-    } else if (GamePad.Down(0x4000) != 0) {
-        WepMenu.mode = 11;
-        WepMenu.tag_row = 0;
-    } else if (GamePad.Down(0x20) != 0) {
-        ComMenuSePlay(2);
+    } else if (GamePad.Down(PAD_DOWN) != 0) {
+        WepMenu.mode = WEP_MENU_ATTACH_TAGS;
+        WepMenu.tag_row = WEP_TAG_ROW_DURABILITY;
+    } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         WepAttachHaveCancel();
     }
 }
@@ -4979,26 +4979,26 @@ void WeaponMenuTagKey() {
     GetWeaponHoleNum(GetNowSelectWeapon()->item_no);
 
     switch (WepMenu.tag_page) {
-        case 0:
-            if (GamePad.Down(0x1000) != 0) {
+        case WEP_TAG_STATUS:
+            if (GamePad.Down(PAD_UP) != 0) {
                 moved = 1;
 
                 if (0 < WepMenu.tag_row) {
                     WepMenu.tag_row--;
                 } else if (WepMenu.sockets_enabled != 0) {
-                    WepMenu.mode = 9;
+                    WepMenu.mode = WEP_MENU_ATTACH_SOCKETS;
                 } else {
-                    WepMenu.mode = 8;
+                    WepMenu.mode = WEP_MENU_ATTACH_WEAPON;
                 }
-            } else if (GamePad.Down(0x4000) != 0) {
+            } else if (GamePad.Down(PAD_DOWN) != 0) {
                 moved = 1;
 
                 if (WepMenu.tag_row < rows[WepMenu.tag_page]) {
                     WepMenu.tag_row++;
                 }
-            } else if (GamePad.Down(0x40) != 0) {
+            } else if (GamePad.Down(PAD_CROSS) != 0) {
                 moved = 1;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
 #ifdef PAL
@@ -5009,39 +5009,39 @@ void WeaponMenuTagKey() {
                 WEAPON_DATA *data = GetWeaponData(weapon->item_no);
                 WeaponAllValueSet(weapon, &total, 0);
 
-                if (GamePad.On2(0x2000)) {
+                if (GamePad.On2(PAD_RIGHT)) {
                     switch (WepMenu.tag_row) {
-                        case 0:
+                        case WEP_TAG_ROW_DURABILITY:
                             if (weapon->durability_f < weapon->durability) {
                                 weapon->durability_f += 1.0f;
                             }
 
                             break;
-                        case 1:
+                        case WEP_TAG_ROW_EXP:
                             if (weapon->experience < GetWeaponMaxExp(weapon)) {
                                 weapon->experience++;
                             }
 
                             break;
-                        case 2:
+                        case WEP_TAG_ROW_ATTACK:
                             if (total.attack < data->attack_max) {
                                 weapon->attack++;
                             }
 
                             break;
-                        case 3:
+                        case WEP_TAG_ROW_ENDURANCE:
                             if (weapon->endurance < 99) {
                                 weapon->endurance++;
                             }
 
                             break;
-                        case 4:
+                        case WEP_TAG_ROW_SPEED:
                             if (weapon->speed < 99) {
                                 weapon->speed++;
                             }
 
                             break;
-                        case 5:
+                        case WEP_TAG_ROW_MAGIC:
                             if (total.magic < data->magic_max) {
                                 weapon->magic++;
                             }
@@ -5050,39 +5050,39 @@ void WeaponMenuTagKey() {
                     }
                 }
 
-                if (GamePad.On2(0x8000)) {
+                if (GamePad.On2(PAD_LEFT)) {
                     switch (WepMenu.tag_row) {
-                        case 0:
+                        case WEP_TAG_ROW_DURABILITY:
                             if (1.0f < weapon->durability_f) {
                                 weapon->durability_f -= 1.0f;
                             }
 
                             break;
-                        case 1:
+                        case WEP_TAG_ROW_EXP:
                             if (0 < weapon->experience) {
                                 weapon->experience--;
                             }
 
                             break;
-                        case 2:
+                        case WEP_TAG_ROW_ATTACK:
                             if (0 < weapon->attack) {
                                 weapon->attack--;
                             }
 
                             break;
-                        case 3:
+                        case WEP_TAG_ROW_ENDURANCE:
                             if (0 < weapon->endurance) {
                                 weapon->endurance--;
                             }
 
                             break;
-                        case 4:
+                        case WEP_TAG_ROW_SPEED:
                             if (0 < weapon->speed) {
                                 weapon->speed--;
                             }
 
                             break;
-                        case 5:
+                        case WEP_TAG_ROW_MAGIC:
                             if (0 < weapon->magic) {
                                 weapon->magic--;
                             }
@@ -5091,9 +5091,9 @@ void WeaponMenuTagKey() {
                     }
                 }
 
-                if (GamePad.On2(0x40)) {
+                if (GamePad.On2(PAD_CROSS)) {
                     switch (WepMenu.tag_row) {
-                        case 0:
+                        case WEP_TAG_ROW_DURABILITY:
                             if (weapon->durability < 99) {
                                 weapon->durability++;
                             }
@@ -5102,9 +5102,9 @@ void WeaponMenuTagKey() {
                     }
                 }
 
-                if (GamePad.On2(0x20)) {
+                if (GamePad.On2(PAD_CIRCLE)) {
                     switch (WepMenu.tag_row) {
-                        case 0:
+                        case WEP_TAG_ROW_DURABILITY:
                             if (weapon->durability_f < weapon->durability) {
                                 weapon->durability--;
                             }
@@ -5113,18 +5113,18 @@ void WeaponMenuTagKey() {
                     }
                 }
 
-                if (GamePad.Down2(0x10)) {
+                if (GamePad.Down2(PAD_TRIANGLE)) {
                     switch (WepMenu.tag_row) {
-                        case 2:
+                        case WEP_TAG_ROW_ATTACK:
                             weapon->attack = 99;
                             break;
-                        case 3:
+                        case WEP_TAG_ROW_ENDURANCE:
                             weapon->endurance = 99;
                             break;
-                        case 4:
+                        case WEP_TAG_ROW_SPEED:
                             weapon->speed = 99;
                             break;
-                        case 5:
+                        case WEP_TAG_ROW_MAGIC:
                             weapon->magic = 99;
                             break;
                     }
@@ -5133,39 +5133,39 @@ void WeaponMenuTagKey() {
 
 #endif
             break;
-        case 1:
-            if (GamePad.Down(0x1000) != 0) {
+        case WEP_TAG_ELEMENT:
+            if (GamePad.Down(PAD_UP) != 0) {
                 moved = 1;
 
                 if (0 < WepMenu.tag_row) {
                     WepMenu.tag_row--;
                 } else if (WepMenu.sockets_enabled != 0) {
-                    WepMenu.mode = 9;
+                    WepMenu.mode = WEP_MENU_ATTACH_SOCKETS;
                 } else {
-                    WepMenu.mode = 8;
+                    WepMenu.mode = WEP_MENU_ATTACH_WEAPON;
                 }
-            } else if (GamePad.Down(0x4000) != 0) {
+            } else if (GamePad.Down(PAD_DOWN) != 0) {
                 moved = 1;
 
                 if (WepMenu.tag_row < rows[WepMenu.tag_page]) {
                     WepMenu.tag_row++;
                 }
-            } else if (GamePad.Down(0x40) != 0) {
+            } else if (GamePad.Down(PAD_CROSS) != 0) {
                 WEAPON_HAVE total;
                 moved = 1;
                 WEAPON_HAVE *weapon = GetNowSelectWeapon();
                 WeaponAllValueSet(weapon, &total, 0);
 
                 if (WeaponMenuCheckEnableSetElem(weapon, &total, WepMenu.tag_row) != 0) {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 } else {
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
             }
 
 #ifdef PAL
             if (DebugMode) {
-                if (GamePad.On2(0x2000)) {
+                if (GamePad.On2(PAD_RIGHT)) {
                     WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
                     if (weapon->elem[WepMenu.tag_row] < 99) {
@@ -5173,7 +5173,7 @@ void WeaponMenuTagKey() {
                     }
                 }
 
-                if (GamePad.On2(0x8000)) {
+                if (GamePad.On2(PAD_LEFT)) {
                     WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
                     if (0 < weapon->elem[WepMenu.tag_row]) {
@@ -5184,37 +5184,37 @@ void WeaponMenuTagKey() {
 
 #endif
             break;
-        case 2:
-            if (GamePad.Down(0x1000) != 0) {
+        case WEP_TAG_VS_MONSTER:
+            if (GamePad.Down(PAD_UP) != 0) {
                 moved = 1;
 
                 if (WepMenu.tag_row % 5 != 0) {
                     WepMenu.tag_row--;
                 } else if (WepMenu.sockets_enabled != 0) {
-                    WepMenu.mode = 9;
+                    WepMenu.mode = WEP_MENU_ATTACH_SOCKETS;
                 } else {
-                    WepMenu.mode = 8;
+                    WepMenu.mode = WEP_MENU_ATTACH_WEAPON;
                 }
-            } else if (GamePad.Down(0x4000) != 0) {
+            } else if (GamePad.Down(PAD_DOWN) != 0) {
                 moved = 1;
 
                 if (WepMenu.tag_row % 5 != 4) {
                     WepMenu.tag_row++;
                 }
-            } else if (GamePad.Down(0x8000) != 0) {
+            } else if (GamePad.Down(PAD_LEFT) != 0) {
                 moved = 1;
 
                 if (WepMenu.tag_row >= 5) {
                     WepMenu.tag_row -= 5;
                 }
-            } else if (GamePad.Down(0x40) != 0) {
+            } else if (GamePad.Down(PAD_CROSS) != 0) {
                 moved = 1;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
 #ifdef PAL
             if (DebugMode) {
-                if (GamePad.On2(0x2000)) {
+                if (GamePad.On2(PAD_RIGHT)) {
                     WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
                     if (weapon->vs_monster[WepMenu.tag_row] < 99) {
@@ -5222,7 +5222,7 @@ void WeaponMenuTagKey() {
                     }
                 }
 
-                if (GamePad.On2(0x8000)) {
+                if (GamePad.On2(PAD_LEFT)) {
                     WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
                     if (0 < weapon->vs_monster[WepMenu.tag_row]) {
@@ -5239,26 +5239,26 @@ void WeaponMenuTagKey() {
         return;
     }
 
-    if (GamePad.Down(0x20) != 0) {
-        ComMenuSePlay(2);
+    if (GamePad.Down(PAD_CIRCLE) != 0) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         WepAttachHaveCancel();
         return;
     }
 
-    if (GamePad.Down(0x2000) != 0) {
+    if (GamePad.Down(PAD_RIGHT) != 0) {
         switch (WepMenu.tag_page) {
-            case 2:
+            case WEP_TAG_VS_MONSTER:
                 if (WepMenu.tag_row < 5) {
                     WepMenu.tag_row += 5;
                     return;
                 }
 
-                WepMenu.mode = 10;
+                WepMenu.mode = WEP_MENU_ATTACH_BOARD;
                 WepMenu.board.cursor = (WepMenu.board.top_row + 2) * 5;
                 return;
-            case 0:
-            case 1:
-                WepMenu.mode = 10;
+            case WEP_TAG_STATUS:
+            case WEP_TAG_ELEMENT:
+                WepMenu.mode = WEP_MENU_ATTACH_BOARD;
                 WepMenu.board.cursor = (WepMenu.board.top_row + 2) * 5;
                 break;
         }
@@ -5276,7 +5276,7 @@ static void WeaponMenuAttachWepKey() {
     int          moved = 0;
     WEAPON_HAVE *weapon = GetNowSelectWeapon();
 
-    if (GamePad.Down(0x8000)) {
+    if (GamePad.Down(PAD_LEFT)) {
         moved = 1;
 
         if (0 < WepMenu.board.cursor) {
@@ -5291,14 +5291,14 @@ static void WeaponMenuAttachWepKey() {
 
         if (WepMenu.board.cursor < 0) {
             WepMenu.board.cursor = 0;
-            WepMenu.mode = 8;
+            WepMenu.mode = WEP_MENU_ATTACH_WEAPON;
             return;
         }
     }
 
     if (holes <= 0) {
         WepMenu.board.cursor = 0;
-        WepMenu.mode = 8;
+        WepMenu.mode = WEP_MENU_ATTACH_WEAPON;
         return;
     }
 
@@ -5306,28 +5306,28 @@ static void WeaponMenuAttachWepKey() {
         return;
     }
 
-    if (GamePad.Down(0x40)) {
+    if (GamePad.Down(PAD_CROSS)) {
         if (holes <= 0) {
-            ComMenuSePlay(2);
+            ComMenuSePlay(MENU_SOUND_REFUSE);
             return;
         }
 
         int hole = WepMenu.board.cursor;
 
-        if (BtlHaveItemPt->item_no < 81) {
+        if (BtlHaveItemPt->item_no < ITEM_ATTACH_START) {
             if (weapon->attach[hole].item_no <= 0) {
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
                 return;
             }
 
-            ComMenuSePlay(6);
+            ComMenuSePlay(SE_ATTACHMENT_REMOVE);
             s16 held = BtlHaveItemPt->item_no;
             s16 item_no = weapon->attach[hole].item_no;
             MenuDataSwap(&WepMenu.board.held_attach, &weapon->attach[hole]);
             BtlHaveItemPt->item_no = item_no;
             weapon->attach[hole].item_no = held;
             BtlHaveItemPt->from_slot = WepMenu.board.cursor;
-            BtlHaveItemPt->from_page = 9;
+            BtlHaveItemPt->from_page = WEP_MENU_ATTACH_SOCKETS;
             WEAPON_HAVE total;
             WeaponAllValueSet(weapon, &total, 0);
             WeaponMenuCheckElemValue(weapon, &total);
@@ -5337,12 +5337,12 @@ static void WeaponMenuAttachWepKey() {
         WEAPON_DATA *data = GetWeaponData(weapon->item_no);
         int          socket = data->hole[hole];
 
-        if (BtlHaveItemPt->item_no == 90 && socket != 2) {
-            ComMenuSePlay(2);
+        if (BtlHaveItemPt->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE && socket != 2) {
+            ComMenuSePlay(MENU_SOUND_REFUSE);
             return;
         }
 
-        ComMenuSePlay(5);
+        ComMenuSePlay(SE_ATTACHMENT_SET);
         s16 item_no = weapon->attach[hole].item_no;
         s16 held = BtlHaveItemPt->item_no;
         MenuDataSwap(&weapon->attach[hole], &WepMenu.board.held_attach);
@@ -5356,13 +5356,13 @@ static void WeaponMenuAttachWepKey() {
         return;
     }
 
-    if (GamePad.Down(0x20)) {
-        ComMenuSePlay(2);
+    if (GamePad.Down(PAD_CIRCLE)) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         WepAttachHaveCancel();
         return;
     }
 
-    if (GamePad.Down(0x2000)) {
+    if (GamePad.Down(PAD_RIGHT)) {
         if (WepMenu.board.cursor < holes - 1) {
             WepMenu.board.cursor++;
 
@@ -5370,14 +5370,14 @@ static void WeaponMenuAttachWepKey() {
                 WepMenu.board.cursor = 0;
             }
         } else {
-            WepMenu.mode = 10;
+            WepMenu.mode = WEP_MENU_ATTACH_BOARD;
             WepMenu.board.cursor = WepMenu.board.top_row * 5;
         }
-    } else if (GamePad.Down(0x80)) {
-        ComMenuSePlay(2);
-    } else if (GamePad.Down(0x4000)) {
-        WepMenu.mode = 11;
-        WepMenu.tag_row = 0;
+    } else if (GamePad.Down(PAD_SQUARE)) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
+    } else if (GamePad.Down(PAD_DOWN)) {
+        WepMenu.mode = WEP_MENU_ATTACH_TAGS;
+        WepMenu.tag_row = WEP_TAG_ROW_DURABILITY;
     }
 }
 
@@ -5393,51 +5393,51 @@ s32 WeaponMenuSelectKeyLockFlag;
 static void WeaponMenuAttachKey() {
     if (PersonalBoardKey()) {
         if (WepMenu.sockets_enabled) {
-            WepMenu.mode = 9;
+            WepMenu.mode = WEP_MENU_ATTACH_SOCKETS;
             WepMenu.board.cursor = GetWeaponHoleNum(GetNowSelectWeapon()->item_no) - 1;
         } else {
-            WepMenu.mode = 8;
+            WepMenu.mode = WEP_MENU_ATTACH_WEAPON;
         }
-    } else if (GamePad.Down(0x40)) {
+    } else if (GamePad.Down(PAD_CROSS)) {
         switch (WepMenu.board.cursor_area) {
-            case 2:
+            case PERSONAL_BOARD_AREA_TRASH:
                 InitHaveData(BtlHaveItemPt);
                 InitHaveAttach(&WepMenu.board.held_attach);
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
                 break;
-            case 1: {
+            case PERSONAL_BOARD_AREA_CELLS: {
                 DNG_CONSUMABLE *items = BtlMenuStatusPt->consumable_items;
                 ATTACH_LIST    *slot = (ATTACH_LIST *) &items[WepMenu.board.cursor];
 
-                if (slot->item_no >= 81 || BtlHaveItemPt->item_no >= 81) {
-                    ComMenuSePlay(1);
+                if (slot->item_no >= ITEM_ATTACH_START || BtlHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                     s16 held = BtlHaveItemPt->item_no;
                     s16 item_no = slot->item_no;
                     MenuDataSwap(slot, &WepMenu.board.held_attach);
                     BtlHaveItemPt->item_no = item_no;
                     slot->item_no = held;
                     BtlHaveItemPt->from_slot = WepMenu.board.cursor;
-                    BtlHaveItemPt->from_page = 10;
+                    BtlHaveItemPt->from_page = WEP_MENU_ATTACH_BOARD;
 
-                    if (BtlHaveItemPt->item_no >= 81) {
-                        WepMenu.sockets_enabled = 1;
+                    if (BtlHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                        WepMenu.sockets_enabled = true;
                     } else {
                         InitHaveData(BtlHaveItemPt);
                         InitHaveAttach(&WepMenu.board.held_attach);
                     }
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
             }
         }
-    } else if (GamePad.Down(0x20)) {
-        ComMenuSePlay(2);
+    } else if (GamePad.Down(PAD_CIRCLE)) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         WepAttachHaveCancel();
-    } else if (GamePad.Down(0x80)) {
+    } else if (GamePad.Down(PAD_SQUARE)) {
         SeitonAttachBoard((ATTACH_LIST *) BtlMenuStatusPt->consumable_items);
-        ComMenuSePlay(1);
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
     }
 }
 
@@ -5450,7 +5450,7 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     MenuHelpWinDraw(x - 10, y, widths[BtlMenuNowLang], 2.2f, alpha);
     int row_y = y + 0xE;
     MenuTextureReload(BtlMenuReadBlock);
-    u8 items[2] = {0xB1, 0xB2};
+    u8 items[2] = {ITEM_REPAIR_POWDER, ITEM_POWERUP_POWDER};
     u8 shift[7] = {0, 0, 0, 58, 8, 22, 22};
 
     for (int i = 0; i < 2; i++) {
@@ -5472,7 +5472,7 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
 
     MenuTextureReload(CommonMenuMes3.tex_block);
 
-    if (BtlMenuNowLang > 0) {
+    if (BtlMenuNowLang > LANG_JAPANESE) {
         s8  count_shift[6] = {20, 20, 0, 12, -6, -4};
         int name_x = x + 0x36;
         int count_x;
@@ -5487,7 +5487,7 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
         CommonMenuMes3.line_pos[3].y = y + 0x3E;
     }
 
-    CommonMenuMes3.stay_frame = 0;
+    CommonMenuMes3.stay_frame = false;
 
     if (CommonMenuMes3.mes_made != 0x1A7) {
         CommonMenuMes3.MakeMesWin(0x1A7);
@@ -5505,7 +5505,7 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     MenuHelpWinDraw(x - 10, y, 10.7f, 2.2f, alpha);
     int row_y = y + 0xE;
     MenuTextureReload(BtlMenuReadBlock);
-    int items[2] = {0xB1, 0xB2};
+    int items[2] = {ITEM_REPAIR_POWDER, ITEM_POWERUP_POWDER};
 
     for (int i = 0; i < 2; i++) {
         int count;
@@ -5536,7 +5536,7 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     CommonMenuMes3.line_pos[2].y = y + 0x2E;
     CommonMenuMes3.line_pos[3].x = count_x;
     CommonMenuMes3.line_pos[3].y = y + 0x3E;
-    CommonMenuMes3.stay_frame = 0;
+    CommonMenuMes3.stay_frame = false;
 
     if (CommonMenuMes3.mes_made != 0x1A7) {
         CommonMenuMes3.MakeMesWin(0x1A7);
@@ -5573,7 +5573,7 @@ void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
     int build;
 
     MenuHelpWinDraw(x - 0xE + offset[BtlMenuNowLang][0], y - 0xC + offset[BtlMenuNowLang][1], size[BtlMenuNowLang][0], size[BtlMenuNowLang][1], 0x80);
-    CommonMenuMes1.stay_frame = 0;
+    CommonMenuMes1.stay_frame = false;
     CommonMenuMes1.line_pos[0].x = x;
     CommonMenuMes1.line_pos[0].y = y - 6;
     y += CommonMenuMes1.char_height;
@@ -5615,7 +5615,7 @@ void WeaponMenuDraw() {
     alpha = 0x80;
 
     switch (WepMenu.state) {
-        case 1:
+        case WEP_STATE_OPEN:
             alpha = WepMenu.counter * 9;
 
             if (alpha > 0x80) {
@@ -5623,7 +5623,7 @@ void WeaponMenuDraw() {
             }
 
             break;
-        case 2:
+        case WEP_STATE_CLOSE:
             alpha = 0x80 - WepMenu.counter * 9;
 
             if (alpha < 0) {
@@ -5636,19 +5636,19 @@ void WeaponMenuDraw() {
     attach_mode = 0;
 
     switch (WepMenu.mode) {
-        case 8:
-        case 9:
-        case 10:
-        case 11:
+        case WEP_MENU_ATTACH_WEAPON:
+        case WEP_MENU_ATTACH_SOCKETS:
+        case WEP_MENU_ATTACH_BOARD:
+        case WEP_MENU_ATTACH_TAGS:
             attach_mode = 1;
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
+        case WEP_MENU_LIST:
+        case WEP_MENU_ACTION:
+        case WEP_MENU_ELEMENT:
+        case WEP_MENU_LEVELUP_CONFIRM:
+        case WEP_MENU_STATUS_BREAK_CONFIRM:
+        case WEP_MENU_BUILDUP_SELECT:
+        case WEP_MENU_BUILDUP_CONFIRM:
+        case WEP_MENU_BUILDUP_PREVIEW:
             for (i = 0; i < 6; i++) {
                 int target = (SysChara[i].chara - WepMenu.chara) * 0x6E + 0x10E;
                 SysChara[i].x += ((float) target - SysChara[i].x) / 4.0f;
@@ -5679,7 +5679,7 @@ void WeaponMenuDraw() {
                 static int ct = 0;
                 scratch = alpha;
 
-                if (WepMenu.mode == 0) {
+                if (WepMenu.mode == WEP_MENU_LIST) {
                     ct++;
 
                     if (ct > 1000000) {
@@ -5705,21 +5705,21 @@ void WeaponMenuDraw() {
     float target_depth;
 
     switch (WepMenu.mode) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
+        case WEP_MENU_LIST:
+        case WEP_MENU_ACTION:
+        case WEP_MENU_ELEMENT:
+        case WEP_MENU_LEVELUP_CONFIRM:
+        case WEP_MENU_STATUS_BREAK_CONFIRM:
+        case WEP_MENU_BUILDUP_SELECT:
+        case WEP_MENU_BUILDUP_CONFIRM:
+        case WEP_MENU_BUILDUP_PREVIEW:
             target_x = 0xE8 - WepMenu.weapon_slot * 0xD6;
             target_depth = 2.0f + 16.0f * -WepMenu.weapon_slot;
             break;
-        case 8:
-        case 9:
-        case 10:
-        case 11: {
+        case WEP_MENU_ATTACH_WEAPON:
+        case WEP_MENU_ATTACH_SOCKETS:
+        case WEP_MENU_ATTACH_BOARD:
+        case WEP_MENU_ATTACH_TAGS: {
             int slot = WepMenu.weapon_slot;
             target_x = (int) (80.0f - (float) (slot * 0xD6));
             target_depth = 2.0f + (-11.0f + 16.0f * -slot);
@@ -5732,14 +5732,14 @@ void WeaponMenuDraw() {
     scratch = alpha;
 
     switch (WepMenu.state) {
-        case 3:
+        case WEP_STATE_UNK_3:
             scratch = alpha - 9;
             break;
-        case 4:
+        case WEP_STATE_CHARA_CHANGE:
             scratch = WepMenu.counter * 5;
             break;
-        case 1:
-        case 2:
+        case WEP_STATE_OPEN:
+        case WEP_STATE_CLOSE:
             scratch = alpha;
             break;
     }
@@ -5772,29 +5772,29 @@ void WeaponMenuDraw() {
     WEP_BUILDUP_INFO builds[4];
 
     switch (WepMenu.mode) {
-        case 3:
-        case 6:
+        case WEP_MENU_LEVELUP_CONFIRM:
+        case WEP_MENU_BUILDUP_CONFIRM:
 #ifdef PAL
             MenuTextureReload(BtlMenuReadBlock);
 #endif
             DrawDngYesNoDialog(0x88, 0xDD, 0x80);
             MenuHelpWinDraw(0x46, 0x8C, 10.0f, 1.4f, 100);
-            CommonMenuMes1.stay_frame = 0;
+            CommonMenuMes1.stay_frame = false;
             CommonMenuMes1.edge_alpha = 0x80;
             MenuTextureReload(CommonMenuMes1.tex_block);
             DrawMenuClsMes(&CommonMenuMes1, 0x58, 0x92);
             break;
-        case 4:
+        case WEP_MENU_STATUS_BREAK_CONFIRM:
 #ifdef PAL
             MenuTextureReload(BtlMenuReadBlock);
 #endif
             DrawDngYesNoDialog(0x88, 0xF3, 0x80);
-            CommonMenuMes1.auto_pos = -1;
-            CommonMenuMes1.stay_frame = 1;
+            CommonMenuMes1.auto_pos = MES_POS_NONE;
+            CommonMenuMes1.stay_frame = true;
             CommonMenuMes1.edge_alpha = 0x80;
             DrawMenuClsMes(&CommonMenuMes1, 0x50, 0x98);
             break;
-        case 7:
+        case WEP_MENU_BUILDUP_PREVIEW:
             AllFadeForMenu(0x40);
 #ifdef PAL
             MenuTextureReload(BtlMenuReadBlock);
@@ -5805,18 +5805,18 @@ void WeaponMenuDraw() {
             MenuTextureReload(BtlMenuExtBlock);
 #endif
             DrawWeaponTagBoard(0x16C, 0x78, GetNowSelectWeapon(), 1, builds[WepMenu.board.cursor].weapon_no, 0x80);
-        case 5:
+        case WEP_MENU_BUILDUP_SELECT:
 #ifdef PAL
             MenuTextureReload(BtlMenuExtBlock);
 #endif
             DrawBuildUpWeaponSelect(0x58, 0x9C, WepMenu.board.cursor);
             break;
-        case 2:
+        case WEP_MENU_ELEMENT:
 #ifdef PAL
             MenuTextureReload(BtlMenuExtBlock);
 #endif
             DrawWeaponTagBoard(0x18A, 0x64, GetNowSelectWeapon(), 0, 0, 0x80);
-        case 1:
+        case WEP_MENU_ACTION:
 #ifdef PAL
             MenuTextureReload(BtlMenuExtBlock);
 #endif
@@ -5827,21 +5827,21 @@ void WeaponMenuDraw() {
             }
 
             break;
-        case 0:
+        case WEP_MENU_LIST:
             if (BtlMenuStatusPt->party_size > 1) {
                 DrawBtlMenuLRCursor(0xE6, 0x12, 0x96, alpha);
             }
 
             break;
-        case 8:
-        case 9:
-        case 10:
-        case 11:
+        case WEP_MENU_ATTACH_WEAPON:
+        case WEP_MENU_ATTACH_SOCKETS:
+        case WEP_MENU_ATTACH_BOARD:
+        case WEP_MENU_ATTACH_TAGS:
             MenuTextureReload(BtlMenuReadBlock);
             DrawPersonalBoard(0x154, 0x78, WepMenu.board.page, alpha, 0);
             CommonTrushDraw(0x232, 0x10C, alpha);
 
-            if (BtlHaveItemPt->item_no >= 0x51) {
+            if (BtlHaveItemPt->item_no >= ITEM_ATTACH_START) {
                 MenuTextureReload(MenuShadowReadBlock);
                 DrawMenuVibeItem((int) SysCur[0], (int) SysCur[1], 2, -0xC, 0x80);
             }
@@ -5890,12 +5890,12 @@ void WeaponMenuDraw() {
     int cursor_x = cursor_pos[WepMenu.mode][0];
     int cursor_y = cursor_pos[WepMenu.mode][1];
 
-    if (WepMenu.state == 12) {
+    if (WepMenu.state == WEP_STATE_SCRAP_PROMPT) {
         cursor_x = 0xB4;
         cursor_y = dialog_pos + 0x2E;
     }
 
-    if (WepMenu.state == 13) {
+    if (WepMenu.state == WEP_STATE_SCRAP_CONFIRM) {
         cursor_x = 0x171;
         cursor_y = WepMenu.confirm[0] * 0x1A + 0xBE;
     }
@@ -5937,11 +5937,11 @@ void WeaponMenuDraw() {
     frame = frames[WepMenu.mode];
     WEAPON_HAVE *selected = GetNowSelectWeapon();
 
-    if (selected != NULL && selected->item_no < 0x101) {
+    if (selected != NULL && selected->item_no < ITEM_WEAPON_START) {
         frame = frames[11];
     }
 
-    if (WepMenu.state == 12) {
+    if (WepMenu.state == WEP_STATE_SCRAP_PROMPT) {
         frame.x = cursor_x + 0x19;
         frame.y = cursor_y - 4;
         frame.width = 0x60;
@@ -5949,8 +5949,8 @@ void WeaponMenuDraw() {
     }
 
     switch (WepMenu.mode) {
-        case 1:
-            if (WepMenu.board.cursor >= 4) {
+        case WEP_MENU_ACTION:
+            if (WepMenu.board.cursor >= WEP_ACTION_LEVELUP) {
                 scratch = 0;
                 int options = NowWeaponStatusValue(&DngWepHavePt[WepMenu.weapon_slot]);
 
@@ -5965,19 +5965,19 @@ void WeaponMenuDraw() {
             }
 
             break;
-        case 5:
-        case 9:
+        case WEP_MENU_BUILDUP_SELECT:
+        case WEP_MENU_ATTACH_SOCKETS:
             break;
-        case 10:
+        case WEP_MENU_ATTACH_BOARD:
             switch (WepMenu.board.cursor_area) {
-                case 1: {
+                case PERSONAL_BOARD_AREA_CELLS: {
                     int cell = WepMenu.board.cursor;
                     cursor_x = cell % 5 * 0x28 + 0x154;
                     cell -= WepMenu.board.top_row * 5;
                     cursor_y = cell / 5 * 0x28 + 0x7E;
                     break;
                 }
-                case 2:
+                case PERSONAL_BOARD_AREA_TRASH:
                     cursor_x = 0x220;
                     cursor_y = 0x110;
                     break;
@@ -5988,11 +5988,11 @@ void WeaponMenuDraw() {
             frame.height = 0x26;
             frame.width = 0x26;
             break;
-        case 11: {
+        case WEP_MENU_ATTACH_TAGS: {
             int sel = WepMenu.tag_row;
 
             switch (WepMenu.tag_page) {
-                case 0:
+                case WEP_TAG_STATUS:
                     if (sel < 2) {
                         cursor_x = 0x24;
                         cursor_y = sel * 0x14 + 0x114;
@@ -6004,12 +6004,12 @@ void WeaponMenuDraw() {
                     }
 
                     break;
-                case 1:
+                case WEP_TAG_ELEMENT:
                     cursor_x = 0x2A;
                     cursor_y = sel * 0x18 + 0x112;
                     frame.width = 0xC4;
                     break;
-                case 2:
+                case WEP_TAG_VS_MONSTER:
                     cursor_x = sel / 5 * 0x68 + 0x28;
                     cursor_y = sel % 5 * 0x18 + 0x112;
                     frame.width = 0x66;
@@ -6025,13 +6025,13 @@ void WeaponMenuDraw() {
 
     DNG_CONSUMABLE *consumables = BtlMenuStatusPt->consumable_items;
 
-    if (WepMenu.mode <= 0) {
+    if (WepMenu.mode <= WEP_MENU_LIST) {
         scratch = 0x40;
-    } else if (BtlHaveItemPt->item_no >= 0x51) {
+    } else if (BtlHaveItemPt->item_no >= ITEM_ATTACH_START) {
         cursor_x += 0x12;
         cursor_y += 0xE;
         scratch = 0x80;
-    } else if ((WepMenu.mode == 9 && DngWepHavePt[slot].attach[WepMenu.board.cursor].item_no >= 0x51) || (WepMenu.mode == 10 && consumables[WepMenu.board.cursor].id >= 0x51)) {
+    } else if ((WepMenu.mode == WEP_MENU_ATTACH_SOCKETS && DngWepHavePt[slot].attach[WepMenu.board.cursor].item_no >= ITEM_ATTACH_START) || (WepMenu.mode == WEP_MENU_ATTACH_BOARD && consumables[WepMenu.board.cursor].id >= ITEM_ATTACH_START)) {
         cursor_x += 10;
         cursor_y += 0x18;
         scratch = 0x60;
@@ -6043,18 +6043,18 @@ void WeaponMenuDraw() {
     SysCur[1] += ((float) cursor_y - SysCur[1]) / 4.0f;
 
     switch (WepMenu.state) {
-        case 1:
-        case 2:
-        case 4:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-            CommonMenuMes1.auto_pos = -1;
+        case WEP_STATE_OPEN:
+        case WEP_STATE_CLOSE:
+        case WEP_STATE_CHARA_CHANGE:
+        case WEP_STATE_LEVELUP_EFFECT:
+        case WEP_STATE_STATUS_BREAK_EFFECT:
+        case WEP_STATE_BUILDUP_EFFECT:
+        case WEP_STATE_REPAIR_EFFECT:
+            CommonMenuMes1.auto_pos = MES_POS_NONE;
             return;
-        case 11:
-        case 14:
-            CommonMenuMes1.auto_pos = 5;
+        case WEP_STATE_WARNING:
+        case WEP_STATE_SCRAP_REFUSED:
+            CommonMenuMes1.auto_pos = MES_POS_CENTRE;
             MenuTextureReload(CommonMenuMes1.tex_block);
             CommonMenuMes1.Step();
             CommonMenuMes1.DrawMesWin();
@@ -6062,11 +6062,11 @@ void WeaponMenuDraw() {
         default: {
             int shadow = 0;
 
-            if (WepMenu.mode == 0) {
+            if (WepMenu.mode == WEP_MENU_LIST) {
                 shadow = 1;
             }
 
-            if (WepMenu.state == 13) {
+            if (WepMenu.state == WEP_STATE_SCRAP_CONFIRM) {
                 DrawDngYesNoDialog(0x190, 0xBE, 0x80);
                 s8 offset[7][2] = {
                     {-20, -60},
@@ -6077,7 +6077,7 @@ void WeaponMenuDraw() {
                     {-24, -68},
                     {-24, -68}
                 };
-                CommonMenuMes1.auto_pos = -1;
+                CommonMenuMes1.auto_pos = MES_POS_NONE;
                 CommonMenuMes1.text_x = offset[BtlMenuNowLang][0] + 0x190;
                 CommonMenuMes1.text_y = offset[BtlMenuNowLang][1] + 0xBE;
                 MenuTextureReload(CommonMenuMes1.tex_block);
@@ -6116,16 +6116,16 @@ static int ItemTrushKey(int *thrown, int *thrown_vol, int slot) {
     s16 item_no;
 
     switch (page) {
-        case 0:
-            if (!kind || kind == -1) {
+        case BOARD_PAGE_ITEM:
+            if (!kind || kind == BOARD_PAGE_NONE) {
                 MenuDataSwap(&MenuItemPackPt->item[MenuItemPackPt->num + slot], &ItemMenuMode.board.held_item.item_no);
                 MenuDataSwap(&ItemMenuMode.board.held_item.volume, &MenuItemPackPt->item_vol[MenuItemPackPt->num + slot]);
                 swapped = 1;
             }
 
             break;
-        case 1:
-            if (kind == 1 || kind == -1) {
+        case BOARD_PAGE_WEAPON:
+            if (kind == BOARD_PAGE_WEAPON || kind == BOARD_PAGE_NONE) {
                 int          owner = -1;
                 WEAPON_HAVE *weapon;
                 int          equip = WhoIsWeaponEquip(held);
@@ -6136,7 +6136,7 @@ static int ItemTrushKey(int *thrown, int *thrown_vol, int slot) {
                         WEAPON_HAVE    *row = status->chara_weapons[i];
                         weapon = &row[10];
 
-                        if (weapon != NULL && weapon->item_no >= 257) {
+                        if (weapon != NULL && weapon->item_no >= ITEM_WEAPON_START) {
                             owner = (s8) GetWeaponData(weapon->item_no)->owner;
                             break;
                         }
@@ -6187,8 +6187,8 @@ static int ItemTrushKey(int *thrown, int *thrown_vol, int slot) {
             }
 
             break;
-        case 2:
-            if (kind == 2 || kind == -1) {
+        case BOARD_PAGE_ATTACH:
+            if (kind == BOARD_PAGE_ATTACH || kind == BOARD_PAGE_NONE) {
                 DNG_CONSUMABLE *items = BtlMenuStatusPt->consumable_items;
                 ATTACH_LIST    *attach = (ATTACH_LIST *) &items[slot] + 40;
                 item_no = attach->item_no;
@@ -6224,7 +6224,7 @@ void DrawTrushItem() {
     int y = 0x7E;
     MenuTextureReload(ItemMenuWeaponIconReadBlock);
     static int ncnt = 0;
-    int        bright = (int) (112.0f + 48.0f * sinf(3.1415927f * (float) (ncnt - 0x3C) / 60.0f));
+    int        bright = (int) (112.0f + 48.0f * sinf(PI * (float) (ncnt - 0x3C) / 60.0f));
 
     for (int i = 0; i < 3; i++) {
         if ((ItemMenuMode.overflow_pages & (1 << (i + 1))) && page == i) {
@@ -6251,7 +6251,7 @@ void DrawTrushItem() {
         AtoraNameMes.MakeMesWin(0xBB);
     }
 
-    AtoraNameMes.stay_frame = 1;
+    AtoraNameMes.stay_frame = true;
     AtoraNameMes.edge_alpha = 0x80;
     DrawMenuClsMes(&AtoraNameMes, 0x34, 0x152);
 }
@@ -6265,10 +6265,10 @@ void DrawTrushItem() {
  */
 static void ExitItemSelect() {
     CommonMenuMes3.rows = 3;
-    CommonMenuMes3.narrow_gaiji = 0;
+    CommonMenuMes3.narrow_gaiji = false;
     CommonMenuMes3.char_width = 11;
-    AtoraNameMes.stay_frame = 0;
-    AtoraNameMes.auto_pos = -1;
+    AtoraNameMes.stay_frame = false;
+    AtoraNameMes.auto_pos = MES_POS_NONE;
     CMenuCursor *cursor = SaveData->GetMenuCursor();
 
     if (cursor->reset_pos == 0) {
@@ -6323,16 +6323,16 @@ static void InitItemMode(int mode, int chara) {
     int          max;
     int          thrown[7];
 
-    InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &ItemMenuMode.board, 0, 0);
-    ItemMenuMode.mode = 4;
+    InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &ItemMenuMode.board, PERSONAL_BOARD_ITEM, BOARD_PAGE_ITEM);
+    ItemMenuMode.mode = ITEM_MENU_BOARD;
     ItemMenuMode.chara = chara;
     cursor = SaveData->GetMenuCursor();
 
     if (cursor->reset_pos == 0) {
         ItemMenuMode.mode = cursor->mode[0];
 
-        if (ItemMenuMode.mode < 0 || ItemMenuMode.mode > 4) {
-            ItemMenuMode.mode = 4;
+        if (ItemMenuMode.mode < 0 || ItemMenuMode.mode > ITEM_MENU_BOARD) {
+            ItemMenuMode.mode = ITEM_MENU_BOARD;
         }
 
         max = PersonalRetMax(cursor->chara_no);
@@ -6343,10 +6343,10 @@ static void InitItemMode(int mode, int chara) {
             ItemMenuMode.board.top_row = 0;
         }
     } else {
-        ItemMenuMode.mode = 4;
+        ItemMenuMode.mode = ITEM_MENU_BOARD;
         ItemMenuMode.board.cursor = 0;
         ItemMenuMode.board.top_row = 0;
-        max = PersonalRetMax(0);
+        max = PersonalRetMax(BOARD_PAGE_ITEM);
     }
 
     memset(thrown, 0, sizeof(thrown));
@@ -6356,21 +6356,21 @@ static void InitItemMode(int mode, int chara) {
     }
 
     ItemMenuMode.overflow_pages = 0;
-    ItemMenuMode.overflow = 0;
+    ItemMenuMode.overflow = false;
 
     if (CheckItemThrow(thrown, NULL)) {
         for (int i = 0; i < 3; i++) {
-            if (thrown[i] >= 0x84) {
+            if (thrown[i] >= ITEM_DUNGEON_START) {
                 ItemMenuMode.overflow_count[0]++;
             }
         }
 
-        if (thrown[3] >= 0x101) {
+        if (thrown[3] >= ITEM_WEAPON_START) {
             ItemMenuMode.overflow_count[1]++;
         }
 
         for (int i = 0; i < 3; i++) {
-            if (thrown[i + 4] < 0x51) {
+            if (thrown[i + 4] < ITEM_ATTACH_START) {
                 break;
             }
 
@@ -6389,7 +6389,7 @@ static void InitItemMode(int mode, int chara) {
             }
         }
 
-        if (ItemMenuMode.board.page == 1) {
+        if (ItemMenuMode.board.page == BOARD_PAGE_WEAPON) {
             ItemMenuMode.board.cursor = WhoIsWeaponEquip(thrown[3]) * 10;
             ItemMenuMode.board.top_row = ItemMenuMode.board.cursor / 5;
 
@@ -6402,15 +6402,15 @@ static void InitItemMode(int mode, int chara) {
             }
         }
 
-        ItemMenuMode.overflow = 1;
-        BtlMenuStatusPt->overflow_flag = 1;
+        ItemMenuMode.overflow = true;
+        BtlMenuStatusPt->overflow_flag = true;
     }
 
     ItemMenuMode.board.y = 127 - ItemMenuMode.board.top_row * 40;
     int pages = max / 5;
     ItemMenuMode.board.scroll = 140.0f + 114.0f * ItemMenuMode.board.top_row / pages;
-    ItemMenuMode.board.cursor_area = 1;
-    ItemMenuMode.state = 1;
+    ItemMenuMode.board.cursor_area = PERSONAL_BOARD_AREA_CELLS;
+    ItemMenuMode.state = ITEM_MENU_STATE_LOADING;
     ItemMenuMode.counter = 0;
     u_long128 *buffer = BtlMenuReadBuf;
     int        size;
@@ -6419,15 +6419,15 @@ static void InitItemMode(int mode, int chara) {
     ItemMenuCharaReadBuf = MenuCalcBufAlignment(buffer);
     BtlHaveItemPt = &ItemMenuMode.board.held_item;
     StartLoadCharaMDS(ItemMenuCharaReadBuf, chara, 1);
-    MenuExTextureReadFlag = 0;
+    MenuExTextureReadFlag = MENU_EX_TEX_UNREAD;
     memset(&IconAutoGet, -1, sizeof(IconAutoGet));
-    CommonMenuMes3.Preset(4);
+    CommonMenuMes3.Preset(MES_PRESET_NAME);
     CommonMenuMes3.mes_made = -1;
     CommonMenuMes3.rows = 1;
     CommonMenuMes3.char_width = 12;
     CommonMenuMes1.mes_made = -1;
-    AtoraNameMes.value_signed = 0;
-    AtoraNameMes.Preset(1);
+    AtoraNameMes.value_signed = false;
+    AtoraNameMes.Preset(MES_PRESET_SYSTEM);
     AtoraNameMes.mes_made = -1;
     AtoraNameMes.rows = 3;
 
@@ -6462,13 +6462,13 @@ static void InitItemTrushStart() {
     if (ReadBGSync() == 0) {
         BattleMenuTexEnter();
 
-        if (BtlMenuMode == 1) {
+        if (BtlMenuMode == BATTLE_MENU_MODE_TOWN) {
             BtlMenuStatusPt->cur_chara = 0;
         }
 
         InitItemMode(0, BtlMenuStatusPt->cur_chara);
-        BattleMenuFlag = MenuSelect[0] + 8;
-        BtlEffectFlag = 1;
+        BattleMenuFlag = MenuSelect[0] + BTLMENU_STATE_OPEN_OFFSET;
+        BtlEffectFlag = BTLEFFECT_PAGE_OPEN;
         BtlEffectCt = 0.0f;
     }
 }
@@ -6501,11 +6501,11 @@ void ExistItemMenu() {
  * @size 0x1C0
  */
 static void ChangeMenuChara() {
-    if (MenuWepLevelUp.operation_kind < 4 || MenuWepLevelUp.operation_kind > 13) {
+    if (MenuWepLevelUp.operation_kind < WEP_EFFECT_CURE_HEAL_HP || MenuWepLevelUp.operation_kind > WEP_EFFECT_CURE_POCKET) {
         int previous = ItemMenuMode.chara;
         int party_size = BtlMenuStatusPt->party_size;
 
-        if (GamePad.Down(5) != 0) {
+        if (GamePad.Down(PAD_L2 | PAD_L1) != 0) {
             ItemMenuMode.chara--;
 
             if (ItemMenuMode.chara < 0) {
@@ -6513,7 +6513,7 @@ static void ChangeMenuChara() {
             }
         }
 
-        if (GamePad.Down(10) != 0) {
+        if (GamePad.Down(PAD_R2 | PAD_R1) != 0) {
             ItemMenuMode.chara++;
 
             if (party_size - 1 < ItemMenuMode.chara) {
@@ -6540,7 +6540,7 @@ static void ChangeMenuChara() {
                     SetNowEquipWeaponDataForMsg(0, 0);
                 }
             } else {
-                MenuExTextureReadFlag = 1;
+                MenuExTextureReadFlag = MENU_EX_TEX_BUILDING;
             }
         }
     }
@@ -6605,21 +6605,21 @@ int ItemMenuMainKey() {
     float effect_y;
 
     switch (MenuExTextureReadFlag) {
-        case 0:
+        case MENU_EX_TEX_UNREAD:
             if (ReadBGSync() == 0) {
                 if (ItemMenuAlreadyReadWepIconTexFlag == 0) {
                     ReadSyncItemMenuWepIcon();
                     ItemMenuAlreadyReadWepIconTexFlag = 1;
-                    ItemMenuMode.state = 2;
+                    ItemMenuMode.state = ITEM_MENU_STATE_OPEN;
                 }
 
                 MenuCharaMDSBuild2(ItemMenuMode.chara, MenuExtendReadBlock);
-                MenuExTextureReadFlag = 1;
+                MenuExTextureReadFlag = MENU_EX_TEX_BUILDING;
                 BtlMDSBuildCnt = 0;
             }
 
             break;
-        case 1:
+        case MENU_EX_TEX_BUILDING:
             BtlMDSBuildCnt++;
             MenuCharaFrame.Step();
 
@@ -6628,7 +6628,7 @@ int ItemMenuMainKey() {
             }
 
             if (BtlMDSBuildCnt > 3) {
-                MenuExTextureReadFlag = 2;
+                MenuExTextureReadFlag = MENU_EX_TEX_READY;
             }
 
             break;
@@ -6658,29 +6658,29 @@ int ItemMenuMainKey() {
         }
     }
 
-    if (IconAutoGet.IsMoveIcon() == 0 && result == 0 && overflowing == 0 && BtlHaveItemPt->item_no < 0x51) {
-        ItemMenuMode.overflow = 0;
-        ((CUserStatus *) BtlMenuStatusPt)->overflow_flag = 0;
+    if (IconAutoGet.IsMoveIcon() == 0 && result == 0 && overflowing == 0 && BtlHaveItemPt->item_no < ITEM_ATTACH_START) {
+        ItemMenuMode.overflow = false;
+        ((CUserStatus *) BtlMenuStatusPt)->overflow_flag = false;
         DeleteMenuTrushMark();
     }
 
     switch (ItemMenuMode.state) {
-        case 1:
+        case ITEM_MENU_STATE_LOADING:
             ToFromSelect(0);
             break;
-        case 2:
+        case ITEM_MENU_STATE_OPEN:
             result = ToFromSelect(0);
             ItemMenuMode.counter++;
 
             if (ItemMenuMode.counter >= 0x11 && result != 0) {
-                BtlEffectFlag = -1;
-                ItemMenuMode.state = 0;
+                BtlEffectFlag = BTLEFFECT_NONE;
+                ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
                 ItemMenuMode.counter = 0;
-                BattleMenuFlag = 1;
+                BattleMenuFlag = BTLMENU_STATE_ITEM;
             }
 
             break;
-        case 3:
+        case ITEM_MENU_STATE_CLOSE:
             result = ToFromSelect(1);
 
             if (BtlMenuExReadFlag == 0) {
@@ -6691,103 +6691,103 @@ int ItemMenuMainKey() {
 
             if (ItemMenuMode.counter > 0x11 && result != 0 && BtlMenuExReadFlag != 0) {
                 ExistItemMenu();
-                BattleMenuFlag = 0;
+                BattleMenuFlag = BTLMENU_STATE_MAIN;
             }
 
             break;
-        case 4: {
+        case ITEM_MENU_STATE_EFFECT: {
             int motion = MenuWepLevelUp.effect.motion_state;
             int state = MenuWepLevelUp.effect_state;
 
-            if (state == 0x15 || state == 0x1D || state == 0x1B || state == 0x1F || state == 0x1Fu || state == 0x19 || (state == 0x17 && MenuWepLevelUp.message_no > 0x190)) {
-                if (motion == 3 && GamePad.Down(0x60) != 0) {
-                    ItemMenuMode.state = 0;
+            if (state == WEP_EFFECT_STATE_CURE_STATUS_PLAY || state == WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_PLAY || state == WEP_EFFECT_STATE_CURE_GOURD_PLAY || state == WEP_EFFECT_STATE_CURE_POCKET_PLAY || state == 0x1Fu || state == WEP_EFFECT_STATE_CURE_REVIVAL_POWDER_PLAY || (state == WEP_EFFECT_STATE_CURE_AILMENT_PLAY && MenuWepLevelUp.message_no > 0x190)) {
+                if (motion == 3 && GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                    ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
                     MenuWepLevelUp.SetSnd(MenuWepLevelUp.snd_volume, MenuWepLevelUp.snd_from, 7);
                     MenuWepLevelUp.Initialize();
                 }
-            } else if (state == 13 || state == 15 || (state == 23 && MenuWepLevelUp.message_no < 0x190) || state == 17) {
+            } else if (state == WEP_EFFECT_STATE_CURE_HEAL_HP_PLAY || state == WEP_EFFECT_STATE_CURE_DRINK_PLAY || (state == WEP_EFFECT_STATE_CURE_AILMENT_PLAY && MenuWepLevelUp.message_no < 0x190) || state == WEP_EFFECT_STATE_CURE_REPAIR_PLAY) {
                 if (motion == 3) {
-                    ItemMenuMode.state = 0;
+                    ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
                     MenuWepLevelUp.Initialize();
                 }
             }
 
             break;
         }
-        case 6:
-            if (GamePad.Down(0x5000) != 0) {
+        case ITEM_MENU_STATE_POWERUP_CONFIRM:
+            if (GamePad.Down(PAD_UP | PAD_DOWN) != 0) {
                 if (ItemMenuMode.confirm != 0) {
                     ItemMenuMode.confirm = 0;
                 } else {
                     ItemMenuMode.confirm = 1;
                 }
 
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (GamePad.Down(0x40) != 0) {
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 if (ItemMenuMode.confirm == 0) {
                     WEAPON_HAVE *weapon = ItemMenuMode.target_weapon;
                     s16          item_no = BtlHaveItemPt->item_no;
-                    int          result = ItemUseFunc(BtlMenuStatusPt, item_no, ItemMenuMode.chara, 2, weapon);
+                    int          result = ItemUseFunc(BtlMenuStatusPt, item_no, ItemMenuMode.chara, ITEM_USE_ON_EQUIP_WEAPON, weapon);
 
                     if ((u32) (result - 1) < 2) {
                         int sounds[2] = {1, 0x18};
                         ComMenuSePlay(sounds[result - 1]);
                     }
 
-                    if (ItemMenuMode.use_target == 2) {
+                    if (ItemMenuMode.use_target == ITEM_USE_ON_EQUIP_WEAPON) {
                         effect_x = -16.95f;
                         effect_y = 1.0f;
                     }
 
-                    if (ItemMenuMode.use_target == 4) {
+                    if (ItemMenuMode.use_target == ITEM_USE_ON_BOARD_WEAPON) {
                         effect_x = 4.3f + 3.2f * (float) (ItemMenuMode.board.cursor % 5);
                         effect_y = 6.7f - 3.2f * (float) (ItemMenuMode.board.cursor / 5 - ItemMenuMode.board.top_row);
                     }
 
                     CWeaponLevelUp *effect = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
-                    MenuWepLevelUp.CureEffect((int) effect_x, (int) effect_y, effect, BtlMenuExReadBlock, 6);
+                    MenuWepLevelUp.CureEffect((int) effect_x, (int) effect_y, effect, BtlMenuExReadBlock, WEP_EFFECT_CURE_REPAIR);
                     InitHaveData(BtlHaveItemPt);
-                    ItemMenuMode.state = 0;
-                    ComMenuSePlay(0x18);
+                    ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
+                    ComMenuSePlay(SE_WEAPON_REPAIR);
                 } else {
-                    ItemMenuMode.state = 0;
-                    ComMenuSePlay(2);
+                    ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
-            } else if (GamePad.Down(0x20) != 0) {
-                ItemMenuMode.state = 0;
-                ComMenuSePlay(2);
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
-        case 0:
+        case ITEM_MENU_STATE_IDLE:
             switch (ItemMenuMode.mode) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
+                case ITEM_MENU_QUICK_SLOTS:
+                case ITEM_MENU_CHARA:
+                case ITEM_MENU_WEAPON:
+                case ITEM_MENU_DEFENSE:
                     ChangeMenuChara();
-                case 5:
+                case ITEM_MENU_TRUSH:
                     ItemMenuModeKey();
                     break;
-                case 4: {
+                case ITEM_MENU_BOARD: {
                     int done = PersonalBoardKey();
                     int row = ItemMenuMode.board.cursor / 5 - ItemMenuMode.board.top_row;
 
                     if (done != 0) {
                         if (row < 2) {
-                            ItemMenuMode.mode = 0;
+                            ItemMenuMode.mode = ITEM_MENU_QUICK_SLOTS;
                             ItemMenuMode.board.cursor = 2;
                         } else {
-                            ItemMenuMode.mode = 1;
+                            ItemMenuMode.mode = ITEM_MENU_CHARA;
                         }
 
                         int page = ItemMenuMode.board.page;
                         int count = ItemMenuMode.overflow_count[page];
 
                         if ((ItemMenuMode.overflow_pages & (1 << (page + 1))) && ItemMenuMode.overflow != 0) {
-                            ItemMenuMode.mode = 5;
+                            ItemMenuMode.mode = ITEM_MENU_TRUSH;
                             ItemMenuMode.board.cursor = row;
 
                             if (ItemMenuMode.board.cursor > count - 1) {
@@ -6804,32 +6804,32 @@ int ItemMenuMainKey() {
                 }
             }
 
-            if (MenuExTextureReadFlag >= 2 && MenuWepLevelUp.operation_kind == -1) {
-                if (GamePad.Down(0x40) != 0) {
+            if (MenuExTextureReadFlag >= MENU_EX_TEX_READY && MenuWepLevelUp.operation_kind == WEP_EFFECT_NONE) {
+                if (GamePad.Down(PAD_CROSS) != 0) {
                     int            cursor = ItemMenuMode.board.cursor;
                     COM_ITEM_INFO *info = GetCommonItemInfo(BtlHaveItemPt->item_no);
 
                     switch (ItemMenuMode.mode) {
-                        case 0: {
+                        case ITEM_MENU_QUICK_SLOTS: {
                             int held = BtlHaveItemPt->item_no;
 
-                            if ((held >= 0x51 && held < 0x84) || held >= 0x101) {
-                                ComMenuSePlay(2);
+                            if ((held >= ITEM_ATTACH_START && held < ITEM_DUNGEON_START) || held >= ITEM_WEAPON_START) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else if (IconAutoGet.IsMoveIcon() != 0) {
-                                ComMenuSePlay(2);
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
                                 s16       *slot_item = &MenuItemPackPt->quick_item_slot[cursor];
                                 s16       *slot_qty = &MenuItemPackPt->quick_item_qty[cursor];
                                 ITEM_DATA *slot_data = NULL;
 
-                                if (*slot_item >= 0x84) {
+                                if (*slot_item >= ITEM_DUNGEON_START) {
                                     slot_data = GetItemData(*slot_item);
                                 }
 
                                 int        held_kind = 0;
                                 ITEM_DATA *held_data = NULL;
 
-                                if (BtlHaveItemPt->item_no >= 0x84) {
+                                if (BtlHaveItemPt->item_no >= ITEM_DUNGEON_START) {
                                     held_data = GetItemData(BtlHaveItemPt->item_no);
                                     held_kind = held_data->stack_kind;
                                 }
@@ -6839,17 +6839,17 @@ int ItemMenuMainKey() {
                                 int take = 0;
 
                                 switch (held_kind) {
-                                    case 2:
+                                    case ITEM_STACK_NEVER:
                                         break;
-                                    case 1:
+                                    case ITEM_STACK_SINGLE:
                                         if (slot_data == NULL) {
                                             ok = 1;
                                         } else {
                                             switch (slot_data->stack_kind) {
-                                                case 1:
+                                                case ITEM_STACK_SINGLE:
                                                     ok = 1;
                                                     break;
-                                                case 0:
+                                                case ITEM_STACK_MULTI:
                                                     ok = 1;
 
                                                     if (*slot_qty >= 2) {
@@ -6861,13 +6861,13 @@ int ItemMenuMainKey() {
                                         }
 
                                         break;
-                                    case 0:
+                                    case ITEM_STACK_MULTI:
                                         if (slot_data == NULL) {
                                             ok = 1;
                                         } else {
                                             ok = 1;
 
-                                            if (slot_data->stack_kind == 0) {
+                                            if (slot_data->stack_kind == ITEM_STACK_MULTI) {
                                                 if (*slot_item == BtlHaveItemPt->item_no) {
                                                     if (*slot_qty < 9) {
                                                         stack = 1;
@@ -6886,7 +6886,7 @@ int ItemMenuMainKey() {
                                 }
 
                                 if (ok == 0) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else {
                                     if (stack != 0) {
                                         if (*slot_qty == 0) {
@@ -6898,7 +6898,7 @@ int ItemMenuMainKey() {
                                         InitHaveData(BtlHaveItemPt);
                                     } else if (take != 0) {
                                         BtlHaveItemPt->item_no = *slot_item;
-                                        BtlHaveItemPt->slot_state = 0;
+                                        BtlHaveItemPt->slot_state = ITEM_MENU_QUICK_SLOTS;
                                         BtlHaveItemPt->from_slot = cursor;
                                         (*slot_qty)--;
 
@@ -6913,32 +6913,32 @@ int ItemMenuMainKey() {
                                         status->active_item_vol[cursor] = BtlHaveItemPt->volume;
                                         BtlHaveItemPt->volume = vol;
 
-                                        if (*slot_item >= 0x84) {
+                                        if (*slot_item >= ITEM_DUNGEON_START) {
                                             *slot_qty = 1;
                                         } else {
                                             *slot_qty = 0;
                                         }
 
-                                        if (BtlHaveItemPt->item_no >= 0x84) {
-                                            BtlHaveItemPt->slot_state = 0;
+                                        if (BtlHaveItemPt->item_no >= ITEM_DUNGEON_START) {
+                                            BtlHaveItemPt->slot_state = ITEM_MENU_QUICK_SLOTS;
                                             BtlHaveItemPt->from_slot = cursor;
                                         }
                                     }
 
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 }
                             }
 
                             break;
                         }
-                        case 1:
+                        case ITEM_MENU_CHARA:
                             if (info == NULL) {
-                                ComMenuSePlay(2);
-                            } else if (info->kind != 1) {
-                                ComMenuSePlay(2);
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
+                            } else if (info->kind != ITEMKIND_ITEM) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
                                 int chara = ItemMenuMode.chara;
-                                int result = ItemUseFunc(BtlMenuStatusPt, BtlHaveItemPt->item_no, chara, 1, NULL);
+                                int result = ItemUseFunc(BtlMenuStatusPt, BtlHaveItemPt->item_no, chara, ITEM_USE_ON_CHARA, NULL);
                                 int sounds[4] = {2, 1, 0x18, -1};
                                 int sound;
 
@@ -6949,29 +6949,29 @@ int ItemMenuMainKey() {
                                 }
 
                                 if (sound == 2) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else {
                                     ITEM_DATA *data = GetItemData(BtlHaveItemPt->item_no);
-                                    int        effect = -1;
+                                    int        effect = WEP_EFFECT_NONE;
 
                                     if (sound > 0) {
                                         u32 use = data->use_flags;
 
                                         if ((use & 0x80) && (data->kind_flags & 4)) {
-                                            effect = 5;
+                                            effect = WEP_EFFECT_CURE_DRINK;
                                             effect_x = -5.0f;
                                             effect_y = -3.0f;
                                         }
 
                                         if ((use & 0x40) && (data->kind_flags & 4)) {
-                                            effect = 4;
+                                            effect = WEP_EFFECT_CURE_HEAL_HP;
                                             effect_x = -5.5f;
                                             effect_y = -6.0f;
-                                            ComMenuSePlay(0x13);
+                                            ComMenuSePlay(SE_EFFECT_CHIME);
                                         }
 
                                         if ((data->use_flags & 0x20) && (data->kind_flags & 0x20)) {
-                                            effect = 8;
+                                            effect = WEP_EFFECT_CURE_STATUS;
                                             effect_x = -5.5f;
                                             effect_y = -6.0f;
                                             int volume = GetMenuItemUseVolume();
@@ -6983,16 +6983,16 @@ int ItemMenuMainKey() {
                                             int message;
 
                                             switch (BtlHaveItemPt->item_no) {
-                                                case 0x97:
+                                                case ITEM_ANTIDOTE_DRINK:
                                                     message = 0x1A2;
                                                     break;
-                                                case 0x98:
+                                                case ITEM_HOLY_WATER:
                                                     message = 0x1A3;
                                                     break;
-                                                case 0x99:
+                                                case ITEM_SOAP:
                                                     message = 0x1A4;
                                                     break;
-                                                case 0x9A:
+                                                case ITEM_MIGHTY_HEALING:
                                                     message = 0x1A5;
                                                     break;
                                                 default:
@@ -7002,25 +7002,25 @@ int ItemMenuMainKey() {
 
                                             MenuWepLevelUp.message_no = message;
                                             MenuWepLevelUp.message_value = 0;
-                                            effect = 9;
+                                            effect = WEP_EFFECT_CURE_AILMENT;
                                             effect_x = -6.0f;
                                             effect_y = -2.0f;
-                                            ComMenuSePlay(0x13);
+                                            ComMenuSePlay(SE_EFFECT_CHIME);
                                         }
 
                                         if ((data->kind_flags & 1) && (data->use_flags & 0x1000)) {
-                                            effect = 9;
+                                            effect = WEP_EFFECT_CURE_AILMENT;
 
-                                            if (BtlMenuMode == 0) {
-                                                ComMenuSePlay(0x6F);
+                                            if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
+                                                ComMenuSePlay(SE_POWER_UP);
                                             }
 
                                             effect_x = -6.0f;
                                             effect_y = -2.0f;
                                         }
 
-                                        if (BtlHaveItemPt->item_no == 0xB3) {
-                                            effect = 13;
+                                        if (BtlHaveItemPt->item_no == ITEM_POCKET) {
+                                            effect = WEP_EFFECT_CURE_POCKET;
                                             effect_x = 19.03f;
                                             effect_y = 9.1f;
                                             int volume = GetMenuItemUseVolume();
@@ -7028,8 +7028,8 @@ int ItemMenuMainKey() {
                                             MenuWepLevelUp.message_value = volume;
                                         }
 
-                                        if (BtlHaveItemPt->item_no == 0xB4) {
-                                            effect = 12;
+                                        if (BtlHaveItemPt->item_no == ITEM_FRUIT_OF_EDEN) {
+                                            effect = WEP_EFFECT_CURE_FRUIT_OF_EDEN;
                                             effect_x = -5.5f;
                                             effect_y = -6.0f;
                                             int volume = GetMenuItemUseVolume();
@@ -7037,8 +7037,8 @@ int ItemMenuMainKey() {
                                             MenuWepLevelUp.message_value = volume;
                                         }
 
-                                        if (BtlHaveItemPt->item_no == 0xB6) {
-                                            effect = 11;
+                                        if (BtlHaveItemPt->item_no == ITEM_GOURD) {
+                                            effect = WEP_EFFECT_CURE_GOURD;
                                             effect_x = -5.5f;
                                             effect_y = -6.0f;
                                             int volume = GetMenuItemUseVolume();
@@ -7046,8 +7046,8 @@ int ItemMenuMainKey() {
                                             MenuWepLevelUp.message_value = volume;
                                         }
 
-                                        if (BtlHaveItemPt->item_no == 0xB0) {
-                                            effect = 10;
+                                        if (BtlHaveItemPt->item_no == ITEM_REVIVAL_POWDER) {
+                                            effect = WEP_EFFECT_CURE_REVIVAL_POWDER;
                                             effect_x = -5.5f;
                                             effect_y = -2.0f;
                                             int volume = GetMenuItemUseVolume();
@@ -7056,7 +7056,7 @@ int ItemMenuMainKey() {
                                         }
 
                                         if (effect > 0) {
-                                            ItemMenuMode.state = 4;
+                                            ItemMenuMode.state = ITEM_MENU_STATE_EFFECT;
                                             CWeaponLevelUp *buffer = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
                                             MenuWepLevelUp.CureEffect((int) effect_x, (int) effect_y, buffer, BtlMenuExReadBlock, effect);
                                         }
@@ -7067,7 +7067,7 @@ int ItemMenuMainKey() {
                             }
 
                             break;
-                        case 2: {
+                        case ITEM_MENU_WEAPON: {
                             int          chara = ItemMenuMode.chara;
                             int          slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
                             WEAPON_HAVE *row = BtlMenuStatusPt->chara_weapons[chara];
@@ -7082,40 +7082,40 @@ int ItemMenuMainKey() {
 
                             int held = BtlHaveItemPt->item_no;
 
-                            if (held == 0xB2 && is_default == 0) {
+                            if (held == ITEM_POWERUP_POWDER && is_default == 0) {
                                 WEAPON_HAVE *target = ItemMenuMode.target_weapon;
 
                                 if (target->experience >= GetWeaponMaxExp(weapon)) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else if (target->level >= 99) {
-                                    ComMenuSePlay(2);
-                                } else if (target->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                                } else if (target->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else {
-                                    ItemMenuMode.state = 6;
-                                    ItemMenuMode.use_target = 2;
+                                    ItemMenuMode.state = ITEM_MENU_STATE_POWERUP_CONFIRM;
+                                    ItemMenuMode.use_target = ITEM_USE_ON_EQUIP_WEAPON;
                                     ItemMenuMode.confirm = 1;
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 }
-                            } else if (held != 0xB2 && held != 0xB1) {
-                                ComMenuSePlay(2);
+                            } else if (held != ITEM_POWERUP_POWDER && held != ITEM_REPAIR_POWDER) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
-                                int result = ItemUseFunc(BtlMenuStatusPt, held, ItemMenuMode.chara, 4, weapon);
+                                int result = ItemUseFunc(BtlMenuStatusPt, held, ItemMenuMode.chara, ITEM_USE_ON_BOARD_WEAPON, weapon);
                                 int after = ItemMenuMode.target_weapon->item_no;
 
                                 if ((u32) (result - 1) < 2) {
                                     s16 sounds[2] = {1, 0x18};
                                     ComMenuSePlay(sounds[result - 1]);
-                                    MenuWepLevelUp.CureEffect(-0x10, 1, (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16), BtlMenuExReadBlock, 6);
+                                    MenuWepLevelUp.CureEffect(-0x10, 1, (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16), BtlMenuExReadBlock, WEP_EFFECT_CURE_REPAIR);
 
-                                    if (BtlMenuMode == 0) {
+                                    if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
                                         if (before != after) {
                                             int who = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
 
                                             if (ItemMenuMode.chara == who) {
                                                 EquipWeaponFrame(&DefaultWeapon, ItemMenuMode.chara, CharaMainHandViewFlag);
 
-                                                if (((CUserStatus *) BtlMenuStatusPt)->cur_chara == 5) {
+                                                if (((CUserStatus *) BtlMenuStatusPt)->cur_chara == CHARA_OSMOND) {
                                                     NowMainEffect = &CharaMainEffectCrash;
                                                     BtActStatus.gun_type = 0;
                                                 }
@@ -7128,35 +7128,35 @@ int ItemMenuMainKey() {
                                     SetNowEquipWeaponDataForMsg(ItemMenuMode.target_weapon->item_no, ItemMenuMode.target_weapon->level);
                                     InitHaveData(BtlHaveItemPt);
                                 } else {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 }
                             }
 
                             break;
                         }
-                        case 3:
-                            ComMenuSePlay(2);
+                        case ITEM_MENU_DEFENSE:
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                             break;
-                        case 4: {
+                        case ITEM_MENU_BOARD: {
                             s16             held = BtlHaveItemPt->item_no;
                             PERSONAL_BOARD *board = &ItemMenuMode.board;
 
-                            if (board->cursor_area == 2) {
-                                if (held < 0x51) {
-                                    ComMenuSePlay(2);
+                            if (board->cursor_area == PERSONAL_BOARD_AREA_TRASH) {
+                                if (held < ITEM_ATTACH_START) {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else if (IsEnableTrushThrow(held) != 0) {
                                     board->trash_anim = 1;
                                     board->trash_frame = 0;
                                     InitHaveData(BtlHaveItemPt);
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 } else {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 }
                             } else {
                                 int before = -1;
                                 int item = held;
 
-                                if (ItemMenuMode.board.page == 1) {
+                                if (ItemMenuMode.board.page == BOARD_PAGE_WEAPON) {
                                     int             chara = ItemMenuMode.board.cursor / 10;
                                     int             slot = ItemMenuMode.board.cursor % 10;
                                     CDngStatusData *status = BtlMenuStatusPt;
@@ -7168,31 +7168,31 @@ int ItemMenuMainKey() {
                                 int result = PersonalBoardItemGetorSwap(ItemMenuMode.board.cursor);
 
                                 if (result == 0) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else if (result == 1) {
-                                    if (BtlHaveItemPt->item_no >= 0x51) {
-                                        BtlHaveItemPt->slot_state = 4;
+                                    if (BtlHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                                        BtlHaveItemPt->slot_state = ITEM_MENU_BOARD;
                                     } else {
                                         InitHaveData(BtlHaveItemPt);
                                         InitHaveWep(&ItemMenuMode.board.weapon);
                                         InitHaveAttach(&ItemMenuMode.board.held_attach);
                                     }
 
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 } else if (result == 2) {
                                     float x = 4.3f + 3.2f * (float) (ItemMenuMode.board.cursor % 5);
                                     float y = 6.7f - 3.2f * (float) (ItemMenuMode.board.cursor / 5 - ItemMenuMode.board.top_row);
 
-                                    if (item == 0xB1) {
+                                    if (item == ITEM_REPAIR_POWDER) {
                                         CWeaponLevelUp *effect = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
-                                        MenuWepLevelUp.CureEffect((int) x, (int) y, effect, BtlMenuExReadBlock, 6);
+                                        MenuWepLevelUp.CureEffect((int) x, (int) y, effect, BtlMenuExReadBlock, WEP_EFFECT_CURE_REPAIR);
                                     }
 
-                                    if (ItemMenuMode.board.page == 1) {
-                                        if (item == 0xB1) {
+                                    if (ItemMenuMode.board.page == BOARD_PAGE_WEAPON) {
+                                        if (item == ITEM_REPAIR_POWDER) {
                                             int after = ItemMenuMode.target_weapon->item_no;
 
-                                            if (BtlMenuMode == 0) {
+                                            if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
                                                 if (after != before) {
                                                     EquipWeaponFrame(&DefaultWeapon, ItemMenuMode.chara, CharaMainHandViewFlag);
                                                 }
@@ -7200,54 +7200,54 @@ int ItemMenuMainKey() {
                                                 MenuWeaponSpSet(&MainWeapon, ItemMenuMode.target_weapon);
                                             }
 
-                                            ComMenuSePlay(0x18);
+                                            ComMenuSePlay(SE_WEAPON_REPAIR);
                                         }
 
-                                        if (item == 0xB2 && before != GetDefaultWeaponNo(ItemMenuMode.board.cursor / 10)) {
-                                            ItemMenuMode.state = 6;
-                                            ItemMenuMode.use_target = 4;
+                                        if (item == ITEM_POWERUP_POWDER && before != GetDefaultWeaponNo(ItemMenuMode.board.cursor / 10)) {
+                                            ItemMenuMode.state = ITEM_MENU_STATE_POWERUP_CONFIRM;
+                                            ItemMenuMode.use_target = ITEM_USE_ON_BOARD_WEAPON;
                                             ItemMenuMode.confirm = 1;
-                                            ComMenuSePlay(1);
+                                            ComMenuSePlay(MENU_SOUND_CONFIRM);
                                         }
                                     }
                                 } else if (result == 1) {
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 } else {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 }
                             }
 
                             break;
                         }
-                        case 5:
+                        case ITEM_MENU_TRUSH:
                             if (ItemTrushKey(thrown, thrown_vol, ItemMenuMode.board.cursor) != 0) {
-                                BtlHaveItemPt->slot_state = 5;
+                                BtlHaveItemPt->slot_state = ITEM_MENU_TRUSH;
                                 BtlHaveItemPt->from_slot = ItemMenuMode.board.cursor;
-                                ComMenuSePlay(1);
+                                ComMenuSePlay(MENU_SOUND_CONFIRM);
                             } else {
-                                ComMenuSePlay(2);
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             }
 
                             break;
                     }
-                } else if (GamePad.Down(0x20) != 0) {
-                    ComMenuSePlay(2);
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
 
-                    if (BtlHaveItemPt->item_no < 0x51 && IconAutoGet.IsMoveIcon() == 0 && ItemMenuMode.overflow == 0) {
-                        BattleMenuFlag = 0x11;
+                    if (BtlHaveItemPt->item_no < ITEM_ATTACH_START && IconAutoGet.IsMoveIcon() == 0 && ItemMenuMode.overflow == 0) {
+                        BattleMenuFlag = BTLMENU_STATE_ITEM_CLOSE;
                         u_long128 *buffer = BtlMenuReadBuf;
 
                         switch (BtlMenuMode) {
-                            case 0:
+                            case BATTLE_MENU_MODE_DUNGEON:
                                 BtlMenuExReadFlag = DngActItemModelReadStart(buffer);
                                 break;
                         }
 
                         ExitItemSelect();
-                        ItemMenuMode.state = 3;
+                        ItemMenuMode.state = ITEM_MENU_STATE_CLOSE;
                         ItemMenuMode.counter = 0;
                     } else if (IconAutoGet.IsMoveIcon() != 0) {
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                         break;
                     } else {
                         s16 *slot_item;
@@ -7257,13 +7257,13 @@ int ItemMenuMainKey() {
                         s16  held = BtlHaveItemPt->item_no;
 
                         switch (BtlHaveItemPt->slot_state) {
-                            case 5:
+                            case ITEM_MENU_TRUSH:
                                 switch (WhatIsKindofItem(held)) {
-                                    case 0:
+                                    case BOARD_PAGE_ITEM:
                                         MenuDataSwap(&BtlHaveItemPt->item_no, &MenuItemPackPt->item[MenuItemPackPt->num + BtlHaveItemPt->from_slot]);
                                         MenuDataSwap(&BtlHaveItemPt->volume, &MenuItemPackPt->item_vol[MenuItemPackPt->num + BtlHaveItemPt->from_slot]);
                                         break;
-                                    case 1: {
+                                    case BOARD_PAGE_WEAPON: {
                                         int             who = WhoIsWeaponEquip(held);
                                         CDngStatusData *status = BtlMenuStatusPt;
                                         WEAPON_HAVE    *weapons = status->chara_weapons[who];
@@ -7273,14 +7273,14 @@ int ItemMenuMainKey() {
                                         BtlHaveItemPt->item_no = item_no;
                                         weapon->item_no = held;
 
-                                        if (BtlHaveItemPt->item_no < 0x101) {
+                                        if (BtlHaveItemPt->item_no < ITEM_WEAPON_START) {
                                             InitHaveData(BtlHaveItemPt);
                                             InitHaveWep(&ItemMenuMode.board.weapon);
                                         }
 
                                         break;
                                     }
-                                    case 2: {
+                                    case BOARD_PAGE_ATTACH: {
                                         ATTACH_LIST *attach = &((ATTACH_LIST *) BtlMenuStatusPt->consumable_items)[BtlHaveItemPt->from_slot];
                                         item_no = attach->item_no;
                                         MenuDataSwap(attach, &ItemMenuMode.board.held_attach);
@@ -7291,17 +7291,17 @@ int ItemMenuMainKey() {
                                 }
 
                                 break;
-                            case 4:
+                            case ITEM_MENU_BOARD:
                                 PersonalBoardItemCancel();
                                 break;
-                            case 0: {
+                            case ITEM_MENU_QUICK_SLOTS: {
                                 int slot = BtlHaveItemPt->from_slot;
                                 slot_item = &MenuItemPackPt->quick_item_slot[slot];
                                 slot_qty = &MenuItemPackPt->quick_item_qty[slot];
                                 CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
                                 vol = status->active_item_vol[slot];
 
-                                if (*slot_qty < 2 && *slot_item != held && held >= 0x84) {
+                                if (*slot_qty < 2 && *slot_item != held && held >= ITEM_DUNGEON_START) {
                                     MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
                                     int held_vol = BtlHaveItemPt->volume;
 
@@ -7313,9 +7313,9 @@ int ItemMenuMainKey() {
                                     status->active_item_vol[slot] = held_vol;
                                     BtlHaveItemPt->volume = vol;
                                     *slot_qty = 1;
-                                } else if (*slot_item == held && held >= 0x84 && *slot_qty < 9) {
+                                } else if (*slot_item == held && held >= ITEM_DUNGEON_START && *slot_qty < 9) {
                                     switch (GetItemData(held)->stack_kind) {
-                                        case 1: {
+                                        case ITEM_STACK_SINGLE: {
                                             MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
                                             int held_vol = BtlHaveItemPt->volume;
 
@@ -7329,13 +7329,13 @@ int ItemMenuMainKey() {
                                             *slot_qty = 1;
                                             break;
                                         }
-                                        case 0:
+                                        case ITEM_STACK_MULTI:
                                             (*slot_qty)++;
                                             InitHaveData(BtlHaveItemPt);
                                             break;
                                     }
 
-                                    if (BtlHaveItemPt->item_no < 0x51) {
+                                    if (BtlHaveItemPt->item_no < ITEM_ATTACH_START) {
                                         InitHaveData(BtlHaveItemPt);
                                     }
                                 }
@@ -7344,9 +7344,9 @@ int ItemMenuMainKey() {
                             }
                         }
                     }
-                } else if (GamePad.Down(0x80) != 0) {
+                } else if (GamePad.Down(PAD_SQUARE) != 0) {
                     switch (ItemMenuMode.mode) {
-                        case 0: {
+                        case ITEM_MENU_QUICK_SLOTS: {
                             int          cursor = ItemMenuMode.board.cursor;
                             ITEM_PACK   *pack = MenuItemPackPt;
                             s16         *items = pack->item;
@@ -7379,78 +7379,78 @@ int ItemMenuMainKey() {
                                 SetMenuTrushMark((ITEM_PACK *) ((CUserStatus *) BtlMenuStatusPt)->active_item);
                             }
 
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                             break;
                         }
-                        case 4:
-                        case 3:
-                        case 1:
+                        case ITEM_MENU_BOARD:
+                        case ITEM_MENU_DEFENSE:
+                        case ITEM_MENU_CHARA:
                             switch (ItemMenuMode.board.page) {
-                                case 0:
+                                case BOARD_PAGE_ITEM:
                                     SeitonItemBoard(MenuItemPackPt);
 
                                     if (((CUserStatus *) BtlMenuStatusPt)->overflow_flag != 0) {
                                         SetMenuTrushMark((ITEM_PACK *) ((CUserStatus *) BtlMenuStatusPt)->active_item);
                                     }
 
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                     break;
-                                case 2:
+                                case BOARD_PAGE_ATTACH:
                                     SeitonAttachBoard((ATTACH_LIST *) BtlMenuStatusPt->consumable_items);
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                     break;
                             }
 
                             break;
                     }
-                } else if (GamePad.Down(0x10) != 0) {
+                } else if (GamePad.Down(PAD_TRIANGLE) != 0) {
                     int  cursor = ItemMenuMode.board.cursor;
                     s16 *items = MenuItemPackPt->item;
 
                     switch (ItemMenuMode.mode) {
-                        case 0: {
+                        case ITEM_MENU_QUICK_SLOTS: {
                             s16 *slot_item = &MenuItemPackPt->quick_item_slot[cursor];
                             s16 *slot_qty = &MenuItemPackPt->quick_item_qty[cursor];
 
-                            if (*slot_item < 0x84) {
-                                ComMenuSePlay(2);
+                            if (*slot_item < ITEM_DUNGEON_START) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                                 break;
                             }
 
                             ITEM_DATA *data = GetItemData(*slot_item);
 
-                            if (data->stack_kind == 2) {
-                                ComMenuSePlay(2);
+                            if (data->stack_kind == ITEM_STACK_NEVER) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                                 break;
                             }
 
                             int moving = IconAutoGet.IsSameItem(*slot_item);
 
                             if (moving > 0) {
-                                ComMenuSePlay(1);
-                            } else if (data->stack_kind == 1) {
-                                ComMenuSePlay(2);
+                                ComMenuSePlay(MENU_SOUND_CONFIRM);
+                            } else if (data->stack_kind == ITEM_STACK_SINGLE) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
                                 int space = IconAutoGet.GetSpace();
                                 int qty = *slot_qty;
                                 int total = qty + moving;
 
                                 if (total >= 9 || space < 0) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else {
                                     s16 held = BtlHaveItemPt->item_no;
 
-                                    if (held >= 0x84 && held == *slot_item && total == 8) {
+                                    if (held >= ITEM_DUNGEON_START && held == *slot_item && total == 8) {
                                         *slot_qty = qty + 1;
                                         BtlHaveItemPt->item_no = 0;
-                                        ComMenuSePlay(1);
+                                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                                     } else {
                                         int found = 0;
 
                                         for (int i = 0; i < MenuItemPackPt->num; i++) {
                                             int want = *slot_item;
 
-                                            if ((want < 0x84 || want == items[i]) && (want >= 0x84 || held == items[i])) {
+                                            if ((want < ITEM_DUNGEON_START || want == items[i]) && (want >= ITEM_DUNGEON_START || held == items[i])) {
                                                 int y = (int) (ItemMenuMode.board.y + (float) (i / 5 * 0x28));
 
                                                 if (y >= 0x78 && y < 0x119) {
@@ -7485,9 +7485,9 @@ int ItemMenuMainKey() {
                                         }
 
                                         if (found != 0) {
-                                            ComMenuSePlay(1);
+                                            ComMenuSePlay(MENU_SOUND_CONFIRM);
                                         } else {
-                                            ComMenuSePlay(2);
+                                            ComMenuSePlay(MENU_SOUND_REFUSE);
                                         }
                                     }
                                 }
@@ -7495,11 +7495,11 @@ int ItemMenuMainKey() {
 
                             break;
                         }
-                        case 4:
-                            if (ItemMenuMode.board.cursor_area == 2) {
-                                ComMenuSePlay(2);
-                            } else if (ItemMenuMode.board.page == 1 || ItemMenuMode.board.page == 2) {
-                                ComMenuSePlay(2);
+                        case ITEM_MENU_BOARD:
+                            if (ItemMenuMode.board.cursor_area == PERSONAL_BOARD_AREA_TRASH) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
+                            } else if (ItemMenuMode.board.page == BOARD_PAGE_WEAPON || ItemMenuMode.board.page == BOARD_PAGE_ATTACH) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
                                 int space = IconAutoGet.GetSpace();
 
@@ -7508,22 +7508,22 @@ int ItemMenuMainKey() {
                                 }
 
                                 if (IconAutoGet.IsMoveIcon() != 0) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                     break;
                                 }
 
                                 int pos = ItemMenuMode.board.cursor;
                                 int item_no = SearchBoardNowPosItemExist(ItemMenuMode.board.page, pos);
 
-                                if (item_no < 0x84) {
-                                    ComMenuSePlay(2);
+                                if (item_no < ITEM_DUNGEON_START) {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                     break;
                                 }
 
                                 ITEM_DATA *data = GetItemData(item_no);
 
-                                if (data->stack_kind == 2) {
-                                    ComMenuSePlay(2);
+                                if (data->stack_kind == ITEM_STACK_NEVER) {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                     break;
                                 }
 
@@ -7536,12 +7536,12 @@ int ItemMenuMainKey() {
                                     s16 slot_item = MenuItemPackPt->quick_item_slot[slot];
                                     int moving = IconAutoGet.GetMoveIconGole(slot, slot_item);
 
-                                    if ((data->stack_kind == 0 && slot_item == item_no && MenuItemPackPt->quick_item_qty[slot] + moving < 9) || (data->stack_kind == 1 && slot_item < 0x84)) {
+                                    if ((data->stack_kind == ITEM_STACK_MULTI && slot_item == item_no && MenuItemPackPt->quick_item_qty[slot] + moving < 9) || (data->stack_kind == ITEM_STACK_SINGLE && slot_item < ITEM_DUNGEON_START)) {
                                         same = 1;
                                         break;
                                     }
 
-                                    if (slot_item < 0x84) {
+                                    if (slot_item < ITEM_DUNGEON_START) {
                                         empty = slot;
                                         break;
                                     }
@@ -7553,8 +7553,8 @@ int ItemMenuMainKey() {
                                     if (same != 0) {
                                         target = slot;
 
-                                        if (GetItemData(item_no)->stack_kind == 1 && MenuItemPackPt->quick_item_qty[slot] == 1) {
-                                            ComMenuSePlay(2);
+                                        if (GetItemData(item_no)->stack_kind == ITEM_STACK_SINGLE && MenuItemPackPt->quick_item_qty[slot] == 1) {
+                                            ComMenuSePlay(MENU_SOUND_REFUSE);
                                             break;
                                         }
                                     } else if (empty >= 0) {
@@ -7570,9 +7570,9 @@ int ItemMenuMainKey() {
                                     }
 
                                     items[pos] = -1;
-                                    ComMenuSePlay(1);
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 } else {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 }
                             }
 
@@ -7586,25 +7586,25 @@ int ItemMenuMainKey() {
             // debug item list.
             if (DebugMode) {
                 switch (ItemMenuMode.mode) {
-                    case 1: {
+                    case ITEM_MENU_CHARA: {
                         int hp = DebugGetHp(ItemMenuMode.chara);
                         int max_hp = DebugGetMaxHp(ItemMenuMode.chara);
 
-                        if (GamePad.On2(0x40) && hp < max_hp) {
+                        if (GamePad.On2(PAD_CROSS) && hp < max_hp) {
                             hp++;
                         }
 
-                        if (GamePad.On2(0x20) && hp > 1) {
+                        if (GamePad.On2(PAD_CIRCLE) && hp > 1) {
                             hp--;
                         }
 
-                        if (GamePad.On2(0x80)) {
+                        if (GamePad.On2(PAD_SQUARE)) {
                             hp = 0;
                         }
 
                         DebugSetHp(ItemMenuMode.chara, hp);
 
-                        if (GamePad.On2(0x10)) {
+                        if (GamePad.On2(PAD_TRIANGLE)) {
                             float water = DebugGetWater(ItemMenuMode.chara);
 
                             if (water > 0.0f) {
@@ -7616,14 +7616,14 @@ int ItemMenuMainKey() {
 
                         break;
                     }
-                    case 3: {
+                    case ITEM_MENU_DEFENSE: {
                         int defense = DebugGetDefense(ItemMenuMode.chara);
 
-                        if (GamePad.On2(0x40) && defense < 999) {
+                        if (GamePad.On2(PAD_CROSS) && defense < 999) {
                             defense++;
                         }
 
-                        if (GamePad.On2(0x20) && 0 < defense) {
+                        if (GamePad.On2(PAD_CIRCLE) && 0 < defense) {
                             defense--;
                         }
 
@@ -7632,9 +7632,9 @@ int ItemMenuMainKey() {
                     }
                 }
 
-                if (GamePad.On2(0x80)) {
+                if (GamePad.On2(PAD_SQUARE)) {
                     switch (ItemMenuMode.mode) {
-                        case 1: {
+                        case ITEM_MENU_CHARA: {
                             float water = DebugGetWater(ItemMenuMode.chara) - 1.0f;
 
                             if (water < 0.0f) {
@@ -7647,11 +7647,11 @@ int ItemMenuMainKey() {
                     }
                 }
 
-                if (GamePad.On2(0x10)) {
+                if (GamePad.On2(PAD_TRIANGLE)) {
                     switch (ItemMenuMode.mode) {
-                        case 1:
+                        case ITEM_MENU_CHARA:
                             break;
-                        case 3: {
+                        case ITEM_MENU_DEFENSE: {
                             CDngStatusData *status = BtlMenuStatusPt;
                             int             money = status->money + 1000;
 
@@ -7666,28 +7666,28 @@ int ItemMenuMainKey() {
                     }
                 }
 
-                if (GamePad.Down(0x100)) {
-                    ItemMenuMode.state = 5;
+                if (GamePad.Down(PAD_SELECT)) {
+                    ItemMenuMode.state = ITEM_MENU_STATE_DEBUG_ITEMS;
                     InitDebugItemGet();
                 }
             }
 
 #endif
             break;
-        case 5:
+        case ITEM_MENU_STATE_DEBUG_ITEMS:
             if (DebugItemGetKey() == -1) {
-                ItemMenuMode.state = 0;
+                ItemMenuMode.state = ITEM_MENU_STATE_IDLE;
             }
 
             break;
     }
 
     if (old_mode != ItemMenuMode.mode || old_cursor != ItemMenuMode.board.cursor || old_chara != ItemMenuMode.chara || old_page != ItemMenuMode.board.page) {
-        ComMenuSePlay(0);
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 
-    if (GamePad.Down(0xF) != 0 && ItemMenuMode.mode == 1 && old_chara == ItemMenuMode.chara) {
-        ComMenuSePlay(2);
+    if (GamePad.Down(PAD_L2 | PAD_R2 | PAD_L1 | PAD_R1) != 0 && ItemMenuMode.mode == ITEM_MENU_CHARA && old_chara == ItemMenuMode.chara) {
+        ComMenuSePlay(MENU_SOUND_REFUSE);
     }
 
     PERSONAL_BOARD *board = &ItemMenuMode.board;
@@ -7702,8 +7702,8 @@ int ItemMenuMainKey() {
 
     s16 held = BtlHaveItemPt->item_no;
 
-    if (held >= 0x51) {
-        if (held == 0x5A) {
+    if (held >= ITEM_ATTACH_START) {
+        if (held == ITEM_ATTACH_SYNTHESIS_SPHERE) {
             name_mes = GetWeaponMsgNo2(ItemMenuMode.board.held_attach.sphere_weapon_no);
         }
 
@@ -7714,41 +7714,41 @@ int ItemMenuMainKey() {
     int message = messages[ItemMenuMode.mode];
 
     switch (ItemMenuMode.mode) {
-        case 0: {
+        case ITEM_MENU_QUICK_SLOTS: {
             s16 *slot = &MenuItemPackPt->quick_item_slot[cursor];
 
-            if (*slot >= 0x84) {
+            if (*slot >= ITEM_DUNGEON_START) {
                 message = *slot + 0x1F4;
             }
 
             break;
         }
-        case 1:
+        case ITEM_MENU_CHARA:
             chara_mes = ItemMenuMode.chara;
             break;
-        case 2:
+        case ITEM_MENU_WEAPON:
             GetNowEquipWeaponDataForMsg(name_mes, value);
             break;
-        case 3:
+        case ITEM_MENU_DEFENSE:
             break;
-        case 5:
+        case ITEM_MENU_TRUSH:
             switch (ItemMenuMode.board.page) {
-                case 0: {
+                case BOARD_PAGE_ITEM: {
                     s16 item_no = MenuItemPackPt->item[MenuItemPackPt->num + ItemMenuMode.board.cursor];
 
-                    if (item_no >= 0x84) {
+                    if (item_no >= ITEM_DUNGEON_START) {
                         message = item_no + 0x1F4;
                     }
 
                     break;
                 }
-                case 1:
+                case BOARD_PAGE_WEAPON:
                     for (int i = 0; i < 6; i++) {
                         CDngStatusData *status = BtlMenuStatusPt;
                         WEAPON_HAVE    *weapons = status->chara_weapons[i];
                         WEAPON_HAVE    *weapon = &weapons[10];
 
-                        if (weapon->item_no >= 0x101) {
+                        if (weapon->item_no >= ITEM_WEAPON_START) {
                             message = GetWeaponMsgNo2(weapon->item_no) + 0x1F4;
                             value = weapon->level;
                             break;
@@ -7756,13 +7756,13 @@ int ItemMenuMainKey() {
                     }
 
                     break;
-                case 2: {
+                case BOARD_PAGE_ATTACH: {
                     ATTACH_LIST *attach = (ATTACH_LIST *) BtlMenuStatusPt->consumable_items + cursor + 40;
 
-                    if (attach->item_no >= 0x51) {
+                    if (attach->item_no >= ITEM_ATTACH_START) {
                         message = attach->item_no + 0x1F4;
 
-                        if (attach->item_no == 0x5A) {
+                        if (attach->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                             name_mes = GetWeaponMsgNo2(attach->sphere_weapon_no);
                         }
 
@@ -7774,40 +7774,40 @@ int ItemMenuMainKey() {
             }
 
             break;
-        case 4:
+        case ITEM_MENU_BOARD:
             switch (board->cursor_area) {
-                case 1:
+                case PERSONAL_BOARD_AREA_CELLS:
                     switch (board->page) {
-                        case 0: {
+                        case BOARD_PAGE_ITEM: {
                             s16 *slot = &MenuItemPackPt->item[cursor];
 
-                            if (*slot >= 0x84) {
+                            if (*slot >= ITEM_DUNGEON_START) {
                                 message = *slot + 0x1F4;
                             }
 
                             break;
                         }
-                        case 1: {
+                        case BOARD_PAGE_WEAPON: {
                             int             chara = board->cursor / 10;
                             CDngStatusData *status = BtlMenuStatusPt;
                             WEAPON_HAVE    *row = status->chara_weapons[chara];
                             WEAPON_HAVE    *weapon = &row[board->cursor % 10];
 
-                            if (weapon->item_no >= 0x101) {
+                            if (weapon->item_no >= ITEM_WEAPON_START) {
                                 message = GetWeaponMsgNo2(weapon->item_no) + 0x1F4;
                                 value = weapon->level;
                             }
 
                             break;
                         }
-                        case 2: {
+                        case BOARD_PAGE_ATTACH: {
                             ATTACH_LIST *attach = (ATTACH_LIST *) &board->consumables[ItemMenuMode.board.cursor];
 
-                            if (attach->item_no >= 0x51) {
+                            if (attach->item_no >= ITEM_ATTACH_START) {
                                 message = attach->item_no + 0x1F4;
                                 value = GetAttachVolumeForMsg(attach);
 
-                                if (attach->item_no == 0x5A) {
+                                if (attach->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                                     name_mes = GetWeaponMsgNo2(attach->sphere_weapon_no);
                                 }
                             }
@@ -7817,8 +7817,8 @@ int ItemMenuMainKey() {
                     }
 
                     break;
-                case 2:
-                    if (BtlHaveItemPt->item_no < 0x51) {
+                case PERSONAL_BOARD_AREA_TRASH:
+                    if (BtlHaveItemPt->item_no < ITEM_ATTACH_START) {
                         message = 0xBE;
                     }
 
@@ -7832,7 +7832,7 @@ int ItemMenuMainKey() {
         message = 0;
     }
 
-    if (ItemMenuMode.state != 5) {
+    if (ItemMenuMode.state != ITEM_MENU_STATE_DEBUG_ITEMS) {
         int remake = 0;
 
         if (CommonMenuMes2.mes_made != message) {
@@ -7847,8 +7847,8 @@ int ItemMenuMainKey() {
         }
 
         if (remake != 0) {
-            CommonMenuMes2.value_signed = 1;
-            CommonMenuMes2.value_show = 0;
+            CommonMenuMes2.value_signed = true;
+            CommonMenuMes2.value_show = false;
             CommonMenuMes2.value = value;
 
             if (name_mes > 0) {
@@ -7866,12 +7866,12 @@ int ItemMenuMainKey() {
 
     if (ItemMenuMode.overflow == 0) {
         switch (ItemMenuMode.mode) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5: {
+            case ITEM_MENU_QUICK_SLOTS:
+            case ITEM_MENU_CHARA:
+            case ITEM_MENU_WEAPON:
+            case ITEM_MENU_DEFENSE:
+            case ITEM_MENU_BOARD:
+            case ITEM_MENU_TRUSH: {
                 s16 names[6] = {0xB4, 0xB6, 0xB6, 0xB6, 0xB5, 0xB6};
                 int made = AtoraNameMes.mes_made;
                 s16 name = names[ItemMenuMode.mode];
@@ -7893,12 +7893,12 @@ void ItemMenuModeDraw() {
     CharaStatus = TexManager.GetTexture("status", -1);
 
     switch (ItemMenuMode.mode) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5: {
+        case ITEM_MENU_QUICK_SLOTS:
+        case ITEM_MENU_CHARA:
+        case ITEM_MENU_WEAPON:
+        case ITEM_MENU_DEFENSE:
+        case ITEM_MENU_BOARD:
+        case ITEM_MENU_TRUSH: {
             ActiveItemDraw(0x3A, 0x4A, 0x80);
             DrawPersonalBoard(0x154, 0x78, ItemMenuMode.board.page, 0x80, 0);
             CommonTrushDraw(0x232, 0x10C, 0x80);
@@ -7913,10 +7913,10 @@ void ItemMenuModeDraw() {
             int arrow_w = arrow_x;
 
             switch (ItemMenuMode.mode) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
+                case ITEM_MENU_QUICK_SLOTS:
+                case ITEM_MENU_CHARA:
+                case ITEM_MENU_WEAPON:
+                case ITEM_MENU_DEFENSE:
                     if (BtlMenuStatusPt->party_size > 1) {
                         arrow_x = 0x32;
                         arrow_y = 0x9C;
@@ -7924,8 +7924,8 @@ void ItemMenuModeDraw() {
                     }
 
                     break;
-                case 4:
-                case 5:
+                case ITEM_MENU_BOARD:
+                case ITEM_MENU_TRUSH:
                     arrow_x = 0x146;
                     arrow_y = 0x2A;
                     arrow_w = 0xE6;
@@ -7951,7 +7951,7 @@ void ItemMenuModeDraw() {
         float widths[7] = {11.4f, 12.7f, 12.7f, 12.7f, 12.7f, 12.7f, 12.7f};
         MenuHelpWinDraw(0x36, 0x154, widths[BtlMenuNowLang], 1.2f, 0x80);
 #endif
-        AtoraNameMes.stay_frame = 0;
+        AtoraNameMes.stay_frame = false;
         AtoraNameMes.text_x = 0x4A;
 #ifdef PAL
         AtoraNameMes.text_y = 0x178;
@@ -7965,7 +7965,7 @@ void ItemMenuModeDraw() {
 
     MenuTextureReload(BtlMenuReadBlock);
 
-    if (ItemMenuMode.state == 5) {
+    if (ItemMenuMode.state == ITEM_MENU_STATE_DEBUG_ITEMS) {
         DebugItemGetDraw();
     }
 
@@ -7985,16 +7985,16 @@ void ItemMenuModeDraw() {
     PERSONAL_BOARD *board = &ItemMenuMode.board;
 
     switch (ItemMenuMode.mode) {
-        case 4:
+        case ITEM_MENU_BOARD:
             switch (board->cursor_area) {
-                case 1: {
+                case PERSONAL_BOARD_AREA_CELLS: {
                     int cursor = board->cursor;
                     x = cursor % 5 * 0x28 + 0x148;
                     cursor -= board->top_row * 5;
                     y = cursor / 5 * 0x28 + 0x7C;
                     break;
                 }
-                case 2:
+                case PERSONAL_BOARD_AREA_TRASH:
                     x = 0x216;
                     y = 0x110;
                     break;
@@ -8008,7 +8008,7 @@ void ItemMenuModeDraw() {
     int frame_x = x + 0x17;
     int frame_y = y - 2;
 
-    if (ItemMenuMode.mode == 1) {
+    if (ItemMenuMode.mode == ITEM_MENU_CHARA) {
         frame_h = 0x68;
         frame_w = frame_h;
         frame_x = x + 0xE;
@@ -8017,29 +8017,29 @@ void ItemMenuModeDraw() {
 
     int vibe = 0;
 
-    if (board->held_item.item_no >= 0x51) {
+    if (board->held_item.item_no >= ITEM_ATTACH_START) {
         vibe = 2;
     } else {
         switch (ItemMenuMode.mode) {
-            case 0: {
+            case ITEM_MENU_QUICK_SLOTS: {
                 int  cursor = ItemMenuMode.board.cursor;
                 s16 *slot = &MenuItemPackPt->quick_item_slot[cursor];
 
-                if (0 <= cursor && *slot >= 0x84) {
+                if (0 <= cursor && *slot >= ITEM_DUNGEON_START) {
                     vibe = 1;
                 }
 
                 break;
             }
-            case 5:
-            case 4:
+            case ITEM_MENU_TRUSH:
+            case ITEM_MENU_BOARD:
                 int cursor = ItemMenuMode.board.cursor;
 
-                if (SearchBoardNowPosItemExist(ItemMenuMode.board.page, cursor) >= 0x51) {
+                if (SearchBoardNowPosItemExist(ItemMenuMode.board.page, cursor) >= ITEM_ATTACH_START) {
                     vibe = 1;
                 }
 
-                if (ItemMenuMode.board.cursor_area == 2 && board->held_item.item_no <= 0x50) {
+                if (ItemMenuMode.board.cursor_area == PERSONAL_BOARD_AREA_TRASH && board->held_item.item_no < ITEM_ATTACH_START) {
                     vibe = 0;
                 }
 
@@ -8063,11 +8063,11 @@ void ItemMenuModeDraw() {
         big = 0;
     }
 
-    if (board->held_item.item_no >= 0x51 && ItemMenuMode.state != 6) {
+    if (board->held_item.item_no >= ITEM_ATTACH_START && ItemMenuMode.state != ITEM_MENU_STATE_POWERUP_CONFIRM) {
         ItemNaviCursor(board->held_item.item_no);
         COM_ITEM_INFO *info = GetCommonItemInfo(board->held_item.item_no);
 
-        if (info != NULL && (info->kind == 2 || info->kind == 0)) {
+        if (info != NULL && (info->kind == ITEMKIND_WEAPON || info->kind == ITEMKIND_ATTACH)) {
             MenuTextureReload(ItemMenuWeaponIconReadBlock);
         }
 
@@ -8075,19 +8075,19 @@ void ItemMenuModeDraw() {
     }
 
     switch (ItemMenuMode.state) {
-        case 1:
-        case 2:
-        case 3: {
+        case ITEM_MENU_STATE_LOADING:
+        case ITEM_MENU_STATE_OPEN:
+        case ITEM_MENU_STATE_CLOSE: {
             int alpha = 0;
 
             switch (ItemMenuMode.state) {
-                case 1:
+                case ITEM_MENU_STATE_LOADING:
                     alpha = 0x80;
                     break;
-                case 2:
+                case ITEM_MENU_STATE_OPEN:
                     alpha = 0x80 - ItemMenuMode.counter * 8;
                     break;
-                case 3:
+                case ITEM_MENU_STATE_CLOSE:
                     alpha = ItemMenuMode.counter * 5 + 0x40;
                     break;
             }
@@ -8103,18 +8103,18 @@ void ItemMenuModeDraw() {
             FrameImageDraw(0x40, alpha);
             break;
         }
-        case 6: {
+        case ITEM_MENU_STATE_POWERUP_CONFIRM: {
             WEAPON_HAVE *weapon = ItemMenuMode.target_weapon;
             int          filled = 0;
             int          holes = GetWeaponHoleNum(weapon->item_no);
 
             for (int i = 0; i < holes; i++) {
-                if (weapon->attach[i].item_no >= 0x51) {
+                if (weapon->attach[i].item_no >= ITEM_ATTACH_START) {
                     filled++;
                 }
             }
 
-            CommonMenuMes1.value_show = 1;
+            CommonMenuMes1.value_show = true;
 
             if (CommonMenuMes1.mes_made != 0xBC || CommonMenuMes1.values[0] != filled || CommonMenuMes1.values[1] != holes) {
                 for (int i = 0; i < 10; i++) {
@@ -8122,7 +8122,7 @@ void ItemMenuModeDraw() {
                     CommonMenuMes1.values[i] = 0;
                 }
 
-                CommonMenuMes1.value_signed = 0;
+                CommonMenuMes1.value_signed = false;
                 CommonMenuMes1.mes_made = -1;
                 CommonMenuMes1.values[0] = filled;
                 CommonMenuMes1.values[1] = holes;
@@ -8130,11 +8130,11 @@ void ItemMenuModeDraw() {
             }
 
             switch (ItemMenuMode.use_target) {
-                case 2:
-                case 4: {
-                    CommonMenuMes1.stay_frame = 1;
+                case ITEM_USE_ON_EQUIP_WEAPON:
+                case ITEM_USE_ON_BOARD_WEAPON: {
+                    CommonMenuMes1.stay_frame = true;
                     MenuTextureReload(CommonMenuMes1.tex_block);
-                    CommonMenuMes1.auto_pos = 0;
+                    CommonMenuMes1.auto_pos = MES_POS_AUTO;
                     CommonMenuMes1.text_x = 0xE2;
                     CommonMenuMes1.text_y = 0x92;
                     CommonMenuMes1.Step();
@@ -8157,7 +8157,7 @@ void ItemMenuModeDraw() {
             break;
         }
         default:
-            if (ItemMenuMode.state != 5 && ItemMenuMode.state != 4) {
+            if (ItemMenuMode.state != ITEM_MENU_STATE_DEBUG_ITEMS && ItemMenuMode.state != ITEM_MENU_STATE_EFFECT) {
                 DrawMenuWaku((float) frame_x, (float) frame_y, frame_w, frame_h, 0, StayTex, 0x80);
                 DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], big, vibe);
             }
@@ -8167,7 +8167,7 @@ void ItemMenuModeDraw() {
 }
 
 int ItemMenuModeKey() {
-    if (ItemMenuMode.mode == 5) {
+    if (ItemMenuMode.mode == ITEM_MENU_TRUSH) {
         int count = TrushMoveMax[ItemMenuMode.board.page];
 
         if (count <= ItemMenuMode.board.cursor) {
@@ -8175,14 +8175,14 @@ int ItemMenuModeKey() {
         }
     }
 
-    if (GamePad.Down(0x1000) != 0) {
+    if (GamePad.Down(PAD_UP) != 0) {
         switch (ItemMenuMode.mode) {
-            case 2:
-            case 3:
+            case ITEM_MENU_WEAPON:
+            case ITEM_MENU_DEFENSE:
                 ItemMenuMode.board.cursor = 0;
-                ItemMenuMode.mode = 0;
+                ItemMenuMode.mode = ITEM_MENU_QUICK_SLOTS;
                 break;
-            case 5:
+            case ITEM_MENU_TRUSH:
                 if (0 < ItemMenuMode.board.cursor) {
                     ItemMenuMode.board.cursor--;
                 }
@@ -8194,14 +8194,14 @@ int ItemMenuModeKey() {
                 break;
             default:
                 ItemMenuMode.board.cursor = 1;
-                ItemMenuMode.mode = 0;
+                ItemMenuMode.mode = ITEM_MENU_QUICK_SLOTS;
                 break;
         }
     }
 
-    if (GamePad.Down(0x4000) != 0) {
+    if (GamePad.Down(PAD_DOWN) != 0) {
         switch (ItemMenuMode.mode) {
-            case 5: {
+            case ITEM_MENU_TRUSH: {
                 ItemMenuMode.board.cursor++;
                 int count = ItemMenuMode.overflow_count[ItemMenuMode.board.page];
 
@@ -8215,71 +8215,71 @@ int ItemMenuModeKey() {
 
                 break;
             }
-            case 0:
+            case ITEM_MENU_QUICK_SLOTS:
                 if (ItemMenuMode.board.cursor == 0) {
-                    ItemMenuMode.mode = 2;
+                    ItemMenuMode.mode = ITEM_MENU_WEAPON;
                     break;
                 }
             default:
-                ItemMenuMode.mode = 1;
+                ItemMenuMode.mode = ITEM_MENU_CHARA;
                 break;
         }
     }
 
-    if (GamePad.Down(0x8000) != 0) {
+    if (GamePad.Down(PAD_LEFT) != 0) {
         switch (ItemMenuMode.mode) {
-            case 0:
+            case ITEM_MENU_QUICK_SLOTS:
                 if (0 < ItemMenuMode.board.cursor) {
                     ItemMenuMode.board.cursor--;
                 }
 
                 break;
-            case 3:
-                ItemMenuMode.mode = 2;
+            case ITEM_MENU_DEFENSE:
+                ItemMenuMode.mode = ITEM_MENU_WEAPON;
                 break;
-            case 1:
-                ItemMenuMode.mode = 3;
+            case ITEM_MENU_CHARA:
+                ItemMenuMode.mode = ITEM_MENU_DEFENSE;
                 break;
-            case 5:
-                ItemMenuMode.mode = 1;
+            case ITEM_MENU_TRUSH:
+                ItemMenuMode.mode = ITEM_MENU_CHARA;
                 ItemMenuMode.board.cursor = 0;
                 break;
         }
     }
 
-    if (GamePad.Down(0x2000) != 0) {
+    if (GamePad.Down(PAD_RIGHT) != 0) {
         int old_mode = ItemMenuMode.mode;
 
         switch (ItemMenuMode.mode) {
-            case 5:
-                ItemMenuMode.mode = 4;
-                ItemMenuMode.board.cursor_area = 1;
+            case ITEM_MENU_TRUSH:
+                ItemMenuMode.mode = ITEM_MENU_BOARD;
+                ItemMenuMode.board.cursor_area = PERSONAL_BOARD_AREA_CELLS;
                 ItemMenuMode.board.cursor = (ItemMenuMode.board.top_row + ItemMenuMode.board.cursor) * 5;
                 break;
-            case 0:
+            case ITEM_MENU_QUICK_SLOTS:
                 if (ItemMenuMode.board.cursor < 2) {
                     ItemMenuMode.board.cursor++;
                 } else {
-                    ItemMenuMode.mode = 4;
-                    ItemMenuMode.board.cursor_area = 1;
+                    ItemMenuMode.mode = ITEM_MENU_BOARD;
+                    ItemMenuMode.board.cursor_area = PERSONAL_BOARD_AREA_CELLS;
                     ItemMenuMode.board.cursor = ItemMenuMode.board.top_row * 5;
                 }
 
                 break;
-            case 2:
-                ItemMenuMode.mode = 3;
+            case ITEM_MENU_WEAPON:
+                ItemMenuMode.mode = ITEM_MENU_DEFENSE;
                 break;
-            case 3:
-                ItemMenuMode.mode = 1;
+            case ITEM_MENU_DEFENSE:
+                ItemMenuMode.mode = ITEM_MENU_CHARA;
                 break;
-            case 1:
-                ItemMenuMode.mode = 4;
-                ItemMenuMode.board.cursor_area = 1;
+            case ITEM_MENU_CHARA:
+                ItemMenuMode.mode = ITEM_MENU_BOARD;
+                ItemMenuMode.board.cursor_area = PERSONAL_BOARD_AREA_CELLS;
                 ItemMenuMode.board.cursor = ItemMenuMode.board.top_row * 5 + 5;
                 break;
         }
 
-        if (old_mode != 5 && ItemMenuMode.mode == 4) {
+        if (old_mode != ITEM_MENU_TRUSH && ItemMenuMode.mode == ITEM_MENU_BOARD) {
             int rows[4] = {0, 2, 0, 0};
 
             if ((ItemMenuMode.overflow_pages & (1 << (ItemMenuMode.board.page + 1))) && ItemMenuMode.overflow != 0) {
@@ -8289,7 +8289,7 @@ int ItemMenuModeKey() {
                     ItemMenuMode.board.cursor = ItemMenuMode.overflow_count[ItemMenuMode.board.page] - 1;
                 }
 
-                ItemMenuMode.mode = 5;
+                ItemMenuMode.mode = ITEM_MENU_TRUSH;
             }
         }
     }
@@ -8310,8 +8310,8 @@ void ActiveItemDraw(int x, int y, int alpha) {
     for (int i = 0; i < 3; i++) {
         s16 item_no = items[i];
 
-        if (item_no >= 0x84) {
-            if (item_no >= 0x84) {
+        if (item_no >= ITEM_DUNGEON_START) {
+            if (item_no >= ITEM_DUNGEON_START) {
                 slot_x = x + 0x22 + (i << 6);
             }
 
@@ -8327,7 +8327,7 @@ void ActiveItemDraw(int x, int y, int alpha) {
     }
 
     switch (BtlMenuMode) {
-        case 0:
+        case BATTLE_MENU_MODE_DUNGEON:
             DngActiveItemTextureCopy();
             break;
     }
@@ -8364,7 +8364,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
         RECT number_rect = {0x100, 0x60, 0xC, 0xE};
         DrawMenuNumber(level, x + 0x64, y + 0x24, CharaStatus, number_rect, 1, alpha);
 
-        if (MenuExTextureReadFlag == 2 && chara < BtlMenuStatusPt->party_size) {
+        if (MenuExTextureReadFlag == MENU_EX_TEX_READY && chara < BtlMenuStatusPt->party_size) {
             MenuTextureReload(MenuExtendReadBlock);
             MGSetWindowRect(CRect_i_(x + 0x82, 0x5D, 0x76, 0x3F));
             MenuPolygonDraw(alpha, MenuCharaPolyDraw);
@@ -8544,7 +8544,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
                     tex_x = 0x8A;
                     tab--;
 
-                    if (GetMenuLangFlag() > 0) {
+                    if (GetMenuLangFlag() > LANG_JAPANESE) {
                         draw_x += 0x14;
                     }
                 }
@@ -8559,7 +8559,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
         RetCTex(item_no, tex_x, tex_y);
         CTexture *icon = TexManager.GetTexture("wepicon", -1);
 
-        if (icon != NULL && item_no >= 0x101) {
+        if (icon != NULL && item_no >= ITEM_WEAPON_START) {
             MenuTextureReload(ItemMenuWeaponIconReadBlock);
             WEAPON_HAVE total;
             WeaponAllValueSet(weapon, &total, 0);
@@ -8576,7 +8576,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
 
         int name_length = GetMsgLengthCharaName(chara);
         CommonMenuMes3.edge_alpha = alpha;
-        CommonMenuMes3.stay_frame = 0;
+        CommonMenuMes3.stay_frame = false;
         s8  char_width[7] = {8, 6, 6, 6, 6, 6, 6};
         s8  name_offset[7] = {0, 6, 6, 6, 6, 6, 6};
         int lang = BtlMenuNowLang;
@@ -8593,24 +8593,24 @@ void ItemNaviCursor(int item_no) {
     }
 
     switch (data->sort_key) {
-        case 1:
+        case ITEM_SORT_FOOD:
             shown[0] = 1;
 
-            if (item_no >= 0x91 && item_no < 0x9C) {
+            if (item_no >= ITEM_REGULAR_WATER && item_no <= ITEM_CHEESE) {
                 shown[1] = 1;
             }
 
-            if (item_no == 0xAA) {
+            if (item_no == ITEM_MELLOW_BANANA) {
                 shown[1] = 1;
             }
 
             break;
-        case 3:
-            if ((u32) (item_no - 0xB1) < 2) {
+        case ITEM_SORT_POWDER:
+            if ((u32) (item_no - ITEM_REPAIR_POWDER) < 2) {
                 shown[2] = 1;
             }
 
-            if (item_no == 0xB0) {
+            if (item_no == ITEM_REVIVAL_POWDER) {
                 shown[1] = 1;
                 int             chara = ItemMenuMode.chara;
                 CDngStatusData *status = BtlMenuStatusPt;
@@ -8621,16 +8621,16 @@ void ItemNaviCursor(int item_no) {
             }
 
             break;
-        case 2:
+        case ITEM_SORT_THROW:
             shown[1] = 1;
 
-            if (BtlMenuMode == 0 && item_no >= 0xA6 && item_no < 0xAB && item_no != 0xA8) {
+            if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && item_no >= ITEM_THROBBING_CHERRY && item_no < ITEM_MEDUSA_POWDER && item_no != ITEM_BOMB_NUTS) {
                 shown[0] = 1;
             }
 
             break;
         default:
-            if (item_no == 0xEB) {
+            if (item_no == ITEM_DRAN_S_FEATHER) {
                 shown[1] = 1;
             }
 
@@ -8663,34 +8663,34 @@ void ItemNaviCursor(int item_no) {
 }
 
 void CharaStatusMsgDraw(int x, int y, int chara, int per_member, int alpha) {
-    static float statusCnt = -3.1415927f;
+    static float statusCnt = -PI;
 
     int bob_y = (int) ((float) y + 4.0f * sinf(statusCnt));
     int condition;
     int icon = -1;
     condition = BtlMenuStatusPt->GetActiveCharaStatus(chara);
 
-    if (condition & 0x40) {
+    if (condition & AILMENT_GOO) {
         icon = 5;
     }
 
-    if (condition & 0x20) {
+    if (condition & AILMENT_CURSE) {
         icon = 2;
     }
 
-    if (condition & 0x10) {
+    if (condition & AILMENT_POISON) {
         icon = 4;
     }
 
-    if (condition & 8) {
+    if (condition & AILMENT_STAMINA) {
         icon = 1;
     }
 
-    if (condition & 4) {
+    if (condition & AILMENT_FREEZE) {
         icon = 3;
     }
 
-    if (BtlMenuStatusPt->hp[chara] <= 0 || (condition & 2)) {
+    if (BtlMenuStatusPt->hp[chara] <= 0 || (condition & AILMENT_KNOCKED_OUT)) {
         icon = 0;
     }
 
@@ -8709,10 +8709,10 @@ void CharaStatusMsgDraw(int x, int y, int chara, int per_member, int alpha) {
         period = 50.0f;
     }
 
-    statusCnt += 3.1415927f / period;
+    statusCnt += PI / period;
 
-    if (!(statusCnt < 3.1415927f)) {
-        statusCnt = -3.1415927f;
+    if (!(statusCnt < PI)) {
+        statusCnt = -PI;
     }
 }
 
@@ -8725,36 +8725,36 @@ void CharaStatusMsgDraw(int x, int y, int chara, int per_member, int alpha) {
  */
 static int BattleMenuAtoraKey() {
     switch (BtlEffectFlag) {
-        case 1:
+        case BTLEFFECT_PAGE_OPEN:
             if (ToFromSelect(0) != 0) {
-                BtlEffectFlag = -1;
+                BtlEffectFlag = BTLEFFECT_NONE;
                 BtlEffectCt = 0.0f;
             }
 
             break;
-        case 0:
+        case BTLEFFECT_PAGE_CLOSE:
             if (ToFromSelect(1) != 0) {
-                MenuSelect[0] = 4;
-                BattleMenuFlag = 20;
+                MenuSelect[0] = BTLMENU_PAGE_ATLA;
+                BattleMenuFlag = BTLMENU_STATE_ATLA_CLOSE;
                 ForBackMenu();
-                BattleMenuFlag = 0;
+                BattleMenuFlag = BTLMENU_STATE_MAIN;
             }
 
             break;
         default:
             switch (MenuAtoraSelectKey()) {
-                case 100:
-                    BtlEffectFlag = 0;
+                case ATORA_SELECT_CLOSE:
+                    BtlEffectFlag = BTLEFFECT_PAGE_CLOSE;
                     BtlEffectCt = 0.0f;
                     break;
-                case 0:
+                case ATORA_SELECT_NONE:
                     break;
             }
 
             break;
     }
 
-    if (BtlEffectFlag != -1) {
+    if (BtlEffectFlag != BTLEFFECT_NONE) {
         BtlEffectCt += 1.0f;
     } else {
         BtlEffectCt = 0.0f;
@@ -8807,19 +8807,19 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
     MenuMove.mode = mode;
 
     switch (mode) {
-        case 0:
-        case 2:
+        case MENU_MOVE_DUNGEON_ESCAPE:
+        case MENU_MOVE_INTERIOR_OUT:
             MenuMapJumpMode = 0;
             MenuMove.cursor = 1;
             MenuMove.ready = 1;
-            CommonMenuMes3.Preset(1);
+            CommonMenuMes3.Preset(MES_PRESET_SYSTEM);
             CommonMenuMes3.rows = 3;
-            CommonMenuMes3.auto_pos = -1;
+            CommonMenuMes3.auto_pos = MES_POS_NONE;
             SysCur[1] = MenuMove.cursor * 26 + 174;
             MapMoveCursor = NULL;
             MenuMoveTex = NULL;
             break;
-        case 5:
+        case MENU_MOVE_WORLD_MAP_DIRECT:
             BtlMenuStatusPt = BtlMenuSaveDataPt->GetDngStatus();
 #ifdef PAL
             StayTex = TexManager.GetTexture("stayframe", -1);
@@ -8827,13 +8827,13 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
             StayTex = TexManager.GetTexture("stayfram", -1);
 #endif
             GamePad.MenuModeOn(0x78);
-            GamePad.SetAutoRepeat(0xF000, 30, 5);
-        case 1:
-            if (((s32 *) SaveData->GetConfigData())[14] != 0 && SaveData->VisitMap(MenuGrobalMapNoTbl[13], 0) > 0) {
+            GamePad.SetAutoRepeat(PAD_DPAD, 30, 5);
+        case MENU_MOVE_WORLD_MAP:
+            if (((s32 *) SaveData->GetConfigData())[14] != 0 && SaveData->VisitMap(MenuGrobalMapNoTbl[WORLD_PLACE_FIELD_S30], 0) > 0) {
                 printf("clear!!!!\n");
 
-                if (SaveData->VisitMap(MenuGrobalMapNoTbl[15] <= 0, 0) != 0) {
-                    SaveData->VisitMap(MenuGrobalMapNoTbl[15], 1);
+                if (SaveData->VisitMap(MenuGrobalMapNoTbl[WORLD_PLACE_DEMON_SHAFT] <= 0, 0) != 0) {
+                    SaveData->VisitMap(MenuGrobalMapNoTbl[WORLD_PLACE_DEMON_SHAFT], 1);
                     printf("demon shaft On!!!!!\n");
                 }
             } else {
@@ -8856,29 +8856,29 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
             NextWorldPos = TownOrDngPos[MenuMove.cursor].frame;
             MenuMove.tex_block = texture_block;
             buffer = MenuCalcBufAlignment(buffer);
-            MenuMove.last_place = 15;
+            MenuMove.last_place = WORLD_PLACE_DEMON_SHAFT;
             StartLoadWorldMap(MenuMove.load_map, buffer);
 
-            if (mode == 5) {
+            if (mode == MENU_MOVE_WORLD_MAP_DIRECT) {
                 do {
                 } while (ReadBGSync() != 0);
             }
 
             MenuMove.ready = 0;
-            CommonMenuMes3.Preset(4);
+            CommonMenuMes3.Preset(MES_PRESET_NAME);
             CommonMenuMes3.rows = 1;
             MapMoveCursor = NULL;
             break;
-        case 10:
+        case MENU_MOVE_FIRST_DUNGEON:
             MenuMove.cursor = 1;
             MenuMapJumpMode = -1;
-            CommonMenuMes3.Preset(1);
+            CommonMenuMes3.Preset(MES_PRESET_SYSTEM);
             CommonMenuMes3.rows = 3;
             SysCur[1] = MenuMove.cursor * 26 + 174;
             break;
     }
 
-    MenuMove.state = 1;
+    MenuMove.state = MENU_MOVE_STATE_OPEN;
     MenuMove.counter = 1;
     CommonMenuMes2.mes_made = -1;
     CommonMenuMes3.mes_made = -1;
@@ -8926,23 +8926,23 @@ int MenuMoveKey() {
     int done;
 
     switch (MenuMove.state) {
-        case 1: {
+        case MENU_MOVE_STATE_OPEN: {
             done = ToFromSelect(0);
             int ready = 1;
 
             switch (MenuMove.mode) {
-                case 0:
-                case 10:
-                case 2:
+                case MENU_MOVE_DUNGEON_ESCAPE:
+                case MENU_MOVE_FIRST_DUNGEON:
+                case MENU_MOVE_INTERIOR_OUT:
                     MenuMove.ready = 1;
                     break;
-                case 1:
-                case 5:
+                case MENU_MOVE_WORLD_MAP:
+                case MENU_MOVE_WORLD_MAP_DIRECT:
                     if (MenuMove.ready == 0) {
                         MenuMove.ready = LoadWorldMap();
 
                         if (MenuMove.ready != 0) {
-                            ComMenuSePlay(0x9B);
+                            ComMenuSePlay(SE_WORLD_MAP_OPEN);
                         }
 
                         ready = 0;
@@ -8962,22 +8962,22 @@ int MenuMoveKey() {
 
             if (done != 0 && MenuMove.counter > 0x14 && MenuMove.ready != 0 && ready != 0) {
                 switch (MenuMove.mode) {
-                    case 5:
+                    case MENU_MOVE_WORLD_MAP_DIRECT:
                         break;
                     default:
-                        BattleMenuFlag = 5;
+                        BattleMenuFlag = BTLMENU_STATE_MOVE;
                         break;
                 }
 
-                MenuMove.state = 0;
+                MenuMove.state = MENU_MOVE_STATE_SELECT;
 
                 switch (MenuMove.mode) {
-                    case 0:
-                    case 10:
-                    case 2:
+                    case MENU_MOVE_DUNGEON_ESCAPE:
+                    case MENU_MOVE_FIRST_DUNGEON:
+                    case MENU_MOVE_INTERIOR_OUT:
                         break;
-                    case 5:
-                    case 1:
+                    case MENU_MOVE_WORLD_MAP_DIRECT:
+                    case MENU_MOVE_WORLD_MAP:
                         SysCur[0] = 328.0f;
                         SysCur[1] = 164.0f;
                         break;
@@ -8986,10 +8986,10 @@ int MenuMoveKey() {
 
             break;
         }
-        case 2: {
+        case MENU_MOVE_STATE_CLOSE: {
             done = ToFromSelect(1);
 
-            if (MenuMove.mode == 5) {
+            if (MenuMove.mode == MENU_MOVE_WORLD_MAP_DIRECT) {
                 done = 1;
             }
 
@@ -8998,13 +8998,13 @@ int MenuMoveKey() {
                 ForBackMenu();
 
                 switch (MenuMove.mode) {
-                    case 5:
+                    case MENU_MOVE_WORLD_MAP_DIRECT:
                         GamePad.AutoRepeatOff();
                         GamePad.MenuModeOff();
                         TexManager.DeleteTextureBlock(MenuMove.tex_block);
                         break;
                     default:
-                        BattleMenuFlag = 0;
+                        BattleMenuFlag = BTLMENU_STATE_MAIN;
                         break;
                 }
 
@@ -9026,17 +9026,17 @@ int MenuMoveKey() {
 
             break;
         }
-        case 3:
+        case MENU_MOVE_STATE_ZOOM_IN:
             mapo[0] += mapmovev[0];
             mapo[1] += mapmovev[1];
             mapo[2] += mapmovev[2];
 
             if (MenuMove.counter > 0xF) {
-                MenuMove.state = 4;
+                MenuMove.state = MENU_MOVE_STATE_CONFIRM;
             }
 
             break;
-        case 6:
+        case MENU_MOVE_STATE_ZOOM_OUT:
             mapo[0] += mapmovev[0];
             mapo[1] += mapmovev[1];
             mapo[2] += mapmovev[2];
@@ -9045,20 +9045,20 @@ int MenuMoveKey() {
                 mapo[0] = 0.0f;
                 mapo[1] = 0.0f;
                 mapo[2] = 0.0f;
-                MenuMove.state = 0;
+                MenuMove.state = MENU_MOVE_STATE_SELECT;
             }
 
             break;
-        case 4:
+        case MENU_MOVE_STATE_CONFIRM:
             switch (MenuMove.cursor) {
-                case 3:
-                case 4:
-                case 7:
-                case 8:
-                case 9:
-                case 10:
-                case 11:
-                case 13:
+                case WORLD_PLACE_WISE_OWL_FOREST:
+                case WORLD_PLACE_FIELD_S04:
+                case WORLD_PLACE_MUSKA_LACKA:
+                case WORLD_PLACE_FIELD_S32:
+                case WORLD_PLACE_SUN_MOON_TEMPLE:
+                case WORLD_PLACE_FIELD_S13:
+                case WORLD_PLACE_YELLOW_DROPS:
+                case WORLD_PLACE_FIELD_S30:
                     help = 0x13A;
                     break;
                 default:
@@ -9066,21 +9066,21 @@ int MenuMoveKey() {
                     break;
             }
 
-            if (GamePad.Down(0x40) != 0) {
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 MenuMapJumpMode = MenuGrobalMapNoTbl[MenuMove.cursor];
 
                 if (MapNo != MenuMapJumpMode) {
                     stay = 0;
-                    ComMenuSePlay(1);
-                } else if (MenuMove.mode == 5) {
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
+                } else if (MenuMove.mode == MENU_MOVE_WORLD_MAP_DIRECT) {
                     stay = 0;
                     MenuMapJumpMode = MapNo;
                 } else {
                     stay = 1;
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
-            } else if (GamePad.Down(0x20) != 0) {
-                MenuMove.state = 6;
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                MenuMove.state = MENU_MOVE_STATE_ZOOM_OUT;
                 MenuMove.counter = 0;
                 mapmovev[0] = -mapmovev[0];
                 mapmovev[1] = -mapmovev[1];
@@ -9088,14 +9088,14 @@ int MenuMoveKey() {
             }
 
             break;
-        case 0: {
+        case MENU_MOVE_STATE_SELECT: {
             int old_cursor = MenuMove.cursor;
 
             switch (MenuMove.mode) {
-                case 0:
-                case 10:
-                case 2:
-                    if (GamePad.Down(0x5000) != 0) {
+                case MENU_MOVE_DUNGEON_ESCAPE:
+                case MENU_MOVE_FIRST_DUNGEON:
+                case MENU_MOVE_INTERIOR_OUT:
+                    if (GamePad.Down(PAD_UP | PAD_DOWN) != 0) {
                         if (MenuMove.cursor != 0) {
                             MenuMove.cursor = 0;
                         } else {
@@ -9103,21 +9103,21 @@ int MenuMoveKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x40) != 0) {
+                    if (GamePad.Down(PAD_CROSS) != 0) {
                         decided = 1;
 
                         if (MenuMove.cursor == 0) {
                             stay = 0;
 
                             switch (MenuMove.mode) {
-                                case 0:
+                                case MENU_MOVE_DUNGEON_ESCAPE:
                                     NowMonstorUnit->GetMonstorNum();
 
                                     switch (EscapeDungeonMode()) {
-                                        case 1:
-                                            BtlMenuStatusPt->LostItem(0xAF);
+                                        case ESCAPE_DNG_POWDER:
+                                            BtlMenuStatusPt->LostItem(ITEM_ESCAPE_POWDER);
                                             break;
-                                        case 0: {
+                                        case ESCAPE_DNG_PAY: {
                                             u16          money;
                                             int          half;
                                             CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
@@ -9136,49 +9136,49 @@ int MenuMoveKey() {
 
                                     MenuMapJumpMode = 1;
                                     break;
-                                case 10:
+                                case MENU_MOVE_FIRST_DUNGEON:
                                     MenuMapJumpMode = 0xC8;
                                     break;
-                                case 2:
+                                case MENU_MOVE_INTERIOR_OUT:
                                     SetInteriorOutFlag(1);
                                     BtlEffectCt = 0.0f;
-                                    MenuMove.state = 7;
+                                    MenuMove.state = MENU_MOVE_STATE_INTERIOR_FADE;
                                     MenuMove.counter = 0;
                                     stay = 1;
                                     break;
                             }
 
-                            ComMenuSePlay(1);
+                            ComMenuSePlay(MENU_SOUND_CONFIRM);
                         } else {
-                            MenuMove.state = 2;
-                            BattleMenuFlag = 0x15;
-                            ComMenuSePlay(2);
+                            MenuMove.state = MENU_MOVE_STATE_CLOSE;
+                            BattleMenuFlag = BTLMENU_STATE_MOVE_CLOSE;
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         }
                     }
 
                     switch (MenuMove.mode) {
-                        case 0: {
+                        case MENU_MOVE_DUNGEON_ESCAPE: {
                             int escape = EscapeDungeonMode();
                             s16 messages[3] = {0x131, 0x130, 0x12F};
                             message = messages[escape];
                             break;
                         }
-                        case 10:
+                        case MENU_MOVE_FIRST_DUNGEON:
                             message = 0x136;
                             break;
-                        case 2:
+                        case MENU_MOVE_INTERIOR_OUT:
                             message = 0x137;
                             break;
                     }
 
                     break;
-                case 1:
-                case 5:
+                case MENU_MOVE_WORLD_MAP:
+                case MENU_MOVE_WORLD_MAP_DIRECT:
                     WorldMapMoveKey();
 
 #ifdef PAL
                     // Debug builds mark the first place not yet visited as visited, or its dungeon as entered.
-                    if (DebugMode && GamePad.Down2(0x40)) {
+                    if (DebugMode && GamePad.Down2(PAD_CROSS)) {
                         for (int i = 0; i <= 15; i++) {
                             if (GetVisitInfo(i, MenuMove.mode) == 0) {
                                 int map = MenuGrobalMapNoTbl[i];
@@ -9189,16 +9189,16 @@ int MenuMoveKey() {
                                 }
 
                                 switch (i) {
-                                    case 0:
-                                    case 2:
-                                    case 4:
-                                    case 5:
-                                    case 7:
-                                    case 8:
-                                    case 10:
-                                    case 11:
-                                    case 13:
-                                    case 15:
+                                    case WORLD_PLACE_NORUNE:
+                                    case WORLD_PLACE_MATATAKI:
+                                    case WORLD_PLACE_FIELD_S04:
+                                    case WORLD_PLACE_QUEENS:
+                                    case WORLD_PLACE_MUSKA_LACKA:
+                                    case WORLD_PLACE_FIELD_S32:
+                                    case WORLD_PLACE_FIELD_S13:
+                                    case WORLD_PLACE_YELLOW_DROPS:
+                                    case WORLD_PLACE_FIELD_S30:
+                                    case WORLD_PLACE_DEMON_SHAFT:
                                         BtlMenuSaveDataPt->VisitMap(map, 1);
 
                                         if (BtlMenuSaveDataPt->VisitMap(map, 0) == 0) {
@@ -9220,19 +9220,19 @@ int MenuMoveKey() {
 
 #endif
                     if (MenuMove.cursor < 0) {
-                        MenuMove.cursor = 4;
+                        MenuMove.cursor = WORLD_PLACE_FIELD_S04;
                     }
 
-                    if (GamePad.Down(0x40) != 0) {
+                    if (GamePad.Down(PAD_CROSS) != 0) {
                         decided = 1;
                         MenuMapJumpMode = MenuGrobalMapNoTbl[MenuMove.cursor];
 
-                        if (MenuMove.mode != 5 && MapNo == MenuMapJumpMode) {
+                        if (MenuMove.mode != MENU_MOVE_WORLD_MAP_DIRECT && MapNo == MenuMapJumpMode) {
                             stay = 1;
-                            ComMenuSePlay(2);
+                            ComMenuSePlay(MENU_SOUND_REFUSE);
                         } else {
-                            ComMenuSePlay(1);
-                            MenuMove.state = 3;
+                            ComMenuSePlay(MENU_SOUND_CONFIRM);
+                            MenuMove.state = MENU_MOVE_STATE_ZOOM_IN;
                             float world[4];
                             float local[4] = {0.0f, 0.0f, 0.0f, 1.0f};
                             MapMoveCursor->GetWorldPosition(world, local);
@@ -9247,39 +9247,39 @@ int MenuMoveKey() {
             }
 
             if (old_cursor != MenuMove.cursor) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (decided == 0 && GamePad.Down(0x20) != 0) {
+            if (decided == 0 && GamePad.Down(PAD_CIRCLE) != 0) {
                 switch (MenuMove.mode) {
-                    case 0:
+                    case MENU_MOVE_DUNGEON_ESCAPE:
                         MenuMapJumpMode = 0;
                         break;
-                    case 5:
+                    case MENU_MOVE_WORLD_MAP_DIRECT:
                         break;
-                    case 1:
-                    case 10:
+                    case MENU_MOVE_WORLD_MAP:
+                    case MENU_MOVE_FIRST_DUNGEON:
                         MenuMapJumpMode = -1;
                         break;
-                    case 2:
+                    case MENU_MOVE_INTERIOR_OUT:
                         SetInteriorOutFlag(0);
                         break;
                 }
 
-                if (MenuMove.mode != 5) {
-                    MenuMove.state = 2;
+                if (MenuMove.mode != MENU_MOVE_WORLD_MAP_DIRECT) {
+                    MenuMove.state = MENU_MOVE_STATE_CLOSE;
 
-                    if (MenuMove.mode != 5) {
-                        BattleMenuFlag = 0x15;
+                    if (MenuMove.mode != MENU_MOVE_WORLD_MAP_DIRECT) {
+                        BattleMenuFlag = BTLMENU_STATE_MOVE_CLOSE;
                     }
                 }
 
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
         }
-        case 7:
+        case MENU_MOVE_STATE_INTERIOR_FADE:
             if (!(BtlEffectCt <= 44.0f)) {
                 ExitBattleMenu(1);
                 stay = 0;
@@ -9321,7 +9321,7 @@ void DrawMenuMove() {
     int y;
     int size[4];
 
-    if (MenuMove.mode == 5) {
+    if (MenuMove.mode == MENU_MOVE_WORLD_MAP_DIRECT) {
         MenuWorldTrans(&MenuCamera);
         FrameImageDraw(0x40, 0x80);
     }
@@ -9330,10 +9330,10 @@ void DrawMenuMove() {
     alpha = 0x80;
 
     switch (MenuMove.state) {
-        case 1:
+        case MENU_MOVE_STATE_OPEN:
             alpha = MenuMove.counter * 6;
             break;
-        case 2:
+        case MENU_MOVE_STATE_CLOSE:
             alpha = 0x80 - MenuMove.counter * 8;
             break;
     }
@@ -9349,17 +9349,17 @@ void DrawMenuMove() {
     float ease = 4.0f;
 
     switch (MenuMove.mode) {
-        case 0:
-        case 2:
+        case MENU_MOVE_DUNGEON_ESCAPE:
+        case MENU_MOVE_INTERIOR_OUT:
             (void) x;
             break;
-        case 10:
+        case MENU_MOVE_FIRST_DUNGEON:
             (void) x;
             break;
     }
 
     switch (MenuMove.mode) {
-        case 0: {
+        case MENU_MOVE_DUNGEON_ESCAPE: {
 #ifdef PAL
             DrawEscapeItem(0x32, 0x160, alpha);
 #else
@@ -9370,10 +9370,10 @@ void DrawMenuMove() {
             CommonMenuMes3.NeedMesWinWH(CommonMenuMes3.mes_made, size);
             CommonMenuMes3.text_x = y - (size[2] >> 1) + 0xA;
             CommonMenuMes3.text_y = 0x7E;
-            CommonMenuMes3.stay_frame = 1;
+            CommonMenuMes3.stay_frame = true;
 
-            if (MenuMove.state == 2) {
-                CommonMenuMes3.stay_frame = 0;
+            if (MenuMove.state == MENU_MOVE_STATE_CLOSE) {
+                CommonMenuMes3.stay_frame = false;
             }
 
             CommonMenuMes3.edge_alpha = alpha;
@@ -9383,24 +9383,24 @@ void DrawMenuMove() {
             y = MenuMove.cursor * 0x1C + 0xD2;
             break;
         }
-        case 2:
-        case 10: {
+        case MENU_MOVE_INTERIOR_OUT:
+        case MENU_MOVE_FIRST_DUNGEON: {
             int half = CommonMenuMes3.char_width >> 1;
             y = 0x140 - half;
             CommonMenuMes3.NeedMesWinWH(CommonMenuMes3.mes_made, size);
             CommonMenuMes3.text_x = y - (size[2] >> 1) + 0xA;
 
-            if (MenuMove.mode == 10 && CommonMenuMes3.mes_made > 0 && size[2] >= 0x28 && size[3] < 0xC9) {
+            if (MenuMove.mode == MENU_MOVE_FIRST_DUNGEON && CommonMenuMes3.mes_made > 0 && size[2] >= 0x28 && size[3] < 0xC9) {
                 CommonMenuMes3.text_y = 0x94;
                 MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x1A, CommonMenuMes3.text_y - 4, 8.0f + (float) size[2], 2.0f + (float) size[3], alpha, 0, 0, StayTex);
             }
 
-            if (MenuMove.mode == 2 && CommonMenuMes3.mes_made > 0 && size[2] >= 0x28 && size[3] < 0xC9) {
+            if (MenuMove.mode == MENU_MOVE_INTERIOR_OUT && CommonMenuMes3.mes_made > 0 && size[2] >= 0x28 && size[3] < 0xC9) {
                 CommonMenuMes3.text_y = 0x92;
                 MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x1A, CommonMenuMes3.text_y - 4, 8.0f + (float) size[2], 2.0f + (float) size[3], alpha, 0, 0, StayTex);
             }
 
-            CommonMenuMes3.stay_frame = 0;
+            CommonMenuMes3.stay_frame = false;
             CommonMenuMes3.edge_alpha = alpha;
             MenuTextureReload(BtlMenuReadBlock);
             DrawDngYesNoDialog(0x118, 0xD8, alpha);
@@ -9408,8 +9408,8 @@ void DrawMenuMove() {
             y = MenuMove.cursor * 0x1C + 0xD2;
             break;
         }
-        case 5:
-        case 1: {
+        case MENU_MOVE_WORLD_MAP_DIRECT:
+        case MENU_MOVE_WORLD_MAP: {
             WORLD_MAP_POS *next = (WORLD_MAP_POS *) NextWorldPos;
 
             if (next != NULL) {
@@ -9444,7 +9444,7 @@ void DrawMenuMove() {
             int map_alpha = 0x80;
 
             switch (MenuMove.state) {
-                case 2:
+                case MENU_MOVE_STATE_CLOSE:
                     map_alpha = alpha;
                     break;
             }
@@ -9459,17 +9459,17 @@ void DrawMenuMove() {
 
     SysCur[0] += ((float) x - SysCur[0]) / ease;
     SysCur[1] += ((float) y - SysCur[1]) / ease;
-    int arrived = 1;
+    int arrived = true;
 
     switch (MenuMove.mode) {
-        case 1:
-        case 5:
+        case MENU_MOVE_WORLD_MAP:
+        case MENU_MOVE_WORLD_MAP_DIRECT:
             if (!((float) abs((int) (SysCur[0] - (float) x)) <= 4.0f) && !((float) abs((int) (SysCur[1] - (float) y)) <= 4.0f)) {
-                arrived = 0;
+                arrived = false;
             }
 
-            if (MenuMove.state != 4 || MenuMove.state != 2) {
-                CommonMenuMes3.stay_frame = 0;
+            if (MenuMove.state != MENU_MOVE_STATE_CONFIRM || MenuMove.state != MENU_MOVE_STATE_CLOSE) {
+                CommonMenuMes3.stay_frame = false;
             }
 
             break;
@@ -9480,9 +9480,9 @@ void DrawMenuMove() {
     float width = 1.0f;
 
     switch (MenuMove.mode) {
-        case 0:
-        case 10:
-        case 2:
+        case MENU_MOVE_DUNGEON_ESCAPE:
+        case MENU_MOVE_FIRST_DUNGEON:
+        case MENU_MOVE_INTERIOR_OUT:
             if (MenuMove.cursor != 0) {
                 width = 98.0f;
             } else {
@@ -9490,8 +9490,8 @@ void DrawMenuMove() {
             }
 
             break;
-        case 1:
-        case 5:
+        case MENU_MOVE_WORLD_MAP:
+        case MENU_MOVE_WORLD_MAP_DIRECT:
             GetMenuLangFlag();
             width = (float) CommonMenuMes3.GetMesWidth_system(CommonMenuMes3.mes_no[0]);
             CommonMenuMes3.text_x = (int) ((double) x - (double) width / 2.0);
@@ -9503,16 +9503,16 @@ void DrawMenuMove() {
     y = (int) SysCur[1];
 
     switch (MenuMove.state) {
-        case 0:
+        case MENU_MOVE_STATE_SELECT:
             switch (MenuMove.mode) {
-                case 0:
-                case 10:
-                case 2:
+                case MENU_MOVE_DUNGEON_ESCAPE:
+                case MENU_MOVE_FIRST_DUNGEON:
+                case MENU_MOVE_INTERIOR_OUT:
                     DrawMenuWaku((float) waku_x, (float) waku_y, (int) width, 0x1A, 0, StayTex, 0x80);
                     DrawMenuObjectVibe(x, y, 1, 0x40);
                     break;
-                case 1:
-                case 5: {
+                case MENU_MOVE_WORLD_MAP:
+                case MENU_MOVE_WORLD_MAP_DIRECT: {
                     MenuTextureReload(MenuMove.tex_block);
                     DrawMapCheck(0x80);
 #ifdef PAL
@@ -9522,29 +9522,29 @@ void DrawMenuMove() {
 #endif
                     DrawObjectVibe(x + 2, y + 2, MenuMoveTex, texel, 0xA, 0x50);
                     DrawObjectVibe(x, y, MenuMoveTex, texel, 0x80, 0x80);
-                    CommonMenuMes3.stay_frame = 0;
+                    CommonMenuMes3.stay_frame = false;
                     MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x18, CommonMenuMes3.text_y - 0xE, 1.0f + width, 0.0f, 0x80, 0, 0, StayTex);
                     break;
                 }
             }
 
             break;
-        case 1:
-        case 2:
+        case MENU_MOVE_STATE_OPEN:
+        case MENU_MOVE_STATE_CLOSE:
             break;
-        case 4:
+        case MENU_MOVE_STATE_CONFIRM:
             MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x18, CommonMenuMes3.text_y - 0xE, 1.0f + width, 0.0f, 0x80, 0, 0, StayTex);
             break;
     }
 
     MenuTextureReload(CommonMenuMes3.tex_block);
 
-    if (arrived != 0 && (MenuMove.state != 4 || MenuMove.state != 2)) {
+    if (arrived != 0 && (MenuMove.state != MENU_MOVE_STATE_CONFIRM || MenuMove.state != MENU_MOVE_STATE_CLOSE)) {
         switch (MenuMove.state) {
-            case 3:
+            case MENU_MOVE_STATE_ZOOM_IN:
                 alpha = 0x80 - MenuMove.counter * 0xA;
                 break;
-            case 6:
+            case MENU_MOVE_STATE_ZOOM_OUT:
                 alpha = MenuMove.counter * 6;
                 break;
         }
@@ -9562,14 +9562,14 @@ void DrawMenuMove() {
         CommonMenuMes3.DrawMesWin();
     }
 
-    if (MenuMove.state == 4) {
+    if (MenuMove.state == MENU_MOVE_STATE_CONFIRM) {
         float win_x;
         float win_y;
         float win_w;
         float win_h;
         GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
 
-        if (GetMenuLangFlag() > 0) {
+        if (GetMenuLangFlag() > LANG_JAPANESE) {
             win_x -= 12.0f;
             win_w = 1.2f + win_w;
         }
@@ -9584,11 +9584,11 @@ void DrawMenuMove() {
         CommonMenuMes2.DrawMesWin();
     }
 
-    if (MenuMove.mode == 5) {
+    if (MenuMove.mode == MENU_MOVE_WORLD_MAP_DIRECT) {
         MenuTextureReload(MenuMove.tex_block);
         int title_w = 0xD8;
 
-        if (GetMenuLangFlag() > 0) {
+        if (GetMenuLangFlag() > LANG_JAPANESE) {
 #ifdef PAL
             title_w = 0xE0;
 #else
@@ -9599,7 +9599,7 @@ void DrawMenuMove() {
         DrawMenu2DSprite(MenuMoveTex, CRect_i_(0x3C, 0x28, title_w, 0x28), CRect_i_(0, 0, title_w, 0x28), 0x80);
     }
 
-    if (MenuMove.state == 7 && GetInteriorOutFlag() != 0) {
+    if (MenuMove.state == MENU_MOVE_STATE_INTERIOR_FADE && GetInteriorOutFlag() != 0) {
         alpha = MenuMove.counter * 3;
 
         if (alpha > 0x80) {
@@ -9610,8 +9610,8 @@ void DrawMenuMove() {
     }
 
     switch (MenuMove.state) {
-        case 0:
-        case 4:
+        case MENU_MOVE_STATE_SELECT:
+        case MENU_MOVE_STATE_CONFIRM:
             MenuMove.counter = 0;
             break;
         default:
@@ -9643,7 +9643,7 @@ void DrawEscapeItem(int x, int y, int alpha) {
 #ifdef PAL
     s8 shift[7] = {0, 0, 0, 34, 0, 0, 0};
 #endif
-    int       count = GetNowItemNum(0xAF, MenuItemPackPt);
+    int       count = GetNowItemNum(ITEM_ESCAPE_POWDER, MenuItemPackPt);
     CTexture *icon = RetCTex(0xAF, u, v);
     DrawMenu2DSprite(icon, CRect_i_(x + 0x14, row_y, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
 #ifdef PAL
@@ -9662,7 +9662,7 @@ void DrawEscapeItem(int x, int y, int alpha) {
         CommonMenuMes1.MakeMesWin(messages[BtlMenuNowLang]);
     }
 
-    if (BtlMenuNowLang > 0) {
+    if (BtlMenuNowLang > LANG_JAPANESE) {
         row_y += 0x10;
         CommonMenuMes1.line_pos[0].x = x + 0x38;
         CommonMenuMes1.line_pos[0].y = row_y - 0x14;
@@ -9672,7 +9672,7 @@ void DrawEscapeItem(int x, int y, int alpha) {
 
     MenuTextureReload(CommonMenuMes1.tex_block);
     CommonMenuMes1.edge_alpha = alpha;
-    CommonMenuMes1.stay_frame = 0;
+    CommonMenuMes1.stay_frame = false;
     DrawMenuClsMes(&CommonMenuMes1, x + 0x38, row_y - 0x10);
 }
 
@@ -9732,8 +9732,8 @@ int LoadWorldMap() {
         TexManager.LoadTextureBlockEX(-1, textures);
         MenuMoveTex = TexManager.GetTexture("menumove", -1);
 
-        if (MenuMove.mode == 5) {
-            InitMenuMesSet(5, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+        if (MenuMove.mode == MENU_MOVE_WORLD_MAP_DIRECT) {
+            InitMenuMesSet(MENU_MES_SET_WORLD_MAP, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
         }
 
         u_long128 *model = file->buffer + ((((file->size >> 6) + 1) << 6) >> 4);
@@ -9913,19 +9913,19 @@ static int WorldMapMoveKey() {
     position[1] = SysCur[1];
     int direction = 0;
 
-    if (GamePad.Down(0x1000) != 0) {
+    if (GamePad.Down(PAD_UP) != 0) {
         direction |= 1;
     }
 
-    if (GamePad.Down(0x4000) != 0) {
+    if (GamePad.Down(PAD_DOWN) != 0) {
         direction |= 2;
     }
 
-    if (GamePad.Down(0x2000) != 0) {
+    if (GamePad.Down(PAD_RIGHT) != 0) {
         direction |= 8;
     }
 
-    if (GamePad.Down(0x8000) != 0) {
+    if (GamePad.Down(PAD_LEFT) != 0) {
         direction |= 4;
     }
 
@@ -10002,16 +10002,16 @@ static int GetVisitInfo(int place, int menu_mode) {
     }
 
     switch (place) {
-        case 0:
-        case 2:
-        case 4:
-        case 5:
-        case 7:
-        case 8:
-        case 10:
-        case 11:
-        case 13:
-        case 15:
+        case WORLD_PLACE_NORUNE:
+        case WORLD_PLACE_MATATAKI:
+        case WORLD_PLACE_FIELD_S04:
+        case WORLD_PLACE_QUEENS:
+        case WORLD_PLACE_MUSKA_LACKA:
+        case WORLD_PLACE_FIELD_S32:
+        case WORLD_PLACE_FIELD_S13:
+        case WORLD_PLACE_YELLOW_DROPS:
+        case WORLD_PLACE_FIELD_S30:
+        case WORLD_PLACE_DEMON_SHAFT:
             dungeon = 0;
             break;
         default:
@@ -10023,8 +10023,8 @@ static int GetVisitInfo(int place, int menu_mode) {
         visits = BtlMenuSaveDataPt->VisitMap(map_no, 0);
 
         switch (NowGetGameFlagForBtlMenu(menu_mode)) {
-            case 1:
-            case 5:
+            case MENU_MOVE_WORLD_MAP:
+            case MENU_MOVE_WORLD_MAP_DIRECT:
                 if (map_no == 1) {
                     visits = 1;
                 }
@@ -10140,69 +10140,69 @@ static int MapNoTransFunc(int map_no) {
     int place;
 
     if (map_no < 10) {
-        s16 towns[5] = {0, 2, 5, 7, 11};
+        s16 towns[5] = {WORLD_PLACE_NORUNE, WORLD_PLACE_MATATAKI, WORLD_PLACE_QUEENS, WORLD_PLACE_MUSKA_LACKA, WORLD_PLACE_YELLOW_DROPS};
         place = towns[map_no];
     }
 
     if (map_no >= 11 && map_no < 200) {
         char fields[69] = {
-            2,
-            2,
-            2,
-            4,
-            4,
-            4,
-            4,
-            4,
-            5,
-            5,
-            10,
-            8,
-            10,
-            13,
-            13,
-            14,
-            8,
-            4,
-            10,
-            10,
-            10,
-            10,
-            2,
-            9,
-            6,
-            8,
-            12,
-            13,
-            6,
-            13,
-            13,
-            8,
-            5,
-            5,
-            5,
-            0,
-            13,
-            13,
-            13,
-            13,
-            13,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            15,
-            15,
+            WORLD_PLACE_MATATAKI,
+            WORLD_PLACE_MATATAKI,
+            WORLD_PLACE_MATATAKI,
+            WORLD_PLACE_FIELD_S04,
+            WORLD_PLACE_FIELD_S04,
+            WORLD_PLACE_FIELD_S04,
+            WORLD_PLACE_FIELD_S04,
+            WORLD_PLACE_FIELD_S04,
+            WORLD_PLACE_QUEENS,
+            WORLD_PLACE_QUEENS,
+            WORLD_PLACE_FIELD_S13,
+            WORLD_PLACE_FIELD_S32,
+            WORLD_PLACE_FIELD_S13,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_GALLERY_OF_TIME,
+            WORLD_PLACE_FIELD_S32,
+            WORLD_PLACE_FIELD_S04,
+            WORLD_PLACE_FIELD_S13,
+            WORLD_PLACE_FIELD_S13,
+            WORLD_PLACE_FIELD_S13,
+            WORLD_PLACE_FIELD_S13,
+            WORLD_PLACE_MATATAKI,
+            WORLD_PLACE_SUN_MOON_TEMPLE,
+            WORLD_PLACE_SHIPWRECK,
+            WORLD_PLACE_FIELD_S32,
+            WORLD_PLACE_MOON_SEA,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_SHIPWRECK,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S32,
+            WORLD_PLACE_QUEENS,
+            WORLD_PLACE_QUEENS,
+            WORLD_PLACE_QUEENS,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_FIELD_S30,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_NORUNE,
+            WORLD_PLACE_DEMON_SHAFT,
+            WORLD_PLACE_DEMON_SHAFT,
         };
         place = fields[map_no - 11];
     }
 
     if (map_no >= 200) {
-        s8 dungeons[6] = {1, 3, 6, 9, 12, 14};
+        s8 dungeons[6] = {WORLD_PLACE_DIVINE_BEAST_CAVE, WORLD_PLACE_WISE_OWL_FOREST, WORLD_PLACE_SHIPWRECK, WORLD_PLACE_SUN_MOON_TEMPLE, WORLD_PLACE_MOON_SEA, WORLD_PLACE_GALLERY_OF_TIME};
         map_no -= 200;
         place = dungeons[map_no];
     }
@@ -10221,21 +10221,21 @@ static void BattleMenuOptionKey() {
     int transition_done = 0;
 
     switch (BtlEffectFlag) {
-        case 1:
+        case BTLEFFECT_PAGE_OPEN:
             transition_done = ToFromSelect(0);
 
             if (transition_done != 0) {
-                BtlEffectFlag = -1;
+                BtlEffectFlag = BTLEFFECT_NONE;
                 BtlEffectCt = 0.0f;
             }
 
             break;
-        case 0:
+        case BTLEFFECT_PAGE_CLOSE:
             transition_done = ToFromSelect(1);
             break;
     }
 
-    if (BtlEffectFlag != -1) {
+    if (BtlEffectFlag != BTLEFFECT_NONE) {
         BtlEffectCt += 1.0f;
     } else {
         BtlEffectCt = 0.0f;
@@ -10244,13 +10244,13 @@ static void BattleMenuOptionKey() {
     int closed = MenuOptionKey();
 
     if (OptionMenuFadeOutStart() != 0) {
-        BtlEffectFlag = 0;
+        BtlEffectFlag = BTLEFFECT_PAGE_CLOSE;
 
         if (transition_done != 0 && closed != 0) {
-            MenuSelect[0] = 6;
-            BattleMenuFlag = 22;
+            MenuSelect[0] = BTLMENU_PAGE_OPTION;
+            BattleMenuFlag = BTLMENU_STATE_OPTION_CLOSE;
             ForBackMenu();
-            BattleMenuFlag = 0;
+            BattleMenuFlag = BTLMENU_STATE_MAIN;
         }
     }
 }
@@ -10266,21 +10266,21 @@ static void BattleMenuSaveKey() {
     int transition_done = 0;
 
     switch (BtlEffectFlag) {
-        case 1:
+        case BTLEFFECT_PAGE_OPEN:
             transition_done = ToFromSelect(0);
 
             if (transition_done != 0) {
-                BtlEffectFlag = -1;
+                BtlEffectFlag = BTLEFFECT_NONE;
                 BtlEffectCt = 0.0f;
             }
 
             break;
-        case 0:
+        case BTLEFFECT_PAGE_CLOSE:
             transition_done = ToFromSelect(1);
             break;
     }
 
-    if (BtlEffectFlag != -1) {
+    if (BtlEffectFlag != BTLEFFECT_NONE) {
         BtlEffectCt += 1.0f;
     } else {
         BtlEffectCt = 0.0f;
@@ -10289,13 +10289,14 @@ static void BattleMenuSaveKey() {
     MenuSaveKey();
 
     if (SaveMenuEffectFadeOut() != 0) {
-        BtlEffectFlag = 0;
+        BtlEffectFlag = BTLEFFECT_PAGE_CLOSE;
 
         if (transition_done != 0) {
-            MenuSelect[0] = 7;
-            BattleMenuFlag = 22;
+            MenuSelect[0] = BTLMENU_PAGE_SAVE;
+            // The previous page's close state, so ForBackMenu leaves MenuSelect[0] one page low.
+            BattleMenuFlag = BTLMENU_STATE_OPTION_CLOSE;
             ForBackMenu();
-            BattleMenuFlag = 0;
+            BattleMenuFlag = BTLMENU_STATE_MAIN;
         }
     }
 }
@@ -10308,21 +10309,21 @@ int BattleManualKey() {
     int transition_done = 0;
 
     switch (BtlEffectFlag) {
-        case 1:
+        case BTLEFFECT_PAGE_OPEN:
             transition_done = ToFromSelect(0);
 
             if (transition_done != 0) {
-                BtlEffectFlag = -1;
+                BtlEffectFlag = BTLEFFECT_NONE;
                 BtlEffectCt = 0.0f;
             }
 
             break;
-        case 0:
+        case BTLEFFECT_PAGE_CLOSE:
             transition_done = ToFromSelect(1);
             break;
     }
 
-    if (BtlEffectFlag != -1) {
+    if (BtlEffectFlag != BTLEFFECT_NONE) {
         BtlEffectCt += 1.0f;
     } else {
         BtlEffectCt = 0.0f;
@@ -10330,14 +10331,15 @@ int BattleManualKey() {
 
     MenuManualKey();
 
-    if (GetNowManualMenuMode() == 1) {
-        BtlEffectFlag = 0;
+    if (GetNowManualMenuMode() == MANUAL_MODE_CLOSING) {
+        BtlEffectFlag = BTLEFFECT_PAGE_CLOSE;
 
         if (transition_done != 0) {
-            MenuSelect[0] = 8;
-            BattleMenuFlag = 0x17;
+            MenuSelect[0] = BTLMENU_PAGE_MANUAL;
+            // The previous page's close state, so ForBackMenu leaves MenuSelect[0] one page low.
+            BattleMenuFlag = BTLMENU_STATE_SAVE_CLOSE;
             ForBackMenu();
-            BattleMenuFlag = 0;
+            BattleMenuFlag = BTLMENU_STATE_MAIN;
         }
     }
 
@@ -10429,7 +10431,7 @@ void MenuClsMes::InitMes() {
 void MenuClsMes::InitData() {
     draw_x = 366;
     draw_y = 166;
-    mode = 0;
+    mode = MENU_CLSMES_OFF;
     option_flags = 0;
     option_count = 0;
     option_start = 0;
@@ -10444,9 +10446,9 @@ void MenuClsMes::SetBuffInfo(short *buffer) {
     mes->text_width = 0;
     mes->text_height = 0;
     mes->fade = 0.0f;
-    mes->fade_in = 1;
+    mes->fade_in = true;
     mes->text_rate = mes->text_rate_set;
-    mes->waiting = 0;
+    mes->waiting = false;
     mes->text_at = 0.0f;
     mes->text_no = 0;
     mes->text_from = 0;
@@ -10468,14 +10470,14 @@ void MenuClsMes::SetBuffInfo(short *buffer) {
     }
 
     mes->value = 0;
-    mes->value_signed = 0;
-    mes->value_show = 1;
-    mes->value_narrow = 0;
+    mes->value_signed = false;
+    mes->value_show = true;
+    mes->value_narrow = false;
     mes->space_width = -1;
     mes->space_area = -1;
     mes->cursor_row = -1;
     mes->cursor_y = 0;
-    mes->cursor_lit = 0;
+    mes->cursor_lit = false;
 
     for (int i = 0; i < 10; i++) {
         mes->line_pos[i].x = -1;
@@ -10487,14 +10489,14 @@ void MenuClsMes::SetBuffInfo(short *buffer) {
     message->SetBuff(buffer);
     message->tex_block = 0x1A;
     ClsMes *window = message;
-    window->auto_pos = -1;
-    message->Preset(1);
+    window->auto_pos = MES_POS_NONE;
+    message->Preset(MES_PRESET_SYSTEM);
     message->narrow_gaiji_set = 2;
-    message->style = 2;
+    message->style = MES_EDGE_BLACK;
     message->rows = 9;
-    message->stay_frame = 0;
+    message->stay_frame = false;
     message->char_width = GetMenuCommonFontW(BtlMenuNowLang, -1);
-    message->value_show = 0;
+    message->value_show = false;
     message->unk_02C = 0x100;
     message->init_030 = 0x100;
     InitData();
@@ -10552,10 +10554,10 @@ void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
 void MenuClsMes::Step() {
     if (message != NULL) {
         switch (mode) {
-            case 0:
+            case MENU_CLSMES_OFF:
                 break;
-            case 1:
-            case 2:
+            case MENU_CLSMES_OPTIONS:
+            case MENU_CLSMES_UNK_2:
                 NowWeaponStatus(GetNowSelectWeapon());
                 message->Step();
                 break;
@@ -10576,10 +10578,10 @@ void MenuClsMes::Draw1(int x, int y, int draw_alpha) {
         int option;
 
         switch (mode) {
-            case 0:
+            case MENU_CLSMES_OFF:
                 break;
-            case 1:
-            case 2:
+            case MENU_CLSMES_OPTIONS:
+            case MENU_CLSMES_UNK_2:
                 if (option_flags == 0 || option_flags == 1) {
                     return;
                 }

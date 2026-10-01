@@ -27,6 +27,7 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
+#include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 #include "sysmes.hpp"
@@ -89,8 +90,7 @@ static void CommandBOUND(void **argv);
 /**
  * Names one keyword of the cloth configuration file.
  *
- * The argument list gives each argument's kind -- 0 for a word, 1 for an
- * integer, 2 for a float -- and ends at -1.
+ * The argument list gives each argument's SCRIPT_ARGUMENT_TYPE and ends at -1.
  */
 struct COMMAND_INFO {
     char *name;          /**< Keyword the line starts with. */
@@ -99,15 +99,15 @@ struct COMMAND_INFO {
 
 /* The keywords a cloth configuration file may use. */
 static COMMAND_INFO Command[9] = {
-    {"SIZE",       {1, 1, -1}                                    },
-    {"FRAME",      {0, -1}                                       },
-    {"NORMAL",     {2, -1}                                       },
-    {"FOLLOW",     {2, 2, 2, -1}                                 },
-    {"K",          {2, 2, 2, -1}                                 },
-    {"WINDEFFECT", {2, -1}                                       },
-    {"GRAVITY",    {2, 2, 2, -1}                                 },
-    {"POLYDIV",    {0, -1}                                       },
-    {"BOUND",      {0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, -1}},
+    {"SIZE",       {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                 },
+    {"FRAME",      {SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                           },
+    {"NORMAL",     {SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                            },
+    {"FOLLOW",     {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                              },
+    {"K",          {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                              },
+    {"WINDEFFECT", {SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                            },
+    {"GRAVITY",    {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                              },
+    {"POLYDIV",    {SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                           },
+    {"BOUND",      {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
 };
 
 /* What each of those keywords does, in the same order. */
@@ -376,7 +376,7 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
         word[length] = 0;
 
         switch (arg_types[i]) {
-            case 0:
+            case SCRIPT_ARGUMENT_STRING:
                 if (word[0] != '"') {
                     return -1;
                 }
@@ -396,7 +396,7 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
 
                 strcpy((char *) argv[i], word + 1);
                 break;
-            case 1:
+            case SCRIPT_ARGUMENT_INTEGER:
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
 
@@ -407,7 +407,7 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
 
                 *(int *) argv[i] = atoi(word);
                 break;
-            case 2:
+            case SCRIPT_ARGUMENT_FLOAT:
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
 
@@ -608,31 +608,31 @@ float unitRotation(CFrameVu1 *frame, float heading) {
         abs_delta = delta;
     }
 
-    if (abs_delta <= 3.141592653589793) {
-        if (abs_delta <= 0.2617993877991494) {
+    if (abs_delta <= PI_D) {
+        if (abs_delta <= TWELFTH_PI_D) {
             delta = 0.0f;
         }
     } else {
-        abs_delta = 6.283185307179586 - abs_delta;
+        abs_delta = TWO_PI_D - abs_delta;
 
-        if (abs_delta <= 0.2617993877991494) {
+        if (abs_delta <= TWELFTH_PI_D) {
             delta = 0.0f;
         }
     }
 
     if (delta > 0.0f) {
-        if (delta <= 3.141592653589793) {
-            rotation[1] += 0.2617994f;
+        if (delta <= PI_D) {
+            rotation[1] += TWELFTH_PI;
         } else {
-            rotation[1] -= 0.2617994f;
+            rotation[1] -= TWELFTH_PI;
         }
     }
 
     if (delta < 0.0f) {
-        if (delta >= -3.141592653589793) {
-            rotation[1] -= 0.2617994f;
+        if (delta >= -PI_D) {
+            rotation[1] -= TWELFTH_PI;
         } else {
-            rotation[1] += 0.2617994f;
+            rotation[1] += TWELFTH_PI;
         }
     }
 
@@ -640,12 +640,12 @@ float unitRotation(CFrameVu1 *frame, float heading) {
         rotation[1] = heading;
     }
 
-    if (rotation[1] <= -3.141592653589793) {
-        rotation[1] += 6.2831855f;
+    if (rotation[1] <= -PI_D) {
+        rotation[1] += TWO_PI;
     }
 
-    if (rotation[1] >= 3.141592653589793) {
-        rotation[1] -= 6.2831855f;
+    if (rotation[1] >= PI_D) {
+        rotation[1] -= TWO_PI;
     }
 
     return rotation[1];

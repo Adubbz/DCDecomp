@@ -31,11 +31,19 @@
 #include "vector3.hpp"
 #include "wind.hpp"
 
-typedef MOTION_INFO tagMOTION_KEY;
+/**
+ * Phases of an actor's blink, as FACE_INFO::blink holds them.
+ */
+// clang-format off
+enum FaceBlink {
+    BLINK_IDLE    = 0, /**< Eyes open, waiting for the next blink. */
+    BLINK_CLOSING = 1, /**< Eyes closing towards the last eye frame. */
+    BLINK_OPENING = 2, /**< Eyes opening back to the first frame. */
+};
 
-/* Spelled here rather than reached through a header because the image holds it only as an
-   anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
-#define PI 3.14159265358979323846
+// clang-format on
+
+typedef MOTION_INFO tagMOTION_KEY;
 
 /* The rectangle a texture transfer takes, declared here rather than reached through rect.h for
    the reason title.cpp declares its own: every rectangle this overlay builds is built by a
@@ -240,24 +248,24 @@ void FaceChange(int actor_no) {
 
     if (!Pause) {
         if (CScript__2.obj[actor_no].eye > face[actor_no].eye_max) {
-            face[actor_no].blink = 0;
+            face[actor_no].blink = BLINK_IDLE;
         }
 
         if (CScript__2.obj[actor_no].eye_time >= CScript__2.motion_step) {
             CScript__2.obj[actor_no].eye_time -= CScript__2.motion_step;
 
             switch (face[actor_no].blink) {
-                case 1:
+                case BLINK_CLOSING:
                     if (CScript__2.obj[actor_no].eye < face[actor_no].eye_max) {
                         CScript__2.obj[actor_no].eye++;
 
                         if (CScript__2.obj[actor_no].eye == face[actor_no].eye_max) {
-                            face[actor_no].blink = 2;
+                            face[actor_no].blink = BLINK_OPENING;
                         }
                     }
 
                     break;
-                case 2:
+                case BLINK_OPENING:
                     if (CScript__2.obj[actor_no].eye > 0) {
                         CScript__2.obj[actor_no].eye--;
                     }
@@ -266,7 +274,7 @@ void FaceChange(int actor_no) {
             }
         } else if (rand() % 200 == 0) {
             if (CScript__2.obj[actor_no].eye == 0) {
-                face[actor_no].blink = 1;
+                face[actor_no].blink = BLINK_CLOSING;
                 CScript__2.obj[actor_no].eye = 1;
                 CScript__2.obj[actor_no].eye_time = 15.0f * CScript__2.motion_step;
             }
@@ -276,11 +284,11 @@ void FaceChange(int actor_no) {
                 CScript__2.obj[2].eye_time = CScript__2.motion_step;
             } else {
                 CScript__2.obj[actor_no].eye = 0;
-                face[actor_no].blink = 0;
+                face[actor_no].blink = BLINK_IDLE;
             }
         } else {
             CScript__2.obj[actor_no].eye = 0;
-            face[actor_no].blink = 0;
+            face[actor_no].blink = BLINK_IDLE;
         }
     }
 
@@ -321,7 +329,7 @@ void FaceChange(int actor_no) {
             }
         } else {
             CScript__2.obj[actor_no].mouth = 0;
-            CScript__2.obj[actor_no].talk = 0;
+            CScript__2.obj[actor_no].talk = false;
         }
     }
 
@@ -354,17 +362,17 @@ void LoadCharaData(int buffer_no, int actor_no) {
     };
 
     switch (CScript__2.obj[actor_no].load_step) {
-        case 0:
+        case TSLOAD_START:
             LoadFileBG(name[actor_no][0], (u_long128 *) read_buffer, 0);
-            CScript__2.obj[actor_no].load_step = 1;
+            CScript__2.obj[actor_no].load_step = TSLOAD_WAIT;
             break;
-        case 1:
+        case TSLOAD_WAIT:
             if (!ReadBGSync()) {
-                CScript__2.obj[actor_no].load_step = 2;
+                CScript__2.obj[actor_no].load_step = TSLOAD_UNPACK;
             }
 
             break;
-        case 2:
+        case TSLOAD_UNPACK:
             Chara__3[actor_no].Initialize();
             CharaDataBuffer__2[buffer_no].used = 0;
             Chara__3[actor_no].LoadPackData(read_buffer, name[actor_no][1], &CharaDataBuffer__2[buffer_no], 0);
@@ -373,7 +381,7 @@ void LoadCharaData(int buffer_no, int actor_no) {
             Chara__3[actor_no].motion_type.state.motion_no = 0;
             Chara__3[actor_no].motion_type.state.playing_no = 0;
             CScript__2.obj[actor_no].load = -1;
-            CScript__2.obj[actor_no].load_step = -1;
+            CScript__2.obj[actor_no].load_step = TSLOAD_NONE;
             break;
     }
 }
@@ -452,7 +460,7 @@ void OpB_LoadDataBG() {
         ;
 
     LoadFileBG("opdat/norn/norn.pak", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 void OpB_LoadDataBG2() {
@@ -460,7 +468,7 @@ void OpB_LoadDataBG2() {
         ;
 
     LoadFileBG("opdat/toan/toan.pim", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 /* The village scene's set-up, and the shape every scene file's is a variation of. The textures come
@@ -521,25 +529,25 @@ void OpB_InitProcess() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
@@ -562,16 +570,16 @@ void OpB_InitProcess() {
     CSnd.SetReverb(0, 4, 30);
     CSnd.SetReverb(1, 4, 5);
     CSnd.LoadSoundFileFromPack("o02a.txt", read_buffer);
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
     OpBgmSqPort = 0;
     OpBgmPlay();
-    CSnd.SQ_Play(1, 0);
-    OpPlayVolSE(15, 16, 22, 0.6f);
+    CSnd.SQ_Play(MIDI_PORT_AMBIENT, 0);
+    OpPlayVolSE(MIDI_PORT_SE_TITLE, 16, 22, 0.6f);
     CSnd.Step();
-    CSnd.SE_Play(15, 16, 21, 0);
+    CSnd.SE_Play(MIDI_PORT_SE_TITLE, 16, 21, 0);
     OP_FireList = 0;
     OPAnalyz("opdat/norn.cfg");
     OPMdsLoad();
@@ -650,7 +658,7 @@ void OpB_InitProcess() {
     CFrameVu1  *frame;
     CMapObject *object;
 
-    attr.fog_enable = 1;
+    attr.fog_enable = true;
     MapDataBuffer.used = 0;
 
     for (int i = 0; i < 68; i++) {
@@ -682,7 +690,7 @@ void OpB_InitProcess() {
         OP_NornMapObj[i].unk_34 = 0;
 
         object->SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
-        object->SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180), (float) (PI * norn[i].rotation[1] / 180), (float) (PI * norn[i].rotation[2] / 180)));
+        object->SetRotation(CVector3_f_((float) (PI_D * norn[i].rotation[0] / 180), (float) (PI_D * norn[i].rotation[1] / 180), (float) (PI_D * norn[i].rotation[2] / 180)));
 
         object->FrameObjectOnOff("win1", 0);
         object->FrameObjectOnOff("light1", 0);
@@ -749,7 +757,7 @@ void OpB_InitProcess() {
         OP_NornMapObj2[i].unk_34 = 0;
 
         object->SetPosition(CVector3_f_(10.0f * ground[i].position[0], 10.0f * ground[i].position[1], 10.0f * ground[i].position[2]));
-        ((CMapObject &) OP_NornMapObj2[i]).SetRotation(CVector3_f_((float) (PI * ground[i].rotation[0] / 180), (float) (PI * ground[i].rotation[1] / 180), (float) (PI * ground[i].rotation[2] / 180)));
+        ((CMapObject &) OP_NornMapObj2[i]).SetRotation(CVector3_f_((float) (PI_D * ground[i].rotation[0] / 180), (float) (PI_D * ground[i].rotation[1] / 180), (float) (PI_D * ground[i].rotation[2] / 180)));
     }
 
     LoadFile("opdat/chara/03p09a.chr", (void *) read_buffer, 0);
@@ -758,7 +766,7 @@ void OpB_InitProcess() {
 
     CFrameAttr chara_attr;
 
-    chara_attr.clip_enable = 0;
+    chara_attr.clip_enable = false;
     Chara__3[9].frame->SetAttr(chara_attr, 1, 4);
     Chara__3[9].motion_type.state.time = 10.0f;
     Chara__3[9].motion_type.state.blend_step = 0.05f;
@@ -863,25 +871,25 @@ void OpB_InitProcess2() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
@@ -913,7 +921,7 @@ void OpB_InitProcess2() {
 
     CFrameAttr komono_attr;
 
-    komono_attr.clip_enable = 0;
+    komono_attr.clip_enable = false;
     Komono.frame->SetAttr(komono_attr, 1, 4);
     Komono.motion_type.state.time = 10.0f;
     Komono.motion_type.state.blend_step = 0.05f;
@@ -925,7 +933,7 @@ void OpB_InitProcess2() {
 
     CFrameAttr mother_attr;
 
-    mother_attr.clip_enable = 0;
+    mother_attr.clip_enable = false;
     Chara__3[10].frame->SetAttr(mother_attr, 1, 4);
     Chara__3[10].motion_type.state.time = 10.0f;
     Chara__3[10].motion_type.state.blend_step = 0.05f;
@@ -943,7 +951,7 @@ void OpB_InitProcess2() {
 
     CFrameAttr toan_attr;
 
-    toan_attr.clip_enable = 0;
+    toan_attr.clip_enable = false;
     Chara__3[8].frame->SetAttr(toan_attr, 1, 4);
     Chara__3[8].motion_type.state.time = 10.0f;
     Chara__3[8].motion_type.state.blend_step = 0.05f;
@@ -964,7 +972,7 @@ void OpB_InitProcess2() {
     LoadFile("opdat/chara/03c01d2.chr", (void *) read_buffer, 0);
     Chara__3[11].LoadPackData(read_buffer, "03c01d2.cfg", &CharaDataBuffer__2[6], 0);
 
-    toan_attr.clip_enable = 0;
+    toan_attr.clip_enable = false;
     Chara__3[11].frame->SetAttr(toan_attr, 1, 4);
     Chara__3[11].motion_type.state.time = 160.0f;
     Chara__3[11].motion_type.state.blend_step = 0.1f;
@@ -986,10 +994,10 @@ void OpB_InitProcess2() {
     strcpy(Door.name, "door_1");
     InitObjAnime(ToansHouse, &Door);
 
-    CSnd.SE_Stop(15, 16, 22, 0);
-    CSnd.SE_Stop(15, 16, 21, 0);
-    CSnd.SetVol(0, (float) (OpGetVolSQ(0) * 0.5));
-    CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.1));
+    CSnd.SE_Stop(MIDI_PORT_SE_TITLE, 16, 22, 0);
+    CSnd.SE_Stop(MIDI_PORT_SE_TITLE, 16, 21, 0);
+    CSnd.SetVol(MIDI_PORT_BGM, (float) (OpGetVolSQ(0) * 0.5));
+    CSnd.SetVol(MIDI_PORT_AMBIENT, (float) (OpGetVolSQ(1) * 0.1));
     CScript__2.init_no = 0;
 }
 
@@ -1072,7 +1080,7 @@ void OpB_MotionProcess() {
         }
     }
 
-    if (CScript__2.scene == 1 && !Pause) {
+    if (CScript__2.scene == OP_SCENE_NORUNE && !Pause) {
         ObjAnimePlay(&Fuusya[0]);
         ObjAnimePlay(&Fuusya[1]);
 
@@ -1081,7 +1089,7 @@ void OpB_MotionProcess() {
         }
     }
 
-    if (CScript__2.scene == 2) {
+    if (CScript__2.scene == OP_SCENE_TOAN_HOUSE) {
         if (CScript__2.sprite == 1) {
             Door.end_value[1] = -85.0f;
             Door.step_y = -2.8f;
@@ -1105,7 +1113,7 @@ void OpB_MotionProcess() {
    footfall takes is decided by how far the camera's motion has run, because the ground changes
    under the actor part way through the scene. */
 void OpB_SoundProcess() {
-    if (CScript__2.scene == 1) {
+    if (CScript__2.scene == OP_SCENE_NORUNE) {
         float camera_time = Cam__2[SceneNp__2].motion_type.state.time;
 
         if (CScript__2.obj[9].motion == 0) {
@@ -1119,17 +1127,17 @@ void OpB_SoundProcess() {
             if (wait == 0) {
                 if (motion_frame > 28 && motion_frame < 30) {
                     if (camera_time < 387.0f) {
-                        OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
+                        OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 20);
                     } else {
-                        OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 32);
+                        OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 32);
                     }
 
                     wait = 4;
                 } else if (motion_frame > 38 && motion_frame < 40) {
                     if (camera_time < 387.0f) {
-                        OpPlayVolPanSE(&position[0], (float) (10 + (motion_frame & 0)), (float) (wait - wait + 400), 14, 21, 21);
+                        OpPlayVolPanSE(&position[0], (float) (10 + (motion_frame & 0)), (float) (wait - wait + 400), MIDI_PORT_SE_DEFAULT, 21, 21);
                     } else {
-                        OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 33);
+                        OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 33);
                     }
 
                     wait = 4;
@@ -1142,15 +1150,15 @@ void OpB_SoundProcess() {
         sceVu0FVECTOR river = {50.0f, 50.0f, -100.0f, 0.0f};
 
         OpSetVolPanSE(river, 100.0f, 400.0f, 15, 16, 21);
-    } else if (CScript__2.scene == 2) {
+    } else if (CScript__2.scene == OP_SCENE_TOAN_HOUSE) {
         if (CScript__2.sprite == 1) {
-            CSnd.SetVol(0, (float) (OpGetVolSQ(0) * 1.0));
-            CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.7));
+            CSnd.SetVol(MIDI_PORT_BGM, (float) (OpGetVolSQ(0) * 1.0));
+            CSnd.SetVol(MIDI_PORT_AMBIENT, (float) (OpGetVolSQ(1) * 0.7));
         }
 
         if (CScript__2.camera_start == 55) {
-            CSnd.SetVol(0, (float) (OpGetVolSQ(0) * 0.5));
-            CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.1));
+            CSnd.SetVol(MIDI_PORT_BGM, (float) (OpGetVolSQ(0) * 0.5));
+            CSnd.SetVol(MIDI_PORT_AMBIENT, (float) (OpGetVolSQ(1) * 0.1));
         }
 
         if (CScript__2.camera_start == 55 && CScript__2.obj[10].motion == 6) {
@@ -1163,10 +1171,10 @@ void OpB_SoundProcess() {
 
             if (wait == 0) {
                 if (motion_frame > 134 && motion_frame < 136) {
-                    OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 32);
+                    OpPlayVolPanSE(position, 50.0f, 300.0f, MIDI_PORT_SE_DEFAULT, 21, 32);
                     wait = 5;
                 } else if (motion_frame > 144 && motion_frame < 146) {
-                    OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 33);
+                    OpPlayVolPanSE(position, 50.0f, 300.0f, MIDI_PORT_SE_DEFAULT, 21, 33);
                     wait = 5;
                 }
             } else {
@@ -1193,7 +1201,7 @@ void OpB_DrawProcess() {
     TexManager.ReloadTexture(Vif1Packet, 10);
 
     switch (CScript__2.scene) {
-        case 1:
+        case OP_SCENE_NORUNE:
             for (int i = 0; i < 68; i++) {
                 CMapObject *obj = &OP_NornMapObj[i];
 
@@ -1210,7 +1218,7 @@ void OpB_DrawProcess() {
 
             break;
 
-        case 2:
+        case OP_SCENE_TOAN_HOUSE:
             setTexAnime();
             OP_ToanMapObj.Draw();
             break;
@@ -1289,7 +1297,7 @@ void OpB_DrawProcess() {
         }
     }
 
-    if (CScript__2.scene == 2) {
+    if (CScript__2.scene == OP_SCENE_TOAN_HOUSE) {
         TexManager.ReloadTexture(Vif1Packet, 22);
 
         if (!Pause) {
@@ -1299,19 +1307,19 @@ void OpB_DrawProcess() {
         Komono.Draw();
     }
 
-    if (CScript__2.scene == 1) {
+    if (CScript__2.scene == OP_SCENE_NORUNE) {
         TexManager.ReloadTexture(Vif1Packet, 23);
         MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buff", -1)->tex0);
 
         switch (CScript__2.scene) {
-            case 1:
+            case OP_SCENE_NORUNE:
                 for (int i = 0; i < 68; i++) {
                     OP_NornMapObj[i].DrawShadow(0);
                 }
 
                 break;
 
-            case 2:
+            case OP_SCENE_TOAN_HOUSE:
                 OP_ToanMapObj.DrawShadow(0);
                 break;
         }
@@ -1319,7 +1327,7 @@ void OpB_DrawProcess() {
         MGEndDrawShadow(52);
     }
 
-    if (CScript__2.scene != 2) {
+    if (CScript__2.scene != OP_SCENE_TOAN_HOUSE) {
         TexManager.ReloadTexture(Vif1Packet, 21);
 
         float dof[2] = {300.0f, 1000.0f};

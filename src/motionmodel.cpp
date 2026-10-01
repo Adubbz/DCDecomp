@@ -87,7 +87,7 @@ void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> 
     motion.state.blend_step = 1.0f;
     motion.state.motion_no = 0;
     motion.state.playing_no = 0;
-    motion.state.blending = 0;
+    motion.state.blending = false;
     current_motion = 0;
 }
 

@@ -39,7 +39,7 @@ void CMapParts::SetRotY(int direction) {
 
     // A part faces one of four directions, so each step is a quarter turn.
     this->rot_y = direction;
-    angle = 0.5f * (3.1415927f * direction);
+    angle = 0.5f * (PI * direction);
     SetRotation(zero, angle, 0.0f);
 }
 
@@ -59,7 +59,7 @@ void CMapParts::Initialize() {
     this->unit_size = 0.0f;
     this->rot_y = 0;
     this->def_parts_no = 0;
-    this->subtype = 0;
+    this->subtype = MAP_PARTS_SUBTYPE_NONE;
     this->parts_no = this->area = -1;
     this->lift = 0.0f;
     this->draw_distance = -1.0f;
@@ -382,7 +382,7 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
             continue;
         }
 
-        if (effect_info->kind != 5) {
+        if (effect_info->kind != EDIT_EFFECT_UNK_5) {
             continue;
         }
 

@@ -21,17 +21,102 @@
 #include "texture.hpp"
 
 /**
+ * Keyboards of the name-entry screen, as NAME_SELECT::input_mode holds them.
+ */
+// clang-format off
+enum NameInputMode {
+    NAME_INPUT_KATAKANA = 0, /**< Katakana. */
+    NAME_INPUT_HIRAGANA = 1, /**< Hiragana. */
+    NAME_INPUT_ALPHABET = 2, /**< The alphabet. */
+    NAME_INPUT_SYMBOL   = 3, /**< Symbols. */
+};
+
+// clang-format on
+
+/**
+ * Parts of the name-entry screen the cursor can be in, as NAME_SELECT::area holds them.
+ */
+// clang-format off
+enum NameSelectArea {
+    NAME_AREA_KEYBOARD     = 4, /**< The keyboard's keys and voicing column. */
+    NAME_AREA_TABS         = 5, /**< The tabs above the keyboard. */
+    NAME_AREA_HELP         = 6, /**< The help message. */
+    NAME_AREA_CONFIRM      = 7, /**< The prompt confirming the name. */
+    NAME_AREA_EMPTY_NOTICE = 8, /**< The notice that an empty name became the default name. */
+};
+
+// clang-format on
+
+/**
+ * What the name-entry screen is doing, as NAME_SELECT::state holds it.
+ */
+// clang-format off
+enum NameSelectState {
+    NAME_STATE_IDLE      = 0, /**< Taking input. */
+    NAME_STATE_FADE_IN   = 1, /**< Fading in. */
+    NAME_STATE_FADE_OUT  = 2, /**< Fading out. */
+    NAME_STATE_EXIT      = 3, /**< Closing. */
+    NAME_STATE_TAB_FLASH = 6, /**< Flashing the tab that was pressed. */
+    NAME_STATE_HELP      = 8, /**< Showing the help message. */
+};
+
+// clang-format on
+
+/**
+ * Tabs of the name-entry screen, as NAME_SELECT::cursor holds them while the cursor is on the tabs.
+ */
+// clang-format off
+enum NameSelectTab {
+    NAME_TAB_KATAKANA     = 0,  /**< Shows the katakana keyboard. */
+    NAME_TAB_HIRAGANA     = 1,  /**< Shows the hiragana keyboard. */
+    NAME_TAB_ALPHABET     = 2,  /**< Shows the alphabet keyboard. */
+    NAME_TAB_SYMBOL       = 3,  /**< Shows the symbol keyboard. */
+    NAME_TAB_DEFAULT_NAME = 4,  /**< Restores the default name. */
+    NAME_TAB_OK           = 5,  /**< Accepts the name. */
+    NAME_TAB_LEFT         = 6,  /**< Moves the name's cursor left. */
+    NAME_TAB_RIGHT        = 7,  /**< Moves the name's cursor right. */
+    NAME_TAB_DELETE       = 8,  /**< Deletes the character under the name's cursor. */
+    NAME_TAB_INSERT       = 9,  /**< Inserts a space under the name's cursor. */
+    NAME_TAB_HELP         = 10, /**< Shows the help message. */
+};
+
+// clang-format on
+
+/**
+ * Actions the name-entry screen's input asks for in one frame.
+ */
+// clang-format off
+enum NameEnterAction {
+    NAME_ACTION_NONE           = -1,  /**< Nothing. */
+    NAME_ACTION_DECIDE         = 49,  /**< Checks the name and asks to confirm it. */
+    NAME_ACTION_FINISH         = 50,  /**< Accepts the name and fades out. */
+    NAME_ACTION_INPUT          = 100, /**< Enters the key under the cursor. */
+    NAME_ACTION_DELETE         = 200, /**< Deletes the character under the name's cursor. */
+    NAME_ACTION_BACKSPACE      = 250, /**< Blanks the character before the name's cursor. */
+    NAME_ACTION_INSERT         = 300, /**< Inserts a space under the name's cursor. */
+    NAME_ACTION_NEXT_MODE      = 400, /**< Shows the next keyboard. */
+    NAME_ACTION_PREV_MODE      = 450, /**< Shows the previous keyboard. */
+    NAME_ACTION_LEFT           = 500, /**< Moves the name's cursor left. */
+    NAME_ACTION_RIGHT          = 600, /**< Moves the name's cursor right. */
+    NAME_ACTION_DEFAULT_NAME   = 700, /**< Restores the default name. */
+    NAME_ACTION_HELP           = 800, /**< Shows the help message. */
+    NAME_ACTION_TOGGLE_VOICING = 900, /**< Toggles the voicing or case of the character under the name's cursor; never requested. */
+};
+
+// clang-format on
+
+/**
  * Holds the state of the name-entry screen.
  */
 struct NAME_SELECT {
     s16   chara_no;      /**< The party member being named. */
-    s16   area;          /**< The part of the screen the cursor is in. */
+    s16   area;          /**< The part of the screen the cursor is in. @see NameSelectArea. */
     s16   name_pos;      /**< The position in the name the next character goes to. */
     s16   side_row;      /**< The row of the voicing column the cursor is on, or 0 when it is on the keyboard. */
-    s16   pushed_tab;    /**< The tab that was last pressed. */
-    s16   input_mode;    /**< The keyboard being shown. */
-    s32   cursor;        /**< The key or tab the cursor is on. */
-    s16   state;         /**< What the screen is doing: fading, flashing a tab or leaving. */
+    s16   pushed_tab;    /**< The tab that was last pressed. @see NameSelectTab. */
+    s16   input_mode;    /**< The keyboard being shown. @see NameInputMode. */
+    s32   cursor;        /**< The key or tab the cursor is on. @see NameSelectTab. */
+    s16   state;         /**< What the screen is doing: fading, flashing a tab or leaving. @see NameSelectState. */
     s32   state_count;   /**< How many frames the state has lasted. */
     float cursor_x;      /**< Where the hand cursor is drawn across the screen. */
     float cursor_y;      /**< Where the hand cursor is drawn down the screen. */
@@ -128,28 +213,28 @@ void InitNameRegist(int chara_no, int texture_block, u_long128 *buffer) {
     LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment(buffer));
     NameSelect.language = GetMenuLangFlag();
     GamePad.MenuModeOn(0x78);
-    GamePad.SetAutoRepeat(0xF000, 30, 9);
+    GamePad.SetAutoRepeat(PAD_DPAD, 30, 9);
 
     NameSelect.chara_no = chara_no;
-    NameSelect.area = 4;
+    NameSelect.area = NAME_AREA_KEYBOARD;
     NameSelect.cursor = 0;
 
     switch (NameSelect.language) {
-        case 0:
-            NameSelect.input_mode = 0;
+        case LANG_JAPANESE:
+            NameSelect.input_mode = NAME_INPUT_KATAKANA;
             break;
 #ifndef PAL
-        case 1:
+        case LANG_ENGLISH_US:
 #endif
         default:
-            NameSelect.input_mode = 2;
+            NameSelect.input_mode = NAME_INPUT_ALPHABET;
             break;
     }
 
     NameSelect.side_row = 0;
-    NameSelect.state = 1;
+    NameSelect.state = NAME_STATE_FADE_IN;
     NameSelect.state_count = 0;
-    NameSelect.loaded = 0;
+    NameSelect.loaded = false;
     NameSelect.texture_block = texture_block;
     NameSelect.cursor_x = 100.0f;
     NameSelect.cursor_y = 242.0f;
@@ -310,7 +395,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     AtoraNameMes.DrawMesWin();
     MenuTextureReload(NameSelect.texture_block);
 
-    if (NameSelect.area < 6) {
+    if (NameSelect.area < NAME_AREA_HELP) {
         CRect_i_ destination(left + 89, top + 25, 24, 24);
         CRect_i_ source(24, 472, 24, 24);
         DrawMenu2DSprite(NameTemp, destination, source, blend_mode);
@@ -326,7 +411,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     left = x + 122;
     top = y + 82;
 
-    if (NameSelect.area == 7) {
+    if (NameSelect.area == NAME_AREA_CONFIRM) {
         for (name_length = 10; name_length > 0; name_length--) {
             if (CharaName[name_length - 1] != 0 && CharaName[name_length - 1] != 0xE6) {
                 break;
@@ -337,7 +422,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     for (int slot = 0; slot < 10; slot++) {
         int underline_brightness = brightness;
 
-        if (NameSelect.area == 7 && name_length <= slot) {
+        if (NameSelect.area == NAME_AREA_CONFIRM && name_length <= slot) {
             underline_brightness = 0x38;
         }
 
@@ -355,15 +440,15 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     top = y + 48;
 
     switch (NameSelect.state) {
-        case 1:
-        case 2:
+        case NAME_STATE_FADE_IN:
+        case NAME_STATE_FADE_OUT:
             break;
         default:
-            if (NameSelect.area < 6) {
+            if (NameSelect.area < NAME_AREA_HELP) {
                 DrawNameRegiWaku(left, top, 30, brightness, blend_mode);
                 int bob_frame = NameSelect.frame - 15;
 
-                if (NameSelect.area >= 6) {
+                if (NameSelect.area >= NAME_AREA_HELP) {
                     bob_frame = 0;
                 }
 
@@ -515,7 +600,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
         {0,  0,  86,  145, 95, 70, 24, 24, 48, 48, 112},
     };
 
-    if (NameSelect.state == 6) {
+    if (NameSelect.state == NAME_STATE_TAB_FLASH) {
         draw_x = x + Get_NameTemp_PutX(language, pushed_tab);
         draw_y = y + 6 + (pushed_tab / 6) * 27;
 
@@ -533,7 +618,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
             tex_u += tab_width[language][i];
         }
 
-        if (pushed_tab == 5) {
+        if (pushed_tab == NAME_TAB_OK) {
             draw_y += 4;
             tab_height = 0x28;
         }
@@ -556,17 +641,17 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
 
     draw_y = base_y;
 
-    if (input_mode == 0) {
+    if (input_mode == NAME_INPUT_KATAKANA) {
         texture = KataTex;
     }
 
-    if (input_mode == 1) {
+    if (input_mode == NAME_INPUT_HIRAGANA) {
         texture = HiraTex;
     }
 
     switch (input_mode) {
-        case 0:
-        case 1:
+        case NAME_INPUT_KATAKANA:
+        case NAME_INPUT_HIRAGANA:
             draw_x = base_x - 8;
 
             for (int key = 0; key < key_count[input_mode]; key++) {
@@ -612,11 +697,11 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
                         case 0x36:
                             draw_y = base_y;
 
-                            if (input_mode == 0) {
+                            if (input_mode == NAME_INPUT_KATAKANA) {
                                 key = 0x50;
                             }
 
-                            if (input_mode == 1) {
+                            if (input_mode == NAME_INPUT_HIRAGANA) {
                                 key = 0x4F;
                             }
                         default:
@@ -627,11 +712,11 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
             }
 
             break;
-        case 2:
+        case NAME_INPUT_ALPHABET:
             draw_x = base_x - 0xE;
 
             // The European keyboards move up to make room for their accented rows.
-            if (NameSelect.language > 2) {
+            if (NameSelect.language > LANG_ENGLISH_UK) {
                 base_y += euro_code_linelimmit[NameSelect.language - 2] * -3;
             }
 
@@ -647,12 +732,12 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
                 DrawMenu2DSprite(AlphaTex, CRect_i_(key_x, key_y, 22, 22), tex_rect, brightness, brightness, brightness, blend_mode);
             }
 
-            if (NameSelect.language > 2) {
+            if (NameSelect.language > LANG_ENGLISH_UK) {
                 DrawEuroSpecialFont(draw_x, key_y + 26, NameSelect.language - 2, brightness, blend_mode);
             }
 
             break;
-        case 3:
+        case NAME_INPUT_SYMBOL:
             for (int key = 0; key < key_count[3]; key++) {
                 int cell_no = menu_kigoutbl[key] + 2;
 
@@ -683,8 +768,8 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
 
     int language = NameSelect.language;
 
-    if (language > 0) {
-        language = 1;
+    if (language > LANG_JAPANESE) {
+        language = LANG_ENGLISH_US;
     }
 
     s16 tab_x[2][11] = {
@@ -697,7 +782,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
     };
     int tab_height = 0x18;
 
-    if (NameSelect.state == 6) {
+    if (NameSelect.state == NAME_STATE_TAB_FLASH) {
         draw_x = x + tab_x[language][pushed_tab];
         draw_y = y + 6 + (pushed_tab / 6) * 27;
 
@@ -715,7 +800,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
             tex_u += tab_width[language][i];
         }
 
-        if (pushed_tab == 5) {
+        if (pushed_tab == NAME_TAB_OK) {
             draw_y += 4;
             tab_height = 0x28;
         }
@@ -738,17 +823,17 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
 
     draw_y = base_y;
 
-    if (input_mode == 0) {
+    if (input_mode == NAME_INPUT_KATAKANA) {
         texture = KataTex;
     }
 
-    if (input_mode == 1) {
+    if (input_mode == NAME_INPUT_HIRAGANA) {
         texture = HiraTex;
     }
 
     switch (input_mode) {
-        case 0:
-        case 1:
+        case NAME_INPUT_KATAKANA:
+        case NAME_INPUT_HIRAGANA:
             draw_x = base_x - 8;
 
             for (int key = 0; key < key_count[input_mode]; key++) {
@@ -794,11 +879,11 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
                         case 0x36:
                             draw_y = base_y;
 
-                            if (input_mode == 0) {
+                            if (input_mode == NAME_INPUT_KATAKANA) {
                                 key = 0x50;
                             }
 
-                            if (input_mode == 1) {
+                            if (input_mode == NAME_INPUT_HIRAGANA) {
                                 key = 0x4F;
                             }
                         default:
@@ -809,7 +894,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
             }
 
             break;
-        case 2:
+        case NAME_INPUT_ALPHABET:
             draw_x = base_x - 0xE;
 
             for (int key = 0; key < key_count[2]; key++) {
@@ -851,7 +936,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
             }
 
             break;
-        case 3:
+        case NAME_INPUT_SYMBOL:
             draw_x = base_x;
 
             for (int key = 0; key < key_count[3]; key++) {
@@ -931,22 +1016,22 @@ int CheckName() {
     }
 
     if (blank_count >= 10) {
-        return 2;
+        return NAME_CHECK_EMPTY;
     }
 
     for (int blank_no = 0; blank_no < 2; blank_no++) {
         if (NameCompare(CharaName, blank_names[blank_no]) == 0) {
-            return 0;
+            return NAME_CHECK_REJECTED;
         }
     }
 
     for (int other_chara_no = NameSelect.chara_no - 1; 0 <= other_chara_no; other_chara_no--) {
         if (NameCompare(CharaName, SaveData->GetCharaName(other_chara_no)) == 0) {
-            return 0;
+            return NAME_CHECK_REJECTED;
         }
     }
 
-    return 1;
+    return NAME_CHECK_OK;
 }
 
 /**
@@ -996,11 +1081,11 @@ void NameEnterDraw() {
             printf(NameEntryEuroTextureFormat, EuroTex);
 #endif
             CharaFace = TexManager.GetTexture(NameEntryFaceTexture, -1);
-            NameSelect.loaded = 1;
+            NameSelect.loaded = true;
 
             short *messages = (short *) GetPackFile((u_int *) read_file->buffer, NameEntryMessageFile, NULL);
             short *messages2 = (short *) GetPackFile((u_int *) read_file->buffer, NameEntryMessageFile2, NULL);
-            InitMenuMesSet(3, messages);
+            InitMenuMesSet(MENU_MES_SET_NAME_ENTRY, messages);
             CommonMenuMes2.SetBuff(messages2);
 
             s8 char_size[7][2] = {
@@ -1014,8 +1099,8 @@ void NameEnterDraw() {
             };
             CommonMenuMes2.char_width = char_size[NameSelect.language][0];
             CommonMenuMes2.char_height = char_size[NameSelect.language][1];
-            CommonMenuMes2.stay_frame = 0;
-            CommonMenuMes3.stay_frame = 0;
+            CommonMenuMes2.stay_frame = false;
+            CommonMenuMes3.stay_frame = false;
             AtoraNameMes.mes_no[0] = NameSelect.chara_no + 0x3C;
             AtoraNameMes.MakeMesWin(0x1E);
         }
@@ -1031,18 +1116,18 @@ void NameEnterDraw() {
     brightness = fade = 0x80;
 
     switch (NameSelect.state) {
-        case 1:
+        case NAME_STATE_FADE_IN:
             fade = NameSelect.state_count * 5;
 
             if (fade > 0x80) {
                 fade = 0x80;
-                NameSelect.state = 0;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
     }
 
-    if (NameSelect.area >= 6) {
+    if (NameSelect.area >= NAME_AREA_HELP) {
         brightness = 0x38;
     }
 
@@ -1059,7 +1144,7 @@ void NameEnterDraw() {
 
         int name_color = brightness;
 
-        if (NameSelect.area >= 6) {
+        if (NameSelect.area >= NAME_AREA_HELP) {
             name_color = 0x80;
         }
 
@@ -1067,15 +1152,15 @@ void NameEnterDraw() {
         DrawNameTemplete(0x42, 0x9E, brightness, fade);
 
         switch (NameSelect.area) {
-            case 5:
+            case NAME_AREA_TABS:
                 switch (language) {
-                    case 0: {
+                    case LANG_JAPANESE: {
                         s16 tab_x[11] = {88, 160, 252, 310, 358, 420, 88, 114, 154, 216, 268};
                         cursor_x = tab_x[NameSelect.cursor];
                         break;
                     }
 #ifdef PAL
-                    case 1: {
+                    case LANG_ENGLISH_US: {
                         s16 tab_x[11] = {88, 88, 88, 256, 350, 436, 88, 114, 154, 216, 268};
                         cursor_x = tab_x[NameSelect.cursor];
                         break;
@@ -1085,7 +1170,7 @@ void NameEnterDraw() {
                         break;
 #else
                     default:
-                    case 1: {
+                    case LANG_ENGLISH_US: {
                         s16 tab_x[11] = {88, 88, 88, 256, 350, 436, 88, 114, 154, 216, 268};
                         cursor_x = tab_x[NameSelect.cursor];
                         break;
@@ -1093,10 +1178,10 @@ void NameEnterDraw() {
 #endif
                 }
 
-                if (NameSelect.cursor < 6) {
+                if (NameSelect.cursor < NAME_TAB_LEFT) {
                     cursor_y = 164.0f;
 
-                    if (NameSelect.cursor == 5) {
+                    if (NameSelect.cursor == NAME_TAB_OK) {
                         cursor_y += 4.0f;
                     }
                 } else {
@@ -1104,7 +1189,7 @@ void NameEnterDraw() {
                 }
 
                 break;
-            case 4: {
+            case NAME_AREA_KEYBOARD: {
                 int keys_per_row = InputModeOrikaeshi[NameSelect.input_mode];
                 int step_x = InputModeMovetbl[NameSelect.input_mode][0];
                 int step_y = InputModeMovetbl[NameSelect.input_mode][1];
@@ -1114,7 +1199,7 @@ void NameEnterDraw() {
                 cursor_x = step_x * column + 0x62;
                 cursor_y = step_y * (cursor_key / keys_per_row) + 0xEE;
 
-                if (NameSelect.input_mode < 2) {
+                if (NameSelect.input_mode < NAME_INPUT_ALPHABET) {
                     cursor_x -= 8.0f;
 
                     if (column > 4) {
@@ -1127,11 +1212,11 @@ void NameEnterDraw() {
                     }
                 }
 
-                if (NameSelect.input_mode == 2) {
+                if (NameSelect.input_mode == NAME_INPUT_ALPHABET) {
                     cursor_x -= 14.0f;
 
 #ifdef PAL
-                    if (NameSelect.language > 2) {
+                    if (NameSelect.language > LANG_ENGLISH_UK) {
                         cursor_y += euro_code_linelimmit[NameSelect.language - 2] * -3;
                     }
 #endif
@@ -1141,7 +1226,7 @@ void NameEnterDraw() {
             }
         }
 
-        if (NameSelect.area < 6) {
+        if (NameSelect.area < NAME_AREA_HELP) {
             if (abs((int) (cursor_x - NameSelect.cursor_x)) < 0x144) {
                 NameSelect.cursor_x += (cursor_x - NameSelect.cursor_x) / 4.0f;
                 NameSelect.cursor_y += (cursor_y - NameSelect.cursor_y) / 4.0f;
@@ -1151,14 +1236,14 @@ void NameEnterDraw() {
         }
 
         switch (NameSelect.state) {
-            case 1:
-            case 2:
+            case NAME_STATE_FADE_IN:
+            case NAME_STATE_FADE_OUT:
                 break;
             default: {
 #ifdef PAL
-                if (NameSelect.area == 4 && 230.0f <= NameSelect.cursor_y) {
+                if (NameSelect.area == NAME_AREA_KEYBOARD && 230.0f <= NameSelect.cursor_y) {
 #else
-                if (NameSelect.area == 4 && 234.0f <= NameSelect.cursor_y) {
+                if (NameSelect.area == NAME_AREA_KEYBOARD && 234.0f <= NameSelect.cursor_y) {
 #endif
                     DrawNameRegiWaku((int) (16.0f + cursor_x), (int) (cursor_y - 6.0f), 0x1C, brightness, fade);
                 }
@@ -1167,7 +1252,7 @@ void NameEnterDraw() {
                 // The hand sways on its own counter, which holds still while a tab flashes.
                 static int lct = 0;
 
-                if (NameSelect.state != 6) {
+                if (NameSelect.state != NAME_STATE_TAB_FLASH) {
                     lct++;
                 }
 
@@ -1183,7 +1268,7 @@ void NameEnterDraw() {
                 cursor_y = NameSelect.cursor_y + 3.0f * sinf(0.13089969754219055f * (float) NameSelect.frame);
 
 #endif
-                if (NameSelect.area < 8) {
+                if (NameSelect.area < NAME_AREA_EMPTY_NOTICE) {
                     CRect_i_ hand_rect(0x1C0, 0x128, 0x20, 0x20);
 
                     DrawMenu2DSprite(NameTemp, CRect_i_((int) (2.0f + cursor_x), (int) (2.0f + cursor_y), 0x20, 0x20), hand_rect, 0, 0, 0, (fade * 0x50) >> 7);
@@ -1208,18 +1293,18 @@ void NameEnterDraw() {
         CommonMenuMes3.text_y = 0x58;
         DrawMenu2DSprite(NameTemp, CRect_i_(0x1A3, 0x46, 0xB8, 0x51), CRect_i_(0, 0x178, 0xC0, 0x61), 0x64, 0x64, 0x64, fade);
 
-        if (NameSelect.area >= 6) {
+        if (NameSelect.area >= NAME_AREA_HELP) {
             int win_x = 0xAE;
             int win_y = 0xAA;
             int win_width = 0x12C;
 
             switch (NameSelect.area) {
-                case 7:
+                case NAME_AREA_CONFIRM:
                     win_x = 0xD8;
                     win_y = 0xB8;
                     win_width = 0xDA;
                     break;
-                case 8:
+                case NAME_AREA_EMPTY_NOTICE:
                     win_x = 0xBA;
                     win_y = 0xB8;
                     win_width = 0x116;
@@ -1237,9 +1322,9 @@ void NameEnterDraw() {
         CommonMenuMes3.DrawMesWin();
 
         switch (NameSelect.area) {
-            case 6:
-            case 7:
-            case 8:
+            case NAME_AREA_HELP:
+            case NAME_AREA_CONFIRM:
+            case NAME_AREA_EMPTY_NOTICE:
                 CommonMenuMes2.edge_alpha = fade;
                 CommonMenuMes2.Step();
                 CommonMenuMes2.DrawMesWin();
@@ -1249,7 +1334,7 @@ void NameEnterDraw() {
         setbilinear(0);
 
         switch (NameSelect.state) {
-            case 1:
+            case NAME_STATE_FADE_IN:
                 fade = 0x80 - NameSelect.state_count * 6;
 
                 if (fade < 0) {
@@ -1261,9 +1346,9 @@ void NameEnterDraw() {
                 }
 
                 break;
-            case 3:
+            case NAME_STATE_EXIT:
                 ExitNameEnterFunc();
-            case 2:
+            case NAME_STATE_FADE_OUT:
                 fade = NameSelect.state_count * 3;
 
                 if (fade > 0x80) {
@@ -1274,7 +1359,7 @@ void NameEnterDraw() {
                 break;
         }
 
-        if (NameSelect.state != 0) {
+        if (NameSelect.state != NAME_STATE_IDLE) {
             NameSelect.state_count++;
         }
 
@@ -1309,18 +1394,18 @@ s32 NameEnterKey() {
     chara_no = NameSelect.chara_no;
 
     switch (NameSelect.state) {
-        case 2:
+        case NAME_STATE_FADE_OUT:
             if (NameSelect.state_count >= 84) {
                 GamePad.AutoRepeatOff();
                 GamePad.MenuModeOff();
-                NameSelect.state = 3;
+                NameSelect.state = NAME_STATE_EXIT;
                 return 1;
             }
 
             return 0;
-        case 6:
+        case NAME_STATE_TAB_FLASH:
             if (NameSelect.state_count > 8) {
-                NameSelect.state = 0;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
@@ -1329,40 +1414,40 @@ s32 NameEnterKey() {
     cursor = NameSelect.cursor;
     side_row = NameSelect.side_row;
     name_pos = NameSelect.name_pos;
-    action = -1;
+    action = NAME_ACTION_NONE;
     mes_no = -1;
 
     switch (NameSelect.area) {
-        case 6:
+        case NAME_AREA_HELP:
             mes_no = chara_no + 100;
 
-            if (GamePad.Down(0x40) || GamePad.Down(0x20)) {
-                NameSelect.area = 5;
-                NameSelect.state = 0;
+            if (GamePad.Down(PAD_CROSS) || GamePad.Down(PAD_CIRCLE)) {
+                NameSelect.area = NAME_AREA_TABS;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
-        case 7:
-        case 8:
-            if (NameSelect.area == 7) {
+        case NAME_AREA_CONFIRM:
+        case NAME_AREA_EMPTY_NOTICE:
+            if (NameSelect.area == NAME_AREA_CONFIRM) {
                 mes_no = 91;
             }
 
-            if (NameSelect.area == 8) {
+            if (NameSelect.area == NAME_AREA_EMPTY_NOTICE) {
                 mes_no = 95;
             }
 
-            if (GamePad.Down(0x40)) {
-                NameSelect.state = 0;
-                action = 50;
-            } else if (GamePad.Down(0x20)) {
-                NameSelect.area = 4;
-                NameSelect.state = 0;
+            if (GamePad.Down(PAD_CROSS)) {
+                NameSelect.state = NAME_STATE_IDLE;
+                action = NAME_ACTION_FINISH;
+            } else if (GamePad.Down(PAD_CIRCLE)) {
+                NameSelect.area = NAME_AREA_KEYBOARD;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
-        case 4:
-            if (NameSelect.input_mode > 1) {
+        case NAME_AREA_KEYBOARD:
+            if (NameSelect.input_mode > NAME_INPUT_HIRAGANA) {
                 NameSelect.side_row = 0;
             }
 
@@ -1370,17 +1455,17 @@ s32 NameEnterKey() {
                 case 0: {
                     int keys_per_row = InputModeOrikaeshi[NameSelect.input_mode];
 
-                    if (GamePad.Down(0x4000)) {
+                    if (GamePad.Down(PAD_DOWN)) {
                         int rows = 5;
 
                         switch (NameSelect.input_mode) {
-                            case 3:
+                            case NAME_INPUT_SYMBOL:
                                 rows -= 2;
                                 break;
-                            case 2:
+                            case NAME_INPUT_ALPHABET:
                                 rows = 4;
 
-                                if (NameSelect.language > 2) {
+                                if (NameSelect.language > LANG_ENGLISH_UK) {
                                     rows = euro_code_linelimmit[NameSelect.language - 2] + 4;
                                 }
 
@@ -1390,36 +1475,36 @@ s32 NameEnterKey() {
                         if (NameSelect.cursor / keys_per_row < rows) {
                             NameSelect.cursor += keys_per_row;
                         }
-                    } else if (GamePad.Down(0x8000)) {
+                    } else if (GamePad.Down(PAD_LEFT)) {
                         if (NameSelect.cursor % keys_per_row != 0) {
                             NameSelect.cursor--;
-                        } else if (NameSelect.input_mode > 1) {
+                        } else if (NameSelect.input_mode > NAME_INPUT_HIRAGANA) {
                             NameSelect.cursor += keys_per_row - 1;
                         } else {
                             NameSelect.side_row = NameSelect.cursor / keys_per_row + 1;
                         }
-                    } else if (GamePad.Down(0x2000)) {
+                    } else if (GamePad.Down(PAD_RIGHT)) {
                         if (keys_per_row - 1 != NameSelect.cursor % keys_per_row) {
                             NameSelect.cursor++;
-                        } else if (NameSelect.input_mode > 1) {
+                        } else if (NameSelect.input_mode > NAME_INPUT_HIRAGANA) {
                             NameSelect.cursor -= keys_per_row - 1;
                         } else {
                             NameSelect.side_row = NameSelect.cursor / keys_per_row + 1;
                         }
-                    } else if (GamePad.Down(0x1000)) {
+                    } else if (GamePad.Down(PAD_UP)) {
                         int row = NameSelect.cursor / keys_per_row;
 
                         if (0 < row) {
                             NameSelect.cursor -= keys_per_row;
                         } else if (row <= 0) {
-                            NameSelect.area = 5;
+                            NameSelect.area = NAME_AREA_TABS;
 
                             if (NameSelect.cursor < 4) {
                                 NameSelect.cursor += 6;
                             } else if (NameSelect.cursor >= 4 && NameSelect.cursor < 7) {
-                                NameSelect.cursor = 10;
+                                NameSelect.cursor = NAME_TAB_HELP;
                             } else {
-                                NameSelect.cursor = 5;
+                                NameSelect.cursor = NAME_TAB_OK;
                             }
                         }
                     }
@@ -1429,21 +1514,21 @@ s32 NameEnterKey() {
                 default: {
                     int column = -1;
 
-                    if (GamePad.Down(0x1000)) {
+                    if (GamePad.Down(PAD_UP)) {
                         if (NameSelect.side_row == 1) {
                             NameSelect.side_row = 0;
-                            NameSelect.area = 5;
-                            NameSelect.cursor = 5;
+                            NameSelect.area = NAME_AREA_TABS;
+                            NameSelect.cursor = NAME_TAB_OK;
                         } else {
                             NameSelect.side_row--;
                         }
-                    } else if (GamePad.Down(0x4000)) {
+                    } else if (GamePad.Down(PAD_DOWN)) {
                         if (NameSelect.side_row < 6) {
                             NameSelect.side_row++;
                         }
-                    } else if (GamePad.Down(0x8000)) {
+                    } else if (GamePad.Down(PAD_LEFT)) {
                         column = 1;
-                    } else if (GamePad.Down(0x2000)) {
+                    } else if (GamePad.Down(PAD_RIGHT)) {
                         column = 0;
                     }
 
@@ -1456,82 +1541,82 @@ s32 NameEnterKey() {
                 }
             }
 
-            if (GamePad.Down(0x40)) {
-                action = 100;
-            } else if (GamePad.Down(0x20)) {
-                action = 250;
+            if (GamePad.Down(PAD_CROSS)) {
+                action = NAME_ACTION_INPUT;
+            } else if (GamePad.Down(PAD_CIRCLE)) {
+                action = NAME_ACTION_BACKSPACE;
             }
 
             break;
-        case 5: {
-            if (GamePad.Down(0x1000)) {
+        case NAME_AREA_TABS: {
+            if (GamePad.Down(PAD_UP)) {
                 switch (language) {
-                    case 0:
-                        if (NameSelect.cursor >= 6) {
-                            if (NameSelect.cursor < 8) {
-                                NameSelect.cursor = 0;
-                            } else if (NameSelect.cursor < 10) {
-                                NameSelect.cursor = 1;
-                            } else if (NameSelect.cursor == 10) {
-                                NameSelect.cursor = 2;
+                    case LANG_JAPANESE:
+                        if (NameSelect.cursor >= NAME_TAB_LEFT) {
+                            if (NameSelect.cursor < NAME_TAB_DELETE) {
+                                NameSelect.cursor = NAME_TAB_KATAKANA;
+                            } else if (NameSelect.cursor < NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_HIRAGANA;
+                            } else if (NameSelect.cursor == NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_ALPHABET;
                             }
                         }
 
                         break;
-                    case 1:
+                    case LANG_ENGLISH_US:
                     default:
-                        if (NameSelect.cursor >= 6) {
-                            if (NameSelect.cursor < 10) {
-                                NameSelect.cursor = 2;
+                        if (NameSelect.cursor >= NAME_TAB_LEFT) {
+                            if (NameSelect.cursor < NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_ALPHABET;
                             } else if (NameSelect.cursor < 11) {
-                                NameSelect.cursor = 3;
-                            } else if (NameSelect.cursor == 10) {
-                                NameSelect.cursor = 4;
+                                NameSelect.cursor = NAME_TAB_SYMBOL;
+                            } else if (NameSelect.cursor == NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_DEFAULT_NAME;
                             }
                         }
 
                         break;
                 }
-            } else if (GamePad.Down(0x4000)) {
-                if (NameSelect.cursor >= 6) {
-                    NameSelect.area = 4;
+            } else if (GamePad.Down(PAD_DOWN)) {
+                if (NameSelect.cursor >= NAME_TAB_LEFT) {
+                    NameSelect.area = NAME_AREA_KEYBOARD;
                     s8 below_key[7] = {0, 0, 1, 2, 3, 4, 4};
-                    NameSelect.cursor = below_key[NameSelect.cursor - 6];
-                } else if (NameSelect.cursor < 6) {
+                    NameSelect.cursor = below_key[NameSelect.cursor - NAME_TAB_LEFT];
+                } else if (NameSelect.cursor < NAME_TAB_LEFT) {
                     switch (language) {
-                        case 0:
+                        case LANG_JAPANESE:
                             switch (NameSelect.cursor) {
-                                case 0:
-                                    NameSelect.cursor = 6;
+                                case NAME_TAB_KATAKANA:
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                     break;
-                                case 1:
-                                    NameSelect.cursor = 8;
+                                case NAME_TAB_HIRAGANA:
+                                    NameSelect.cursor = NAME_TAB_DELETE;
                                     break;
-                                case 5:
+                                case NAME_TAB_OK:
                                     NameSelect.cursor = 8;
-                                    NameSelect.area = 4;
+                                    NameSelect.area = NAME_AREA_KEYBOARD;
                                     break;
                                 default:
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                     break;
                             }
 
                             break;
-                        case 1:
+                        case LANG_ENGLISH_US:
                         default:
                             switch (NameSelect.cursor) {
-                                case 2:
-                                    NameSelect.cursor = 6;
+                                case NAME_TAB_ALPHABET:
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                     break;
-                                case 3:
-                                    NameSelect.cursor = 9;
+                                case NAME_TAB_SYMBOL:
+                                    NameSelect.cursor = NAME_TAB_INSERT;
                                     break;
-                                case 5:
+                                case NAME_TAB_OK:
                                     NameSelect.cursor = 8;
-                                    NameSelect.area = 4;
+                                    NameSelect.area = NAME_AREA_KEYBOARD;
                                     break;
                                 default:
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                     break;
                             }
 
@@ -1542,19 +1627,19 @@ s32 NameEnterKey() {
 
             static s8 up_or_down = 0;
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 switch (language) {
-                    case 0:
+                    case LANG_JAPANESE:
                         switch (NameSelect.cursor) {
-                            case 0:
-                            case 6:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_KATAKANA:
+                            case NAME_TAB_LEFT:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down != 0) {
-                                    NameSelect.cursor = 4;
+                                    NameSelect.cursor = NAME_TAB_DEFAULT_NAME;
                                 } else {
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                 }
 
                                 break;
@@ -1564,18 +1649,18 @@ s32 NameEnterKey() {
                         }
 
                         break;
-                    case 1:
+                    case LANG_ENGLISH_US:
                     default:
                         switch (NameSelect.cursor) {
-                            case 2:
-                            case 6:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_ALPHABET:
+                            case NAME_TAB_LEFT:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down != 0) {
-                                    NameSelect.cursor = 4;
+                                    NameSelect.cursor = NAME_TAB_DEFAULT_NAME;
                                 } else {
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                 }
 
                                 break;
@@ -1586,20 +1671,20 @@ s32 NameEnterKey() {
 
                         break;
                 }
-            } else if (GamePad.Down(0x2000)) {
+            } else if (GamePad.Down(PAD_RIGHT)) {
                 switch (language) {
-                    case 0:
+                    case LANG_JAPANESE:
                         switch (NameSelect.cursor) {
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down == 0) {
-                                    NameSelect.cursor = 0;
+                                    NameSelect.cursor = NAME_TAB_KATAKANA;
                                 } else {
-                                    NameSelect.cursor = 6;
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                 }
 
                                 break;
-                            case 10:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_HELP:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
                             default:
                                 NameSelect.cursor++;
@@ -1607,19 +1692,19 @@ s32 NameEnterKey() {
                         }
 
                         break;
-                    case 1:
+                    case LANG_ENGLISH_US:
                     default:
                         switch (NameSelect.cursor) {
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down == 0) {
-                                    NameSelect.cursor = 2;
+                                    NameSelect.cursor = NAME_TAB_ALPHABET;
                                 } else {
-                                    NameSelect.cursor = 6;
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                 }
 
                                 break;
-                            case 10:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_HELP:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
                             default:
                                 NameSelect.cursor++;
@@ -1630,20 +1715,20 @@ s32 NameEnterKey() {
                 }
             }
 
-            if (GamePad.Down(0x20)) {
-                action = 250;
-            } else if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
+                action = NAME_ACTION_BACKSPACE;
+            } else if (GamePad.Down(PAD_CROSS)) {
                 NameSelect.pushed_tab = NameSelect.cursor;
 
-                if (NameSelect.cursor < 4) {
+                if (NameSelect.cursor < NAME_TAB_DEFAULT_NAME) {
                     if (NameSelect.input_mode != NameSelect.cursor) {
                         NameSelect.input_mode = NameSelect.cursor;
                     }
                 } else {
-                    NameSelect.state = 6;
+                    NameSelect.state = NAME_STATE_TAB_FLASH;
                     NameSelect.state_count = 0;
-                    int tab_action[7] = {700, 49, 500, 600, 200, 300, 800};
-                    action = tab_action[NameSelect.cursor - 4];
+                    int tab_action[7] = {NAME_ACTION_DEFAULT_NAME, NAME_ACTION_DECIDE, NAME_ACTION_LEFT, NAME_ACTION_RIGHT, NAME_ACTION_DELETE, NAME_ACTION_INSERT, NAME_ACTION_HELP};
+                    action = tab_action[NameSelect.cursor - NAME_TAB_DEFAULT_NAME];
                 }
             }
 
@@ -1651,36 +1736,36 @@ s32 NameEnterKey() {
         }
     }
 
-    if (GamePad.Down(0x800) && NameSelect.area < 6) {
-        action = 49;
+    if (GamePad.Down(PAD_START) && NameSelect.area < NAME_AREA_HELP) {
+        action = NAME_ACTION_DECIDE;
     }
 
-    GamePad.Down(0x10);
+    GamePad.Down(PAD_TRIANGLE);
 
-    if (GamePad.Down(0x4)) {
-        action = 500;
+    if (GamePad.Down(PAD_L1)) {
+        action = NAME_ACTION_LEFT;
     }
 
-    if (GamePad.Down(0x8)) {
-        action = 600;
+    if (GamePad.Down(PAD_R1)) {
+        action = NAME_ACTION_RIGHT;
     }
 
-    if (NameSelect.area < 6) {
-        if (GamePad.Down(0x2)) {
-            action = 400;
+    if (NameSelect.area < NAME_AREA_HELP) {
+        if (GamePad.Down(PAD_R2)) {
+            action = NAME_ACTION_NEXT_MODE;
         }
 
-        if (GamePad.Down(0x1)) {
-            action = 450;
+        if (GamePad.Down(PAD_L2)) {
+            action = NAME_ACTION_PREV_MODE;
         }
     }
 
     input_mode = NameSelect.input_mode;
 
     switch (action) {
-        case -1:
+        case NAME_ACTION_NONE:
             break;
-        case 100: {
+        case NAME_ACTION_INPUT: {
             int slot;
             int code_base;
             int key;
@@ -1690,9 +1775,9 @@ s32 NameEnterKey() {
             slot = NameSelect.name_pos;
 
             switch (input_mode) {
-                case 1:
-                case 0:
-                    if (input_mode == 1) {
+                case NAME_INPUT_HIRAGANA:
+                case NAME_INPUT_KATAKANA:
+                    if (input_mode == NAME_INPUT_HIRAGANA) {
                         code_base = 82;
                     } else {
                         code_base = 1;
@@ -1792,10 +1877,10 @@ s32 NameEnterKey() {
                     }
 
                     break;
-                case 2:
+                case NAME_INPUT_ALPHABET:
                     if (NameSelect.cursor < 52) {
                         code = NameSelect.cursor + 162;
-                    } else if (NameSelect.language > 2) {
+                    } else if (NameSelect.language > LANG_ENGLISH_UK) {
                         code = menu_euro_codetbl[NameSelect.language - 2][0][NameSelect.cursor - 52];
                     }
 
@@ -1810,7 +1895,7 @@ s32 NameEnterKey() {
                     }
 
                     break;
-                case 3:
+                case NAME_INPUT_SYMBOL:
                     if (language == 0) {
                         if (key < 28) {
                             code = key;
@@ -1867,13 +1952,13 @@ s32 NameEnterKey() {
 
             break;
         }
-        case 200:
+        case NAME_ACTION_DELETE:
             for (int i = NameSelect.name_pos + 1; i <= 11; i++) {
                 CharaName[i - 1] = CharaName[i];
             }
 
             break;
-        case 250:
+        case NAME_ACTION_BACKSPACE:
             if (NameSelect.name_pos >= 10) {
                 NameSelect.name_pos--;
                 CharaName[NameSelect.name_pos] = 230;
@@ -1885,7 +1970,7 @@ s32 NameEnterKey() {
             }
 
             break;
-        case 300: {
+        case NAME_ACTION_INSERT: {
             int slot = NameSelect.name_pos;
             int i;
 
@@ -1901,51 +1986,51 @@ s32 NameEnterKey() {
 
             break;
         }
-        case 400:
+        case NAME_ACTION_NEXT_MODE:
             switch (language) {
-                case 0:
-                    if (input_mode < 3) {
+                case LANG_JAPANESE:
+                    if (input_mode < NAME_INPUT_SYMBOL) {
                         NameSelect.input_mode = input_mode + 1;
                     } else {
-                        NameSelect.input_mode = 0;
+                        NameSelect.input_mode = NAME_INPUT_KATAKANA;
                     }
 
                     break;
-                case 1:
+                case LANG_ENGLISH_US:
                 default:
-                    if (input_mode < 3) {
+                    if (input_mode < NAME_INPUT_SYMBOL) {
                         NameSelect.input_mode++;
                     } else {
-                        NameSelect.input_mode = 2;
+                        NameSelect.input_mode = NAME_INPUT_ALPHABET;
                     }
 
                     break;
             }
 
             break;
-        case 450:
+        case NAME_ACTION_PREV_MODE:
             switch (language) {
-                case 0:
-                    if (0 < input_mode) {
+                case LANG_JAPANESE:
+                    if (NAME_INPUT_KATAKANA < input_mode) {
                         NameSelect.input_mode = input_mode - 1;
                     } else {
-                        NameSelect.input_mode = 3;
+                        NameSelect.input_mode = NAME_INPUT_SYMBOL;
                     }
 
                     break;
-                case 1:
+                case LANG_ENGLISH_US:
                 default:
-                    if (input_mode > 2) {
+                    if (input_mode > NAME_INPUT_ALPHABET) {
                         NameSelect.input_mode--;
                     } else {
-                        NameSelect.input_mode = 3;
+                        NameSelect.input_mode = NAME_INPUT_SYMBOL;
                     }
 
                     break;
             }
 
             break;
-        case 500:
+        case NAME_ACTION_LEFT:
             if (0 < NameSelect.name_pos) {
                 if (NameSelect.name_pos >= 10) {
                     NameSelect.name_pos--;
@@ -1955,26 +2040,26 @@ s32 NameEnterKey() {
             }
 
             break;
-        case 600:
+        case NAME_ACTION_RIGHT:
             if (NameSelect.name_pos < 10) {
                 NameSelect.name_pos++;
             }
 
             break;
-        case 800:
-            NameSelect.area = 6;
-            NameSelect.state = 8;
+        case NAME_ACTION_HELP:
+            NameSelect.area = NAME_AREA_HELP;
+            NameSelect.state = NAME_STATE_HELP;
             break;
-        case 700:
+        case NAME_ACTION_DEFAULT_NAME:
             NameDefaultSet(NameSelect.chara_no);
             break;
-        case 49:
+        case NAME_ACTION_DECIDE:
             switch (CheckName()) {
-                case 1: {
+                case NAME_CHECK_OK: {
                     int length;
                     int i;
 
-                    NameSelect.area = 7;
+                    NameSelect.area = NAME_AREA_CONFIRM;
 
                     for (length = 10; length > 0; length--) {
                         if (CharaName[length - 1] != 0 && CharaName[length - 1] != 230) {
@@ -1994,60 +2079,60 @@ s32 NameEnterKey() {
 
                     break;
                 }
-                case 0:
+                case NAME_CHECK_REJECTED:
                     for (int i = 0; i < 10; i++) {
                         CharaName[i] = 0;
                     }
 
                     NameSelect.name_pos = 0;
                     break;
-                case 2:
+                case NAME_CHECK_EMPTY:
                     NameDefaultSet(NameSelect.chara_no);
                     mes_no = 95;
-                    NameSelect.area = 8;
+                    NameSelect.area = NAME_AREA_EMPTY_NOTICE;
                     break;
             }
 
             break;
-        case 50:
+        case NAME_ACTION_FINISH:
             for (int i = 0; i < 10; i++) {
                 printf("CharaName[%d][%d] = %d\n", chara_no, i, CharaName[i]);
             }
 
             GamePad.AutoRepeatOff();
             GamePad.MenuModeOff();
-            NameSelect.area = 4;
-            NameSelect.state = 2;
+            NameSelect.area = NAME_AREA_KEYBOARD;
+            NameSelect.state = NAME_STATE_FADE_OUT;
             NameSelect.state_count = 0;
             break;
     }
 
-    if (input_mode != NameSelect.input_mode && NameSelect.area != 5) {
+    if (input_mode != NameSelect.input_mode && NameSelect.area != NAME_AREA_TABS) {
         int old_cursor;
         int row;
         int column;
 
         switch (NameSelect.input_mode) {
-            case 1:
-            case 3:
-                if (input_mode == 2) {
+            case NAME_INPUT_HIRAGANA:
+            case NAME_INPUT_SYMBOL:
+                if (input_mode == NAME_INPUT_ALPHABET) {
                     old_cursor = NameSelect.cursor;
                     row = old_cursor / 13;
                     column = old_cursor % 13;
 
-                    if (NameSelect.input_mode == 1 && column == 12) {
+                    if (NameSelect.input_mode == NAME_INPUT_HIRAGANA && column == 12) {
                         NameSelect.side_row = row + 1;
                     } else {
                         if (column >= 5) {
                             column--;
                         }
 
-                        if (NameSelect.input_mode == 3) {
+                        if (NameSelect.input_mode == NAME_INPUT_SYMBOL) {
                             while (column >= 10) {
                                 column--;
                             }
 
-                            if (NameSelect.language > 0) {
+                            if (NameSelect.language > LANG_JAPANESE) {
                                 while (row >= 4) {
                                     row--;
                                 }
@@ -2059,7 +2144,7 @@ s32 NameEnterKey() {
                 }
 
                 break;
-            case 2: {
+            case NAME_INPUT_ALPHABET: {
                 old_cursor = NameSelect.cursor;
                 row = old_cursor / 10;
                 column = old_cursor % 10;
@@ -2086,10 +2171,10 @@ s32 NameEnterKey() {
     s8 rows;
 
     switch (NameSelect.input_mode) {
-        case 1:
-        case 0:
+        case NAME_INPUT_HIRAGANA:
+        case NAME_INPUT_KATAKANA:
             break;
-        case 3:
+        case NAME_INPUT_SYMBOL:
             rows = 3;
 
             while (NameSelect.cursor >= 40) {
@@ -2097,10 +2182,10 @@ s32 NameEnterKey() {
             }
 
             break;
-        case 2:
+        case NAME_INPUT_ALPHABET:
             rows = 4;
 
-            if (NameSelect.language > 2) {
+            if (NameSelect.language > LANG_ENGLISH_UK) {
                 rows += euro_code_linelimmit[NameSelect.language - 2];
             }
 
@@ -2114,19 +2199,19 @@ s32 NameEnterKey() {
     sound = -1;
 
     if (cursor != NameSelect.cursor || side_row != NameSelect.side_row) {
-        sound = 0;
+        sound = MENU_SOUND_CURSOR;
     }
 
     if (name_pos != NameSelect.name_pos || input_mode != NameSelect.input_mode) {
-        sound = 1;
+        sound = MENU_SOUND_CONFIRM;
     }
 
-    if (GamePad.Down(0x40)) {
-        sound = 1;
+    if (GamePad.Down(PAD_CROSS)) {
+        sound = MENU_SOUND_CONFIRM;
     }
 
-    if (GamePad.Down(0x20) || action == 200 || action == 250) {
-        sound = 2;
+    if (GamePad.Down(PAD_CIRCLE) || action == NAME_ACTION_DELETE || action == NAME_ACTION_BACKSPACE) {
+        sound = MENU_SOUND_REFUSE;
     }
 
     if (CommonMenuMes3.mes_made != 0) {
@@ -2160,18 +2245,18 @@ s32 NameEnterKey() {
     chara_no = NameSelect.chara_no;
 
     switch (NameSelect.state) {
-        case 2:
+        case NAME_STATE_FADE_OUT:
             if (NameSelect.state_count >= 84) {
                 GamePad.AutoRepeatOff();
                 GamePad.MenuModeOff();
-                NameSelect.state = 3;
+                NameSelect.state = NAME_STATE_EXIT;
                 return 1;
             }
 
             return 0;
-        case 6:
+        case NAME_STATE_TAB_FLASH:
             if (NameSelect.state_count > 8) {
-                NameSelect.state = 0;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
@@ -2180,40 +2265,40 @@ s32 NameEnterKey() {
     cursor = NameSelect.cursor;
     side_row = NameSelect.side_row;
     name_pos = NameSelect.name_pos;
-    action = -1;
+    action = NAME_ACTION_NONE;
     mes_no = -1;
 
     switch (NameSelect.area) {
-        case 6:
+        case NAME_AREA_HELP:
             mes_no = chara_no + 100;
 
-            if (GamePad.Down(0x40) || GamePad.Down(0x20)) {
-                NameSelect.area = 5;
-                NameSelect.state = 0;
+            if (GamePad.Down(PAD_CROSS) || GamePad.Down(PAD_CIRCLE)) {
+                NameSelect.area = NAME_AREA_TABS;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
-        case 7:
-        case 8:
-            if (NameSelect.area == 7) {
+        case NAME_AREA_CONFIRM:
+        case NAME_AREA_EMPTY_NOTICE:
+            if (NameSelect.area == NAME_AREA_CONFIRM) {
                 mes_no = 91;
             }
 
-            if (NameSelect.area == 8) {
+            if (NameSelect.area == NAME_AREA_EMPTY_NOTICE) {
                 mes_no = 95;
             }
 
-            if (GamePad.Down(0x40)) {
-                NameSelect.state = 0;
-                action = 50;
-            } else if (GamePad.Down(0x20)) {
-                NameSelect.area = 4;
-                NameSelect.state = 0;
+            if (GamePad.Down(PAD_CROSS)) {
+                NameSelect.state = NAME_STATE_IDLE;
+                action = NAME_ACTION_FINISH;
+            } else if (GamePad.Down(PAD_CIRCLE)) {
+                NameSelect.area = NAME_AREA_KEYBOARD;
+                NameSelect.state = NAME_STATE_IDLE;
             }
 
             break;
-        case 4:
-            if (NameSelect.input_mode > 1) {
+        case NAME_AREA_KEYBOARD:
+            if (NameSelect.input_mode > NAME_INPUT_HIRAGANA) {
                 NameSelect.side_row = 0;
             }
 
@@ -2221,13 +2306,13 @@ s32 NameEnterKey() {
                 case 0: {
                     int keys_per_row = InputModeOrikaeshi[NameSelect.input_mode];
 
-                    if (GamePad.Down(0x4000)) {
+                    if (GamePad.Down(PAD_DOWN)) {
                         int rows = 5;
 
                         switch (NameSelect.input_mode) {
-                            case 3:
+                            case NAME_INPUT_SYMBOL:
                                 rows -= 2;
-                            case 2:
+                            case NAME_INPUT_ALPHABET:
                                 rows -= 1;
                                 break;
                         }
@@ -2235,36 +2320,36 @@ s32 NameEnterKey() {
                         if (NameSelect.cursor / keys_per_row < rows) {
                             NameSelect.cursor += keys_per_row;
                         }
-                    } else if (GamePad.Down(0x8000)) {
+                    } else if (GamePad.Down(PAD_LEFT)) {
                         if (NameSelect.cursor % keys_per_row != 0) {
                             NameSelect.cursor--;
-                        } else if (NameSelect.input_mode > 1) {
+                        } else if (NameSelect.input_mode > NAME_INPUT_HIRAGANA) {
                             NameSelect.cursor += keys_per_row - 1;
                         } else {
                             NameSelect.side_row = NameSelect.cursor / keys_per_row + 1;
                         }
-                    } else if (GamePad.Down(0x2000)) {
+                    } else if (GamePad.Down(PAD_RIGHT)) {
                         if (keys_per_row - 1 != NameSelect.cursor % keys_per_row) {
                             NameSelect.cursor++;
-                        } else if (NameSelect.input_mode > 1) {
+                        } else if (NameSelect.input_mode > NAME_INPUT_HIRAGANA) {
                             NameSelect.cursor -= keys_per_row - 1;
                         } else {
                             NameSelect.side_row = NameSelect.cursor / keys_per_row + 1;
                         }
-                    } else if (GamePad.Down(0x1000)) {
+                    } else if (GamePad.Down(PAD_UP)) {
                         int row = NameSelect.cursor / keys_per_row;
 
                         if (0 < row) {
                             NameSelect.cursor -= keys_per_row;
                         } else if (row <= 0) {
-                            NameSelect.area = 5;
+                            NameSelect.area = NAME_AREA_TABS;
 
                             if (NameSelect.cursor < 4) {
                                 NameSelect.cursor += 6;
                             } else if (NameSelect.cursor >= 4 && NameSelect.cursor < 7) {
-                                NameSelect.cursor = 10;
+                                NameSelect.cursor = NAME_TAB_HELP;
                             } else {
-                                NameSelect.cursor = 5;
+                                NameSelect.cursor = NAME_TAB_OK;
                             }
                         }
                     }
@@ -2274,21 +2359,21 @@ s32 NameEnterKey() {
                 default: {
                     int column = -1;
 
-                    if (GamePad.Down(0x1000)) {
+                    if (GamePad.Down(PAD_UP)) {
                         if (NameSelect.side_row == 1) {
                             NameSelect.side_row = 0;
-                            NameSelect.area = 5;
-                            NameSelect.cursor = 5;
+                            NameSelect.area = NAME_AREA_TABS;
+                            NameSelect.cursor = NAME_TAB_OK;
                         } else {
                             NameSelect.side_row--;
                         }
-                    } else if (GamePad.Down(0x4000)) {
+                    } else if (GamePad.Down(PAD_DOWN)) {
                         if (NameSelect.side_row < 6) {
                             NameSelect.side_row++;
                         }
-                    } else if (GamePad.Down(0x8000)) {
+                    } else if (GamePad.Down(PAD_LEFT)) {
                         column = 1;
-                    } else if (GamePad.Down(0x2000)) {
+                    } else if (GamePad.Down(PAD_RIGHT)) {
                         column = 0;
                     }
 
@@ -2301,98 +2386,98 @@ s32 NameEnterKey() {
                 }
             }
 
-            if (GamePad.Down(0x40)) {
-                action = 100;
-            } else if (GamePad.Down(0x20)) {
-                action = 250;
+            if (GamePad.Down(PAD_CROSS)) {
+                action = NAME_ACTION_INPUT;
+            } else if (GamePad.Down(PAD_CIRCLE)) {
+                action = NAME_ACTION_BACKSPACE;
             }
 
             break;
-        case 5: {
+        case NAME_AREA_TABS: {
             int tab_first_key[3] = {0, 2, 2};
 
-            if (GamePad.Down(0x1000)) {
+            if (GamePad.Down(PAD_UP)) {
                 switch (language) {
-                    case 0:
-                        if (NameSelect.cursor >= 6) {
-                            if (NameSelect.cursor < 8) {
-                                NameSelect.cursor = 0;
-                            } else if (NameSelect.cursor < 10) {
-                                NameSelect.cursor = 1;
-                            } else if (NameSelect.cursor == 10) {
-                                NameSelect.cursor = 2;
+                    case LANG_JAPANESE:
+                        if (NameSelect.cursor >= NAME_TAB_LEFT) {
+                            if (NameSelect.cursor < NAME_TAB_DELETE) {
+                                NameSelect.cursor = NAME_TAB_KATAKANA;
+                            } else if (NameSelect.cursor < NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_HIRAGANA;
+                            } else if (NameSelect.cursor == NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_ALPHABET;
                             }
                         }
 
                         break;
-                    case 1:
+                    case LANG_ENGLISH_US:
                     default:
-                        if (NameSelect.cursor >= 6) {
-                            if (NameSelect.cursor < 10) {
-                                NameSelect.cursor = 2;
+                        if (NameSelect.cursor >= NAME_TAB_LEFT) {
+                            if (NameSelect.cursor < NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_ALPHABET;
                             } else if (NameSelect.cursor < 11) {
-                                NameSelect.cursor = 3;
-                            } else if (NameSelect.cursor == 10) {
-                                NameSelect.cursor = 4;
+                                NameSelect.cursor = NAME_TAB_SYMBOL;
+                            } else if (NameSelect.cursor == NAME_TAB_HELP) {
+                                NameSelect.cursor = NAME_TAB_DEFAULT_NAME;
                             }
                         }
 
                         break;
                 }
-            } else if (GamePad.Down(0x4000)) {
-                if (NameSelect.cursor >= 6) {
-                    NameSelect.area = 4;
+            } else if (GamePad.Down(PAD_DOWN)) {
+                if (NameSelect.cursor >= NAME_TAB_LEFT) {
+                    NameSelect.area = NAME_AREA_KEYBOARD;
 
                     switch (NameSelect.cursor) {
-                        case 6:
-                        case 7:
+                        case NAME_TAB_LEFT:
+                        case NAME_TAB_RIGHT:
                             NameSelect.cursor = 0;
                             break;
-                        case 8:
+                        case NAME_TAB_DELETE:
                             NameSelect.cursor = 1;
                             break;
-                        case 9:
+                        case NAME_TAB_INSERT:
                             NameSelect.cursor = 3;
                             break;
-                        case 10:
+                        case NAME_TAB_HELP:
                             NameSelect.cursor = 4;
                             break;
                     }
-                } else if (NameSelect.cursor < 6) {
+                } else if (NameSelect.cursor < NAME_TAB_LEFT) {
                     switch (language) {
-                        case 0:
+                        case LANG_JAPANESE:
                             switch (NameSelect.cursor) {
-                                case 0:
-                                    NameSelect.cursor = 6;
+                                case NAME_TAB_KATAKANA:
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                     break;
-                                case 1:
-                                    NameSelect.cursor = 8;
+                                case NAME_TAB_HIRAGANA:
+                                    NameSelect.cursor = NAME_TAB_DELETE;
                                     break;
-                                case 5:
+                                case NAME_TAB_OK:
                                     NameSelect.cursor = 8;
-                                    NameSelect.area = 4;
+                                    NameSelect.area = NAME_AREA_KEYBOARD;
                                     break;
                                 default:
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                     break;
                             }
 
                             break;
-                        case 1:
+                        case LANG_ENGLISH_US:
                         default:
                             switch (NameSelect.cursor) {
-                                case 2:
-                                    NameSelect.cursor = 6;
+                                case NAME_TAB_ALPHABET:
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                     break;
-                                case 3:
-                                    NameSelect.cursor = 10;
+                                case NAME_TAB_SYMBOL:
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                     break;
-                                case 5:
+                                case NAME_TAB_OK:
                                     NameSelect.cursor = 8;
-                                    NameSelect.area = 4;
+                                    NameSelect.area = NAME_AREA_KEYBOARD;
                                     break;
                                 default:
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                     break;
                             }
 
@@ -2403,19 +2488,19 @@ s32 NameEnterKey() {
 
             static s8 up_or_down = 0;
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 switch (language) {
-                    case 0:
+                    case LANG_JAPANESE:
                         switch (NameSelect.cursor) {
-                            case 0:
-                            case 6:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_KATAKANA:
+                            case NAME_TAB_LEFT:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down != 0) {
-                                    NameSelect.cursor = 4;
+                                    NameSelect.cursor = NAME_TAB_DEFAULT_NAME;
                                 } else {
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                 }
 
                                 break;
@@ -2425,18 +2510,18 @@ s32 NameEnterKey() {
                         }
 
                         break;
-                    case 1:
+                    case LANG_ENGLISH_US:
                     default:
                         switch (NameSelect.cursor) {
-                            case 2:
-                            case 6:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_ALPHABET:
+                            case NAME_TAB_LEFT:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down != 0) {
-                                    NameSelect.cursor = 4;
+                                    NameSelect.cursor = NAME_TAB_DEFAULT_NAME;
                                 } else {
-                                    NameSelect.cursor = 10;
+                                    NameSelect.cursor = NAME_TAB_HELP;
                                 }
 
                                 break;
@@ -2447,20 +2532,20 @@ s32 NameEnterKey() {
 
                         break;
                 }
-            } else if (GamePad.Down(0x2000)) {
+            } else if (GamePad.Down(PAD_RIGHT)) {
                 switch (language) {
-                    case 0:
+                    case LANG_JAPANESE:
                         switch (NameSelect.cursor) {
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down == 0) {
-                                    NameSelect.cursor = 0;
+                                    NameSelect.cursor = NAME_TAB_KATAKANA;
                                 } else {
-                                    NameSelect.cursor = 6;
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                 }
 
                                 break;
-                            case 10:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_HELP:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
                             default:
                                 NameSelect.cursor++;
@@ -2468,19 +2553,19 @@ s32 NameEnterKey() {
                         }
 
                         break;
-                    case 1:
+                    case LANG_ENGLISH_US:
                     default:
                         switch (NameSelect.cursor) {
-                            case 5:
+                            case NAME_TAB_OK:
                                 if (up_or_down == 0) {
-                                    NameSelect.cursor = 2;
+                                    NameSelect.cursor = NAME_TAB_ALPHABET;
                                 } else {
-                                    NameSelect.cursor = 6;
+                                    NameSelect.cursor = NAME_TAB_LEFT;
                                 }
 
                                 break;
-                            case 10:
-                                NameSelect.cursor = 5;
+                            case NAME_TAB_HELP:
+                                NameSelect.cursor = NAME_TAB_OK;
                                 break;
                             default:
                                 NameSelect.cursor++;
@@ -2491,20 +2576,20 @@ s32 NameEnterKey() {
                 }
             }
 
-            if (GamePad.Down(0x20)) {
-                action = 250;
-            } else if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
+                action = NAME_ACTION_BACKSPACE;
+            } else if (GamePad.Down(PAD_CROSS)) {
                 NameSelect.pushed_tab = NameSelect.cursor;
 
-                if (NameSelect.cursor < 4) {
+                if (NameSelect.cursor < NAME_TAB_DEFAULT_NAME) {
                     if (NameSelect.input_mode != NameSelect.cursor) {
                         NameSelect.input_mode = NameSelect.cursor;
                     }
                 } else {
-                    NameSelect.state = 6;
+                    NameSelect.state = NAME_STATE_TAB_FLASH;
                     NameSelect.state_count = 0;
-                    int tab_action[7] = {700, 49, 500, 600, 200, 300, 800};
-                    action = tab_action[NameSelect.cursor - 4];
+                    int tab_action[7] = {NAME_ACTION_DEFAULT_NAME, NAME_ACTION_DECIDE, NAME_ACTION_LEFT, NAME_ACTION_RIGHT, NAME_ACTION_DELETE, NAME_ACTION_INSERT, NAME_ACTION_HELP};
+                    action = tab_action[NameSelect.cursor - NAME_TAB_DEFAULT_NAME];
                 }
             }
 
@@ -2512,36 +2597,36 @@ s32 NameEnterKey() {
         }
     }
 
-    if (GamePad.Down(0x800) && NameSelect.area < 6) {
-        action = 49;
+    if (GamePad.Down(PAD_START) && NameSelect.area < NAME_AREA_HELP) {
+        action = NAME_ACTION_DECIDE;
     }
 
-    GamePad.Down(0x10);
+    GamePad.Down(PAD_TRIANGLE);
 
-    if (GamePad.Down(0x4)) {
-        action = 500;
+    if (GamePad.Down(PAD_L1)) {
+        action = NAME_ACTION_LEFT;
     }
 
-    if (GamePad.Down(0x8)) {
-        action = 600;
+    if (GamePad.Down(PAD_R1)) {
+        action = NAME_ACTION_RIGHT;
     }
 
-    if (NameSelect.area < 6) {
-        if (GamePad.Down(0x2)) {
-            action = 400;
+    if (NameSelect.area < NAME_AREA_HELP) {
+        if (GamePad.Down(PAD_R2)) {
+            action = NAME_ACTION_NEXT_MODE;
         }
 
-        if (GamePad.Down(0x1)) {
-            action = 450;
+        if (GamePad.Down(PAD_L2)) {
+            action = NAME_ACTION_PREV_MODE;
         }
     }
 
     input_mode = NameSelect.input_mode;
 
     switch (action) {
-        case -1:
+        case NAME_ACTION_NONE:
             break;
-        case 100: {
+        case NAME_ACTION_INPUT: {
             int slot;
             int code_base;
             int key;
@@ -2551,9 +2636,9 @@ s32 NameEnterKey() {
             slot = NameSelect.name_pos;
 
             switch (input_mode) {
-                case 1:
-                case 0:
-                    if (input_mode == 1) {
+                case NAME_INPUT_HIRAGANA:
+                case NAME_INPUT_KATAKANA:
+                    if (input_mode == NAME_INPUT_HIRAGANA) {
                         code_base = 82;
                     } else {
                         code_base = 1;
@@ -2650,7 +2735,7 @@ s32 NameEnterKey() {
                     }
 
                     break;
-                case 2:
+                case NAME_INPUT_ALPHABET:
                     key = (key < 52) ? key : ((key < 62) ? key + 28 : 68);
 
                     if (slot >= 10) {
@@ -2664,7 +2749,7 @@ s32 NameEnterKey() {
                     }
 
                     break;
-                case 3:
+                case NAME_INPUT_SYMBOL:
                     if (key < 12) {
                         raw_key = key;
                     } else {
@@ -2695,7 +2780,7 @@ s32 NameEnterKey() {
 
             break;
         }
-        case 900: {
+        case NAME_ACTION_TOGGLE_VOICING: {
             int slot = NameSelect.name_pos;
             int old_code;
 
@@ -2731,13 +2816,13 @@ s32 NameEnterKey() {
 
             break;
         }
-        case 200:
+        case NAME_ACTION_DELETE:
             for (int i = NameSelect.name_pos + 1; i <= 11; i++) {
                 CharaName[i - 1] = CharaName[i];
             }
 
             break;
-        case 250:
+        case NAME_ACTION_BACKSPACE:
             if (NameSelect.name_pos >= 10) {
                 NameSelect.name_pos--;
                 CharaName[NameSelect.name_pos] = 230;
@@ -2749,7 +2834,7 @@ s32 NameEnterKey() {
             }
 
             break;
-        case 300: {
+        case NAME_ACTION_INSERT: {
             int slot = NameSelect.name_pos;
             int i;
 
@@ -2765,51 +2850,51 @@ s32 NameEnterKey() {
 
             break;
         }
-        case 400:
+        case NAME_ACTION_NEXT_MODE:
             switch (language) {
-                case 0:
-                    if (input_mode < 3) {
+                case LANG_JAPANESE:
+                    if (input_mode < NAME_INPUT_SYMBOL) {
                         NameSelect.input_mode = input_mode + 1;
                     } else {
-                        NameSelect.input_mode = 0;
+                        NameSelect.input_mode = NAME_INPUT_KATAKANA;
                     }
 
                     break;
-                case 1:
+                case LANG_ENGLISH_US:
                 default:
-                    if (input_mode < 3) {
+                    if (input_mode < NAME_INPUT_SYMBOL) {
                         NameSelect.input_mode++;
                     } else {
-                        NameSelect.input_mode = 2;
+                        NameSelect.input_mode = NAME_INPUT_ALPHABET;
                     }
 
                     break;
             }
 
             break;
-        case 450:
+        case NAME_ACTION_PREV_MODE:
             switch (language) {
-                case 0:
-                    if (0 < input_mode) {
+                case LANG_JAPANESE:
+                    if (NAME_INPUT_KATAKANA < input_mode) {
                         NameSelect.input_mode = input_mode - 1;
                     } else {
-                        NameSelect.input_mode = 3;
+                        NameSelect.input_mode = NAME_INPUT_SYMBOL;
                     }
 
                     break;
-                case 1:
+                case LANG_ENGLISH_US:
                 default:
-                    if (input_mode > 2) {
+                    if (input_mode > NAME_INPUT_ALPHABET) {
                         NameSelect.input_mode--;
                     } else {
-                        NameSelect.input_mode = 3;
+                        NameSelect.input_mode = NAME_INPUT_SYMBOL;
                     }
 
                     break;
             }
 
             break;
-        case 500:
+        case NAME_ACTION_LEFT:
             if (0 < NameSelect.name_pos) {
                 if (NameSelect.name_pos >= 10) {
                     NameSelect.name_pos--;
@@ -2819,26 +2904,26 @@ s32 NameEnterKey() {
             }
 
             break;
-        case 600:
+        case NAME_ACTION_RIGHT:
             if (NameSelect.name_pos < 10) {
                 NameSelect.name_pos++;
             }
 
             break;
-        case 800:
-            NameSelect.area = 6;
-            NameSelect.state = 8;
+        case NAME_ACTION_HELP:
+            NameSelect.area = NAME_AREA_HELP;
+            NameSelect.state = NAME_STATE_HELP;
             break;
-        case 700:
+        case NAME_ACTION_DEFAULT_NAME:
             NameDefaultSet(NameSelect.chara_no);
             break;
-        case 49:
+        case NAME_ACTION_DECIDE:
             switch (CheckName()) {
-                case 1: {
+                case NAME_CHECK_OK: {
                     int length;
                     int i;
 
-                    NameSelect.area = 7;
+                    NameSelect.area = NAME_AREA_CONFIRM;
 
                     for (length = 10; length > 0; length--) {
                         if (CharaName[length - 1] != 0 && CharaName[length - 1] != 230) {
@@ -2858,60 +2943,60 @@ s32 NameEnterKey() {
 
                     break;
                 }
-                case 0:
+                case NAME_CHECK_REJECTED:
                     for (int i = 0; i < 10; i++) {
                         CharaName[i] = 0;
                     }
 
                     NameSelect.name_pos = 0;
                     break;
-                case 2:
+                case NAME_CHECK_EMPTY:
                     NameDefaultSet(NameSelect.chara_no);
                     mes_no = 95;
-                    NameSelect.area = 8;
+                    NameSelect.area = NAME_AREA_EMPTY_NOTICE;
                     break;
             }
 
             break;
-        case 50:
+        case NAME_ACTION_FINISH:
             for (int i = 0; i < 10; i++) {
                 printf("CharaName[%d][%d] = %d\n", chara_no, i, CharaName[i]);
             }
 
             GamePad.AutoRepeatOff();
             GamePad.MenuModeOff();
-            NameSelect.area = 4;
-            NameSelect.state = 2;
+            NameSelect.area = NAME_AREA_KEYBOARD;
+            NameSelect.state = NAME_STATE_FADE_OUT;
             NameSelect.state_count = 0;
             break;
     }
 
-    if (input_mode != NameSelect.input_mode && NameSelect.area != 5) {
+    if (input_mode != NameSelect.input_mode && NameSelect.area != NAME_AREA_TABS) {
         int old_cursor;
         int row;
         int column;
 
         switch (NameSelect.input_mode) {
-            case 1:
-            case 3:
-                if (input_mode == 2) {
+            case NAME_INPUT_HIRAGANA:
+            case NAME_INPUT_SYMBOL:
+                if (input_mode == NAME_INPUT_ALPHABET) {
                     old_cursor = NameSelect.cursor;
                     row = old_cursor / 13;
                     column = old_cursor % 13;
 
-                    if (NameSelect.input_mode == 1 && column == 12) {
+                    if (NameSelect.input_mode == NAME_INPUT_HIRAGANA && column == 12) {
                         NameSelect.side_row = row + 1;
                     } else {
                         if (column >= 5) {
                             column--;
                         }
 
-                        if (NameSelect.input_mode == 3) {
+                        if (NameSelect.input_mode == NAME_INPUT_SYMBOL) {
                             while (column >= 10) {
                                 column--;
                             }
 
-                            if (NameSelect.language > 0) {
+                            if (NameSelect.language > LANG_JAPANESE) {
                                 while (row >= 3) {
                                     row--;
                                 }
@@ -2923,7 +3008,7 @@ s32 NameEnterKey() {
                 }
 
                 break;
-            case 2: {
+            case NAME_INPUT_ALPHABET: {
                 old_cursor = NameSelect.cursor;
                 row = old_cursor / 10;
                 column = old_cursor % 10;
@@ -2947,13 +3032,13 @@ s32 NameEnterKey() {
         }
     }
 
-    if (NameSelect.input_mode == 3) {
+    if (NameSelect.input_mode == NAME_INPUT_SYMBOL) {
         while (NameSelect.cursor >= 40) {
             NameSelect.cursor -= 10;
         }
     }
 
-    if (NameSelect.input_mode == 2) {
+    if (NameSelect.input_mode == NAME_INPUT_ALPHABET) {
         while (NameSelect.cursor >= 66) {
             NameSelect.cursor -= 13;
         }
@@ -2962,19 +3047,19 @@ s32 NameEnterKey() {
     sound = -1;
 
     if (cursor != NameSelect.cursor || side_row != NameSelect.side_row) {
-        sound = 0;
+        sound = MENU_SOUND_CURSOR;
     }
 
     if (name_pos != NameSelect.name_pos || input_mode != NameSelect.input_mode) {
-        sound = 1;
+        sound = MENU_SOUND_CONFIRM;
     }
 
-    if (GamePad.Down(0x40)) {
-        sound = 1;
+    if (GamePad.Down(PAD_CROSS)) {
+        sound = MENU_SOUND_CONFIRM;
     }
 
-    if (GamePad.Down(0x20) || action == 200 || action == 250) {
-        sound = 2;
+    if (GamePad.Down(PAD_CIRCLE) || action == NAME_ACTION_DELETE || action == NAME_ACTION_BACKSPACE) {
+        sound = MENU_SOUND_REFUSE;
     }
 
     if (CommonMenuMes3.mes_made != 0) {
@@ -3269,8 +3354,8 @@ void InitOpeningBook(u_long128 *buffer, int *tex_blocks) {
     LoadFileBGMenuData("openbook.pak", load_buffer);
     OpenBook.tex_block = tex_blocks[0];
     OpenBook.name_tex_block = tex_blocks[1];
-    OpenBook.open = 0;
-    OpenBook.step = 0;
+    OpenBook.open = false;
+    OpenBook.step = OPENING_BOOK_LOAD;
     OpenBook.page = 0;
     OpenBook.fade = 128;
     OpenBook.text_alpha = 0;
@@ -3290,7 +3375,7 @@ int OpeningBookKey() {
     result = 0;
 
     switch (OpenBook.step) {
-        case 0:
+        case OPENING_BOOK_LOAD:
             if (OpenBook.open == 0 && ReadBGSync() == 0) {
                 LOADTEXTURE_INFO2 info[3] = {
                     {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
@@ -3315,9 +3400,9 @@ int OpeningBookKey() {
                 CommonMenuMes2.text_width = 0;
                 CommonMenuMes2.text_height = 0;
                 CommonMenuMes2.fade = 0.0f;
-                CommonMenuMes2.fade_in = 1;
+                CommonMenuMes2.fade_in = true;
                 CommonMenuMes2.text_rate = CommonMenuMes2.text_rate_set;
-                CommonMenuMes2.waiting = 0;
+                CommonMenuMes2.waiting = false;
                 CommonMenuMes2.text_at = 0.0f;
                 CommonMenuMes2.text_no = 0;
                 CommonMenuMes2.text_from = 0;
@@ -3339,30 +3424,30 @@ int OpeningBookKey() {
                 }
 
                 CommonMenuMes2.value = 0;
-                CommonMenuMes2.value_signed = 0;
-                CommonMenuMes2.value_show = 1;
-                CommonMenuMes2.value_narrow = 0;
+                CommonMenuMes2.value_signed = false;
+                CommonMenuMes2.value_show = true;
+                CommonMenuMes2.value_narrow = false;
                 CommonMenuMes2.space_width = -1;
                 CommonMenuMes2.space_area = -1;
                 CommonMenuMes2.cursor_row = -1;
                 CommonMenuMes2.cursor_y = 0;
-                CommonMenuMes2.cursor_lit = 0;
+                CommonMenuMes2.cursor_lit = false;
 
                 for (int i = 0; i < 10; i++) {
                     CommonMenuMes2.line_pos[i].x = -1;
                     CommonMenuMes2.line_pos[i].y = -1;
                 }
 
-                CommonMenuMes2.SetMesFukidashi(4);
+                CommonMenuMes2.SetMesFukidashi(MES_FUKIDASHI_LARGE_TABLE_EDGE);
                 CommonMenuMes2.text_rate = 0.0f;
                 CommonMenuMes2.text_rate_set = 0.0f;
-                CommonMenuMes2.page_arrow = 1;
-                CommonMenuMes2.centre_rows = 1;
+                CommonMenuMes2.page_arrow = true;
+                CommonMenuMes2.centre_rows = true;
                 CommonMenuMes2.columns = 40;
                 CommonMenuMes2.rows = 3;
                 int language = GetMenuLangFlag();
 
-                if (language > 0) {
+                if (language > LANG_JAPANESE) {
                     CommonMenuMes2.char_width--;
                 }
 
@@ -3370,7 +3455,7 @@ int OpeningBookKey() {
                 CommonMenuMes2.tex_buff = MesWinTexBuff_02;
                 CommonMenuMes2.SetBuff(messages);
                 CommonMenuMes2.edge_alpha = OpenBook.text_alpha;
-                OpenBook.open = 1;
+                OpenBook.open = true;
                 OpenBook.fade = 0x80;
                 s8 page_text_y[7] = {20, 16, 16, 16, 16, 16, 16};
                 CommonMenuMes2.text_y = page_text_y[language] + 300;
@@ -3387,59 +3472,59 @@ int OpeningBookKey() {
             }
 
             if (OpenBook.fade <= 0) {
-                OpenBook.step = 1;
+                OpenBook.step = OPENING_BOOK_TEXT_IN;
                 OpenBook.text_alpha = 0;
             }
 
             break;
-        case 1:
+        case OPENING_BOOK_TEXT_IN:
             OpenBook.text_alpha += 2;
 
             if (OpenBook.text_alpha >= 0x80) {
                 OpenBook.text_alpha = 0x80;
-                OpenBook.step = 2;
+                OpenBook.step = OPENING_BOOK_WAIT;
                 OpenBook.fade = 0;
             }
 
             break;
-        case 3:
+        case OPENING_BOOK_TEXT_OUT:
             OpenBook.text_alpha -= 2;
 
             if (OpenBook.text_alpha <= 0) {
                 OpenBook.text_alpha = 0;
                 OpenBook.page++;
                 CommonMenuMes2.MakeMesWin(OpenBook.page + 100);
-                OpenBook.step = 1;
+                OpenBook.step = OPENING_BOOK_TEXT_IN;
             }
 
             break;
-        case 2:
-            if (GamePad.Down(0x40)) {
-                OpenBook.step = 3;
+        case OPENING_BOOK_WAIT:
+            if (GamePad.Down(PAD_CROSS)) {
+                OpenBook.step = OPENING_BOOK_TEXT_OUT;
 
                 if (OpenBook.page >= 11) {
-                    OpenBook.step = 4;
+                    OpenBook.step = OPENING_BOOK_FINISH;
                 }
             }
 
 #ifdef PAL
-            if (DebugMode && GamePad.Down2(0x40)) {
-                OpenBook.step = 4;
+            if (DebugMode && GamePad.Down2(PAD_CROSS)) {
+                OpenBook.step = OPENING_BOOK_FINISH;
             }
 
 #endif
             break;
-        case 4:
+        case OPENING_BOOK_FINISH:
             OpenBook.text_alpha--;
 
-            if (OpenBook.text_alpha <= 0 && OpenBook.step == 4 && OpenBook.text_alpha <= 0) {
-                CommonMenuMes2.page_arrow = 0;
+            if (OpenBook.text_alpha <= 0 && OpenBook.step == OPENING_BOOK_FINISH && OpenBook.text_alpha <= 0) {
+                CommonMenuMes2.page_arrow = false;
                 InitNameRegist(0, OpenBook.name_tex_block, OpeningReadBuf);
-                OpenBook.step = 5;
+                OpenBook.step = OPENING_BOOK_NAME_ENTRY;
             }
 
             break;
-        case 5:
+        case OPENING_BOOK_NAME_ENTRY:
             result = NameEnterKey();
             break;
     }
@@ -3466,11 +3551,11 @@ void OpeningBookDraw() {
     DrawFullSizePicture(TexManager.GetTexture("openbook", -1), 0, 0, 0x80);
 
     switch (OpenBook.step) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
+        case OPENING_BOOK_LOAD:
+        case OPENING_BOOK_TEXT_IN:
+        case OPENING_BOOK_WAIT:
+        case OPENING_BOOK_TEXT_OUT:
+        case OPENING_BOOK_FINISH:
             MenuTextureReload(CommonMenuMes2.tex_block);
             CommonMenuMes2.edge_alpha = OpenBook.text_alpha;
             GetMenuCommonPutXY(&CommonMenuMes2, 0x14C - CommonMenuMes2.char_width);
@@ -3478,8 +3563,8 @@ void OpeningBookDraw() {
             CommonMenuMes2.DrawMesWin();
             AllFadeForMenu(OpenBook.fade);
             break;
-        case 5:
-        case 6:
+        case OPENING_BOOK_NAME_ENTRY:
+        case OPENING_BOOK_UNK_6:
             NameEnterDraw();
             break;
     }

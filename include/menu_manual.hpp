@@ -2,6 +2,22 @@
 
 #include "common.h"
 
+/**
+ * Steps of the manual, as MANUAL_MENU_STATE::mode holds them.
+ */
+// clang-format off
+enum ManualMenuMode {
+    MANUAL_MODE_LOADING  = 0, /**< Loading. */
+    MANUAL_MODE_CLOSING  = 1, /**< Closing. */
+    MANUAL_MODE_SELECT   = 2, /**< Choosing an entry. */
+    MANUAL_MODE_OPENING  = 3, /**< Loading an entry's images. */
+    MANUAL_MODE_READING  = 4, /**< Reading an entry. */
+    MANUAL_MODE_SLIDE_IN = 5, /**< Sliding an entry in. */
+    MANUAL_MODE_COUNT    = 6, /**< Number of modes. */
+};
+
+// clang-format on
+
 class ClsMes;
 class CTexture;
 
@@ -15,7 +31,7 @@ struct MANUAL_MENU_STATE {
     s16        messages_ready;        /**< Whether the manual message archive has been installed. */
     s16        images_ready;          /**< Whether the selected entry's images have been installed. */
     s16        selection_level;       /**< Selects categories (-2), entries (-1), or an open entry (0). */
-    s16        mode;                  /**< Current manual screen transition and interaction mode. */
+    s16        mode;                  /**< Current manual screen transition and interaction mode. @see ManualMenuMode. */
     s16        char_width;            /**< Width of one character in the menu's preloaded message font. */
     s32        category;              /**< Selected manual category. */
     s32        entry;                 /**< Selected entry within the category. */

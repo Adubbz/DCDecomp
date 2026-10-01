@@ -10,6 +10,21 @@
  * Declares one part that an edited map is built from.
  */
 
+/**
+ * What a map part is, as CMapParts::subtype holds it.
+ */
+// clang-format off
+enum MapPartsSubtype {
+    MAP_PARTS_SUBTYPE_NONE     = 0, /**< Building or ground part. */
+    MAP_PARTS_SUBTYPE_ROAD     = 1, /**< Road. */
+    MAP_PARTS_SUBTYPE_RIVER    = 2, /**< River. */
+    MAP_PARTS_SUBTYPE_BRIDGE   = 3, /**< Bridge. */
+    MAP_PARTS_SUBTYPE_LAKE     = 4, /**< Lake. */
+    MAP_PARTS_SUBTYPE_ON_RIVER = 5, /**< Part that stands on a river. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -43,7 +58,7 @@ public:
     s32             func_count;            /**< Number of function points the part's definition holds. */
     s32             func_data;             /**< Function points of the part's definition. */
     s32             def_parts_no;          /**< Part number that the part's definition gives. */
-    s32             subtype;               /**< Subtype of the part: 1 for a road, 2 for a river, 3 and 5 for parts a new part may replace. */
+    s32             subtype;               /**< Subtype of the part. @see MapPartsSubtype. */
     float           lift;                  /**< Scale of the height the part is raised by to keep it from cutting into the ground; above 1 raises it by a fixed step. */
     float           draw_distance;         /**< Distance beyond which the part is not drawn; zero or below to draw it at any distance. */
     s32             unk_124;

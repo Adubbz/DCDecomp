@@ -2,6 +2,34 @@
 
 #include "common.h"
 
+/**
+ * What CheckName reports.
+ */
+// clang-format off
+enum NameCheckResult {
+    NAME_CHECK_REJECTED = 0, /**< Rejected and cleared. */
+    NAME_CHECK_OK       = 1, /**< Accepted. */
+    NAME_CHECK_EMPTY    = 2, /**< Blank; the default name is restored. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the opening book, as OPENING_BOOK::step holds them.
+ */
+// clang-format off
+enum OpeningBookStep {
+    OPENING_BOOK_LOAD       = 0, /**< Loading and fading the cover. */
+    OPENING_BOOK_TEXT_IN    = 1, /**< Text fading in. */
+    OPENING_BOOK_WAIT       = 2, /**< Waiting for cross. */
+    OPENING_BOOK_TEXT_OUT   = 3, /**< Text fading out. */
+    OPENING_BOOK_FINISH     = 4, /**< Fading out before name entry. */
+    OPENING_BOOK_NAME_ENTRY = 5, /**< Name entry. */
+    OPENING_BOOK_UNK_6      = 6, /**< Drawn but never set. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -18,7 +46,7 @@ struct OPENING_BOOK {
     s16 tex_block;      /**< Texture block the storybook's pages are loaded into. */
     s16 name_tex_block; /**< Texture block handed to the name-entry screen that follows the storybook. */
     s16 page;           /**< Index of the page being shown; its message is page plus 100. */
-    s16 step;           /**< Which part of the opening the storybook is showing. */
+    s16 step;           /**< Which part of the opening the storybook is showing. @see OpeningBookStep. */
     s16 fade;           /**< Strength of the full-screen fade drawn over the storybook. */
     s16 text_alpha;     /**< Alpha the page text fades in and out through. */
 };

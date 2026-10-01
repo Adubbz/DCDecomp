@@ -5,6 +5,93 @@
 #include <libvu0.h>
 
 /**
+ * Commands of the title script, indexing Command.
+ */
+// clang-format off
+enum TitleScriptCommand {
+    TSC_OBJ_MOTION2   = 0,  /**< OBJ_MOTION2. */
+    TSC_OBJ_MOTION    = 1,  /**< OBJ_MOTION. */
+    TSC_OBJ_MOVE      = 2,  /**< OBJ_MOVE. */
+    TSC_OBJ_TALK      = 3,  /**< OBJ_TALK. */
+    TSC_OBJ_EYE       = 4,  /**< OBJ_EYE. */
+    TSC_OBJ_MOUTH     = 5,  /**< OBJ_MOUTH. */
+    TSC_OBJ_DISP      = 6,  /**< OBJ_DISP. */
+    TSC_OBJ_STEP      = 7,  /**< OBJ_STEP. */
+    TSC_CAMERA        = 8,  /**< CAMERA. */
+    TSC_SE_STOP       = 9,  /**< SE_STOP. */
+    TSC_SE            = 10, /**< SE. */
+    TSC_SOUND_FADE    = 11, /**< SOUND_FADE. */
+    TSC_FADE_IN       = 12, /**< FADE_IN. */
+    TSC_FADE_OUT      = 13, /**< FADE_OUT. */
+    TSC_MESSAGE       = 14, /**< MESSAGE. */
+    TSC_NEXT_MES      = 15, /**< NEXT_MES. */
+    TSC_MES_CLR       = 16, /**< MES_CLR. */
+    TSC_LOAD_OBJ      = 17, /**< LOAD_OBJ. */
+    TSC_SPRITE        = 18, /**< SPRITE. */
+    TSC_BOM           = 19, /**< BOM. */
+    TSC_BEEM          = 20, /**< BEEM. */
+    TSC_SCENE_LOAD    = 21, /**< SCENE_LOAD. */
+    TSC_SCENE         = 22, /**< SCENE. */
+    TSC_END           = 23, /**< END. */
+    TSC_WAIT_KEY      = 24, /**< WAIT_KEY. */
+    TSC_WAIT          = 25, /**< WAIT. */
+    TSC_COMMAND_COUNT = 26, /**< Number of commands. */
+};
+
+// clang-format on
+
+/**
+ * Kinds of title script argument, as CSCRIPT_COMMAND::arg_type holds them.
+ */
+// clang-format off
+enum TitleScriptArgType {
+    TSARG_STRING      = 0, /**< Quoted string; only the opening's parser reads it. */
+    TSARG_COMMA_VALUE = 1, /**< Comma, then ON, OFF or a number. */
+    TSARG_VALUE       = 2, /**< ON, OFF or a number. */
+};
+
+// clang-format on
+
+/**
+ * Fades a title script asks for, as CScript::fade holds them.
+ */
+// clang-format off
+enum TitleScriptFade {
+    TSFADE_NONE      = 0, /**< None. */
+    TSFADE_IN_BLACK  = 1, /**< Fade in from black. */
+    TSFADE_OUT_BLACK = 2, /**< Fade out to black. */
+    TSFADE_IN_WHITE  = 3, /**< Fade in from white. */
+    TSFADE_OUT_WHITE = 4, /**< Fade out to white. */
+};
+
+// clang-format on
+
+/**
+ * Sound channels a title script addresses, as CScript::se_kind holds them.
+ */
+// clang-format off
+enum TitleScriptSeKind {
+    TSSE_ALL     = -1, /**< Every channel. */
+    TSSE_EFFECT  = 0,  /**< The scene effect port. */
+    TSSE_SPECIAL = 1,  /**< The special effect port. */
+};
+
+// clang-format on
+
+/**
+ * Steps of a title script object's load, as SCRIPT_OBJ::load_step holds them.
+ */
+// clang-format off
+enum TitleScriptLoadStep {
+    TSLOAD_NONE   = -1, /**< Nothing to load. */
+    TSLOAD_START  = 0,  /**< Starting the read. */
+    TSLOAD_WAIT   = 1,  /**< Waiting for the read. */
+    TSLOAD_UNPACK = 2,  /**< Unpacking. */
+};
+
+// clang-format on
+
+/**
  *          Describes one command recognized by the title script parser.
  */
 struct CSCRIPT_COMMAND {
@@ -34,7 +121,7 @@ struct SCRIPT_OBJ {
     u8    talk;       /**< Whether the object is the active speaker. */
     u8    unk_25[3];
     int   load;      /**< Model requested for the object. */
-    int   load_step; /**< Stage the requested model load has reached; -1 when none is running. */
+    int   load_step; /**< Stage the requested model load has reached. @see TitleScriptLoadStep. */
     float step;      /**< Blend step the object's motion advances by. */
 };
 
@@ -47,14 +134,14 @@ class CScript {
 public:
     int           camera_start; /**< Camera selected by the current command. */
     int           camera_no;    /**< Camera that was selected before the current command. */
-    int           fade;         /**< Fade request consumed by the title movie. */
+    int           fade;         /**< Fade request consumed by the title movie. @see TitleScriptFade. */
     float         fade_speed;   /**< Rate of the pending fade. */
     u8            end;          /**< Whether the script reached its end command. */
     u8            unk_11[3];
     int           sprite;     /**< Sprite request consumed by the scene. */
-    int           scene;      /**< Scene selected by the script. */
-    int           load_no;    /**< Scene data requested for loading. */
-    int           init_no;    /**< Scene selected for initialization. */
+    int           scene;      /**< Scene selected by the script, as an OpeningScene or a RushScene. */
+    int           load_no;    /**< Scene data requested for loading, as an OpeningScene or a RushScene. */
+    int           init_no;    /**< Scene selected for initialization, as an OpeningScene or a RushScene. */
     int           mes_wait;   /**< Whether message completion blocks execution. */
     float         wait;       /**< Remaining scripted wait time. */
     u8            reset_flag; /**< Flag cleared when a script loads; nothing else reads or writes it. */
@@ -85,7 +172,7 @@ public:
     u8            unk_566[10];
     sceVu0FVECTOR beem_from[3]; /**< Starting points of beam requests. */
     sceVu0FVECTOR beem_to[3];   /**< Ending points of beam requests. */
-    int           se_kind;      /**< Sound group the sound request targets; -1 addresses every channel for a fade. */
+    int           se_kind;      /**< Sound group the sound request targets. @see TitleScriptSeKind. */
     int           se_no;        /**< Sound selected by the script. */
     int           se_voice;     /**< Voice selected for the sound. */
     int           se_fade_time; /**< Fade duration assigned to the sound. */

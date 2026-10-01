@@ -45,10 +45,6 @@
 
 typedef MOTION_INFO tagMOTION_KEY;
 
-/* Spelled here rather than reached through a header because the image holds it only as an
-   anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
-#define PI 3.14159265358979323846
-
 /* The rectangle a texture transfer takes, declared here rather than reached through rect.h for the
    reason op_b.cpp declares its own: rect.h's four-argument constructor assigns h, w, y and x in
    that order and every rectangle this file builds assigns them the other way round. The default
@@ -344,11 +340,11 @@ void OpA_InitProcess() {
     CSnd.SetReverb(0, 4, 80);
     CSnd.SetReverb(1, 4, 60);
     CSnd.LoadSoundFileFromPack("o01a.txt", read_buffer);
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
-    CSnd.SE_Play(15, 16, 20, 0, 0);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
+    CSnd.SE_Play(MIDI_PORT_SE_TITLE, 16, 20, 0, 0);
     wait_now_loading_vsync();
     SetDanceMotion();
     LoadFile("opdat/chara/01p19a1b.chr", (void *) ((char *) read_buffer + 0x10C900), 0);
@@ -434,25 +430,25 @@ static void LoadTexture() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
@@ -494,7 +490,7 @@ static void LoadData() {
 
         CFrameAttr attr;
 
-        attr.clip_enable = 0;
+        attr.clip_enable = false;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 10.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -511,7 +507,7 @@ static void LoadData() {
 
     CFrameAttr noroi_attr;
 
-    noroi_attr.clip_enable = 0;
+    noroi_attr.clip_enable = false;
     Chara__3[6].frame->SetAttr(noroi_attr, 1, 4);
 
     wait_now_loading_vsync();
@@ -521,7 +517,7 @@ static void LoadData() {
 
     CFrameAttr dancer_attr;
 
-    dancer_attr.clip_enable = 0;
+    dancer_attr.clip_enable = false;
     Chara__3[7].frame->SetAttr(dancer_attr, 1, 4);
 
     float scale[4] = {4.5f, 1.0f, 4.5f, 0.0f};
@@ -624,7 +620,7 @@ static void InitDancerPos() {
         DancerPos[i][1] = 10.0f * layout[i][1];
         DancerPos[i][2] = 10.0f + 10.0f * layout[i][2];
         DancerRot[i][0] = 0.0f;
-        DancerRot[i][1] = PI;
+        DancerRot[i][1] = PI_D;
         /* The third store repeats the first rather than clearing the roll, which is deliberate here
            and not a slip left in place: every row of the table has a zero roll already, so the
            line has no effect either way, and the code the compiler emits is not the same without
@@ -633,7 +629,7 @@ static void InitDancerPos() {
     }
 
     Chara__3[6].SetPosition(0.0f, 0.0f, 250.0f);
-    Chara__3[6].SetRotation(0.0f, PI, 0.0f);
+    Chara__3[6].SetRotation(0.0f, PI_D, 0.0f);
 }
 
 /* The tick's drawing, in the order the frame is built: the ground, the buildings standing on it,
@@ -974,7 +970,7 @@ static void DrawCloud() {
 
         if (CScript__2.camera_start == 44 || CScript__2.camera_start == 16) {
             Cloud.SetPosition(0.0f, 30.0f, -10.0f);
-            Cloud.SetRotation(0.0f, PI, 0.0f);
+            Cloud.SetRotation(0.0f, PI_D, 0.0f);
         } else {
             Cloud.SetPosition(0.0f, 50.0f, 15.0f);
             Cloud.SetRotation(0.0f, 0.0f, 0.0f);
@@ -1038,7 +1034,7 @@ static void SmokeProcess() {
 
         param.position_oscillation_flags = 1;
         param.position_oscillation_x = 0.5f * (float) rand() / 2147483648.0f;
-        param.position_oscillation_rate_x = (float) PI / (20.0f + (float) (rand() * 10) / 2147483648.0f);
+        param.position_oscillation_rate_x = (float) PI_D / (20.0f + (float) (rand() * 10) / 2147483648.0f);
         param.opacity_mode = 2;
         param.render_flags = 2;
         param.opacity = 0.07f;
@@ -1193,7 +1189,7 @@ void OpA_MotionProcess() {
                 frame->GetLWMatrix(matrix);
 
                 if (i == 6) {
-                    Chara__3[i].SetRotation(0.0f, (float) (atan2f(matrix[2][0], matrix[2][2]) + PI), 0.0f);
+                    Chara__3[i].SetRotation(0.0f, (float) (atan2f(matrix[2][0], matrix[2][2]) + PI_D), 0.0f);
                 } else if (i == 5) {
                     float tilt = atan2f(-matrix[2][1], matrix[2][2]);
 
@@ -1277,7 +1273,7 @@ static void MoveDancers() {
                 DancerPos[i][1] = matrix[3][1];
                 DancerPos[i][2] = matrix[3][2];
                 DancerRot[i][0] = 0.0f;
-                DancerRot[i][1] = (float) (atan2f(matrix[2][0], matrix[2][2]) + PI);
+                DancerRot[i][1] = (float) (atan2f(matrix[2][0], matrix[2][2]) + PI_D);
                 DancerRot[i][2] = 0.0f;
             }
         }
@@ -1440,7 +1436,7 @@ static void DrawShadow(float x, float y, float z) {
         float heading = atan2f(x, z);
 
         Shadow->SetPosition(x, 0.05f, z);
-        Shadow->SetRotation(89.0f * PI / 180.0f, heading, 0.0f);
+        Shadow->SetRotation(89.0f * PI_D / 180.0f, heading, 0.0f);
         MGDraw(Shadow);
         MGSetAmbient(ambientlight);
     }
@@ -1478,10 +1474,10 @@ void OpA_SoundProcess() {
 
         if (wait == 0) {
             if (motion_frame > 38 && motion_frame < 40) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 28);
                 wait = 10;
             } else if (motion_frame > 48 && motion_frame < 50) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 29);
                 wait = 10;
             }
         } else {
@@ -1495,10 +1491,10 @@ void OpA_SoundProcess() {
 
         if (wait == 0) {
             if (motion_frame > 98 && motion_frame < 100) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 28);
                 wait = 10;
             } else if (motion_frame > 108 && motion_frame < 110) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 29);
                 wait = 10;
             }
         } else {
@@ -1512,10 +1508,10 @@ void OpA_SoundProcess() {
 
         if (wait == 0) {
             if (motion_frame > 228 && motion_frame < 230) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 28);
                 wait = 10;
             } else if (motion_frame > 238 && motion_frame < 240) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 29);
                 wait = 10;
             }
         } else {
@@ -1529,13 +1525,13 @@ void OpA_SoundProcess() {
 
         if (wait == 0) {
             if (motion_frame > 295 && motion_frame < 297) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 28);
                 wait = 5;
             } else if (motion_frame > 298 && motion_frame < 300) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 29);
                 wait = 5;
             } else if (motion_frame > 301 && motion_frame < 303) {
-                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, MIDI_PORT_SE_DEFAULT, 21, 28);
                 wait = 5;
             }
         } else {
@@ -1553,7 +1549,7 @@ void OpA_SoundProcess() {
 
     if (CloudFlag == 1) {
         if (seflg == 0) {
-            OpPlayVolSE(15, 16, 28, 0.8f);
+            OpPlayVolSE(MIDI_PORT_SE_TITLE, 16, 28, 0.8f);
             seflg = 1;
         } else if (CScript__2.camera_start != 44) {
             sceVu0FVECTOR wind = {0.0f, 50.0f, 0.0f, 0.0f};
@@ -1591,7 +1587,7 @@ void OpA_SoundProcess() {
 
         if (CScript__2.camera_start == 14) {
             if (flg == 0) {
-                CSnd.Stop(0);
+                CSnd.Stop(MIDI_PORT_BGM);
                 CSnd.SetReverb(0, 4, 50);
                 CSnd.LoadSoundFileFromPack("o01b.txt", read_buffer);
                 OpBgmSqPort = 0;

@@ -5,6 +5,72 @@
 #include "character.hpp"
 #include "itemdata.hpp"
 
+/**
+ * Weapon effects the menus play, as CWeaponLevelUp::operation_kind holds them.
+ */
+// clang-format off
+enum WepEffectKind {
+    WEP_EFFECT_NONE                = -1, /**< None. */
+    WEP_EFFECT_LEVELUP             = 0,  /**< Level-up. */
+    WEP_EFFECT_STATUS_BREAK        = 1,  /**< Status break. */
+    WEP_EFFECT_BUILDUP             = 2,  /**< Build-up. */
+    WEP_EFFECT_RECOVER             = 3,  /**< Repair. */
+    WEP_EFFECT_CURE_HEAL_HP        = 4,  /**< Item that restores hit points. */
+    WEP_EFFECT_CURE_DRINK          = 5,  /**< Drink. */
+    WEP_EFFECT_CURE_REPAIR         = 6,  /**< Repair Powder. */
+    WEP_EFFECT_UNK_7               = 7,  /**< Item effect with no caller. */
+    WEP_EFFECT_CURE_STATUS         = 8,  /**< Item that grants a status effect. */
+    WEP_EFFECT_CURE_AILMENT        = 9,  /**< Item that cures an ailment. */
+    WEP_EFFECT_CURE_REVIVAL_POWDER = 10, /**< Revival Powder. */
+    WEP_EFFECT_CURE_GOURD          = 11, /**< Gourd. */
+    WEP_EFFECT_CURE_FRUIT_OF_EDEN  = 12, /**< Fruit of Eden. */
+    WEP_EFFECT_CURE_POCKET         = 13, /**< Pocket. */
+    WEP_EFFECT_KIND_COUNT          = 14, /**< Number of effects. */
+};
+
+// clang-format on
+
+/**
+ * Steps of a weapon effect, as CWeaponLevelUp::effect_state holds them; each item effect's load step is followed by its play step.
+ */
+// clang-format off
+enum WepEffectState {
+    WEP_EFFECT_STATE_IDLE                     = 0,  /**< Idle. */
+    WEP_EFFECT_STATE_LEVELUP_LOAD             = 1,  /**< Loading the level-up effect. */
+    WEP_EFFECT_STATE_LEVELUP_ORBIT            = 2,  /**< Level-up effect orbiting. */
+    WEP_EFFECT_STATE_LEVELUP_DONE             = 3,  /**< Level-up effect finished. */
+    WEP_EFFECT_STATE_BREAK_LOAD               = 4,  /**< Loading the status break effect. */
+    WEP_EFFECT_STATE_BREAK_PLAY               = 5,  /**< Status break effect playing. */
+    WEP_EFFECT_STATE_BREAK_DONE               = 6,  /**< Status break effect finished. */
+    WEP_EFFECT_STATE_BUILDUP_LOAD             = 7,  /**< Loading the build-up effect. */
+    WEP_EFFECT_STATE_BUILDUP_PLAY             = 8,  /**< Build-up effect playing. */
+    WEP_EFFECT_STATE_BUILDUP_DONE             = 9,  /**< Build-up effect finished. */
+    WEP_EFFECT_STATE_RECOVER_LOAD             = 10, /**< Loading the repair effect. */
+    WEP_EFFECT_STATE_RECOVER_DONE             = 11, /**< Repair effect finished. */
+    WEP_EFFECT_STATE_CURE_HEAL_HP_LOAD        = 12, /**< Loading the hit point item effect. */
+    WEP_EFFECT_STATE_CURE_HEAL_HP_PLAY        = 13, /**< Hit point item effect playing. */
+    WEP_EFFECT_STATE_CURE_DRINK_LOAD          = 14, /**< Loading the drink effect. */
+    WEP_EFFECT_STATE_CURE_DRINK_PLAY          = 15, /**< Drink effect playing. */
+    WEP_EFFECT_STATE_CURE_REPAIR_LOAD         = 16, /**< Loading the Repair Powder effect. */
+    WEP_EFFECT_STATE_CURE_REPAIR_PLAY         = 17, /**< Repair Powder effect playing. */
+    WEP_EFFECT_STATE_UNK_12                   = 18, /**< Loading WEP_EFFECT_UNK_7. */
+    WEP_EFFECT_STATE_UNK_13                   = 19, /**< Playing WEP_EFFECT_UNK_7. */
+    WEP_EFFECT_STATE_CURE_STATUS_LOAD         = 20, /**< Loading the status item effect. */
+    WEP_EFFECT_STATE_CURE_STATUS_PLAY         = 21, /**< Status item effect playing. */
+    WEP_EFFECT_STATE_CURE_AILMENT_LOAD        = 22, /**< Loading the cure effect. */
+    WEP_EFFECT_STATE_CURE_AILMENT_PLAY        = 23, /**< Cure effect playing. */
+    WEP_EFFECT_STATE_CURE_REVIVAL_POWDER_LOAD = 24, /**< Loading the Revival Powder effect. */
+    WEP_EFFECT_STATE_CURE_REVIVAL_POWDER_PLAY = 25, /**< Revival Powder effect playing. */
+    WEP_EFFECT_STATE_CURE_GOURD_LOAD          = 26, /**< Loading the Gourd effect. */
+    WEP_EFFECT_STATE_CURE_GOURD_PLAY          = 27, /**< Gourd effect playing. */
+    WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_LOAD  = 28, /**< Loading the Fruit of Eden effect. */
+    WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_PLAY  = 29, /**< Fruit of Eden effect playing. */
+    WEP_EFFECT_STATE_CURE_POCKET_LOAD         = 30, /**< Loading the Pocket effect. */
+    WEP_EFFECT_STATE_CURE_POCKET_PLAY         = 31, /**< Pocket effect playing. */
+};
+
+// clang-format on
+
 class CMenuItemStep;
 
 /**
@@ -40,13 +106,13 @@ public:
     s16          attachment_icons[5];  /**< Item ids of the attachments orbiting the level-up effect. */
     s16          attachment_values[5]; /**< Values drawn beside the orbiting attachment icons. */
     s16          effect_active;        /**< Nonzero while the effect plays, which holds back the result message. */
-    s16          operation_kind;       /**< Active effect: 0 level-up, 1 status break, 2 build-up, 3 recovery, 4 and above a cure, -1 idle. */
+    s16          operation_kind;       /**< Active effect. @see WepEffectKind. */
     s16          texture_block;        /**< Texture block the effect's textures load into. */
     u8           unk_1306[2];
     float        effect_x;     /**< Horizontal position a cure effect plays at. */
     float        effect_y;     /**< Vertical position a cure effect plays at. */
     float        effect_timer; /**< Frames since the effect started, negative before it has. */
-    s16          effect_state; /**< Step of the effect state machine, starting at a per-operation base. */
+    s16          effect_state; /**< Step of the effect state machine, starting at a per-operation base. @see WepEffectState. */
     s16          snd_volume;   /**< Background-music volume the fade has reached. */
     s16          snd_from;     /**< Background-music volume the fade started from, restored afterwards. */
     s16          snd_to;       /**< Background-music volume the fade ends at. */

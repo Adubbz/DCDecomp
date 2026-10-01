@@ -4,6 +4,18 @@
 
 #include "rect.hpp"
 
+/**
+ * How an effect's opacity changes.
+ */
+// clang-format off
+enum EffectOpacityMode {
+    EFFECT_OPACITY_CONSTANT = 0, /**< Constant. */
+    EFFECT_OPACITY_FADE_IN  = 1, /**< Increasing. */
+    EFFECT_OPACITY_FADE_OUT = 2, /**< Decreasing. */
+};
+
+// clang-format on
+
 class CTexture;
 
 /**

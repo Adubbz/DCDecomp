@@ -24,7 +24,8 @@ enum WEAPON_ELEMENT_KIND {
     WEAPON_ELEMENT_COLD = 1,    /**< Sparks that fall away from the blade. */
     WEAPON_ELEMENT_THUNDER = 2, /**< Sparks that fly apart, with bolts arcing between them. */
     WEAPON_ELEMENT_WIND = 3,    /**< Sparks that blow away on a rising wind, spinning. */
-    WEAPON_ELEMENT_HOLY = 4     /**< Sparks that rise slowly and fade. */
+    WEAPON_ELEMENT_HOLY = 4,    /**< Sparks that rise slowly and fade. */
+    WEAPON_ELEMENT_NONE = 5,    /**< No element. */
 };
 
 /**

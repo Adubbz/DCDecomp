@@ -8,6 +8,21 @@
 #include "edit.hpp"
 #include "objanime.hpp"
 
+/**
+ * Kinds of town event point, as ED_EVENT_POINT::event_type holds them.
+ */
+// clang-format off
+enum EdEventPointType {
+    ED_EVENT_POINT_NONE          = 0, /**< Unused slot. */
+    ED_EVENT_POINT_DOOR          = 1, /**< Door. */
+    ED_EVENT_POINT_ITEM_BOX      = 2, /**< Item box. */
+    ED_EVENT_POINT_EVENT         = 3, /**< Map event. */
+    ED_EVENT_POINT_LADDER_BOTTOM = 4, /**< Bottom of a ladder. */
+    ED_EVENT_POINT_LADDER_TOP    = 5, /**< Top of a ladder. */
+};
+
+// clang-format on
+
 class C3DSprite;
 
 class CEffect;
@@ -79,7 +94,7 @@ struct EDIT_MOTION_PARTS_INFO {
 struct MAP_PARTS_INFO {
     char  name[9][0x40]; /**< Model resource names: seven shape variants then two more. */
     int   parts_no;      /**< Part number supplied by the script. */
-    int   subtype;       /**< Road, river, bridge, or surface subtype. */
+    int   subtype;       /**< Road, river, bridge, or surface subtype. @see MapPartsSubtype. */
     int   kind;          /**< Broad ground, building, or terrain classification. */
     float position[3];   /**< World-space placement of the part. */
     float rotation[3];   /**< Orientation of the part, in radians. */
@@ -227,7 +242,7 @@ struct ED_EVENT_POINT {
     int           map_no;             /**< Map the event moves the player to. */
     int           completion_flag;    /**< Map flag which suppresses an event after completion. */
     int           parts_no;           /**< Ground-parts object associated with the event. */
-    int           event_type;         /**< Kind of event represented by the entry. */
+    int           event_type;         /**< Kind of event represented by the entry. @see EdEventPointType. */
     CMapObject   *map_object;         /**< Optional map object associated with the event. */
     CFrame       *frame;              /**< Optional frame whose draw state gates the event. */
     int           side;               /**< Which side of the entrance the player arrives on. */

@@ -2,6 +2,18 @@
 
 #include "common.h"
 
+/**
+ * Steps of a dropped item, as CRandomItem::state holds them.
+ */
+// clang-format off
+enum RandomItemState {
+    RANDOM_ITEM_RISING  = 0, /**< Rising. */
+    RANDOM_ITEM_WAITING = 1, /**< Waiting to be taken. */
+    RANDOM_ITEM_TAKEN   = 2, /**< Shrinking away. */
+};
+
+// clang-format on
+
 class CTexture;
 
 /**

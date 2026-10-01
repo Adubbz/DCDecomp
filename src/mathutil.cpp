@@ -716,8 +716,6 @@ extern "C" int mwLoadOverlay(char *path, void *address) {
     return result;
 }
 
-#define PI 3.1415927f
-
 static float sin_table_num = 1024.0f;
 static float sin_table_unit_1 = 162.97466f;
 static float SinTable[1024];
@@ -1151,7 +1149,7 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
     sceVu0SubVector(gap, to, from);
 
     switch (mode) {
-        case 0:
+        case INTERPOLATE_STEP:
             for (i = 0; i < 3; i++) {
                 /* The signed difference and its magnitude are carried as two variables, and each
                    arm writes back the one the other arm would have changed - so the second assignment
@@ -1175,7 +1173,7 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
             }
 
             break;
-        case 1:
+        case INTERPOLATE_FRACTION:
             for (i = 0; i < 3; i++) {
                 out[i] = from[i] + gap[i] / step;
             }
@@ -1205,12 +1203,12 @@ float AngleInterpolate(float from, float to, float step, int mode) {
 
     offset = 0.0f;
 
-    if (mode == 0 && (delta < 0.0f ? -delta : delta) < step) {
+    if (mode == INTERPOLATE_STEP && (delta < 0.0f ? -delta : delta) < step) {
         return to;
     }
 
     switch (mode) {
-        case 0:
+        case INTERPOLATE_STEP:
             if (delta < 0.0f) {
                 if (step < delta) {
                     return to;
@@ -1228,7 +1226,7 @@ float AngleInterpolate(float from, float to, float step, int mode) {
             }
 
             break;
-        case 1:
+        case INTERPOLATE_FRACTION:
             offset = delta / step;
             break;
     }

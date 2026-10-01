@@ -31,7 +31,7 @@ int           all_stop;
  * @size 0x14
  */
 void OBJ_ANIME_SEQ::Initialize() {
-    property = -1;
+    property = OBJ_ANIME_PROPERTY_NONE;
     completion_flag = 0;
 }
 
@@ -68,7 +68,7 @@ int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence) {
         sequence->frames[i] = NULL;
     }
 
-    if (sequence->property <= -1) {
+    if (sequence->property <= OBJ_ANIME_PROPERTY_NONE) {
         return 0;
     }
 
@@ -97,7 +97,7 @@ int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence) {
 int InitObjAnime(CFrame **frames, OBJ_ANIME_SEQ *sequence) {
     int i;
 
-    if (sequence->property <= -1) {
+    if (sequence->property <= OBJ_ANIME_PROPERTY_NONE) {
         return 0;
     }
 
@@ -132,7 +132,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
     int i;
     int found = 0;
 
-    if (sequence->property <= -1) {
+    if (sequence->property <= OBJ_ANIME_PROPERTY_NONE) {
         return 0;
     }
 
@@ -174,7 +174,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
 int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_SEQ *sequence) {
     sceVu0FVECTOR span;
 
-    if (func->kind != 6) {
+    if (func->kind != EPARTS_FUNC_OBJ_ANIME) {
         return 0;
     }
 
@@ -231,38 +231,38 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
         return;
     }
 
-    if (sequence->property <= -1) {
+    if (sequence->property <= OBJ_ANIME_PROPERTY_NONE) {
         return;
     }
 
     switch (sequence->property) {
-        case 0:
+        case OBJ_ANIME_PROPERTY_ROTATION:
             if (sequence->frames[0] != NULL) {
-                float x = (3.1415927f * sequence->current[0]) / 180.0f;
-                float y = (3.1415927f * sequence->current[1]) / 180.0f;
-                float z = (3.1415927f * sequence->current[2]) / 180.0f;
+                float x = (PI * sequence->current[0]) / 180.0f;
+                float y = (PI * sequence->current[1]) / 180.0f;
+                float z = (PI * sequence->current[2]) / 180.0f;
                 sequence->frames[0]->SetRotType(2);
                 sequence->frames[0]->SetRotation(x, y, z);
             }
 
             break;
-        case 1:
+        case OBJ_ANIME_PROPERTY_POSITION:
             if (sequence->frames[0] != NULL) {
                 sequence->frames[0]->SetPosition(sequence->current);
             }
 
             break;
-        case 2:
+        case OBJ_ANIME_PROPERTY_SCALE:
             if (sequence->frames[0] != NULL) {
                 sequence->frames[0]->SetScale(sequence->current);
             }
 
             break;
-        case 3:
+        case OBJ_ANIME_PROPERTY_COLOR:
             if (sequence->frames[0] != NULL) {
                 CFrameAttr *attr = &sequence->frames[0]->attr;
                 sceVu0CopyVector(attr->color, sequence->current);
-                attr->use_color = 1;
+                attr->use_color = true;
             }
 
             break;
@@ -283,20 +283,20 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
                 sequence->frames[i]->SetPosition(position);
                 sequence->frames[i]->SetScale(scale);
 
-                if (sequence->property == 3) {
+                if (sequence->property == OBJ_ANIME_PROPERTY_COLOR) {
                     CFrameAttr *attr = &sequence->frames[i]->attr;
                     sceVu0CopyVector(attr->color, sequence->current);
-                    attr->use_color = 1;
+                    attr->use_color = true;
                 }
             }
         }
     }
 
     switch (sequence->mode) {
-        case 0:
+        case OBJ_ANIME_MODE_LINEAR:
             sceVu0AddVector(sequence->current, sequence->current, sequence->step);
             break;
-        case 1:
+        case OBJ_ANIME_MODE_WRAP:
             sceVu0AddVector(sequence->current, sequence->current, sequence->step);
 
             if (end_check(sequence->current[0], sequence->to[0], sequence->step[0]) != 0) {
@@ -312,7 +312,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             }
 
             break;
-        case 2:
+        case OBJ_ANIME_MODE_PING_PONG:
             // Reverse at either end, swapping the two ends round.
             sceVu0AddVector(sequence->current, sequence->current, sequence->step);
 
@@ -327,7 +327,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             }
 
             break;
-        case 3:
+        case OBJ_ANIME_MODE_ONCE:
             // Stop at the far end.
             sceVu0AddVector(sequence->current, sequence->current, sequence->step);
 
@@ -339,7 +339,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             }
 
             break;
-        case 4:
+        case OBJ_ANIME_MODE_RANDOM:
             for (i = 0; i < 3; i++) {
                 value = sequence->to[i] - sequence->from[i];
                 value *= (float) rand() / 2.1474836e9f;
@@ -347,13 +347,13 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             }
 
             break;
-        case 6:
+        case OBJ_ANIME_MODE_RANDOM_UNIFORM:
             value = sequence->to[0] - sequence->from[0];
             value *= (float) rand() / 2.1474836e9f;
             sequence->current[1] = sequence->current[0] = sequence->from[0] + value;
             sequence->current[2] = sequence->current[0];
             break;
-        case 5:
+        case OBJ_ANIME_MODE_RANDOM_WALK:
             for (i = 0; i < 3; i++) {
                 value = sequence->step[i] * (((float) rand() / 2.1474836e9f) - 0.5f);
                 sequence->current[i] += value;
@@ -368,7 +368,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             }
 
             break;
-        case 7:
+        case OBJ_ANIME_MODE_RANDOM_WALK_UNIFORM:
             value = sequence->step[0] * (((float) rand() / 2.1474836e9f) - 0.5f);
             sequence->current[0] += value;
 
@@ -385,7 +385,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             break;
     }
 
-    if (sequence->property == 0) {
+    if (sequence->property == OBJ_ANIME_PROPERTY_ROTATION) {
         if (sequence->current[0] > 180.0f) {
             sequence->current[0] -= 360.0f;
         }
@@ -434,27 +434,27 @@ void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect) {
  */
 int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effect) {
     switch (func->kind) {
-        case 3:
-            effect->kind = 1;
+        case EPARTS_FUNC_FIRE_LARGE:
+            effect->kind = EDIT_EFFECT_FIRE_LARGE;
             break;
-        case 5:
-        case 13:
-            effect->kind = 3;
+        case EPARTS_FUNC_FIRE_MEDIUM:
+        case EPARTS_FUNC_UNK_D:
+            effect->kind = EDIT_EFFECT_FIRE_MEDIUM;
             break;
-        case 12:
-            effect->kind = 2;
+        case EPARTS_FUNC_FIRE_SMALL:
+            effect->kind = EDIT_EFFECT_FIRE_SMALL;
             break;
-        case 4:
-            effect->kind = 4;
+        case EPARTS_FUNC_SMOKE:
+            effect->kind = EDIT_EFFECT_SMOKE;
             break;
-        case 14:
-            effect->kind = 5;
+        case EPARTS_FUNC_UNK_E:
+            effect->kind = EDIT_EFFECT_UNK_5;
             break;
-        case 15:
-            effect->kind = 6;
+        case EPARTS_FUNC_CANDLE:
+            effect->kind = EDIT_EFFECT_CANDLE;
             break;
-        case 21:
-            effect->kind = 7;
+        case EPARTS_FUNC_SOUND:
+            effect->kind = EDIT_EFFECT_SOUND;
             break;
         default:
             return 0;
@@ -484,7 +484,7 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
 }
 
 int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
-    if (effect->kind <= 0) {
+    if (effect->kind <= EDIT_EFFECT_NONE) {
         return 0;
     }
 
@@ -562,7 +562,7 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
         return;
     }
 
-    if (effect->kind <= 0) {
+    if (effect->kind <= EDIT_EFFECT_NONE) {
         return;
     }
 
@@ -574,7 +574,7 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
     scale = effect->colour[0];
 
     switch (effect->kind) {
-        case 6:
+        case EDIT_EFFECT_CANDLE:
             setbilinear(1);
             Candle.SetPosition(position);
             Candle.SetScale(effect->colour[0], effect->colour[1]);
@@ -585,9 +585,9 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             if (effect->sound_no > 0.0f) {
                 break;
             }
-        case 1:
-        case 2:
-        case 3: {
+        case EDIT_EFFECT_FIRE_LARGE:
+        case EDIT_EFFECT_FIRE_SMALL:
+        case EDIT_EFFECT_FIRE_MEDIUM: {
             float z = 0.1f * position[2];
             float y = 0.1f * position[1];
             float x = 0.1f * position[0];
@@ -598,26 +598,26 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             Fire.pos[3] = 1.0f;
             position[3] = 1.0f;
 
-            if (effect->kind == 1) {
+            if (effect->kind == EDIT_EFFECT_FIRE_LARGE) {
                 fire_kind = 3;
             }
 
-            if (effect->kind == 2) {
+            if (effect->kind == EDIT_EFFECT_FIRE_SMALL) {
                 fire_kind = 1;
             }
 
-            if (effect->kind == 3) {
+            if (effect->kind == EDIT_EFFECT_FIRE_MEDIUM) {
                 fire_kind = 2;
             }
 
-            if (effect->kind == 6) {
+            if (effect->kind == EDIT_EFFECT_CANDLE) {
                 fire_kind = 2;
             }
 
             setbilinear(1);
             Fire.DrawFire(1, 1, camera, position, scale, fire_kind, 15.0f);
             break;
-        case 4:
+        case EDIT_EFFECT_SMOKE:
             if (group != NULL) {
                 EffectSmoke(group, position, effect->colour[0], 13);
             }

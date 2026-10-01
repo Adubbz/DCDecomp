@@ -5,6 +5,45 @@
  * Declares the shared editor helpers implemented by retail editetc.cpp.
  */
 
+/**
+ * What a town event asks for when it ends, as ED_EVENT_INFO::return_code holds it.
+ */
+// clang-format off
+enum EdEventReturn {
+    ED_EVENT_RETURN_NONE     = 0,  /**< Nothing. */
+    ED_EVENT_RETURN_INTERIOR = 4,  /**< Go into an interior. */
+    ED_EVENT_RETURN_DUNGEON  = 5,  /**< Go to the dungeon. */
+    ED_EVENT_RETURN_CONTINUE = 6,  /**< Carry on. */
+    ED_EVENT_RETURN_OUTSIDE  = 7,  /**< Leave the interior. */
+    ED_EVENT_RETURN_MAP_JUMP = 8,  /**< Jump to another map. */
+    ED_EVENT_RETURN_TALK     = 9,  /**< Return to talking. */
+    ED_EVENT_RETURN_EXIT     = 10, /**< Leave the town loop. */
+    ED_EVENT_RETURN_FISHING  = 11, /**< Start fishing. */
+};
+
+// clang-format on
+
+/**
+ * Menus a town script can open, as EdInitMenu takes them.
+ */
+// clang-format off
+enum EdMenuKind {
+    ED_MENU_RESET            = -1, /**< Clears the menu request without opening a menu. */
+    ED_MENU_NONE             = 0,  /**< No menu. */
+    ED_MENU_EDIT             = 1,  /**< Edit menu. */
+    ED_MENU_BATTLE           = 2,  /**< Battle menu. */
+    ED_MENU_SHOP             = 3,  /**< Shop. */
+    ED_MENU_UNK_4            = 4,  /**< Opens a shop like ED_MENU_SHOP. */
+    ED_MENU_USE_ITEM         = 5,  /**< Item use selection. */
+    ED_MENU_NAME_REGISTRY    = 6,  /**< Name entry. */
+    ED_MENU_WORLD_MAP        = 7,  /**< World map. */
+    ED_MENU_FISHING_EXCHANGE = 8,  /**< Fish point exchange. */
+    ED_MENU_CHANGE_ESA       = 9,  /**< Bait selection. */
+    ED_MENU_FISH_RANKING     = 10, /**< Fishing record. */
+};
+
+// clang-format on
+
 class CCamera;
 class CCharacter;
 class CDebugFont;
@@ -27,7 +66,7 @@ class CCameraFollow;
  * Describes the event the player is standing in, and where it puts them.
  */
 struct ED_EVENT_PARAM {
-    int             kind;     /**< What kind of event the point is: 1 a door, 2 an item box, 3 a map event, 4 and 5 the two ends of a ladder. */
+    int             kind;     /**< What kind of event the point is. @see EdEventPointType. */
     int             parts_no; /**< Map part the event point hangs off, or negative for none; a door enters the interior through it. */
     u8              unk_08[0x8];
     sceVu0FVECTOR   position;   /**< Where the player stands while the door plays. */
@@ -175,7 +214,7 @@ struct ED_EVENT_INFO {
     s32            flag_arguments[8];    /**< Flag-like arguments supplied to the active event. */
     s32            fadeout_event_no;     /**< Event started after the current fade-out completes. */
     s32            next_event;           /**< Event number requested by the NEXT_EVENT opcode. */
-    s32            return_code;          /**< Result code passed from an editor event back to the game loop. */
+    s32            return_code;          /**< Result code passed from an editor event back to the game loop. @see EdEventReturn. */
     s32            exit_code;            /**< Exit status supplied by the event script. */
 };
 

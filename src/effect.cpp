@@ -58,12 +58,12 @@ void C3DSprite::Initialize() {
     colour.g = 128;
     colour.b = 128;
     colour.r = 128;
-    alpha_blend = 0;
-    disable_z_write = 0;
+    alpha_blend = false;
+    disable_z_write = false;
 }
 
 void CEffect::SetEffect(CEffectParam *parameters) {
-    active = 1;
+    active = true;
     frame = 0;
     draw_mode = (s16) parameters->draw_mode;
     lifetime = (s16) parameters->lifetime;
@@ -89,15 +89,15 @@ void CEffect::SetEffect(CEffectParam *parameters) {
     texture_frame_period = parameters->texture_frame_period;
 
     switch (opacity_mode) {
-        case 0:
+        case EFFECT_OPACITY_CONSTANT:
             opacity = parameters->opacity;
             opacity_step = 0.0f;
             break;
-        case 1:
+        case EFFECT_OPACITY_FADE_IN:
             opacity = parameters->opacity;
             opacity_step = (1.0f - parameters->opacity) / (float) lifetime;
             break;
-        case 2:
+        case EFFECT_OPACITY_FADE_OUT:
             opacity = parameters->opacity;
             opacity_step = -parameters->opacity / (float) lifetime;
             break;
@@ -113,7 +113,7 @@ void CEffect::Step(int unused) {
 
     if (frame > lifetime) {
         frame = 0;
-        active = 0;
+        active = false;
     }
 
     sceVu0AddVector(position, position, velocity);
@@ -260,7 +260,7 @@ void CEffectParam::Initialize() {
     draw_mode = 0;
     position_oscillation_flags = 0;
     scale_oscillation_flags = 0;
-    opacity_mode = 0;
+    opacity_mode = EFFECT_OPACITY_CONSTANT;
     opacity = 1.0f;
     render_flags = 0;
     width = height = 0.0f;
@@ -280,13 +280,13 @@ void CEffectParam::Initialize() {
 }
 
 void CEffect::Initialize() {
-    active = 0;
+    active = false;
     frame = 0;
     lifetime = 0;
     draw_mode = 0;
     position_oscillation_flags = 0;
     scale_oscillation_flags = 0;
-    opacity_mode = 0;
+    opacity_mode = EFFECT_OPACITY_CONSTANT;
     opacity = 1.0f;
     render_flags = 0;
     opacity_step = 0.0f;

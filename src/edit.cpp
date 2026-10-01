@@ -14,7 +14,10 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "battle_globals.hpp"
+#include "battlemenu.hpp"
 #include "boxvu0.hpp"
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "character.hpp"
 #include "clsmes.hpp"
@@ -23,6 +26,7 @@
 #include "edit.hpp"
 #include "editground.hpp"
 #include "editloop3.hpp"
+#include "editmapscript.hpp"
 #include "editpartsinfo.hpp"
 #include "effectmacro.hpp"
 #include "frame.hpp"
@@ -31,11 +35,15 @@
 #include "mainselect.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
+#include "memcard.hpp"
+#include "menu_misc.hpp"
+#include "menu_save.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
+#include "shop.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
@@ -55,32 +63,7 @@ struct SOUND_SRC {
     float pan[16];    /**< Pan the sound arrives at from each place. */
 };
 
-int  TransWepNo(int item);
-int  TransWepNoNewToOld(int item);
-void SetInteriorOutFlag(int flag);
 void EdSaveFrameImage(CTexture texture);
-int  BattleMenuCursor();
-void BattleMenuDraw();
-void BattleMenuInit(int *texture_block, int mode);
-int  ShopNoInput(int *texture_block, int shop, int mode);
-int  CommonShopLoop();
-void InitEventItemSelect(int texture_block, int *list, ITEM_PACK *pack, int x, int y, int mode, int kind);
-int  EventItemSelectLoop(int *item);
-void InitNameRegist(int chara, int texture_block, u_long128 *buffer);
-int  NameEnterKey();
-void NameEnterDraw();
-void InitMenuMove(int mode, int texture_block, u_long128 *buffer);
-int  MenuMoveKey();
-void DrawMenuMove();
-void InitFishingExchange(u_long128 *buffer, int *texture_block, int mode);
-int  FishingExchangeLoop();
-void InitFishRecordView(u_long128 *buffer, int *texture_block, int mode);
-int  FishRecordViewLoop();
-
-/**
- * Resolves the model and texture paths for a battle item.
- */
-void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
 
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
@@ -94,7 +77,6 @@ int  SystemMesCheck();
 void SystemMesStep();
 void SystemMesDraw();
 void ItemGetMes(int item, int value, int duration, int input_key);
-int  GetAtraMsgNo(int map, int no);
 
 /* The map editor's own debug layer: a text overlay anything may append a line to, a free camera
    and a free character driven straight off the pad, and a wireframe box drawn through the GS by
@@ -297,11 +279,11 @@ void EdDMoveCamera(float *position, float *reference) {
 
     x = -GamePad.GetLXf();
 
-    if (GamePad.On(8)) {
+    if (GamePad.On(PAD_R1)) {
         x = 0.02f * distance;
     }
 
-    if (GamePad.On(4)) {
+    if (GamePad.On(PAD_L1)) {
         x = 0.02f * -distance;
     }
 
@@ -312,23 +294,23 @@ void EdDMoveCamera(float *position, float *reference) {
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
 
-    if (GamePad.On(64)) {
+    if (GamePad.On(PAD_CROSS)) {
         sceVu0ScaleVector(move, move, 3.0f);
     }
 
     sceVu0AddVector(position, position, move);
 
-    if (GamePad.On(128) && !GamePad.On(12)) {
+    if (GamePad.On(PAD_SQUARE) && !GamePad.On(PAD_L1 | PAD_R1)) {
         sceVu0AddVector(reference, reference, move);
     }
 
     projection = MGGetProjection();
 
-    if (GamePad.On(8192)) {
+    if (GamePad.On(PAD_RIGHT)) {
         projection += 1.0f;
     }
 
-    if (GamePad.On(32768)) {
+    if (GamePad.On(PAD_LEFT)) {
         projection -= 1.0f;
     }
 
@@ -380,11 +362,11 @@ void EdDMoveCameraRef(float *position, float *reference) {
 
     x = -GamePad.GetLXf();
 
-    if (GamePad.On(8)) {
+    if (GamePad.On(PAD_R1)) {
         x = 0.02f * -distance;
     }
 
-    if (GamePad.On(4)) {
+    if (GamePad.On(PAD_L1)) {
         x = 0.02f * distance;
     }
 
@@ -397,7 +379,7 @@ void EdDMoveCameraRef(float *position, float *reference) {
 
     sceVu0AddVector(reference, reference, move);
 
-    if (GamePad.On(128) && !GamePad.On(12)) {
+    if (GamePad.On(PAD_SQUARE) && !GamePad.On(PAD_L1 | PAD_R1)) {
         sceVu0AddVector(position, position, move);
     }
 
@@ -455,27 +437,27 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
     y = -GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
-    if (GamePad.On(8)) {
+    if (GamePad.On(PAD_R1)) {
         rot[1] += -0.06f;
     }
 
-    if (GamePad.On(4)) {
+    if (GamePad.On(PAD_L1)) {
         rot[1] += 0.06f;
     }
 
-    if (rot[1] > 3.141592f) {
-        rot[1] -= 6.283184f;
+    if (rot[1] > PI_SHORT) {
+        rot[1] -= TWO_PI_SHORT;
     }
 
-    if (rot[1] < -3.141592f) {
-        rot[1] += 6.283184f;
+    if (rot[1] < -PI_SHORT) {
+        rot[1] += TWO_PI_SHORT;
     }
 
     move[0] = x * cosf(angle) + z * sinf(angle);
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
 
-    if (GamePad.On(128)) {
+    if (GamePad.On(PAD_SQUARE)) {
         speed = 1.0f;
     }
 
@@ -484,7 +466,7 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
     character->SetPosition(pos);
     character->SetRotation(rot);
 
-    if (GamePad.Down(16)) {
+    if (GamePad.Down(PAD_TRIANGLE)) {
         sceVu0CopyVector(camera_ref, pos);
         camera_ref[1] += 0.7f * character->body_height;
         camera->SetRef(camera_ref);
@@ -492,11 +474,11 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
 
     ambient = character->ambient_offset[0];
 
-    if (GamePad.On(2)) {
+    if (GamePad.On(PAD_R2)) {
         ambient += 0.1f;
     }
 
-    if (GamePad.On(1)) {
+    if (GamePad.On(PAD_L2)) {
         ambient -= 0.1f;
     }
 
@@ -540,11 +522,11 @@ void EdDebugMenu() {
             break;
     }
 
-    if (GamePad.Down(2)) {
+    if (GamePad.Down(PAD_R2)) {
         mode++;
     }
 
-    if (GamePad.Down(1)) {
+    if (GamePad.Down(PAD_L2)) {
         mode--;
     }
 
@@ -594,51 +576,51 @@ void DM_Main() {
 
     switch (select) {
         case 0:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 EdDebugCameraFlag = 1;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 EdDebugCameraFlag = 0;
             }
 
             break;
         case 1:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 EdDebugParamDrawOff = 0;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 EdDebugParamDrawOff = 1;
             }
 
             break;
         case 2:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 EdDebugCharaDrawOff = 0;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 EdDebugCharaDrawOff = 1;
             }
 
             break;
         case 3:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 MesAbsDrawOff = 0;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 MesAbsDrawOff = 1;
             }
 
             break;
         case 4:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 EdDebugMoveFlag++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 EdDebugMoveFlag--;
             }
 
@@ -652,85 +634,85 @@ void DM_Main() {
 
             break;
         case 5:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 run_event++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 run_event--;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 run_event -= 10;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 run_event += 10;
             }
 
-            if (GamePad.On(0x20)) {
+            if (GamePad.On(PAD_CIRCLE)) {
                 EdDebugRunEventNo = run_event;
             }
 
             break;
         case 6:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 talk_chara++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 talk_chara--;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 talk_chara -= 10;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 talk_chara += 10;
             }
 
-            if (GamePad.On(0x20)) {
+            if (GamePad.On(PAD_CIRCLE)) {
                 EdTalkModeInit(EdVillager, talk_chara);
                 EdDebugRunEventNo = 256;
             }
 
             break;
         case 7:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 EdDebugEventEnable = 1;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 EdDebugEventEnable = 0;
             }
 
             break;
         case 8:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 LanguageCode++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 LanguageCode--;
             }
 
-            if (LanguageCode < 0) {
-                LanguageCode = 0;
+            if (LanguageCode < LANG_JAPANESE) {
+                LanguageCode = LANG_JAPANESE;
             }
 
-            if (LanguageCode > 6) {
-                LanguageCode = 6;
+            if (LanguageCode > LANG_SPANISH) {
+                LanguageCode = LANG_SPANISH;
             }
 
             break;
     }
 
-    if (GamePad.Down(0x4000)) {
+    if (GamePad.Down(PAD_DOWN)) {
         select++;
     }
 
-    if (GamePad.Down(0x1000)) {
+    if (GamePad.Down(PAD_UP)) {
         select--;
     }
 
@@ -765,27 +747,27 @@ void DM_Sound() {
 
     switch (select) {
         case 0:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 bgm_no++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 bgm_no--;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 bgm_no -= 10;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 bgm_no += 10;
             }
 
-            if (GamePad.Down(0x10)) {
+            if (GamePad.Down(PAD_TRIANGLE)) {
                 bgm_seq++;
             }
 
-            if (GamePad.Down(0x80)) {
+            if (GamePad.Down(PAD_SQUARE)) {
                 bgm_seq--;
             }
 
@@ -797,84 +779,84 @@ void DM_Sound() {
                 bgm_seq = 3;
             }
 
-            if (GamePad.Down(0x20)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 SndBgmStop();
                 SndBgmInit();
                 SndBgmLoad(bgm_no);
                 SndBgmPlay(bgm_seq);
             }
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 SndBgmStop();
                 SndBgmInit();
             }
 
             break;
         case 1:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 SndBgmDisable(1);
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 SndBgmDisable(0);
             }
 
             break;
         case 2:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 se_no++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 se_no--;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 se_no -= 10;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 se_no += 10;
             }
 
-            if (GamePad.Down(0x20)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 SndSePlay(se_no, -1, 0);
             }
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 SndSeStop(se_no, 0);
             }
 
             break;
         case 3:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 set_no++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 set_no--;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 set_no -= 10;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 set_no += 10;
             }
 
-            if (GamePad.Down(0x20)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 SndSoundLoad(set_no);
             }
 
             break;
     }
 
-    if (GamePad.Down(0x4000)) {
+    if (GamePad.Down(PAD_DOWN)) {
         select++;
     }
 
-    if (GamePad.Down(0x1000)) {
+    if (GamePad.Down(PAD_UP)) {
         select--;
     }
 
@@ -969,7 +951,7 @@ void DM_Flag() {
     sprintf(work, "%sPARTY NUM       = %d\n", cursor[select == 6], status->party_size);
     AddStr(DebugFont, work);
     npc = SaveData->GetGrdNPCData(MapNo, chara);
-    talk = 0;
+    talk = false;
 
     if (npc) {
         talk = npc->talk_message;
@@ -984,11 +966,11 @@ void DM_Flag() {
         case 0:
             value = &game_no;
 
-            if (GamePad.Down(0x20)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 SaveData->SetGameFlag(game_no, 1);
             }
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 SaveData->SetGameFlag(game_no, 0);
             }
 
@@ -996,11 +978,11 @@ void DM_Flag() {
         case 1:
             value = &map_no;
 
-            if (GamePad.Down(0x20)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 SaveData->SetMapFlag(MapNo, map_no, 0);
             }
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 SaveData->SetMapFlag(MapNo, map_no, 1);
             }
 
@@ -1008,15 +990,15 @@ void DM_Flag() {
         case 2:
             value = &comp_no;
 
-            if (GamePad.Down(0x20)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 EditPartsInfo.SetCompEvent(comp_no, 1);
             }
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 EditPartsInfo.SetCompEvent(comp_no, 0);
             }
 
-            if (GamePad.Down(0x10)) {
+            if (GamePad.Down(PAD_TRIANGLE)) {
                 SV_GEORAMA_DATA *georama;
 
                 for (i = 0; i < 24; i++) {
@@ -1030,7 +1012,7 @@ void DM_Flag() {
                 }
             }
 
-            if (GamePad.Down(0x80)) {
+            if (GamePad.Down(PAD_SQUARE)) {
                 SV_GEORAMA_DATA *georama;
 
                 for (i = 0; i < 24; i++) {
@@ -1048,19 +1030,19 @@ void DM_Flag() {
         case 3: {
             int flag = SaveData->GetGameIntFlag(0);
 
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 flag++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 flag--;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 flag += 10;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 flag -= 10;
             }
 
@@ -1072,19 +1054,19 @@ void DM_Flag() {
             break;
         }
         case 4:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 SaveData->QuestDungeon(dun_map, 1);
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 SaveData->QuestDungeon(dun_map, -1);
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 SaveData->QuestDungeon(dun_map, 10);
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 SaveData->QuestDungeon(dun_map, -10);
             }
 
@@ -1092,19 +1074,19 @@ void DM_Flag() {
         case 5: {
             floor = status->floor_reached[dun_map];
 
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 floor++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 floor--;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 floor += 10;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 floor -= 10;
             }
 
@@ -1112,19 +1094,19 @@ void DM_Flag() {
             break;
         }
         case 6:
-            if (GamePad.Down(0x2000)) {
+            if (GamePad.Down(PAD_RIGHT)) {
                 status->party_size++;
             }
 
-            if (GamePad.Down(0x8000)) {
+            if (GamePad.Down(PAD_LEFT)) {
                 status->party_size--;
             }
 
-            if (GamePad.Down(8)) {
+            if (GamePad.Down(PAD_R1)) {
                 status->party_size += 10;
             }
 
-            if (GamePad.Down(4)) {
+            if (GamePad.Down(PAD_L1)) {
                 status->party_size -= 10;
             }
 
@@ -1132,15 +1114,15 @@ void DM_Flag() {
         case 7:
             value = &chara;
 
-            if (GamePad.Down(0x20) && npc) {
+            if (GamePad.Down(PAD_CIRCLE) && npc) {
                 npc->talk_message++;
             }
 
-            if (GamePad.Down(0x40) && npc) {
+            if (GamePad.Down(PAD_CROSS) && npc) {
                 npc->talk_message--;
             }
 
-            if (GamePad.Down(0x10)) {
+            if (GamePad.Down(PAD_TRIANGLE)) {
                 for (i = 0; i < 20; i++) {
                     SV_GRD_NPC *other = SaveData->GetGrdNPCData(MapNo, i);
 
@@ -1150,7 +1132,7 @@ void DM_Flag() {
                 }
             }
 
-            if (GamePad.Down(0x80)) {
+            if (GamePad.Down(PAD_SQUARE)) {
                 for (i = 0; i < 20; i++) {
                     SV_GRD_NPC *other = SaveData->GetGrdNPCData(MapNo, i);
 
@@ -1164,19 +1146,19 @@ void DM_Flag() {
     }
 
     if (value) {
-        if (GamePad.Down(0x2000)) {
+        if (GamePad.Down(PAD_RIGHT)) {
             (*value)++;
         }
 
-        if (GamePad.Down(0x8000)) {
+        if (GamePad.Down(PAD_LEFT)) {
             (*value)--;
         }
 
-        if (GamePad.Down(8)) {
+        if (GamePad.Down(PAD_R1)) {
             *value += 10;
         }
 
-        if (GamePad.Down(4)) {
+        if (GamePad.Down(PAD_L1)) {
             *value -= 10;
         }
 
@@ -1185,11 +1167,11 @@ void DM_Flag() {
         }
     }
 
-    if (GamePad.Down(0x4000)) {
+    if (GamePad.Down(PAD_DOWN)) {
         select++;
     }
 
-    if (GamePad.Down(0x1000)) {
+    if (GamePad.Down(PAD_UP)) {
         select--;
     }
 
@@ -1218,7 +1200,7 @@ static void DrawBound(CFrame *frame) {
     }
 
     frame->GetLWMatrix(matrix);
-    visible = 1;
+    visible = true;
     ApplyMatrixN(world, matrix, frame->corner, 8);
 
     for (i = 0; i < 8; i++) {
@@ -1495,8 +1477,8 @@ void EdStopSoundSrc() {
         now_play_se[i] = -1;
     }
 
-    SndSeStop(54, 0);
-    SndSeStop(52, 0);
+    SndSeStop(SE_AMBIENT_TOWN_PATTER, 0);
+    SndSeStop(SE_AMBIENT_TOWN_NOISE, 0);
 }
 
 /* How far a point is from a segment, and where on the segment it is nearest to. The projection is
@@ -1593,7 +1575,7 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
                 continue;
             }
 
-            if (effect->kind != 7 && effect->kind != 1 && effect->kind != 2) {
+            if (effect->kind != EDIT_EFFECT_SOUND && effect->kind != EDIT_EFFECT_FIRE_LARGE && effect->kind != EDIT_EFFECT_FIRE_SMALL) {
                 continue;
             }
 
@@ -1620,7 +1602,7 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
             se = (int) effect->sound_no;
 
             /* A torch and a fire are one sound at one range whatever the description says. */
-            if (effect->kind == 1 || effect->kind == 2) {
+            if (effect->kind == EDIT_EFFECT_FIRE_LARGE || effect->kind == EDIT_EFFECT_FIRE_SMALL) {
                 se = 54;
                 near_dist = 20.0f;
                 far_dist = 150.0f;
@@ -1646,7 +1628,7 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
             }
         }
 
-        if (parts[i]->subtype != 2) {
+        if (parts[i]->subtype != MAP_PARTS_SUBTYPE_RIVER) {
             continue;
         }
 
@@ -1824,10 +1806,10 @@ void EdThunderEffect(int map, CEditGround *ground) {
                     }
                 }
 
-                SndSePlay(rand() % 6 + 67, -1, 0);
+                SndSePlay(rand() % 6 + SE_THUNDER_RUMBLE, -1, 0);
 
                 if (start_thunder == 0) {
-                    SndSePlay(74, -1, 0);
+                    SndSePlay(SE_THUNDER_CLAP, -1, 0);
                     start_thunder = 1;
                 }
 
@@ -1995,7 +1977,7 @@ void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func_data, EDIT_EFFECT
             return;
         }
 
-        if (effects->kind <= 0) {
+        if (effects->kind <= EDIT_EFFECT_NONE) {
             break;
         }
     }
@@ -2037,7 +2019,7 @@ static int InvertItemNo(int item) {
 }
 
 void EdUseItemInit() {
-    use_item_list[0] = 100;
+    use_item_list[0] = ITEM_ATTACH_PEARL;
     use_item_list[1] = -1;
     use_item = -1;
 }
@@ -2107,37 +2089,37 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
 #endif
 
     switch (menu_mode) {
-        case 1:
-            EditMenuInit(texture_block, EditMenuStatus.mode == 0);
-            return 6;
-        case 2:
-            BattleMenuInit(texture_block, 1);
+        case ED_MENU_EDIT:
+            EditMenuInit(texture_block, EditMenuStatus.mode == EDIT_MENU_MODE_PLACE);
+            return ED_MODE_GEORAMA_MENU;
+        case ED_MENU_BATTLE:
+            BattleMenuInit(texture_block, BATTLE_MENU_MODE_TOWN);
             break;
-        case 3:
-        case 4:
+        case ED_MENU_SHOP:
+        case ED_MENU_UNK_4:
             ShopNoInput(texture_block, shop_no, 1);
             break;
-        case 5:
+        case ED_MENU_USE_ITEM:
             InitEventItemSelect(16, use_item_list, &SaveData->GetDngStatus()->item_pack, 180, 210, 1, 0);
             break;
-        case 9:
+        case ED_MENU_CHANGE_ESA:
             InitEventItemSelect(16, use_item_list, &SaveData->GetDngStatus()->item_pack, 180, 210, 1, 1);
             break;
-        case 6:
+        case ED_MENU_NAME_REGISTRY:
             InitNameRegist(name_reg_chara, 16, 0);
             break;
-        case 7:
-            InitMenuMove(5, 16, (u_long128 *) read_buffer);
+        case ED_MENU_WORLD_MAP:
+            InitMenuMove(MENU_MOVE_WORLD_MAP_DIRECT, 16, (u_long128 *) read_buffer);
             break;
-        case 8:
+        case ED_MENU_FISHING_EXCHANGE:
             InitFishingExchange(0, texture_block, 0);
             break;
-        case 10:
+        case ED_MENU_FISH_RANKING:
             InitFishRecordView(0, texture_block, 0);
             break;
     }
 
-    return 8;
+    return ED_MODE_MENU;
 }
 
 void EdExitMenu() {
@@ -2152,7 +2134,7 @@ int EdMenuMode() {
     finished = 0;
 
     switch (menu_mode) {
-        case 2:
+        case ED_MENU_BATTLE:
             finished = !BattleMenuCursor();
             BattleMenuDraw();
 
@@ -2161,26 +2143,26 @@ int EdMenuMode() {
             }
 
             break;
-        case 3:
-        case 4:
+        case ED_MENU_SHOP:
+        case ED_MENU_UNK_4:
             finished = CommonShopLoop();
             break;
-        case 5:
-        case 9:
+        case ED_MENU_USE_ITEM:
+        case ED_MENU_CHANGE_ESA:
             finished = EventItemSelectLoop(&use_item);
             break;
-        case 6:
+        case ED_MENU_NAME_REGISTRY:
             finished = NameEnterKey();
             NameEnterDraw();
             break;
-        case 7:
+        case ED_MENU_WORLD_MAP:
             finished = !MenuMoveKey();
             DrawMenuMove();
             break;
-        case 8:
+        case ED_MENU_FISHING_EXCHANGE:
             finished = FishingExchangeLoop();
             break;
-        case 10:
+        case ED_MENU_FISH_RANKING:
             finished = FishRecordViewLoop();
             break;
     }
@@ -2245,7 +2227,7 @@ int EdCheckItemOver() {
 }
 
 void EdClearItemOverFlag() {
-    SaveData->GetDngStatus()->overflow_flag = 0;
+    SaveData->GetDngStatus()->overflow_flag = false;
 }
 
 int EdCheckItem(int item) {
@@ -2428,7 +2410,7 @@ void EdSystemMesStep() {
         EditSystemMes.Step();
     }
 
-    if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(64)) {
+    if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(PAD_CROSS)) {
         if (SystemMesCount > 0) {
             SystemMesCount--;
         }
@@ -2627,13 +2609,13 @@ void EdStepOpenItemBox() {
             return;
         }
 
-        open_angle = -(1.5707964f - 1.5707964f * (float) (ibox_open_cnt - 20) / 20.0f);
+        open_angle = -(HALF_PI - HALF_PI * (float) (ibox_open_cnt - 20) / 20.0f);
         lid->SetRotation(open_angle, 0.0f, 0.0f);
     } else {
         if (ibox_open_cnt >= 6) {
-            close_angle = 1.5707964f - 1.5707964f * (float) (ibox_open_cnt - 5) / 5.0f;
+            close_angle = HALF_PI - HALF_PI * (float) (ibox_open_cnt - 5) / 5.0f;
         } else {
-            close_angle = 1.5707964f * (float) ibox_open_cnt / 5.0f;
+            close_angle = HALF_PI * (float) ibox_open_cnt / 5.0f;
         }
 
         lid->SetRotation(0.2f * -close_angle, 0.0f, 0.0f);
@@ -2823,22 +2805,22 @@ int EdMenuLoop(ClsMes *message) {
 
     message->Step();
 
-    if (GamePad.Down(0x60) != 0) {
+    if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
         // A confirm on the last page closes the window and leaves it ready
         // for the next one.
-        if (message->State() == 3) {
+        if (message->State() == CLSMES_SHOWN) {
             message->text_rate = message->text_rate_set;
             message->mes_made = -1;
-            message->fade_in = 0;
+            message->fade_in = false;
             message->text_columns = MES_WIN_COLUMNS;
             message->text_rows = 0xA;
             message->text_len = 0;
             message->text_width = 0;
             message->text_height = 0;
             message->fade = 0.0f;
-            message->fade_in = 1;
+            message->fade_in = true;
             message->text_rate = message->text_rate_set;
-            message->waiting = 0;
+            message->waiting = false;
             message->text_at = 0.0f;
             message->text_no = 0;
             message->text_from = 0;
@@ -2860,14 +2842,14 @@ int EdMenuLoop(ClsMes *message) {
             }
 
             message->value = 0;
-            message->value_signed = 0;
-            message->value_show = 1;
-            message->value_narrow = 0;
+            message->value_signed = false;
+            message->value_show = true;
+            message->value_narrow = false;
             message->space_width = -1;
             message->space_area = -1;
             message->cursor_row = -1;
             message->cursor_y = 0;
-            message->cursor_lit = 0;
+            message->cursor_lit = false;
 
             for (int i = 0; i < 10; i++) {
                 message->line_pos[i].x = -1;
@@ -2877,7 +2859,7 @@ int EdMenuLoop(ClsMes *message) {
             return 1;
         }
 
-        if (message->State() == 5) {
+        if (message->State() == CLSMES_PAGE_WAIT) {
             message->GoNextPage();
         } else {
             message->text_rate = 0.0f;

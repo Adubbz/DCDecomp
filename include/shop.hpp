@@ -5,6 +5,112 @@
 #include "itemdata.hpp"
 #include "stockitem.hpp"
 
+/**
+ * What the shopkeeper is saying or prompting, as ShopMenuWork::talk_mode holds it.
+ */
+// clang-format off
+enum ShopTalkMode {
+    SHOP_TALK_NONE               = 0,  /**< Shopping. */
+    SHOP_TALK_FADE_IN            = 1,  /**< Fading in. */
+    SHOP_TALK_FADE_OUT           = 2,  /**< Fading out. */
+    SHOP_TALK_GREETING           = 3,  /**< Greeting. */
+    SHOP_TALK_CANNOT_SELL        = 4,  /**< The item cannot be sold. */
+    SHOP_TALK_WEAPON_EQUIPPED    = 5,  /**< The weapon is equipped. */
+    SHOP_TALK_DEAL_PENDING       = 6,  /**< Marked goods wait to be dealt. */
+    SHOP_TALK_CANNOT_CHARGE      = 7,  /**< The item cannot be stored. */
+    SHOP_TALK_STOCK_FULL         = 8,  /**< The storage is full. */
+    SHOP_TALK_UNK_9              = 9,  /**< Dismissed like a message; never set. */
+    SHOP_TALK_INVENTORY_OVERFLOW = 10, /**< The inventory would overflow. */
+    SHOP_TALK_NO_SPACE           = 11, /**< No room on the board. */
+    SHOP_TALK_CONFIRM_DEAL       = 12, /**< Confirming the deal. */
+    SHOP_TALK_BUY_PROMPT         = 13, /**< Asking whether to buy. */
+    SHOP_TALK_SELL_PROMPT        = 14, /**< Asking whether to sell. */
+    SHOP_TALK_UNK_10             = 16, /**< Dismissed like a message; never set. */
+    SHOP_TALK_CHARGE_PUT_PROMPT  = 17, /**< Asking whether to store an item. */
+    SHOP_TALK_CHARGE_TAKE_PROMPT = 18, /**< Asking whether to take out an item. */
+    SHOP_TALK_DEAL_DONE          = 20, /**< The deal is done. */
+    SHOP_TALK_NOT_ENOUGH_MONEY   = 21, /**< Too little money. */
+    SHOP_TALK_TOO_MUCH_MONEY     = 22, /**< The wallet would overflow. */
+    SHOP_TALK_NOTHING_MARKED     = 23, /**< Nothing is marked. */
+    SHOP_TALK_LEAVE_PROMPT       = 24, /**< Asking whether to leave. */
+    SHOP_TALK_GOODBYE            = 25, /**< Saying goodbye. */
+    SHOP_TALK_BUTTON_FLASH       = 26, /**< Check button flashing. */
+};
+
+// clang-format on
+
+/**
+ * Whether the shopkeeper is talking, as ShopMenuWork::msg_mode holds it.
+ */
+// clang-format off
+enum ShopMsgMode {
+    SHOP_MSG_IDLE    = 0, /**< Waiting. */
+    SHOP_MSG_TALKING = 1, /**< Talking. */
+};
+
+// clang-format on
+
+/**
+ * Which board the shop cursor is on, as ShopMenuWork::side holds it.
+ */
+// clang-format off
+enum ShopSide {
+    SHOP_SIDE_STOCK        = 0, /**< The shop's goods or the storage. */
+    SHOP_SIDE_PERSONAL     = 1, /**< The player's board. */
+    SHOP_SIDE_CHECK_BUTTON = 2, /**< The item shop's check button. */
+};
+
+// clang-format on
+
+/**
+ * Who a shop board slot's item belongs to.
+ */
+// clang-format off
+enum ShopSlotState {
+    SHOP_SLOT_EMPTY       = 0, /**< Empty. */
+    SHOP_SLOT_SHOP_GOOD   = 1, /**< One of the shop's goods. */
+    SHOP_SLOT_PLAYER_ITEM = 2, /**< One of the player's items. */
+};
+
+// clang-format on
+
+/**
+ * Which shop is open, as ChargeOrShopFlag holds it.
+ */
+// clang-format off
+enum ShopKind {
+    SHOP_KIND_CHARGE = 0, /**< The storage shop. */
+    SHOP_KIND_ITEM   = 1, /**< An item shop. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the fish point exchange, as FishMenuWork::fade_mode holds them.
+ */
+// clang-format off
+enum FishExchangeMode {
+    FISH_EXCHANGE_FADE_IN  = 0, /**< Opening. */
+    FISH_EXCHANGE_FADE_OUT = 1, /**< Closing. */
+    FISH_EXCHANGE_SELECT   = 3, /**< Choosing a prize. */
+    FISH_EXCHANGE_CONFIRM  = 4, /**< Confirming. */
+    FISH_EXCHANGE_REFUSE   = 5, /**< Refusing. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the fishing record view, as FishRecordMenuWork::fade_mode holds them.
+ */
+// clang-format off
+enum FishRecordMode {
+    FISH_RECORD_FADE_IN  = 0, /**< Opening. */
+    FISH_RECORD_FADE_OUT = 1, /**< Closing. */
+    FISH_RECORD_VIEW     = 2, /**< Viewing. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -18,7 +124,7 @@ union MENU_ITEMDATA {
     s32         volume;      /**< A dungeon item's volume. */
     WEAPON_HAVE weapon;      /**< A weapon's record. */
     ATTACH_LIST attach;      /**< An attachment's record. */
-    s16         param[0x7C]; /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
+    s16         param[0x7C]; /**< The record read as halfwords; the stat attachments ITEM_ATTACH_ATTACK to ITEM_ATTACH_MAGICAL_POWER each set one of an attachment's stats. */
 };
 
 STATIC_ASSERT(sizeof(MENU_ITEMDATA) == 0xF8);
@@ -39,7 +145,7 @@ STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
  */
 struct IHAVEITEM {
     s32 slot_state; /**< State of the board slot the held item was taken from, handed back to the slot it is put down in. */
-    s32 from_page;  /**< Board the held item was taken from: 0 items, 1 weapons, 2 attachments, or a battle-menu board. */
+    s32 from_page;  /**< Board the held item was taken from: a PersonalBoardPage, or a WepMenuMode attachment screen in the weapon menu. */
     s32 last_slot;  /**< Slot the item shop last picked the held item up from. */
     s32 from_slot;  /**< Slot on that board the held item was taken from, where a cancel returns it. */
     s16 item_no;    /**< The item held. */

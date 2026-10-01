@@ -3,6 +3,74 @@
 #include "common.h"
 
 /**
+ * Opcodes of the script virtual machine, as vmcode_t::op holds them.
+ */
+// clang-format off
+enum RS_OPCODE {
+    RS_OP_LOAD       = 1,  /**< Push a variable. */
+    RS_OP_LOAD_ADDR  = 2,  /**< Push a variable's address. */
+    RS_OP_PUSH_CONST = 3,  /**< Push a constant. */
+    RS_OP_POP        = 4,  /**< Pop. */
+    RS_OP_STORE      = 5,  /**< Store. */
+    RS_OP_ADD        = 6,  /**< Add. */
+    RS_OP_SUB        = 7,  /**< Subtract. */
+    RS_OP_MUL        = 8,  /**< Multiply. */
+    RS_OP_DIV        = 9,  /**< Divide. */
+    RS_OP_MOD        = 10, /**< Remainder. */
+    RS_OP_NEG        = 11, /**< Negate. */
+    RS_OP_ITOF       = 12, /**< Integer to float. */
+    RS_OP_FTOI       = 13, /**< Float to integer. */
+    RS_OP_CMP        = 14, /**< Compare. */
+    RS_OP_RET        = 15, /**< Return. */
+    RS_OP_JMP        = 16, /**< Jump. */
+    RS_OP_JMP_FALSE  = 17, /**< Jump if false. */
+    RS_OP_JMP_TRUE   = 18, /**< Jump if true. */
+    RS_OP_CALL       = 19, /**< Call. */
+    RS_OP_PRINT      = 20, /**< Print. */
+    RS_OP_EXT        = 21, /**< Call an external function. */
+    RS_OP_WAIT       = 23, /**< Wait. */
+    RS_OP_AND        = 24, /**< Logical and. */
+    RS_OP_OR         = 25, /**< Logical or. */
+    RS_OP_NOT        = 26, /**< Logical not. */
+    RS_OP_END        = 27, /**< End. */
+    RS_OP_SKIP_END   = 28, /**< Clear the skip wait. */
+    RS_OP_SIN        = 29, /**< Sine. */
+    RS_OP_COS        = 30, /**< Cosine. */
+};
+
+// clang-format on
+
+/**
+ * How a script load addresses its variable, as vmcode_t::arg2 holds it.
+ */
+// clang-format off
+enum RS_ADDR_MODE {
+    RS_ADDR_LOCAL               = 1,  /**< Local slot. */
+    RS_ADDR_LOCAL_INDEX         = 2,  /**< Indexed local slot. */
+    RS_ADDR_POINTER_INDEX       = 4,  /**< Indexed through a pointer. */
+    RS_ADDR_LOCAL_FLOAT         = 8,  /**< Local slot, as a float. */
+    RS_ADDR_LOCAL_INDEX_FLOAT   = 16, /**< Indexed local slot, as a float. */
+    RS_ADDR_POINTER_INDEX_FLOAT = 32, /**< Indexed through a pointer, as a float. */
+};
+
+// clang-format on
+
+/**
+ * Comparisons of the script compare opcode, as vmcode_t::arg1 holds them.
+ */
+// clang-format off
+enum RS_COMPARE {
+    RS_CMP_EQ = 40, /**< Equal. */
+    RS_CMP_NE = 41, /**< Not equal. */
+    RS_CMP_LT = 42, /**< Less than. */
+    RS_CMP_LE = 43, /**< Less than or equal. */
+    RS_CMP_GT = 44, /**< Greater than. */
+    RS_CMP_GE = 45, /**< Greater than or equal. */
+};
+
+// clang-format on
+
+/**
  * A tagged value stored on the script interpreter's operand stack.
  */
 struct RS_STACKDATA {
@@ -27,7 +95,7 @@ enum {
  * A single virtual-machine instruction and its two opcode-specific operands.
  */
 struct vmcode_t {
-    int op;   /**< Selects the operation to execute. */
+    int op;   /**< Selects the operation to execute. @see RS_OPCODE. */
     int arg1; /**< Supplies the operation's first operand. */
     int arg2; /**< Supplies the operation's second operand. */
 };

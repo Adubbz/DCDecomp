@@ -147,7 +147,7 @@ void InitReadBG() {
     int i;
 
     for (i = 0; i < 32; i++) {
-        bg_read_info[i].busy = 0;
+        bg_read_info[i].busy = false;
     }
 
     old_vsync = -1;
@@ -212,7 +212,7 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     }
 
     strcpy(info->name, name);
-    info->busy = 1;
+    info->busy = true;
     info->id = 0;
     info->done = 0;
     info->buffer = buffer;

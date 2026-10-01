@@ -99,7 +99,7 @@ void ToanKey_Play() {
     float time = CharaMain.motion_type.state.time;
     int   damage = NowWeaponHave->attack;
 
-    if (StatusErrCheck(8) != 0) {
+    if (StatusErrCheck(AILMENT_STAMINA) != 0) {
         damage *= 2;
     }
 
@@ -474,7 +474,7 @@ void ToanKey_Play() {
                     BtActStatus.action_no = 0x18;
                     BtActStatus.motion_no = 0x18;
                     driveNoInterpolate = 1;
-                    SndSePlay(0x1A7, -1, 0);
+                    SndSePlay(SE_CHARA_SHOUT_4, -1, 0);
                 }
             } else {
                 if (lockOnTargetFlag != 0) {
@@ -554,7 +554,7 @@ void ToanKey_Play() {
             driveNoInterpolate = 1;
             CWeaponFx.Set(0x14, 16.0f, 64.0f);
             CharaMain.motion_type.state.time = CharaMain.motion_type.motion_info[3].start;
-            SndSePlay(0x1A6, -1, 0);
+            SndSePlay(SE_CHARA_SHOUT_3, -1, 0);
         }
     }
 
@@ -657,7 +657,7 @@ void UngagaKey_Play() {
 
     int damage = NowWeaponHave->attack;
 
-    if (StatusErrCheck(8) != 0) {
+    if (StatusErrCheck(AILMENT_STAMINA) != 0) {
         damage *= 2;
     }
 
@@ -867,7 +867,7 @@ void UngagaKey_Play() {
         if (time >= end - 2.0f && time <= end) {
             BtActStatus.motion_no = 14;
             BtActStatus.action_no = 14;
-            SndSePlay(0x1A6, -1, 0);
+            SndSePlay(SE_CHARA_SHOUT_3, -1, 0);
         }
     }
 
@@ -961,7 +961,7 @@ void GoroKey_Play() {
     float time = CharaMain.motion_type.state.time;
     int   damage = NowWeaponHave->attack;
 
-    if (StatusErrCheck(8) != 0) {
+    if (StatusErrCheck(AILMENT_STAMINA) != 0) {
         damage *= 2;
     }
 
@@ -1026,23 +1026,23 @@ void GoroKey_Play() {
     }
 
     if (time >= 98.0f && time < 98.3f) {
-        SndSePlay(0x1A4, -1, 0);
+        SndSePlay(SE_CHARA_SHOUT, -1, 0);
     }
 
     if (time >= 471 && time < 471.4f) {
-        SndSePlay(0x1A5, -1, 0);
+        SndSePlay(SE_CHARA_SHOUT_2, -1, 0);
     }
 
     if (time >= 471 && time < 471.4f) {
-        SndSePlay(0x192, -1, 0);
+        SndSePlay(SE_CHARA_ACTION_3, -1, 0);
     }
 
     if (time >= 478.0f && time < 478.4f) {
-        SndSePlay(0x192, -1, 0);
+        SndSePlay(SE_CHARA_ACTION_3, -1, 0);
     }
 
     if (time >= 481 && time < 481.4f) {
-        SndSePlay(0x193, -1, 0);
+        SndSePlay(SE_CHARA_ACTION_4, -1, 0);
     }
 
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
@@ -1130,7 +1130,7 @@ void GoroKey_Play() {
                 BtActStatus.can_act = 0;
                 BtActStatus.invincible_frames = 0x3E7;
                 SwordDmgCheck1(2.0f, 0);
-                SndSePlay(0x108, -1, 0);
+                SndSePlay(SE_GORO_SMASH, -1, 0);
             }
         }
     }

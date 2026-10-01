@@ -9,6 +9,91 @@
 #include "runscript.hpp"
 #include "textureanime.hpp"
 
+/**
+ * What the dungeon game loop runs, as BtGameModeFlag holds it.
+ */
+// clang-format off
+enum BtGameMode {
+    BT_GAME_MODE_PLAY          = 1, /**< Play. */
+    BT_GAME_MODE_BATTLE_MENU   = 2, /**< Battle menu. */
+    BT_GAME_MODE_ITEM_SELECT   = 3, /**< Event item selection. */
+    BT_GAME_MODE_ENTRANCE_MENU = 4, /**< Dungeon entrance menu. */
+    BT_GAME_MODE_CHARA_CHANGE  = 5, /**< Character change. */
+    BT_GAME_MODE_ESCAPE_MSG    = 7, /**< Escape message. */
+};
+
+// clang-format on
+
+/**
+ * What MoveChara is doing, as gameTask holds it; each INIT task is followed by its LOOP task.
+ */
+// clang-format off
+enum GameTask {
+    GAME_TASK_PLAY                     = 0x0,   /**< Under the player's control. */
+    GAME_TASK_EYE_CAMERA               = 0xA,   /**< First-person camera. */
+    GAME_TASK_MENU_OPEN                = 0x1E,  /**< Opening the battle menu. */
+    GAME_TASK_MENU_WAIT_FRAME          = 0x1F,  /**< Waiting to capture the frame behind the menu. */
+    GAME_TASK_MENU_SKIP                = 0x20,  /**< Passed over. */
+    GAME_TASK_MENU_INIT                = 0x21,  /**< Starting the battle menu. */
+    GAME_TASK_MENU_CLOSE               = 0x22,  /**< Restoring play after the battle menu. */
+    GAME_TASK_BOX_BIG_INIT             = 0x78,  /**< Starting a large treasure box. */
+    GAME_TASK_BOX_BIG_LOOP             = 0x79,  /**< Running a large treasure box. */
+    GAME_TASK_BOX_SMALL_INIT           = 0x82,  /**< Starting a small treasure box. */
+    GAME_TASK_BOX_SMALL_LOOP           = 0x83,  /**< Running a small treasure box. */
+    GAME_TASK_ATRA_GET_INIT            = 0x8C,  /**< Starting an Atla pickup. */
+    GAME_TASK_ATRA_GET_LOOP            = 0x8D,  /**< Running an Atla pickup. */
+    GAME_TASK_ATRA_REFUSE_INIT         = 0x8E,  /**< Telling another character that only Toan takes Atla. */
+    GAME_TASK_ATRA_REFUSE_WAIT         = 0x8F,  /**< Waiting for that message to close. */
+    GAME_TASK_MAPJUMP_FADE_START       = 0x97,  /**< Fading out for a map jump. */
+    GAME_TASK_MAPJUMP_FADE_WAIT        = 0x98,  /**< Jumping once the fade ends. */
+    GAME_TASK_PAUSE                    = 0x9B,  /**< Paused. */
+    GAME_TASK_URA_SWAP                 = 0xA0,  /**< Switching between the floor and its back floor. */
+    GAME_TASK_ESCAPE_INIT              = 0xAA,  /**< Starting an escape. */
+    GAME_TASK_ESCAPE_LOOP              = 0xAB,  /**< Running an escape. */
+    GAME_TASK_EXIT_FADE_START          = 0xAF,  /**< Fading out to leave the dungeon. */
+    GAME_TASK_EXIT_FADE_WAIT           = 0xB0,  /**< Leaving for the town once the fade ends. */
+    GAME_TASK_DEAD                     = 0xC8,  /**< Knocked out. */
+    GAME_TASK_DEAD_GAMEOVER            = 0xC9,  /**< Party defeated. */
+    GAME_TASK_DEAD_CHANGE_CHARA        = 0xCA,  /**< Choosing a character after a knockout. */
+    GAME_TASK_DEBUG_OPEN               = 0xDC,  /**< Opening the debug overlay. */
+    GAME_TASK_DEBUG_MENU               = 0xDD,  /**< Debug overlay. */
+    GAME_TASK_DEBUG_RUN_EVENT          = 0xDE,  /**< Running the debug overlay's event. */
+    GAME_TASK_DEBUG_RELOAD_MONSTER     = 0xE3,  /**< Reloading a monster. */
+    GAME_TASK_DEBUG_RELOAD_MONSTER_SET = 0xE4,  /**< Reloading a monster set. */
+    GAME_TASK_UNK_F0                   = 0xF0,  /**< Only compared; never set. */
+    GAME_TASK_CHARA_CHANGED            = 0x122, /**< Showing a character change. */
+    GAME_TASK_UNK_123                  = 0x123, /**< Does nothing; never set. */
+    GAME_TASK_CHARA_SELECT_LOOP        = 0x127, /**< Running the character selection. */
+    GAME_TASK_SCRIPT_START             = 0x190, /**< Starting a system script. */
+    GAME_TASK_SCRIPT_RUN               = 0x191, /**< Running a system script. */
+    GAME_TASK_SCRIPT_ITEM_SELECT       = 0x19A, /**< Script's item selection. */
+    GAME_TASK_SCRIPT_RESTART           = 0x1F4, /**< Returning to the system script. */
+    GAME_TASK_GATE_KEY_LOOP            = 0x1FE, /**< Running a gate key pickup. */
+    GAME_TASK_ATTACH_LOOP              = 0x208, /**< Running an attachment pickup. */
+    GAME_TASK_REVIVE_WAIT              = 0x212, /**< Recovering after a revival item. */
+    GAME_TASK_REVIVE_DONE              = 0x213, /**< Waiting for the revival message to close. */
+    GAME_TASK_SYSMES_WAIT              = 0x21C, /**< Waiting for a system message to close. */
+    GAME_TASK_FLOOR_FADE_RESET         = 0x226, /**< Resetting the floor once a fade ends. */
+};
+
+// clang-format on
+
+/**
+ * Transition a system script asks the game loop for, as BT_EVENT_INFO::request holds it.
+ */
+// clang-format off
+enum BtEventRequest {
+    BT_REQUEST_NONE            = 0, /**< Nothing. */
+    BT_REQUEST_ITEM_WINDOW     = 1, /**< Open the item use window. */
+    BT_REQUEST_URA_DUNGEON     = 2, /**< Switch to the back floor. */
+    BT_REQUEST_ENTRANCE_WINDOW = 3, /**< Open the entrance window. */
+    BT_REQUEST_GO_DUNGEON      = 4, /**< Go into the dungeon. */
+    BT_REQUEST_RUN_SCRIPT      = 5, /**< Run a script. */
+    BT_REQUEST_ESCAPE_WINDOW   = 6, /**< Open the escape window. */
+};
+
+// clang-format on
+
 class CSHOT_EFFECT;
 class CWeaponEffect;
 class CDispCtrl;
@@ -66,7 +151,7 @@ struct BT_EVENT_INFO {
     s32           floor_title_off;         /**< Suppresses the floor title when the floor starts. */
     s32           fade_on_start;           /**< Whether the next system script resets the editor fade when it starts. */
     s32           bee_npc;                 /**< NPC unit the bee follows, or -1 when there is no bee. */
-    s32           request;                 /**< Dungeon transition requested by the event script. */
+    s32           request;                 /**< Dungeon transition requested by the event script. @see BtEventRequest. */
     s32           chained_script_no;       /**< Script _RUN_SCRIPT_NO asks to run after the current one ends. */
     s32           clear_script_no;         /**< Script to run once every monster on the floor is defeated, or -1. */
     s32           clear_script_ext_memory; /**< ext_memory setting for clear_script_no. */
@@ -807,7 +892,7 @@ extern int frameCaputer;
 extern int miniItemSelNo;
 
 /**
- * Mode the battle loop runs its menus in.
+ * Mode the battle loop runs its menus in. @see BtGameMode.
  */
 extern int BtGameModeFlag;
 

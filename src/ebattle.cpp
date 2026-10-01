@@ -178,9 +178,9 @@ int ok_effect_button;
 int viewMode;
 /** Movement mode of the editor character. */
 int chara_mode;
-/** Whether the editor character is fishing. */
+/** Step of the editor character's fishing. @see EdFishingState. */
 int chara_fishing;
-/** Message shown while fishing. */
+/** Step of the fishing catch message. @see EdFishingMessageStep. */
 int fishing_mes;
 /** Horizontal angle of the first-person view. */
 float viewAngleH;
@@ -547,9 +547,9 @@ void EBSetKey(float time, int buttons, int mode) {
         }
 
         key->mode = mode;
-        key->passed = 0;
+        key->passed = false;
         key->hit = 0;
-        key->highlight = 0;
+        key->highlight = false;
     }
 }
 
@@ -645,13 +645,13 @@ int EBLoop() {
             early = (6 - key->mode) << 6;
         }
 
-        key->highlight = 0;
+        key->highlight = false;
 
         if (distance > 0.0f) {
             if (distance < 48.0f) {
                 active = key;
             } else {
-                key->passed = 1;
+                key->passed = true;
             }
 
             if (distance < 24.0f) {
@@ -663,13 +663,13 @@ int EBLoop() {
             }
 
             if (early > 0 && distance <= 16.0f - early) {
-                key->highlight = 1;
+                key->highlight = true;
             }
         }
 
         if (debug_mode != 0 && eb_count == key->frame) {
-            SndSePlay(9, -1, 0);
-            SndSePlay(1, -1, 0);
+            SndSePlay(SE_EB_HIT, -1, 0);
+            SndSePlay(MENU_SOUND_CONFIRM, -1, 0);
         }
     }
 
@@ -681,9 +681,9 @@ int EBLoop() {
         if (active->pressed == active->buttons) {
             if (active->hit == 0) {
                 if (cool) {
-                    SndSePlay(10, -1, 0);
+                    SndSePlay(SE_EB_HIT_COOL, -1, 0);
                 } else {
-                    SndSePlay(9, -1, 0);
+                    SndSePlay(SE_EB_HIT, -1, 0);
                 }
 
                 set_draw_ok(cool, active - eb_key);
@@ -761,8 +761,8 @@ void EBDraw() {
 #ifdef PAL
     int lang = LanguageCode;
 
-    if (lang < 0 || lang >= 7) {
-        lang = 1;
+    if (lang < LANG_JAPANESE || lang >= LANG_COUNT) {
+        lang = LANG_ENGLISH_US;
     }
 
 #endif
@@ -842,7 +842,7 @@ void EBDraw() {
         }
 
         if (eb_intro_cnt % 8 == 0) {
-            SndSePlay(8, -1, 0);
+            SndSePlay(SE_EB_INTRO_TICK, -1, 0);
         }
 
         return;
@@ -1024,8 +1024,8 @@ static void draw_ok(int x) {
     CRect_i_ cool_texel(0, 0xE0, 0x32, 0x10);
     int      lang = LanguageCode;
 
-    if (lang < 0 || lang >= 7) {
-        lang = 1;
+    if (lang < LANG_JAPANESE || lang >= LANG_COUNT) {
+        lang = LANG_ENGLISH_US;
     }
 
     success_texel = OkRect[lang];
@@ -1377,8 +1377,8 @@ void EyeCamera(CCamera *camera, CCharacter *character, int right_stick) {
         float rate = 0.02f;
         viewAngleH -= stick_x * rate;
 
-        if (viewAngleH < -3.1415927f) {
-            viewAngleH += 6.2831855f;
+        if (viewAngleH < -PI) {
+            viewAngleH += TWO_PI;
         }
     }
 
@@ -1386,8 +1386,8 @@ void EyeCamera(CCamera *camera, CCharacter *character, int right_stick) {
         float rate = 0.02f;
         viewAngleH -= stick_x * rate;
 
-        if (viewAngleH > 3.1415927f) {
-            viewAngleH -= 6.2831855f;
+        if (viewAngleH > PI) {
+            viewAngleH -= TWO_PI;
         }
     }
 
@@ -1414,8 +1414,8 @@ void EdInitCameraParam(CCameraFollow *camera) {
 void EdMoveCharaInit() {
     viewMode = 0;
     chara_mode = 0;
-    chara_fishing = 0;
-    fishing_mes = 0;
+    chara_fishing = ED_FISHING_INIT;
+    fishing_mes = ED_FISHING_MES_EVALUATE;
 }
 
 /**
@@ -1606,7 +1606,7 @@ void EdMoveChara() {
     lx = GetLXf();
     ly = GetLYf();
 
-    if (key_lock != 0 || chara_fishing > 1) {
+    if (key_lock != 0 || chara_fishing > ED_FISHING_STAND) {
         lx = ly = 0.0f;
     }
 
@@ -1662,7 +1662,7 @@ void EdMoveChara() {
         }
 
         if (move_x != 0.0f || move_z != 0.0f) {
-            chara->SetRotation(0.0f, AngleInterpolate(rot[1], atan2f(move_x, move_z), 0.2f, 0), 0.0f);
+            chara->SetRotation(0.0f, AngleInterpolate(rot[1], atan2f(move_x, move_z), 0.2f, INTERPOLATE_STEP), 0.0f);
         }
     } else if (interior != 0) {
         if (lx == 0.0f) {
@@ -1673,12 +1673,12 @@ void EdMoveChara() {
         chara->GetRotation(eye_rot);
         eye_rot[1] -= 0.04f * lx;
 
-        if (eye_rot[1] > 3.1415927f) {
-            eye_rot[1] -= 6.2831855f;
+        if (eye_rot[1] > PI) {
+            eye_rot[1] -= TWO_PI;
         }
 
-        if (eye_rot[1] < -3.1415927f) {
-            eye_rot[1] += 6.2831855f;
+        if (eye_rot[1] < -PI) {
+            eye_rot[1] += TWO_PI;
         }
 
         angle = eye_rot[1];
@@ -1698,12 +1698,12 @@ void EdMoveChara() {
         }
     }
 
-    if ((chara_mode & 6) == 0 && chara_fishing < 2) {
+    if ((chara_mode & 6) == 0 && chara_fishing < ED_FISHING_CAST_START) {
         chara->SetMotion(motion, 0);
         chara->SetMotionSpeed(motion_speed);
     }
 
-    if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < 2) {
+    if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < ED_FISHING_CAST_START) {
         CVector3_f_ jump;
         chara->GetVelocity(&jump);
         jump.y = 2.0f;
@@ -1842,7 +1842,7 @@ void EdMoveChara() {
 
     shallow = 0;
 
-    if (chara->move_info.ground_found != 0 && chara->move_info.poly.attr.area_kind == 10) {
+    if (chara->move_info.ground_found != 0 && chara->move_info.poly.attr.area_kind == AREA_KIND_HIGH_CAMERA) {
         shallow = 1;
     }
 
@@ -2053,9 +2053,9 @@ void EdMoveChara() {
 
         if (rx == 0.0f) {
             if (left_clear != 0 && PadOn(8) != 0) {
-                camera->AddAngle(-0.017453292f);
+                camera->AddAngle(-DEG_TO_RAD);
             } else if (right_clear != 0 && PadOn(4) != 0) {
-                camera->AddAngle(0.017453292f);
+                camera->AddAngle(DEG_TO_RAD);
             } else {
                 drift = 1;
             }
@@ -2102,7 +2102,7 @@ void EdMoveChara() {
                     turn = 1.0f;
                 }
 
-                camera->AddAngle(2.0f * (-0.017453292f * turn));
+                camera->AddAngle(2.0f * (-DEG_TO_RAD * turn));
             }
 
             if (lx < -0.1f && right_clear != 0) {
@@ -2114,7 +2114,7 @@ void EdMoveChara() {
                     turn = -1.0f;
                 }
 
-                camera->AddAngle(2.0f * (-0.017453292f * turn));
+                camera->AddAngle(2.0f * (-DEG_TO_RAD * turn));
             }
         }
 
@@ -2169,7 +2169,7 @@ void EdMoveChara() {
         }
 
         if (rot_count > 0) {
-            behind_angle = chara->GetRotation()->y - 3.141592653589793;
+            behind_angle = chara->GetRotation()->y - PI_D;
             turn_side = AngleCmp(behind_angle, camera->GetAngle(), 0.1f);
 
             if (turn_side < 0) {
@@ -2203,11 +2203,11 @@ void EdMoveChara() {
     near_villager = EdSearchNearNPC(chara, EdVillager, 10);
 
     if (near_villager >= 0) {
-        EdVillager[near_villager].talk_target = 1;
+        EdVillager[near_villager].talk_target = true;
     }
 
     if (EdMoveCharaInfo.fishing == 0) {
-        acted = 0;
+        acted = false;
         sceVu0FVECTOR here;
         sceVu0FVECTOR heading;
         chara->GetPosition(here);
@@ -2215,11 +2215,11 @@ void EdMoveChara() {
         system_event_no = event_no = -1;
         points = EdMoveCharaInfo.points;
         point_count = EdMoveCharaInfo.point_count;
-        EdMoveCharaInfo.event_ready = 0;
+        EdMoveCharaInfo.event_ready = false;
         param = &EdMoveCharaInfo.param;
 
         if (EdGetEvent(points, point_count, param, here, heading, time) != 0) {
-            if (param->kind == 2 && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0)) {
+            if (param->kind == ED_EVENT_POINT_ITEM_BOX && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0)) {
                 item = param->point->side;
                 refused = EdCheckGetItem(item);
 
@@ -2234,19 +2234,19 @@ void EdMoveChara() {
                     EdGetItem(item, param->point->linked_value, attach);
                     EdItemGetMes(item, param->point->linked_value, attach, 40);
                     EdSetOpenItemBox(param->position, param->rotation);
-                    SndSePlay(0x99, -1, 0);
+                    SndSePlay(SE_BOX_OPEN, -1, 0);
                 } else {
                     DontGetItemMes(refused);
-                    SndSePlay(0x99, -1, 0);
+                    SndSePlay(SE_BOX_OPEN, -1, 0);
                 }
             }
 
-            if (param->kind == 3 && param->point->side > 0) {
+            if (param->kind == ED_EVENT_POINT_EVENT && param->point->side > 0) {
                 event_no = param->point->side;
             }
 
-            if (param->kind == 4 || param->kind == 5) {
-                EdEventInfo.draw_exclamation_mark = 1;
+            if (param->kind == ED_EVENT_POINT_LADDER_BOTTOM || param->kind == ED_EVENT_POINT_LADDER_TOP) {
+                EdEventInfo.draw_exclamation_mark = true;
 
                 if (PadDown(0x40) != 0 && (interior != 0 || viewMode == 0)) {
                     EdInitHashigo(&EdEventInfo, param);
@@ -2254,7 +2254,7 @@ void EdMoveChara() {
                 }
             }
 
-            EdMoveCharaInfo.event_ready = acted = 1;
+            EdMoveCharaInfo.event_ready = acted = true;
         }
 
         if (near_villager >= 10) {
@@ -2264,7 +2264,7 @@ void EdMoveChara() {
         if (acted == 0 && (viewMode == 0 || interior != 0) && near_villager >= 0) {
             if (EdVillagerInfo[near_villager].talk_event_no > 0 && EdVillagerInfo[near_villager].talk_event_level != 0 && EdTalkModeInit(&EdVillager[near_villager], -1) != 0) {
                 event_no = EdVillagerInfo[near_villager].talk_event_no;
-                acted = 1;
+                acted = true;
             }
         }
 
@@ -2272,11 +2272,11 @@ void EdMoveChara() {
             if (near_villager >= 0) {
                 if (EdTalkModeInit(&EdVillager[near_villager], -1) != 0) {
                     event_no = 0x100;
-                    acted = 1;
+                    acted = true;
                 }
             } else if (poly_event > 0) {
                 event_no = poly_event;
-                acted = 1;
+                acted = true;
             }
         }
 
@@ -2309,14 +2309,14 @@ void EdMoveChara() {
         static int wait_cnt = 0;
 
         switch (chara_fishing) {
-            case 0:
-                chara_fishing = 1;
+            case ED_FISHING_INIT:
+                chara_fishing = ED_FISHING_STAND;
                 FishingInitFishStatus();
                 FishingAngleFish(-1);
                 wait_cnt = 0;
                 st_cnt = 0;
                 break;
-            case 1:
+            case ED_FISHING_STAND:
                 if (st_cnt > 120) {
                     EdFishingWalkHelpMes(FishingGetEsaItemNo());
                 }
@@ -2324,47 +2324,47 @@ void EdMoveChara() {
                 FishingAngleFish(-1);
 
                 if (EdPadDown(0x40, 0xFFFF) != 0) {
-                    chara_fishing = 2;
+                    chara_fishing = ED_FISHING_CAST_START;
                     st_cnt = 0;
                 }
 
                 if (EdPadDown(0x20, 0xFFFF) != 0) {
                     EdMoveCharaInfo.event_no = 0x85;
                     EdMoveCharaInfo.system_event_no = -1;
-                    EdMoveCharaInfo.acted = 1;
+                    EdMoveCharaInfo.acted = true;
                     chara->SetMotion(0, 0);
                 }
 
                 if (EdPadDown(0x80, 0xFFFF) != 0) {
                     EdMoveCharaInfo.event_no = 0x86;
                     EdMoveCharaInfo.system_event_no = -1;
-                    EdMoveCharaInfo.acted = 1;
+                    EdMoveCharaInfo.acted = true;
                     chara->SetMotion(0, 0);
                 }
 
                 float_weight = 1.0f;
                 break;
-            case 2:
+            case ED_FISHING_CAST_START:
                 chara->SetMotion(4, 6);
-                chara_fishing = 3;
+                chara_fishing = ED_FISHING_CASTING;
                 st_cnt = 0;
                 break;
-            case 3:
+            case ED_FISHING_CASTING:
                 chara_mode = 1;
 
                 if (st_cnt == 90) {
-                    SndSePlay(0x190, pos, -1.0f, -1.0f);
+                    SndSePlay(SE_FISHING_CAST, pos, -1.0f, -1.0f);
                 }
 
                 if (chara->motion_state == 3) {
                     chara->SetMotion(5, 0);
-                    chara_fishing = 4;
+                    chara_fishing = ED_FISHING_WAIT_BITE;
                     st_cnt = 0;
                     wait_cnt = 0;
                 }
 
                 break;
-            case 4: {
+            case ED_FISHING_WAIT_BITE: {
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
                 chara_mode = 1;
 
@@ -2384,7 +2384,7 @@ void EdMoveChara() {
                 }
 
                 reel_turn = -GamePad.GetLXf();
-                facing[1] = AngleInterpolate(facing[1], facing[1] + 0.1f * reel_turn, 0.01f, 0);
+                facing[1] = AngleInterpolate(facing[1], facing[1] + 0.1f * reel_turn, 0.01f, INTERPOLATE_STEP);
                 chara->SetRotation(facing);
 
                 if (reel_turn != 0.0f) {
@@ -2393,16 +2393,16 @@ void EdMoveChara() {
                 }
 
                 if (EdPadDown(0x40, 0xFFFF) != 0 || (st_cnt > 30 && FishingCheckUkiHook() != 0)) {
-                    chara_fishing = 5;
+                    chara_fishing = ED_FISHING_REEL_IN;
                     chara->SetMotion(7, 6);
                     st_cnt = 0;
                 } else {
                     if (fish_status == 7) {
-                        chara_fishing = 6;
+                        chara_fishing = ED_FISHING_BITE_CHECK;
                     }
 
                     if (fish_status == 8) {
-                        chara_fishing = 7;
+                        chara_fishing = ED_FISHING_HOOKED;
                     }
                 }
 
@@ -2410,19 +2410,19 @@ void EdMoveChara() {
                 follow_line = 1;
                 break;
             }
-            case 5:
+            case ED_FISHING_REEL_IN:
                 if (st_cnt == 40) {
                     sceVu0FVECTOR hook;
                     FishLineGetHook(hook);
 
                     if (hook[1] < 5.0f + FishingGetWaterLevel()) {
-                        SndSePlay(0x192, float_pos, -1.0f, -1.0f);
+                        SndSePlay(SE_FISHING_SINK, float_pos, -1.0f, -1.0f);
                     }
                 }
 
                 if (chara->motion_state == 3) {
                     chara->SetMotion(0, 0);
-                    chara_fishing = 1;
+                    chara_fishing = ED_FISHING_STAND;
                     wait_cnt = 0;
                 }
 
@@ -2435,22 +2435,22 @@ void EdMoveChara() {
                 }
 
                 break;
-            case 6: {
+            case ED_FISHING_BITE_CHECK: {
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
 
                 if (fish_status == 8) {
-                    chara_fishing = 7;
+                    chara_fishing = ED_FISHING_HOOKED;
                 } else if (fish_status != 7) {
-                    chara_fishing = 4;
+                    chara_fishing = ED_FISHING_WAIT_BITE;
                     st_cnt = 0;
                     wait_cnt = 0;
                 }
 
                 if (EdPadDown(0x40, 0xFFFF) != 0) {
-                    chara_fishing = 9;
+                    chara_fishing = ED_FISHING_SINK;
                     chara->SetMotion(6, 6);
                     st_cnt = 0;
-                    SndSePlay(0x192, float_pos, -1.0f, -1.0f);
+                    SndSePlay(SE_FISHING_SINK, float_pos, -1.0f, -1.0f);
 
                     if (rand() % 100 < 20) {
                         EdFishingLostEsaMes();
@@ -2472,11 +2472,11 @@ void EdMoveChara() {
                 follow_line = 1;
                 break;
             }
-            case 7:
+            case ED_FISHING_HOOKED:
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
 
                 if (FishingFishStatus(NULL) != 8) {
-                    chara_fishing = 4;
+                    chara_fishing = ED_FISHING_WAIT_BITE;
                     wait_cnt = 0;
 
                     if (rand() % 100 < 30) {
@@ -2491,8 +2491,8 @@ void EdMoveChara() {
 #else
                     if (EdPadDown(0x40, 0xFFFF) != 0) {
 #endif
-                        SndSePlay(0x190, pos, -1.0f, -1.0f);
-                        chara_fishing = 10;
+                        SndSePlay(SE_FISHING_CAST, pos, -1.0f, -1.0f);
+                        chara_fishing = ED_FISHING_BATTLE;
                         chara->SetMotion(12, 2);
                         FishingBattleFish(fish_no);
                         fish_file = GetFishFileName(FishingFishKind(fish_no));
@@ -2516,7 +2516,7 @@ void EdMoveChara() {
                 }
 
                 break;
-            case 10:
+            case ED_FISHING_BATTLE:
                 FishingDeleteEsa();
 
                 if (st_cnt > 120 && ReadBGSync() == 0) {
@@ -2532,26 +2532,26 @@ void EdMoveChara() {
                         arena.used = 0;
                     }
 
-                    chara_fishing = 8;
+                    chara_fishing = ED_FISHING_LANDED;
                     chara->SetMotion(6, 6);
                     FishingBattleToAngleFish(fish_data, &arena);
-                    SndSePlay(0x193, -1, 0);
+                    SndSePlay(SE_FISHING_BITE, -1, 0);
                 }
 
                 GamePad.SetVibration(1, rand() % 40 + 80, 10);
                 follow_line = 1;
                 break;
-            case 8:
-                chara_fishing = 11;
+            case ED_FISHING_LANDED:
+                chara_fishing = ED_FISHING_RESULT;
                 chara->SetMotion(10, 6);
-                fishing_mes = 0;
+                fishing_mes = ED_FISHING_MES_EVALUATE;
                 follow_line = 1;
                 bgm_vol = SndGetBgmVol();
                 SndBgmFadeOut(60, 0);
                 break;
-            case 9:
+            case ED_FISHING_SINK:
                 if (chara->motion_state == 3) {
-                    chara_fishing = 1;
+                    chara_fishing = ED_FISHING_STAND;
                     chara->SetMotion(0, 0);
                     FishingAngleFish(fish_no);
                     FishingInitFishStatus();
@@ -2567,7 +2567,7 @@ void EdMoveChara() {
                 }
 
                 break;
-            case 11:
+            case ED_FISHING_RESULT:
                 camera->SetAngle(AngleLimit(facing[1]));
                 camera->SetHeight(10.0f);
                 camera->SetDistance(40.0f);
@@ -2580,13 +2580,13 @@ void EdMoveChara() {
                     }
                 } else {
                     switch (fishing_mes) {
-                        case 0: {
+                        case ED_FISHING_MES_EVALUATE: {
                             int size;
                             int fish_points;
                             fish_kind = FishingGetAngleFishSize(&size, &fish_points);
 
                             if (fish_kind < 0) {
-                                fishing_mes = 2;
+                                fishing_mes = ED_FISHING_MES_DONE;
                             } else {
                                 if (fish_kind == 5 || fish_kind == 17) {
                                     caught = &SaveData->mardan_garayan_caught;
@@ -2601,27 +2601,27 @@ void EdMoveChara() {
                                 EditMes1.values[0] = size;
                                 EditMes1.values[1] = fish_points;
                                 EditMes1.values[2] = SaveData->GetFishingPoint();
-                                EditMes1.tail_on = 0;
-                                EditMes1.auto_pos = 1;
+                                EditMes1.tail_on = false;
+                                EditMes1.auto_pos = MES_POS_TOP_LEFT;
                                 EditMes1.MakeMesWin(2000);
-                                EditMes1.auto_pos = 1;
+                                EditMes1.auto_pos = MES_POS_TOP_LEFT;
                                 int window[4];
                                 EditMes1.AutoSet(window);
                             }
 
                             break;
                         }
-                        case 1:
+                        case ED_FISHING_MES_WAIT:
                             if (EdMenuLoop(&EditMes1) != 0) {
-                                EditMes1.auto_pos = 1;
+                                EditMes1.auto_pos = MES_POS_TOP_LEFT;
                                 fishing_mes++;
                             }
 
                             break;
-                        case 2:
+                        case ED_FISHING_MES_DONE:
                             SndBgmFadeIn(60, bgm_vol, 0);
                             chara->SetMotion(0, 0);
-                            chara_fishing = 12;
+                            chara_fishing = ED_FISHING_FINISH;
                             chara->SetMotion(9, 6);
                             st_cnt = 0;
                             break;
@@ -2630,7 +2630,7 @@ void EdMoveChara() {
 
                 hook_weight = 1.0f;
                 break;
-            case 12:
+            case ED_FISHING_FINISH:
                 camera->SetAngle(AngleLimit(facing[1]));
                 camera->SetHeight(10.0f);
                 camera->SetDistance(30.0f);
@@ -2638,12 +2638,12 @@ void EdMoveChara() {
 
                 if (st_cnt == 120) {
                     FishingDeleteAngleFish();
-                    SndSePlay(0x194, -1, 0);
+                    SndSePlay(SE_FISHING_LANDED, -1, 0);
                 }
 
                 if (chara->motion_state == 3) {
                     chara->SetMotion(0, 0);
-                    chara_fishing = 0;
+                    chara_fishing = ED_FISHING_INIT;
                     FishingDeleteAngleFish();
                     FishingAngleFish(-1);
                     FishingInitFishStatus();
@@ -2664,7 +2664,7 @@ void EdMoveChara() {
 
         st_cnt++;
     } else {
-        chara_fishing = 0;
+        chara_fishing = ED_FISHING_INIT;
     }
 
     chara->Step();
@@ -2744,7 +2744,7 @@ void EdMoveChara() {
             fall_height = after[1] - before[1];
 
             if ((fall_height < 0.0f ? -fall_height : fall_height) > 0.8f) {
-                SndSePlay(0x191, after, -1.0f, -1.0f);
+                SndSePlay(SE_FISHING_SPLASH, after, -1.0f, -1.0f);
                 after[1] = FishingGetWaterLevel();
                 EffectHamon(&EdEffectGroup, after, 15.0f);
                 EffectHamon(&EdEffectGroup, after, 20.0f);
@@ -2800,11 +2800,11 @@ void EdMoveChara() {
         floor_kind = chara->move_info.poly.attr.area_kind;
 
         switch (floor_kind) {
-            case 2:
+            case AREA_KIND_FADE_OUT:
                 chara->fade_out = 1;
                 break;
-            case 3:
-            case 4:
+            case AREA_KIND_AMBIENT_0:
+            case AREA_KIND_AMBIENT_1:
                 chara->ground_ambient_no = floor_kind - 3;
                 break;
         }
@@ -2815,7 +2815,7 @@ void EdMoveChara() {
 }
 
 void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
-    if (param->kind == 4) {
+    if (param->kind == ED_EVENT_POINT_LADDER_BOTTOM) {
         sceVu0CopyVector(info->vector_arguments[1], param->position);
         sceVu0CopyVector(info->vector_arguments[0], param->camera_pos);
         info->integer_arguments[0] = 0;

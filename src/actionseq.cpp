@@ -466,7 +466,7 @@ void CActionSeq::Play() {
         }
 
         if (rotation_mode == 3) {
-            rotation[1] = AngleInterpolate(rotation[1], rotation_target[1], rotation_target[3], 0);
+            rotation[1] = AngleInterpolate(rotation[1], rotation_target[1], rotation_target[3], INTERPOLATE_STEP);
 
             if (AngleCmp(rotation[1], rotation_target[1], 0.001f) == 0) {
                 rotation_complete = 1;
@@ -474,7 +474,7 @@ void CActionSeq::Play() {
         } else if (direction[0] != 0.0f || direction[2] != 0.0f) {
             float target_yaw = atan2f(direction[0], direction[2]);
 
-            rotation[1] = AngleInterpolate(rotation[1], target_yaw, rotation_target[3], 0);
+            rotation[1] = AngleInterpolate(rotation[1], target_yaw, rotation_target[3], INTERPOLATE_STEP);
 
             if (AngleCmp(rotation[1], target_yaw, 0.001f) == 0) {
                 rotation_complete = 1;
@@ -632,16 +632,16 @@ void CActionSeq::Play() {
         wrapped_rotation[2] = rotation[2];
         wrapped_rotation[3] = 0.0f;
         // Wrap the yaw into [-pi, pi]; the first truncation's result is unused.
-        turns = wrapped_rotation[1] / 6.2831855f;
+        turns = wrapped_rotation[1] / TWO_PI;
         whole_turns = (int) turns;
-        wrapped_rotation[1] -= 3.1415927f * (2.0f * (int) turns);
+        wrapped_rotation[1] -= PI * (2.0f * (int) turns);
 
-        if (wrapped_rotation[1] > 3.1415927f) {
-            wrapped_rotation[1] -= 6.2831855f;
+        if (wrapped_rotation[1] > PI) {
+            wrapped_rotation[1] -= TWO_PI;
         }
 
-        if (wrapped_rotation[1] < -3.1415927f) {
-            wrapped_rotation[1] += 6.2831855f;
+        if (wrapped_rotation[1] < -PI) {
+            wrapped_rotation[1] += TWO_PI;
         }
 
         character->SetRotation(wrapped_rotation);

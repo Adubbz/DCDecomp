@@ -5,6 +5,72 @@
 #include "itemdata.hpp"
 #include "shop.hpp"
 
+/**
+ * Pages of a personal board, as PERSONAL_BOARD::page holds them.
+ */
+// clang-format off
+enum PersonalBoardPage {
+    BOARD_PAGE_NONE         = -1, /**< No page. */
+    BOARD_PAGE_ITEM         = 0,  /**< Items. */
+    BOARD_PAGE_WEAPON       = 1,  /**< Weapons. */
+    BOARD_PAGE_ATTACH       = 2,  /**< Attachments. */
+    BOARD_PAGE_ATLA_VILLAGE = 3,  /**< First town's Atla; each later town follows it. */
+};
+
+// clang-format on
+
+/**
+ * Parts of a personal board the cursor can be on, as PERSONAL_BOARD::cursor_area holds them.
+ */
+// clang-format off
+enum PersonalBoardArea {
+    PERSONAL_BOARD_AREA_CELLS = 1, /**< The cells. */
+    PERSONAL_BOARD_AREA_TRASH = 2, /**< The trash can. */
+};
+
+// clang-format on
+
+/**
+ * Menus a personal board serves, as PERSONAL_BOARD::menu_kind holds them.
+ */
+// clang-format off
+enum PersonalBoardKind {
+    PERSONAL_BOARD_ITEM          = 0, /**< Item menu and shops. */
+    PERSONAL_BOARD_WEAPON_ATTACH = 1, /**< Weapon menu's attachment list. */
+    PERSONAL_BOARD_ATLA          = 2, /**< Atla board. */
+};
+
+// clang-format on
+
+/**
+ * Message window presets that InitMenuMesSet sets up.
+ */
+// clang-format off
+enum MenuMesSet {
+    MENU_MES_SET_ALLMENU       = 0, /**< Common menu messages. */
+    MENU_MES_SET_EVENT_ITEM    = 1, /**< Event item selection. */
+    MENU_MES_SET_SHOP          = 2, /**< Shops. */
+    MENU_MES_SET_NAME_ENTRY    = 3, /**< Name entry. */
+    MENU_MES_SET_ATLA_NAME     = 4, /**< Atla name window only. */
+    MENU_MES_SET_WORLD_MAP     = 5, /**< World map opened from a town script. */
+    MENU_MES_SET_DUNGEON_ENTER = 7, /**< Dungeon entrance menu. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the dungeon entrance menu, as DUN_ENTER_MENU::state holds them.
+ */
+// clang-format off
+enum DunEnterMenuState {
+    DUN_ENTER_SELECT   = 0, /**< Choosing a floor. */
+    DUN_ENTER_FADE_IN  = 1, /**< Loading and fading in. */
+    DUN_ENTER_FADE_OUT = 2, /**< Fading out before returning the floor. */
+    DUN_ENTER_DIRECT   = 3, /**< Loading a requested floor without drawing. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -49,9 +115,9 @@ STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
  * State of a personal inventory board, the item list that the item, shop and Atla menus share.
  */
 struct PERSONAL_BOARD {
-    s32             menu_kind;   /**< Menu the board belongs to: 0 the item and shop menus, 1 the weapon menu's attachment list, 2 the Atla selection. */
-    s32             page;        /**< Page of the board that is showing. */
-    s32             cursor_area; /**< Part of the board the cursor is on: 1 the cells, 2 the trash. */
+    s32             menu_kind;   /**< Menu the board belongs to. @see PersonalBoardKind. */
+    s32             page;        /**< Page of the board that is showing. @see PersonalBoardPage. */
+    s32             cursor_area; /**< Part of the board the cursor is on. @see PersonalBoardArea. */
     s32             cursor;      /**< Cell that the cursor is on. */
     float           y;           /**< Screen Y the board draws at, eased toward its top row. */
     float           scroll;      /**< Scroll bar position the board draws. */
@@ -114,7 +180,7 @@ extern int BtlMenuReadBlock;
 /** Volume the battle menu drops the background music to. */
 extern int BtlMenuBGMvol;
 
-/** Set while the extra-menu texture has been read. */
+/** Progress of the extra-menu model read. @see MenuExTextureRead. */
 extern int MenuExTextureReadFlag;
 
 /** Description of each main menu icon, for each of the seven languages. */
@@ -272,6 +338,15 @@ void InitMenuMesSet(int mode, short *messages);
  * @size 0x48
  */
 void DrawMenuClsMes(ClsMes *message, int x, int y);
+
+/**
+ * Sound effects the menus play through ComMenuSePlay.
+ */
+enum MenuSound {
+    MENU_SOUND_CURSOR = 0,  /**< Cursor or page moved. */
+    MENU_SOUND_CONFIRM = 1, /**< Selection accepted. */
+    MENU_SOUND_REFUSE = 2,  /**< Selection refused. */
+};
 
 /**
  * Plays a menu sound effect, unless the identifier is negative.

@@ -2,6 +2,37 @@
 
 #include "common.h"
 
+/**
+ * How an item sits in a quick-use slot, as ITEM_DATA::stack_kind holds it.
+ */
+// clang-format off
+enum ItemStackKind {
+    ITEM_STACK_MULTI  = 0, /**< Stacks with copies of itself. */
+    ITEM_STACK_SINGLE = 1, /**< Sits alone. */
+    ITEM_STACK_NEVER  = 2, /**< Cannot be placed. */
+};
+
+// clang-format on
+
+/**
+ * Groups the menus sort items by, as ITEM_DATA::sort_key holds them.
+ */
+// clang-format off
+enum ItemSortKey {
+    ITEM_SORT_NONE     = 0, /**< Not sorted. */
+    ITEM_SORT_FOOD     = 1, /**< Food and drink. */
+    ITEM_SORT_THROW    = 2, /**< Throwing items. */
+    ITEM_SORT_POWDER   = 3, /**< Powders. */
+    ITEM_SORT_QUEST    = 4, /**< Dungeon quest items. */
+    ITEM_SORT_KEY_ITEM = 5, /**< Story items. */
+    ITEM_SORT_GOODS    = 6, /**< Amulets, fishing goods and other goods. */
+    ITEM_SORT_FISH     = 7, /**< Fish. */
+    ITEM_SORT_ROTTEN   = 8, /**< Rotten fish. */
+    ITEM_SORT_COUNT    = 9, /**< Number of sort keys. */
+};
+
+// clang-format on
+
 template <int>
 class CDataAlloc2;
 
@@ -162,10 +193,14 @@ enum Item {
     ITEM_ATTACH_THUNDER                = 83,
     ITEM_ATTACH_WIND                   = 84,
     ITEM_ATTACH_HOLY                   = 85,
+    ITEM_ATTACH_ELEMENT_END            = 86,
+    ITEM_ATTACH_SYNTHESIS_SPHERE       = 90,
+    ITEM_ATTACH_STAT_START             = 91,
     ITEM_ATTACH_ATTACK                 = 91,
     ITEM_ATTACH_ENDURANCE              = 92,
     ITEM_ATTACH_SPEED                  = 93,
     ITEM_ATTACH_MAGICAL_POWER          = 94,
+    ITEM_ATTACH_GEM_START              = 95,
     ITEM_ATTACH_GARNET                 = 95,
     ITEM_ATTACH_AMETHYST               = 96,
     ITEM_ATTACH_AQUAMARINE             = 97,
@@ -179,6 +214,8 @@ enum Item {
     ITEM_ATTACH_TOPAZ                  = 105,
     ITEM_ATTACH_TURQUOISE              = 106,
     ITEM_ATTACH_SUN                    = 107,
+    ITEM_ATTACH_GEM_END                = 110,
+    ITEM_ATTACH_SLAYER_START           = 111,
     ITEM_ATTACH_DINOSLAYER             = 111,
     ITEM_ATTACH_UNDEAD_BUSTER          = 112,
     ITEM_ATTACH_SEA_KILLER             = 113,
@@ -189,6 +226,7 @@ enum Item {
     ITEM_ATTACH_METALBREAKER           = 118,
     ITEM_ATTACH_MIMIC_BREAKER          = 119,
     ITEM_ATTACH_MAGE_SLAYER            = 120,
+    ITEM_ATTACH_SLAYER_END             = 121,
     ITEM_DUNGEON_START                 = 132,
     ITEM_ANTI_FREEZE_AMULET            = 132,
     ITEM_ANTICURSEAMULET               = 133,
@@ -212,6 +250,7 @@ enum Item {
     ITEM_SOAP                          = 153,
     ITEM_MIGHTY_HEALING                = 154,
     ITEM_CHEESE                        = 155,
+    ITEM_UNUSED_156                    = 156,
     ITEM_BOMB                          = 159,
     ITEM_STONE                         = 160,
     ITEM_FIRE_GEM                      = 161,
@@ -421,6 +460,7 @@ enum Item {
     ITEM_WEAPON_SUPERNOVA              = 373,
     ITEM_WEAPON_SNAIL                  = 374,
     ITEM_WEAPON_SWALLOW                = 375,
+    ITEM_WEAPON_END                    = 377,
 };
 
 // clang-format on
@@ -482,14 +522,14 @@ STATIC_ASSERT(sizeof(COM_ITEM_INFO) == 0x8);
  * An entry in ITEM_LIST.
  */
 struct ITEM_DATA {
-    s16 sort_key; /**< Index into the menus' sort tables that orders the item. */
+    s16 sort_key; /**< Index into the menus' sort tables that orders the item. @see ItemSortKey. */
     s16 unk_02;
     u32 use_flags;  /**< What using the item does. @see ItemUseFlag. */
     s16 kind_flags; /**< What kind of item it is. @see ItemKindFlag. */
     s16 vol;        /**< The volume a fresh copy starts with. */
     s16 vol_range;  /**< The range of random variation for the item's volume. */
     s16 unk_0E;
-    s32 stack_kind; /**< How the item sits in a quick-use slot: 0 stacks, 1 alone, 2 never. */
+    s32 stack_kind; /**< How the item sits in a quick-use slot. @see ItemStackKind. */
 };
 
 STATIC_ASSERT(sizeof(ITEM_DATA) == 0x14);
@@ -746,6 +786,6 @@ inline int GetDungeonItemStart() { return ITEM_DUNGEON_START; }
 inline int GetDungeonItemEnd() { return ITEM_WEAPON_SLOT_EMPTY; }
 
 /**
- * The item data table, one entry per item from 0x51 on.
+ * The item data table, one entry per item from ITEM_ATTACH_START on.
  */
 extern ITEM_DATA ITEM_LIST[];

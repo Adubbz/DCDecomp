@@ -217,7 +217,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
         CFrameVu1    *target = &((CFrameVu1 *) frame)[list->frame];
 
         switch (list->type) {
-            case 0:
+            case MOTION_KEY_ROTATION:
                 sceVu0CopyVector(from, list->keys[key].value);
                 sceVu0CopyVector(to, list->keys[next].value);
 
@@ -238,7 +238,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 }
 
                 break;
-            case 1:
+            case MOTION_KEY_SCALE:
                 if (!(t <= 0.0001f) && t < 0.9999f) {
                     sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
                 } else {
@@ -253,7 +253,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
 
                 target->SetScale(value[0], value[1], value[2]);
                 break;
-            case 2:
+            case MOTION_KEY_TRANSLATION:
                 if (!(t <= 0.0001f) && t < 0.9999f) {
                     sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
                 } else {
@@ -269,9 +269,9 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 target->local[3][0] = value[0];
                 target->local[3][1] = value[1];
                 target->local[3][2] = value[2];
-                target->world_valid = 0;
+                target->world_valid = false;
                 break;
-            case 12: {
+            case MOTION_KEY_VERTEX: {
                 int            vertex;
                 MDT_HEADER    *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
@@ -322,7 +322,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
 
                 return list;
             }
-            case 30:
+            case MOTION_KEY_CAMERA_POSITION:
                 if (state->camera != NULL) {
                     sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
                     frame->GetWorldPosition(value, value);
@@ -330,7 +330,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 }
 
                 break;
-            case 31:
+            case MOTION_KEY_CAMERA_TARGET:
                 if (state->camera != NULL) {
                     sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
                     frame->GetWorldPosition(value, value);
@@ -338,7 +338,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 }
 
                 break;
-            case 40: {
+            case MOTION_KEY_MATERIAL_ALPHA: {
                 MDT_HEADER   *model;
                 MDT_MATERIAL *material;
 
@@ -349,7 +349,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 target->attr.remake_pending = 2;
                 break;
             }
-            case 41: {
+            case MOTION_KEY_MATERIAL_COLOR: {
                 MDT_HEADER   *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 MDT_MATERIAL *material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
 
@@ -357,21 +357,21 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 target->attr.remake_pending = 2;
                 break;
             }
-            case 32:
+            case MOTION_KEY_CAMERA_ROLL:
                 if (state->camera != NULL) {
                     one_minus_t = 1.0f - t;
-                    state->camera->SetRoll(-(3.1415927f * ((one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
+                    state->camera->SetRoll(-(PI * ((one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
                 }
 
                 break;
-            case 33:
+            case MOTION_KEY_CAMERA_FOV:
                 if (state->camera != NULL) {
                     one_minus_t = 1.0f - t;
-                    MGSetProjection(0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
+                    MGSetProjection(0.5f * (480.0f * (1.0f / tanf(PI * ((0.5f * (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
                 }
 
                 break;
-            case 50:
+            case MOTION_KEY_VISIBLE:
                 if (list->keys[key].value[0] < 1.0f) {
                     target->attr.draw_on = 0;
                 } else {
@@ -379,7 +379,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 }
 
                 break;
-            case 51:
+            case MOTION_KEY_UNK_33:
                 if (list->keys[key].value[0] < 1.0f) {
                     target->attr.draw_on = 2;
                 } else {
@@ -406,7 +406,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
     CFrameVu1            *target;
     u_int                 i;
 
-    if (list->type == 200) {
+    if (list->type == MOTION_KEY_SKIP) {
         return list->next;
     }
 
@@ -515,7 +515,7 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
             state->blend = 0.0f;
         }
 
-        state->blending = 1;
+        state->blending = true;
         state->frame = state->time;
         state->blend += state->blend_step;
         state->playing_no = state->motion_no;
@@ -524,7 +524,7 @@ void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTIO
             state->time = state->next_frame;
             state->frame = state->next_frame;
             state->blend = 0.0f;
-            state->blending = 0;
+            state->blending = false;
         }
 
         for (list = motion->proc_list; list != NULL;) {
@@ -722,7 +722,7 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, 
     }
 
     for (; list != NULL; list = list->next) {
-        if (list->type == 200) {
+        if (list->type == MOTION_KEY_SKIP) {
             continue;
         }
 
@@ -869,11 +869,11 @@ int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint) {
             sceVu0UnitMatrix(rotation);
             angle = acosf(angle);
 
-            if (angle > 0.7853982f) {
-                angle = 0.7853982f;
+            if (angle > QUARTER_PI) {
+                angle = QUARTER_PI;
             }
 
-            if (acosf(sceVu0InnerProduct(axis, direction)) > 1.5707964f) {
+            if (acosf(sceVu0InnerProduct(axis, direction)) > HALF_PI) {
                 SetRotationMatrixFromDir(rotation, side, -angle);
             } else {
                 SetRotationMatrixFromDir(rotation, side, angle);
@@ -2004,10 +2004,10 @@ s32 GaijiDataTbl[][8] = {
 
 // clang-format off
 u32 FontColorTbl[16] = {
-    0x00000000, 0x80304045, 0x80BFBFBF, 0x8040BDBD,
-    0x80BDBD40, 0x8040BD40, 0xFF304045, 0x8066CEE7,
-    0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x808F8F8F,
-    0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x00000000,
+    0x00000000,      FONT_COLOR_BROWN, FONT_COLOR_WHITE,        FONT_COLOR_YELLOW,
+    FONT_COLOR_CYAN, FONT_COLOR_GREEN, FONT_COLOR_BROWN_OPAQUE, FONT_COLOR_GOLD,
+    FONT_COLOR_GREY, FONT_COLOR_GREY,  FONT_COLOR_GREY,         FONT_COLOR_GREY,
+    FONT_COLOR_GREY, FONT_COLOR_GREY,  FONT_COLOR_GREY,         0x00000000,
 };
 // clang-format on
 

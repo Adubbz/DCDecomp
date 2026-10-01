@@ -236,7 +236,7 @@ void ClsMes::AutoSet(int *pos) {
     best_col = 0;
     best_row = 0;
 
-    if (this->auto_pos == 0) {
+    if (this->auto_pos == MES_POS_AUTO) {
         for (row = 0; row < 3; row++) {
             for (col = 0; col < 3; col++) {
                 RECT *rect = &candidate[row][col];
@@ -376,7 +376,7 @@ ClsMes::ClsMes() {
     this->text_height = 0;
     this->unk_02C = 0x10;
     this->init_030 = 0x10;
-    this->fukidashi = 1;
+    this->fukidashi = true;
     this->fukidashi_shape = 0;
     this->grow_x = 0x140;
     this->grow_y = SCREEN_HALF_HEIGHT;
@@ -384,24 +384,24 @@ ClsMes::ClsMes() {
     this->win_y = this->text_y;
     this->win_width = this->char_width * this->columns;
     this->win_height = this->char_height * this->rows;
-    this->auto_pos = 0;
-    this->tail_on = 1;
+    this->auto_pos = MES_POS_AUTO;
+    this->tail_on = true;
     this->tail_x = 0x12C;
     this->tail_y = 0xC8;
     this->tail_to_x = 0x140;
     this->tail_to_y = 0xC8;
     this->tail_half_width = 8;
     this->tail_length = 0x40;
-    this->stay_frame = 0;
+    this->stay_frame = false;
     this->stay_width = 0;
     this->stay_height = 0;
     this->text_rate = 0.5f;
     this->text_rate_set = 0.5f;
-    this->waiting = 0;
-    this->auto_page = 0;
+    this->waiting = false;
+    this->auto_page = false;
     this->fade_speed = 0.01f;
     this->fade = 0.0f;
-    this->fade_in = 1;
+    this->fade_in = true;
     this->text_at = 0.0f;
     this->text_no = 0;
     this->text_from = 0;
@@ -412,14 +412,14 @@ ClsMes::ClsMes() {
     this->blink = 0;
     this->auto_page_wait = 0;
     this->mes_made = -1;
-    this->style = 4;
-    this->page_arrow = 1;
-    this->end_mark = 0;
-    this->centre_rows = 1;
-    this->page_mark_style = 1;
+    this->style = MES_EDGE_DOUBLE;
+    this->page_arrow = true;
+    this->end_mark = false;
+    this->centre_rows = true;
+    this->page_mark_style = true;
     this->edge_alpha = 0x80;
     this->narrow_gaiji_set = 0;
-    this->narrow_gaiji = 0;
+    this->narrow_gaiji = false;
 
     for (int i = 0; i < 10; i++) {
         this->mes_no[i] = -1;
@@ -430,14 +430,14 @@ ClsMes::ClsMes() {
     }
 
     this->value = 0;
-    this->value_signed = 0;
-    this->value_show = 1;
-    this->value_narrow = 0;
+    this->value_signed = false;
+    this->value_show = true;
+    this->value_narrow = false;
     this->space_width = -1;
     this->space_area = -1;
     this->cursor_row = -1;
     this->cursor_y = 0;
-    this->cursor_lit = 0;
+    this->cursor_lit = false;
     this->tex_block = 0;
 
     for (int i = 0; i < 10; i++) {
@@ -467,107 +467,107 @@ void ClsMes::SetBuff_system(short *buff) {
 
 void ClsMes::Preset(int style) {
     switch (style) {
-        case 1:
-            this->fukidashi = 0;
+        case MES_PRESET_SYSTEM:
+            this->fukidashi = false;
             this->text_rate = 0.0f;
             this->text_rate_set = 0.0f;
-            this->clut_default = Color2Clut(0x80BFBFBF) & 0xFF;
+            this->clut_default = Color2Clut(FONT_COLOR_WHITE) & 0xFF;
             this->clut_now = this->clut_default;
-            this->style = 2;
-            this->page_arrow = 0;
-            this->centre_rows = 1;
-            this->page_mark_style = 0;
+            this->style = MES_EDGE_BLACK;
+            this->page_arrow = false;
+            this->centre_rows = true;
+            this->page_mark_style = false;
             break;
-        case 0:
-            this->fukidashi = 1;
-            this->clut_default = Color2Clut(0x80304045) & 0xFF;
+        case MES_PRESET_FUKIDASHI:
+            this->fukidashi = true;
+            this->clut_default = Color2Clut(FONT_COLOR_BROWN) & 0xFF;
             this->clut_now = this->clut_default;
-            this->style = 1;
-            this->page_arrow = 1;
-            this->centre_rows = 1;
-            this->page_mark_style = 1;
+            this->style = MES_EDGE_WHITE;
+            this->page_arrow = true;
+            this->centre_rows = true;
+            this->page_mark_style = true;
             break;
-        case 2:
-            this->style = 0;
-            this->page_arrow = 0;
-            this->centre_rows = 1;
-            this->auto_page = 1;
+        case MES_PRESET_AUTO_PAGE:
+            this->style = MES_EDGE_NONE;
+            this->page_arrow = false;
+            this->centre_rows = true;
+            this->auto_page = true;
             break;
-        case 4:
-            this->fukidashi = 0;
+        case MES_PRESET_NAME:
+            this->fukidashi = false;
             this->text_rate = 0.0f;
             this->text_rate_set = 0.0f;
-            this->clut_default = Color2Clut(0x8066CEE7) & 0xFF;
+            this->clut_default = Color2Clut(FONT_COLOR_GOLD) & 0xFF;
             this->clut_now = this->clut_default;
-            this->style = 3;
-            this->page_arrow = 0;
-            this->page_mark_style = 0;
+            this->style = MES_EDGE_TABLE;
+            this->page_arrow = false;
+            this->page_mark_style = false;
             break;
-        case 3:
+        case MES_PRESET_NONE:
             break;
     }
 }
 
 void ClsMes::SetMesFukidashi(int style) {
     switch (style) {
-        case 5:
+        case MES_FUKIDASHI_LARGE_BLACK_EDGE:
             this->char_width = 0xD;
             this->char_height = 0x14;
-            this->fukidashi = 0;
-            this->stay_frame = 0;
+            this->fukidashi = false;
+            this->stay_frame = false;
             this->clut_default = 1;
             this->clut_now = this->clut_default;
-            this->page_arrow = 1;
-            this->style = 2;
-            this->page_mark_style = 1;
+            this->page_arrow = true;
+            this->style = MES_EDGE_BLACK;
+            this->page_mark_style = true;
             break;
-        case 4:
+        case MES_FUKIDASHI_LARGE_TABLE_EDGE:
             this->char_width = 0xD;
             this->char_height = 0x14;
-            this->fukidashi = 0;
-            this->stay_frame = 0;
-            this->clut_default = Color2Clut(0x80BFBFBF) & 0xFF;
+            this->fukidashi = false;
+            this->stay_frame = false;
+            this->clut_default = Color2Clut(FONT_COLOR_WHITE) & 0xFF;
             this->clut_now = this->clut_default;
-            this->page_arrow = 1;
-            this->style = 3;
-            this->page_mark_style = 1;
+            this->page_arrow = true;
+            this->style = MES_EDGE_TABLE;
+            this->page_mark_style = true;
             break;
-        case 3:
+        case MES_FUKIDASHI_SMALL_FRAMED:
             this->char_width = 0xB;
             this->char_height = 0x14;
-            this->fukidashi = 0;
-            this->stay_frame = 1;
-            this->clut_default = Color2Clut(0x80BFBFBF) & 0xFF;
+            this->fukidashi = false;
+            this->stay_frame = true;
+            this->clut_default = Color2Clut(FONT_COLOR_WHITE) & 0xFF;
             this->clut_now = this->clut_default;
-            this->page_arrow = 0;
-            this->style = 2;
-            this->page_mark_style = 0;
+            this->page_arrow = false;
+            this->style = MES_EDGE_BLACK;
+            this->page_mark_style = false;
             break;
-        case 2:
+        case MES_FUKIDASHI_SMALL_DOUBLE_EDGE:
             this->char_width = 0xB;
             this->char_height = 0x14;
-            this->fukidashi = 0;
-            this->stay_frame = 0;
-            this->clut_default = Color2Clut(0x80BFBFBF) & 0xFF;
+            this->fukidashi = false;
+            this->stay_frame = false;
+            this->clut_default = Color2Clut(FONT_COLOR_WHITE) & 0xFF;
             this->clut_now = this->clut_default;
-            this->page_arrow = 1;
-            this->style = 4;
-            this->page_mark_style = 1;
+            this->page_arrow = true;
+            this->style = MES_EDGE_DOUBLE;
+            this->page_mark_style = true;
             break;
-        case 1:
-            this->fukidashi = 0;
-            this->page_arrow = 0;
+        case MES_FUKIDASHI_NO_BUBBLE:
+            this->fukidashi = false;
+            this->page_arrow = false;
             break;
         default:
             this->char_width = 0xB;
             this->char_height = 0x14;
-            this->fukidashi = 1;
-            this->stay_frame = 0;
+            this->fukidashi = true;
+            this->stay_frame = false;
             this->clut_default = 1;
             this->clut_now = this->clut_default;
-            this->page_arrow = 1;
-            this->style = 0;
-            this->page_mark_style = 1;
+            this->page_arrow = true;
+            this->style = MES_EDGE_NONE;
+            this->page_mark_style = true;
             break;
     }
 }
@@ -636,22 +636,22 @@ void ClsMes::Step() {
 
 int ClsMes::State() {
     if (this->fade <= 0.0f) {
-        return 0;
+        return CLSMES_CLOSED;
     }
 
     if (0.0f < this->fade && this->fade < 1.0f) {
-        return this->fade_in != 0 ? 1 : 4;
+        return this->fade_in != 0 ? CLSMES_FADE_IN : CLSMES_FADE_OUT;
     }
 
     if (this->waiting != 0) {
-        return 5;
+        return CLSMES_PAGE_WAIT;
     }
 
     if (this->text_no >= this->text_len) {
-        return 3;
+        return CLSMES_SHOWN;
     }
 
-    return 2;
+    return CLSMES_REVEALING;
 }
 
 void ClsMes::MyTextureMake_InitAll() {
@@ -662,7 +662,7 @@ void ClsMes::MyTextureMake_InitAll() {
 
 void ClsMes::GoNextPage() {
     if (this->waiting != 0) {
-        this->waiting = 0;
+        this->waiting = false;
         MyTextureMake_InitAll();
         this->blink = 0;
         this->text_from = this->page_from;
@@ -683,11 +683,11 @@ int ClsMes::MyTextureMake_sub() {
     }
 
     switch (code) {
-        case -0x100:
+        case MES_CODE_NEWLINE:
             this->text_at += 1.0f;
             return 0;
-        case -0xFD:
-            this->waiting = 1;
+        case MES_CODE_PAGE:
+            this->waiting = true;
 
             if (this->auto_page != 0 && this->blink >= this->auto_page_wait) {
                 this->GoNextPage();
@@ -696,10 +696,10 @@ int ClsMes::MyTextureMake_sub() {
 
             this->page_from = at;
             return 1;
-        case -0xFF:
+        case MES_CODE_END:
             this->text_at += 1.0f;
             return 2;
-        case -0xFE:
+        case MES_CODE_SPACE:
             this->text_at += 1.0f;
             return 0;
     }
@@ -771,14 +771,14 @@ short *SetAndGetNameRegistTbl(int chara) {
     }
 
     for (int i = 0; i < 11; i++) {
-        NameRegistTbl[chara][i] = -0x100;
+        NameRegistTbl[chara][i] = MES_CODE_NEWLINE;
     }
 
     u16 *name = (u16 *) SaveData->GetCharaName(chara);
 
     for (int i = 0; i < 11; i++) {
         if (name[i] == 0) {
-            NameRegistTbl[chara][i] = -0x100;
+            NameRegistTbl[chara][i] = MES_CODE_NEWLINE;
         } else {
             NameRegistTbl[chara][i] = NameRegistCodeJtoE(name[i] - 1);
         }
@@ -1037,7 +1037,7 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
             if (name != 0) {
                 int name_code = *name;
 
-                while (name_code != -0x100 && name_code != -0xFF) {
+                while (name_code != MES_CODE_NEWLINE && name_code != MES_CODE_END) {
                     this->SetMesWinTbl(name_code, 0, *x, *y);
                     *x += this->char_width;
                     name++;
@@ -1046,10 +1046,10 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
             }
         } else {
             switch (text_code) {
-                case -0xFF:
+                case MES_CODE_END:
                     return 1;
 
-                case -0xFE:
+                case MES_CODE_SPACE:
                     this->SetMesWinTbl(text_code, 0, *x, *y);
 
                     if (this->space_area >= 0 || this->space_width >= 0) {
@@ -1060,7 +1060,7 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
 
                     break;
 
-                case -0x100:
+                case MES_CODE_NEWLINE:
                     this->SetMesWinTbl(text_code, 1, *x, *y);
                     *x = 0;
                     *y += this->char_height;
@@ -1175,10 +1175,10 @@ int ClsMes::GetMesLen_system(int mes_no) {
         }
 
         switch (code) {
-            case -0x100:
+            case MES_CODE_NEWLINE:
                 line++;
                 continue;
-            case -0xFF:
+            case MES_CODE_END:
                 if (len[0] > len[1]) {
                     return len[0];
                 }
@@ -1213,10 +1213,10 @@ int ClsMes::GetMesWidth_system(int mes_no) {
         }
 
         switch (code) {
-            case -0x100:
+            case MES_CODE_NEWLINE:
                 line++;
                 continue;
-            case -0xFF:
+            case MES_CODE_END:
                 if (width[0] > width[1]) {
                     return width[0];
                 }
@@ -1326,15 +1326,15 @@ int ClsMes::CalcSpaceW(int width, int glyph_width, short *text) {
         short code = *at++;
 
         switch (code) {
-            case -0x100:
-            case -0xFD:
-            case -0xFF:
+            case MES_CODE_NEWLINE:
+            case MES_CODE_PAGE:
+            case MES_CODE_END:
                 if (spaces > 0) {
                     return (width - used) / spaces;
                 }
 
                 return -1;
-            case -0xFE:
+            case MES_CODE_SPACE:
                 spaces++;
                 continue;
         }
@@ -1378,29 +1378,29 @@ int ClsMes::MakeMesWinTbl(int mes_no) {
         code = *at;
         at++;
 
-        if (code == -0xFD || code == -0x100 || code == -0xFF) {
+        if (code == MES_CODE_PAGE || code == MES_CODE_NEWLINE || code == MES_CODE_END) {
             this->space_width = -1;
             this->space_area = -1;
         }
 
         switch (code) {
-            case -0xFF:
+            case MES_CODE_END:
                 this->SetMesWinTbl(code, 0, x, y);
                 return 1;
 
-            case -0x100:
+            case MES_CODE_NEWLINE:
                 this->SetMesWinTbl(code, 0, x, y);
                 x = 0;
                 y += this->char_height;
                 break;
 
-            case -0xFD:
+            case MES_CODE_PAGE:
                 this->SetMesWinTbl(code, 0, x, y);
                 x = 0;
                 y = 0;
                 break;
 
-            case -0xFE:
+            case MES_CODE_SPACE:
                 this->SetMesWinTbl(code, 0, x, y);
 
                 if (this->space_area >= 0 || this->space_width >= 0) {
@@ -1433,7 +1433,7 @@ int ClsMes::MakeMesWinTbl(int mes_no) {
                     if (name != 0) {
                         int name_code = *name;
 
-                        while (name_code != -0x100 && name_code != -0xFF) {
+                        while (name_code != MES_CODE_NEWLINE && name_code != MES_CODE_END) {
                             this->SetMesWinTbl(name_code, 0, x, y);
                             x += this->char_width;
                             name++;
@@ -1516,16 +1516,16 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
         code = *at;
         at++;
 
-        if (code == -0xFD || code == -0x100 || code == -0xFF) {
+        if (code == MES_CODE_PAGE || code == MES_CODE_NEWLINE || code == MES_CODE_END) {
             this->space_width = -1;
             this->space_area = -1;
         }
 
         switch (code) {
-            case -0xFF:
+            case MES_CODE_END:
                 return;
 
-            case -0xFE:
+            case MES_CODE_SPACE:
                 len++;
 
                 if (*max_len < len) {
@@ -1544,7 +1544,7 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
 
                 break;
 
-            case -0x100:
+            case MES_CODE_NEWLINE:
                 len = 0;
                 lines++;
 
@@ -1561,7 +1561,7 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
 
                 break;
 
-            case -0xFD:
+            case MES_CODE_PAGE:
                 len = 0;
                 lines = 0;
                 width = 0;
@@ -1670,7 +1670,7 @@ int ClsMes::MakeMesWin(int mes_no) {
     if (this->mes_made == mes_no) {
         if (this->auto_page == 0) {
             this->fade = 1.0f;
-            this->fade_in = 1;
+            this->fade_in = true;
             GoNextPage();
         }
 
@@ -1703,10 +1703,10 @@ void ClsMes::MakeMesTexture(int mes_no) {
 
     if (this->fukidashi != 0) {
         this->fade = 0.0f;
-        this->fade_in = 1;
+        this->fade_in = true;
     }
 
-    this->waiting = 0;
+    this->waiting = false;
     this->blink = 0;
     MyTextureMake_InitAll();
     NeedMesWinWH(mes_no, needed);
@@ -1747,19 +1747,19 @@ void ClsMes::MakeMesTexture(int mes_no) {
 
 void ClsMes::Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y, int width, int height, int u, int v, int u_width, int v_height) {
     switch (this->style) {
-        case 1:
+        case MES_EDGE_WHITE:
             set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0xFF, 0xFF, 0xFF, this->edge_alpha < 0x40 ? this->edge_alpha : 0x40);
             break;
-        case 2:
+        case MES_EDGE_BLACK:
             set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0, 0, 0, this->edge_alpha < 0x40 ? this->edge_alpha : 0x40);
             break;
-        case 3:
+        case MES_EDGE_TABLE:
             for (int i = 0; FuchiTbl_E[i].alpha > 0; i++) {
                 set2DSprite_Core(packet, texture, CRect_i_(x + FuchiTbl_E[i].x, y + FuchiTbl_E[i].y, width, height), CRect_i_(u, v, u_width, v_height), FuchiTbl_E[i].r, FuchiTbl_E[i].g, FuchiTbl_E[i].b, this->edge_alpha < FuchiTbl_E[i].alpha ? this->edge_alpha : FuchiTbl_E[i].alpha);
             }
 
             break;
-        case 4:
+        case MES_EDGE_DOUBLE:
             set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0x40, 0x40, 0x40, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
             set2DSprite_Core(packet, texture, CRect_i_(x + 2, y + 2, width, height), CRect_i_(u, v, u_width, v_height), 0, 0, 0, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
             break;
@@ -1786,7 +1786,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
     step = 0;
 
     while (turn < 128.0f) {
-        float angle = 6.2831855f * turn / 128.0f;
+        float angle = TWO_PI * turn / 128.0f;
 
         across = cosf(angle);
         down = sinf(angle);
@@ -1972,7 +1972,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         int   step = 0;
 
         while (turn < 128.0f) {
-            float angle = 6.2831855f * turn / 128.0f;
+            float angle = TWO_PI * turn / 128.0f;
 
             across = cosf(angle);
             down = sinf(angle);
@@ -2305,9 +2305,9 @@ void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, in
 
 void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int win_height, int align, int *out_x, int *out_y) {
     switch (align) {
-        case 1:
-        case 4:
-        case 7:
+        case MES_POS_TOP_LEFT:
+        case MES_POS_LEFT:
+        case MES_POS_BOTTOM_LEFT:
             if (win_width < width / 3) {
                 *out_x = x + width / 6 - (win_width >> 1);
             } else {
@@ -2315,14 +2315,14 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
             }
 
             break;
-        case 2:
-        case 5:
-        case 8:
+        case MES_POS_TOP:
+        case MES_POS_CENTRE:
+        case MES_POS_BOTTOM:
             *out_x = x + (width >> 1) - (win_width >> 1);
             break;
-        case 3:
-        case 6:
-        case 9:
+        case MES_POS_TOP_RIGHT:
+        case MES_POS_RIGHT:
+        case MES_POS_BOTTOM_RIGHT:
             if (win_width < width / 3) {
                 *out_x = x + width * 5 / 6 - (win_width >> 1);
             } else {
@@ -2333,9 +2333,9 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
     }
 
     switch (align) {
-        case 1:
-        case 2:
-        case 3:
+        case MES_POS_TOP_LEFT:
+        case MES_POS_TOP:
+        case MES_POS_TOP_RIGHT:
             if (win_height < height / 3) {
                 *out_y = y + height / 6 - (win_height >> 1);
             } else {
@@ -2343,14 +2343,14 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
             }
 
             break;
-        case 4:
-        case 5:
-        case 6:
+        case MES_POS_LEFT:
+        case MES_POS_CENTRE:
+        case MES_POS_RIGHT:
             *out_y = y + (height >> 1) - (win_height >> 1);
             break;
-        case 7:
-        case 8:
-        case 9:
+        case MES_POS_BOTTOM_LEFT:
+        case MES_POS_BOTTOM:
+        case MES_POS_BOTTOM_RIGHT:
             if (win_height < height / 3) {
                 *out_y = y + height * 5 / 6 - (win_height >> 1);
             } else {
@@ -2381,63 +2381,63 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel, 
     clut = this->win_line[index].clut;
 
     switch (FontColorTbl[clut]) {
-        case 0x80BFBFBF:
+        case FONT_COLOR_WHITE:
             r = 0x5F;
             g = 0x5F;
             b = 0x5F;
             alpha = 0x80;
             break;
 
-        case 0x80304045:
+        case FONT_COLOR_BROWN:
             r = 0x22;
             g = 0x20;
             b = 0x18;
             alpha = 0x80;
             break;
 
-        case 0x8040BDBD:
+        case FONT_COLOR_YELLOW:
             r = 0x5E;
             g = 0x5E;
             b = 0x20;
             alpha = 0x80;
             break;
 
-        case 0x80BDBD40:
+        case FONT_COLOR_CYAN:
             r = 0x20;
             g = 0x5E;
             b = 0x5E;
             alpha = 0x80;
             break;
 
-        case 0x8040BD40:
+        case FONT_COLOR_GREEN:
             r = 0x20;
             g = 0x5E;
             b = 0x20;
             alpha = 0x80;
             break;
 
-        case 0xFF304045:
+        case FONT_COLOR_BROWN_OPAQUE:
             r = 0x22;
             g = 0x20;
             b = 0x18;
             alpha = 0x80;
             break;
 
-        case 0x8066CEE7:
+        case FONT_COLOR_GOLD:
             r = 0x73;
             g = 0x67;
             b = 0x33;
             alpha = 0x80;
             break;
 
-        case 0x808F8F8F:
+        case FONT_COLOR_GREY:
             r = 0x47;
             g = 0x47;
             b = 0x47;
             alpha = 0x80;
             break;
 
-        case 0x80BF3FBF:
+        case FONT_COLOR_MAGENTA:
             r = 0x5F;
             g = 0x1F;
             b = 0x5F;

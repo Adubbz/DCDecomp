@@ -11,6 +11,63 @@
 #include "fireomni.hpp"
 #include "water.hpp"
 
+/**
+ * Kinds of dungeon event, as DUNGEON_EVENT::kind holds them.
+ */
+// clang-format off
+enum DungeonEventKind {
+    DNG_EVENT_NONE         = -1, /**< Free. */
+    DNG_EVENT_TREASURE_BOX = 2,  /**< Treasure box. */
+    DNG_EVENT_ATRA         = 3,  /**< Atla ball. */
+    DNG_EVENT_MIMIC        = 8,  /**< Mimic. */
+};
+
+// clang-format on
+
+/**
+ * Effects of a dungeon magic circle, as MAP_TRAP_CIRCLE::kind holds them.
+ */
+// clang-format off
+enum TrapCircleKind {
+    TRAP_CIRCLE_STAMINA             = 0,  /**< Gives the player stamina. */
+    TRAP_CIRCLE_MONEY_UP            = 1,  /**< Raises the player's money. */
+    TRAP_CIRCLE_ABS_FULL            = 2,  /**< Fills the weapon's ABS. */
+    TRAP_CIRCLE_WHP_UP              = 3,  /**< Raises the weapon's maximum WHp. */
+    TRAP_CIRCLE_WHP_CURE            = 4,  /**< Restores the weapon's WHp. */
+    TRAP_CIRCLE_ALL_MONSTER_STAMINA = 5,  /**< Gives every monster stamina. */
+    TRAP_CIRCLE_MONEY_DOWN          = 6,  /**< Lowers the player's money. */
+    TRAP_CIRCLE_STAT_DOWN           = 7,  /**< Lowers a random weapon stat. */
+    TRAP_CIRCLE_WHP_DOWN            = 8,  /**< Lowers the weapon's maximum WHp. */
+    TRAP_CIRCLE_WHP_QUARTER         = 9,  /**< Quarters the weapon's WHp. */
+    TRAP_CIRCLE_COUNT               = 10, /**< Number of effects. */
+};
+
+// clang-format on
+
+/**
+ * Kinds of treasure box, as TREASURE_BOX::kind holds them.
+ */
+// clang-format off
+enum TreasureBoxKind {
+    TREASURE_BOX_LARGE = 0, /**< Large box. */
+    TREASURE_BOX_SMALL = 1, /**< Small box. */
+};
+
+// clang-format on
+
+/**
+ * Directions out of a dungeon room, as bits.
+ */
+// clang-format off
+enum MapDirection {
+    MAP_DIR_NORTH = 1, /**< North. */
+    MAP_DIR_EAST  = 2, /**< East. */
+    MAP_DIR_WEST  = 4, /**< West. */
+    MAP_DIR_SOUTH = 8, /**< South. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -52,7 +109,7 @@ struct TREASURE_BOX {
     sceVu0FVECTOR pos;       /**< World position of the box. */
     s32           item_no;   /**< Identifier of the item inside the box. */
     s32           closed;    /**< 1 until the box is opened; the mini map shows only closed boxes. */
-    s32           kind;      /**< 0 for a large box, 1 for a small box. */
+    s32           kind;      /**< Size of the box. @see TreasureBoxKind. */
     float         lid_angle; /**< Degrees the lid has swung open. */
     s32           trap_no;   /**< Trap that opening the box sets off, or 0 for none. */
     u8            unk_34[12];
@@ -75,7 +132,7 @@ struct ATRA_BOLL {
 struct MAP_TRAP_CIRCLE {
     float pos[4]; /**< World position of the circle. */
     s32   state;  /**< 0 for a free slot, 1 while the circle waits, 2 while the circle fades. */
-    s32   kind;   /**< Identifier of the trap that the circle shows. */
+    s32   kind;   /**< Trap that the circle shows. @see TrapCircleKind. */
     float timer;  /**< Time that passed since the circle started to fade. */
     s32   unk_1C;
 };
@@ -98,7 +155,7 @@ struct ROOM_LINK_RESULT {
 struct DUNGEON_EVENT {
     s32   origin_x;    /**< World X of the object the event belongs to, in whole units. */
     s32   origin_z;    /**< World Z of the object the event belongs to, in whole units. */
-    s32   kind;        /**< -1 for a free slot, 2 for a treasure box, 3 for an atla ball, 8 for a mimic. */
+    s32   kind;        /**< Kind of event in the slot. @see DungeonEventKind. */
     s32   placed_flag; /**< Cleared when the event is placed; nothing reads it. */
     float pos[4];      /**< World position that the event uses. */
     s32   unk_20;

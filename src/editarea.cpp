@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "collision.hpp"
+#include "editground.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mapparts.hpp"
@@ -204,7 +205,7 @@ int CEditArea::GetAlt_i(float x, float y, float z) {
 
 int CEditArea::GetPartsExtra(int x, int y) {
     switch (map_no) {
-        case 1:
+        case TOWN_MATATAKI:
             switch (area_id) {
                 case 0:
                     if (x == 5 && y == -1) {
@@ -357,14 +358,14 @@ int CEditArea::SetRiverParts(int x, int y) {
     neighbors[1] = positive_x == MAP_CONNECTION_RIVER;
     neighbors[2] = positive_z == MAP_CONNECTION_RIVER;
     neighbors[3] = negative_x == MAP_CONNECTION_RIVER;
-    neighbors[0] = neighbors[0] || negative_z == 3;
-    neighbors[1] = neighbors[1] || positive_x == 3;
-    neighbors[2] = neighbors[2] || positive_z == 3;
-    neighbors[3] = neighbors[3] || negative_x == 3;
-    neighbors[0] = neighbors[0] || negative_z == 5;
-    neighbors[1] = neighbors[1] || positive_x == 5;
-    neighbors[2] = neighbors[2] || positive_z == 5;
-    neighbors[3] = neighbors[3] || negative_x == 5;
+    neighbors[0] = neighbors[0] || negative_z == MAP_PARTS_SUBTYPE_BRIDGE;
+    neighbors[1] = neighbors[1] || positive_x == MAP_PARTS_SUBTYPE_BRIDGE;
+    neighbors[2] = neighbors[2] || positive_z == MAP_PARTS_SUBTYPE_BRIDGE;
+    neighbors[3] = neighbors[3] || negative_x == MAP_PARTS_SUBTYPE_BRIDGE;
+    neighbors[0] = neighbors[0] || negative_z == MAP_PARTS_SUBTYPE_ON_RIVER;
+    neighbors[1] = neighbors[1] || positive_x == MAP_PARTS_SUBTYPE_ON_RIVER;
+    neighbors[2] = neighbors[2] || positive_z == MAP_PARTS_SUBTYPE_ON_RIVER;
+    neighbors[3] = neighbors[3] || negative_x == MAP_PARTS_SUBTYPE_ON_RIVER;
     count = 0;
 
     for (i = 0; i < 4; i++) {
@@ -742,8 +743,8 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
     CVector3_i_ position;
     GetPos(&position, x, y, z);
 
-    if (parts->subtype == 5) {
-        if (GetPartsExtra(position.x, position.z) != 2) {
+    if (parts->subtype == MAP_PARTS_SUBTYPE_ON_RIVER) {
+        if (GetPartsExtra(position.x, position.z) != MAP_PARTS_SUBTYPE_RIVER) {
             return 0;
         }
 
@@ -777,14 +778,14 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
                 int occupant = grid[cell_x][cell_y].parts_no;
                 int extra = GetPartsExtra(cell_x, cell_y);
 
-                if ((parts->subtype == 1 || extra != 1) && occupant >= 0) {
+                if ((parts->subtype == MAP_PARTS_SUBTYPE_ROAD || extra != MAP_PARTS_SUBTYPE_ROAD) && occupant >= 0) {
                     return 0;
                 }
             }
         }
     }
 
-    if (parts->subtype == 2) {
+    if (parts->subtype == MAP_PARTS_SUBTYPE_RIVER) {
         if (GetAlt_i(position.x, position.z) > 0) {
             return 0;
         }
@@ -798,25 +799,25 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
         for (int i = 0; i < 4; i++) {
             int extra = neighbors[i];
 
-            if (extra == 3) {
+            if (extra == MAP_PARTS_SUBTYPE_BRIDGE) {
                 return 0;
             }
 
-            if (extra == 4) {
+            if (extra == MAP_PARTS_SUBTYPE_LAKE) {
                 return 0;
             }
 
-            if (extra == 5) {
+            if (extra == MAP_PARTS_SUBTYPE_ON_RIVER) {
                 return 0;
             }
 
-            if (extra == 5) {
+            if (extra == MAP_PARTS_SUBTYPE_ON_RIVER) {
                 return 0;
             }
         }
     }
 
-    if (parts->subtype == 4) {
+    if (parts->subtype == MAP_PARTS_SUBTYPE_LAKE) {
         if (GetAlt_i(position.x, position.z) > 0) {
             return 0;
         }
@@ -827,15 +828,15 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
                 int cell_x = i + (position.x - half_width);
                 int extra = GetPartsExtra(cell_x, j + (position.z - (part_height >> 1)));
 
-                if (extra == 3) {
+                if (extra == MAP_PARTS_SUBTYPE_BRIDGE) {
                     return 0;
                 }
 
-                if (extra == 2) {
+                if (extra == MAP_PARTS_SUBTYPE_RIVER) {
                     return 0;
                 }
 
-                if (extra == 5) {
+                if (extra == MAP_PARTS_SUBTYPE_ON_RIVER) {
                     return 0;
                 }
             }
@@ -979,7 +980,7 @@ int CEditArea::CheckRiverChain(int x, int y, int target_x, int target_y) {
     static int ext = 0;
     ext = GetPartsExtra(x, y);
 
-    if (ext != MAP_CONNECTION_RIVER && ext != 3 && ext != 5) {
+    if (ext != MAP_CONNECTION_RIVER && ext != MAP_PARTS_SUBTYPE_BRIDGE && ext != MAP_PARTS_SUBTYPE_ON_RIVER) {
         return 0;
     }
 
@@ -1015,11 +1016,11 @@ void CEditArea::DrawGrid() {
         RemakeGrid();
 
         if (grid_frame != NULL) {
-            grid_frame->attr.cull_enable = 0;
+            grid_frame->attr.cull_enable = false;
         }
     } else {
         if (grid_frame != NULL) {
-            grid_frame->attr.cull_enable = 1;
+            grid_frame->attr.cull_enable = true;
         }
     }
 

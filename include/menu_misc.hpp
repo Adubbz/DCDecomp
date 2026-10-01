@@ -2,6 +2,48 @@
 
 #include "common.h"
 
+/**
+ * What the travel page offers, as NowGetGameFlagForBtlMenu returns it and MENU_MOVE_INFO::mode holds it.
+ */
+// clang-format off
+enum MenuMoveMode {
+    MENU_MOVE_DUNGEON_ESCAPE   = 0,  /**< Leave the dungeon. */
+    MENU_MOVE_WORLD_MAP        = 1,  /**< World map. */
+    MENU_MOVE_INTERIOR_OUT     = 2,  /**< Leave the interior. */
+    MENU_MOVE_WORLD_MAP_DIRECT = 5,  /**< World map opened from a town script. */
+    MENU_MOVE_FIRST_DUNGEON    = 10, /**< Only the Divine Beast Cave, before the world map is held. */
+    MENU_MOVE_LOCKED           = 11, /**< Travel refused. */
+};
+
+// clang-format on
+
+/**
+ * What an item is used on, as ItemUseFunc's target and ITEM_MENU_MODE_INFO::use_target take it.
+ */
+// clang-format off
+enum ItemUseTarget {
+    ITEM_USE_ON_CHARA        = 1, /**< The current character. */
+    ITEM_USE_ON_EQUIP_WEAPON = 2, /**< The equipped weapon. */
+    ITEM_USE_ON_BOARD_WEAPON = 4, /**< A weapon on the personal board. */
+};
+
+// clang-format on
+
+/**
+ * Weapon effects that WeaponDataChangeByRGate applies.
+ */
+// clang-format off
+enum RGateEffect {
+    RGATE_ABS_FULL    = 0, /**< Fills the weapon's ABS. */
+    RGATE_STAT_DOWN   = 1, /**< Lowers a random stat. */
+    RGATE_WHP_UP      = 2, /**< Raises the maximum WHp. */
+    RGATE_WHP_DOWN    = 3, /**< Lowers the maximum WHp. */
+    RGATE_WHP_CURE    = 4, /**< Restores the WHp. */
+    RGATE_WHP_QUARTER = 5, /**< Quarters the WHp. */
+};
+
+// clang-format on
+
 class CCharacter;
 class CTexture;
 class CUserStatus;
@@ -478,7 +520,7 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha);
 void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha);
 
 /**
- * Applies one of the R gate's weapon effects by kind: fill its ABS, lower a random stat, raise or lower its maximum WHp, restore or quarter its WHp; returns -1 without a weapon.
+ * Applies one of the R gate's weapon effects by kind, or returns -1 without a weapon. @see RGateEffect.
  *
  * @mangled WeaponDataChangeByRGate__FP11WEAPON_HAVEi
  * @address 0x20FCE0

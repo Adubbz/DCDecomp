@@ -105,7 +105,7 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
             if (weapon_data->hole[i] > 0) {
                 attach = &src->attach[i];
 
-                if (attach->item_no >= 0x51) {
+                if (attach->item_no >= ITEM_ATTACH_START) {
                     scale = 1.0f;
 
                     if (src->attach_kind[i] == 3) {
@@ -114,7 +114,7 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
 
                     AttachMentValuePlus(&total, attach, scale);
 
-                    if (attach->item_no == 0x5A) {
+                    if (attach->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                         synth_count++;
 
                         if (attach->sphere_flags != 0 && attach->sphere_flags != 1) {
@@ -207,13 +207,13 @@ void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *load_buffer, int kind) 
     {
         char *file_names[5] = {"wlevelup.pak", "s_break.pak", "buildup.chr", "menu_ex.chr", "w_recover.chr"};
         char  path[0x40] = "commenu/effect/";
-        char  file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-        s16   se_table[14] = {25, 26, 28, -1, -1, -1, -1, 20, 20, -1, 20, 20, 20, 20};
+        char  file_table[WEP_EFFECT_KIND_COUNT] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+        s16   se_table[WEP_EFFECT_KIND_COUNT] = {25, 26, 28, -1, -1, -1, -1, 20, 20, -1, 20, 20, 20, 20};
 
         file_no = file_table[kind];
         se_no = se_table[kind];
 
-        if (kind == 2 && IsLastWeapon(buildup_weapon_no) != 0) {
+        if (kind == WEP_EFFECT_BUILDUP && IsLastWeapon(buildup_weapon_no) != 0) {
             se_no = 21;
             printf("last weapon\n");
         }
@@ -241,10 +241,10 @@ void CWeaponLevelUp::Initialize() {
     effect_buffer = NULL;
     weapon = NULL;
     reserved_word = 0;
-    effect_active = 0;
+    effect_active = false;
     effect_timer = -1.0f;
-    effect_state = 0;
-    operation_kind = -1;
+    effect_state = WEP_EFFECT_STATE_IDLE;
+    operation_kind = WEP_EFFECT_NONE;
     texture_block = -1;
     buildup_weapon_no = -1;
     message_no = 0;
@@ -252,7 +252,7 @@ void CWeaponLevelUp::Initialize() {
     synthesis_count = 0;
     reserved_half = 0;
     buildup_complete = 0;
-    lost_default_weapon = 0;
+    lost_default_weapon = false;
 }
 
 void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
@@ -276,7 +276,7 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     }
 
     texture_block = tex_block;
-    operation_kind = 0;
+    operation_kind = WEP_EFFECT_LEVELUP;
     effect_motion = 0;
     CMenuEffectDataLoad(load_buffer, 0);
     synthesis_count = 0;
@@ -292,7 +292,7 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
         if (weapon_data->hole[i] > 0) {
             attach = &preview.attach[i];
 
-            if (preview.attach[i].item_no >= 0x51) {
+            if (preview.attach[i].item_no >= ITEM_ATTACH_START) {
                 scale = 1.0f;
 
                 if (preview.attach_kind[i] == 3) {
@@ -301,7 +301,7 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
 
                 AttachMentValuePlus(&total, attach, scale);
 
-                if (attach->item_no == 0x5A) {
+                if (attach->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                     synthesis_count++;
 
                     if (attach->sphere_flags != 0 && attach->sphere_flags != 1) {
@@ -367,15 +367,15 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     icon_count = 0;
 
     for (slot = 0; slot < 5; slot++) {
-        if (preview.attach[slot].item_no >= 0x51) {
+        if (preview.attach[slot].item_no >= ITEM_ATTACH_START) {
             attachment_icons[icon_count] = preview.attach[slot].item_no;
             attachment_values[icon_count] = 0;
 
-            if (attachment_icons[icon_count] >= 0x5B && attachment_icons[icon_count] < 0x5F) {
-                attachment_values[icon_count] = preview.attach[slot].status[preview.attach[slot].item_no - 0x5B];
+            if (attachment_icons[icon_count] >= ITEM_ATTACH_STAT_START && attachment_icons[icon_count] < ITEM_ATTACH_GEM_START) {
+                attachment_values[icon_count] = preview.attach[slot].status[preview.attach[slot].item_no - ITEM_ATTACH_STAT_START];
             }
 
-            if (attachment_icons[icon_count] == 0x5A) {
+            if (attachment_icons[icon_count] == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                 attachment_values[icon_count] = preview.attach[slot].sphere_weapon_no;
             }
 
@@ -406,7 +406,7 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     }
 
     memcpy(weapon, &preview, 0xF8);
-    effect_state = 1;
+    effect_state = WEP_EFFECT_STATE_LEVELUP_LOAD;
 }
 
 void CWeaponLevelUp::SetLevelUpWeaponData() {
@@ -462,14 +462,14 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     }
 
     texture_block = tex_block;
-    operation_kind = 1;
-    effect_state = 4;
+    operation_kind = WEP_EFFECT_STATUS_BREAK;
+    effect_state = WEP_EFFECT_STATE_BREAK_LOAD;
     effect_motion = 0;
     CMenuEffectDataLoad(load_buffer, 1);
     chara = character;
     weapon = have;
     memset(&status_item_no, 0, 0x20);
-    status_item_no = 0x5A;
+    status_item_no = ITEM_ATTACH_SYNTHESIS_SPHERE;
     status_weapon_no = weapon->item_no;
     status_weapon_level = weapon->level;
 
@@ -499,7 +499,7 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     total.sphere_weapon_no = status_weapon_no;
 
     for (i = 0; i < 6; i++) {
-        if (weapon->attach[i].item_no >= 0x51) {
+        if (weapon->attach[i].item_no >= ITEM_ATTACH_START) {
             scale = 1.0f;
 
             if (weapon->attach_kind[i] == 3) {
@@ -508,7 +508,7 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
 
             AttachMentValuePlus(&total, &have->attach[i], scale);
 
-            if (weapon->attach[i].item_no == 0x5A) {
+            if (weapon->attach[i].item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                 if (weapon->attach[i].sphere_flags != 0 && weapon->attach[i].sphere_flags != 1) {
                     flags |= weapon->attach[i].sphere_flags;
                 }
@@ -523,7 +523,7 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     items = (ATTACH_LIST *) dng_status->consumable_items;
     slot = &items[slot_no];
     memcpy(slot, &status_item_no, 0x20);
-    slot->item_no = 0x5A;
+    slot->item_no = ITEM_ATTACH_SYNTHESIS_SPHERE;
     items[slot_no].sphere_level = weapon->level;
     items[slot_no].sphere_weapon_no = weapon->item_no;
     items[slot_no].sphere_flags = flags;
@@ -535,8 +535,8 @@ void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeapo
     }
 
     texture_block = tex_block;
-    operation_kind = 2;
-    effect_state = 7;
+    operation_kind = WEP_EFFECT_BUILDUP;
+    effect_state = WEP_EFFECT_STATE_BUILDUP_LOAD;
     effect_motion = 0;
     CMenuEffectDataLoad(load_buffer, operation_kind);
     chara = character;
@@ -544,7 +544,7 @@ void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeapo
     memcpy(&preview, weapon, 0xF8);
     SetWeaponBuildValue(&preview, buildup_weapon_no);
 
-    if (have->item_no == 0x116 || have->item_no == 0x117) {
+    if (have->item_no == ITEM_WEAPON_MARDAN_EINS || have->item_no == ITEM_WEAPON_MARDAN_TWEI) {
         ClearFishMardanGarayanNum();
         printf("mardan num clear!!\n");
     }
@@ -556,8 +556,8 @@ void CWeaponLevelUp::WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeapo
     }
 
     texture_block = tex_block;
-    operation_kind = 3;
-    effect_state = 10;
+    operation_kind = WEP_EFFECT_RECOVER;
+    effect_state = WEP_EFFECT_STATE_RECOVER_LOAD;
     effect_motion = 0;
     CMenuEffectDataLoad(load_buffer, operation_kind);
     chara = character;
@@ -571,14 +571,14 @@ void CWeaponLevelUp::CureEffect(int x, int y, CWeaponLevelUp *load_buffer, int t
     effect_state = (operation_kind - 4) * 2 + 12;
     effect_motion = operation_kind - 4;
 
-    if (kind == 13) {
+    if (kind == WEP_EFFECT_CURE_POCKET) {
         effect_motion = 2;
     } else {
-        if (operation_kind >= 7) {
+        if (operation_kind >= WEP_EFFECT_UNK_7) {
             effect_motion = effect_motion - 1;
         }
 
-        if (operation_kind >= 10) {
+        if (operation_kind >= WEP_EFFECT_CURE_REVIVAL_POWDER) {
             effect_motion = effect_motion - 1;
         }
     }
@@ -669,7 +669,7 @@ void CWeaponLevelUp::Step() {
     int           option;
     float         motion_time;
 
-    if (operation_kind == -1) {
+    if (operation_kind == WEP_EFFECT_NONE) {
         return;
     }
 
@@ -682,22 +682,22 @@ void CWeaponLevelUp::Step() {
     switch (effect_state) {
         default:
             break;
-        case 0:
+        case WEP_EFFECT_STATE_IDLE:
             return;
-        case 1:
-        case 4:
-        case 7:
-        case 10:
-        case 12:
-        case 14:
-        case 16:
-        case 18:
-        case 20:
-        case 22:
-        case 24:
-        case 26:
-        case 28:
-        case 30:
+        case WEP_EFFECT_STATE_LEVELUP_LOAD:
+        case WEP_EFFECT_STATE_BREAK_LOAD:
+        case WEP_EFFECT_STATE_BUILDUP_LOAD:
+        case WEP_EFFECT_STATE_RECOVER_LOAD:
+        case WEP_EFFECT_STATE_CURE_HEAL_HP_LOAD:
+        case WEP_EFFECT_STATE_CURE_DRINK_LOAD:
+        case WEP_EFFECT_STATE_CURE_REPAIR_LOAD:
+        case WEP_EFFECT_STATE_UNK_12:
+        case WEP_EFFECT_STATE_CURE_STATUS_LOAD:
+        case WEP_EFFECT_STATE_CURE_AILMENT_LOAD:
+        case WEP_EFFECT_STATE_CURE_REVIVAL_POWDER_LOAD:
+        case WEP_EFFECT_STATE_CURE_GOURD_LOAD:
+        case WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_LOAD:
+        case WEP_EFFECT_STATE_CURE_POCKET_LOAD:
             ReadBG();
             ready_count = 0;
 
@@ -708,7 +708,7 @@ void CWeaponLevelUp::Step() {
             if (SndSPSeSyncBG() == 0) {
                 ready_count++;
 
-                if (operation_kind != 6 && operation_kind != 3 && operation_kind != 9 && operation_kind != 4 && operation_kind != 5) {
+                if (operation_kind != WEP_EFFECT_CURE_REPAIR && operation_kind != WEP_EFFECT_RECOVER && operation_kind != WEP_EFFECT_CURE_AILMENT && operation_kind != WEP_EFFECT_CURE_HEAL_HP && operation_kind != WEP_EFFECT_CURE_DRINK) {
                     volume = BtlMenuBGMvol;
                     SetSnd(volume, volume >> 2, 7);
                 }
@@ -722,7 +722,7 @@ void CWeaponLevelUp::Step() {
                 };
                 textures[0].block_no = texture_block;
                 textures[1].block_no = texture_block;
-                char  file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+                char  file_table[WEP_EFFECT_KIND_COUNT] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
                 char *image_names[5] = {"wlevelup", "s_break", "buildup", "menu_ex", "w_recover"};
                 char *config_names[14] = {"wlevelup", "info", "buildup", "info", "w_recover",
                                           NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -750,20 +750,20 @@ void CWeaponLevelUp::Step() {
                 effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) + MenuEffectCashBuffer.base);
                 effect_state++;
                 effect_timer = 0.0f;
-                effect_active = 1;
+                effect_active = true;
 
                 float position[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
                 switch (operation_kind) {
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case WEP_EFFECT_CURE_HEAL_HP:
+                    case WEP_EFFECT_CURE_DRINK:
+                    case WEP_EFFECT_CURE_REPAIR:
+                    case WEP_EFFECT_CURE_STATUS:
+                    case WEP_EFFECT_CURE_AILMENT:
+                    case WEP_EFFECT_CURE_REVIVAL_POWDER:
+                    case WEP_EFFECT_CURE_GOURD:
+                    case WEP_EFFECT_CURE_FRUIT_OF_EDEN:
+                    case WEP_EFFECT_CURE_POCKET:
                         position[0] = effect_x;
                         position[1] = effect_y;
                         break;
@@ -774,7 +774,7 @@ void CWeaponLevelUp::Step() {
                 float scale[3] = {1.0f, 1.0f, 1.0f};
 
                 switch (operation_kind) {
-                    case 1:
+                    case WEP_EFFECT_STATUS_BREAK:
                         int i;
 
                         for (i = 0; i < 3; i++) {
@@ -782,7 +782,7 @@ void CWeaponLevelUp::Step() {
                         }
 
                         break;
-                    case 2:
+                    case WEP_EFFECT_BUILDUP:
                         int j;
 
                         for (j = 0; j < 3; j++) {
@@ -800,13 +800,13 @@ void CWeaponLevelUp::Step() {
                 se_no = -1;
 
                 switch (operation_kind) {
-                    case 1:
+                    case WEP_EFFECT_STATUS_BREAK:
                         se_no = 0x1A;
                         break;
-                    case 0:
+                    case WEP_EFFECT_LEVELUP:
                         se_no = 0x19;
                         break;
-                    case 2:
+                    case WEP_EFFECT_BUILDUP:
                         se_no = 0x1C;
 
                         if (IsLastWeapon(buildup_weapon_no) != 0) {
@@ -814,12 +814,12 @@ void CWeaponLevelUp::Step() {
                         }
 
                         break;
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 8:
-                    case 7:
-                    case 10:
+                    case WEP_EFFECT_CURE_GOURD:
+                    case WEP_EFFECT_CURE_FRUIT_OF_EDEN:
+                    case WEP_EFFECT_CURE_POCKET:
+                    case WEP_EFFECT_CURE_STATUS:
+                    case WEP_EFFECT_UNK_7:
+                    case WEP_EFFECT_CURE_REVIVAL_POWDER:
                         se_no = 0x14;
                         break;
                 }
@@ -841,26 +841,26 @@ void CWeaponLevelUp::Step() {
             }
 
             break;
-        case 2:
+        case WEP_EFFECT_STATE_LEVELUP_ORBIT:
             effect_timer += 1.0f;
 
             if (!(effect_timer < 140.0f)) {
-                effect_state = 3;
+                effect_state = WEP_EFFECT_STATE_LEVELUP_DONE;
                 return;
             }
 
             break;
-        case 3:
+        case WEP_EFFECT_STATE_LEVELUP_DONE:
             effect_timer += 1.0f;
 
             if (motion_state == 3) {
                 effect_timer = 200.0f;
-                effect_active = 0;
+                effect_active = false;
                 return;
             }
 
             break;
-        case 5:
+        case WEP_EFFECT_STATE_BREAK_PLAY:
             effect_timer += 1.0f;
 
             if (motion_state == 3) {
@@ -875,7 +875,7 @@ void CWeaponLevelUp::Step() {
                 if (IsDefaultWeapon(weapon->item_no) >= 0) {
                     discard = 0;
                     weapon->level = 0;
-                    lost_default_weapon = 1;
+                    lost_default_weapon = true;
                 }
 
                 if (discard != 0) {
@@ -889,17 +889,17 @@ void CWeaponLevelUp::Step() {
             }
 
             break;
-        case 6:
+        case WEP_EFFECT_STATE_BREAK_DONE:
             effect_timer += 1.0f;
 
             if (motion_state == 3) {
                 effect_timer = 12.0f;
-                effect_active = 0;
+                effect_active = false;
                 return;
             }
 
             break;
-        case 8:
+        case WEP_EFFECT_STATE_BUILDUP_PLAY:
             if (motion_state == 3) {
                 effect_motion++;
                 SetWeaponBuildValue(weapon, buildup_weapon_no);
@@ -913,7 +913,7 @@ void CWeaponLevelUp::Step() {
                     weapon->flags = weapon->flags | option;
                 }
 
-                MenuExTextureReadFlag = 0;
+                MenuExTextureReadFlag = MENU_EX_TEX_UNREAD;
                 buildup_complete = 1;
                 effect.motion_no = effect_motion;
                 effect.motion_flags = 6;
@@ -924,50 +924,50 @@ void CWeaponLevelUp::Step() {
             }
 
             break;
-        case 9:
+        case WEP_EFFECT_STATE_BUILDUP_DONE:
             if (motion_state == 3) {
-                effect_active = 0;
+                effect_active = false;
                 return;
             }
 
             break;
-        case 11:
+        case WEP_EFFECT_STATE_RECOVER_DONE:
             if (motion_state == 3) {
-                effect_active = 0;
+                effect_active = false;
                 return;
             }
 
             break;
-        case 15:
+        case WEP_EFFECT_STATE_CURE_DRINK_PLAY:
             motion_time = effect.motion_type.state.time;
 
             if (motion_time > 52.0 && motion_time < 52.3) {
-                ComMenuSePlay(0x13);
+                ComMenuSePlay(SE_EFFECT_CHIME);
             }
             /* fallthrough */
-        case 13:
-        case 17:
-        case 19:
-        case 23:
+        case WEP_EFFECT_STATE_CURE_HEAL_HP_PLAY:
+        case WEP_EFFECT_STATE_CURE_REPAIR_PLAY:
+        case WEP_EFFECT_STATE_UNK_13:
+        case WEP_EFFECT_STATE_CURE_AILMENT_PLAY:
             if (motion_state == 3) {
                 if (message_no >= 0x190) {
-                    effect_active = 0;
+                    effect_active = false;
                     return;
                 }
 
-                effect_active = 1;
+                effect_active = true;
                 Initialize();
                 return;
             }
 
             break;
-        case 21:
-        case 25:
-        case 27:
-        case 29:
-        case 31:
+        case WEP_EFFECT_STATE_CURE_STATUS_PLAY:
+        case WEP_EFFECT_STATE_CURE_REVIVAL_POWDER_PLAY:
+        case WEP_EFFECT_STATE_CURE_GOURD_PLAY:
+        case WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_PLAY:
+        case WEP_EFFECT_STATE_CURE_POCKET_PLAY:
             if (motion_state == 3) {
-                effect_active = 0;
+                effect_active = false;
             }
 
             break;
@@ -987,7 +987,7 @@ void CWeaponLevelUp::Draw() {
     float x;
     float y;
 
-    if (effect_state == 0) {
+    if (effect_state == WEP_EFFECT_STATE_IDLE) {
         return;
     }
 
@@ -998,10 +998,10 @@ void CWeaponLevelUp::Draw() {
     alpha = 128;
 
     switch (effect_state) {
-        case 6:
+        case WEP_EFFECT_STATE_BREAK_DONE:
             if (!(effect.GetNowTime() < 134.0f)) {
                 MenuTextureReload(MenuShadowReadBlock);
-                DrawIconParts(0x5A, 0x132, 0xD0, 0, 0x280, alpha, status_weapon_no);
+                DrawIconParts(ITEM_ATTACH_SYNTHESIS_SPHERE, 0x132, 0xD0, 0, 0x280, alpha, status_weapon_no);
             }
 
             break;
@@ -1016,16 +1016,16 @@ void CWeaponLevelUp::Draw() {
     MenuTextureReload(BtlMenuReadBlock);
 
     switch (effect_state) {
-        case 0:
-        case 1:
-        case 4:
-        case 7:
+        case WEP_EFFECT_STATE_IDLE:
+        case WEP_EFFECT_STATE_LEVELUP_LOAD:
+        case WEP_EFFECT_STATE_BREAK_LOAD:
+        case WEP_EFFECT_STATE_BUILDUP_LOAD:
             return;
-        case 2:
+        case WEP_EFFECT_STATE_LEVELUP_ORBIT:
             count = 0;
 
             for (i = 0; i < 5; i++) {
-                if (attachment_icons[i] < 0x51) {
+                if (attachment_icons[i] < ITEM_ATTACH_START) {
                     break;
                 }
 
@@ -1038,7 +1038,7 @@ void CWeaponLevelUp::Draw() {
                 return;
             }
 
-            angle_step = 6.2831855f / (float) count;
+            angle_step = TWO_PI / (float) count;
             angular_rate = angle_step / 140.0f;
             orbit_radius = 128.0f - 128.0f * (effect_timer / 140.0f);
 
@@ -1064,11 +1064,11 @@ void CWeaponLevelUp::Draw() {
             }
 
             break;
-        case 3:
-        case 5:
-        case 6:
-        case 8:
-        case 9:
+        case WEP_EFFECT_STATE_LEVELUP_DONE:
+        case WEP_EFFECT_STATE_BREAK_PLAY:
+        case WEP_EFFECT_STATE_BREAK_DONE:
+        case WEP_EFFECT_STATE_BUILDUP_PLAY:
+        case WEP_EFFECT_STATE_BUILDUP_DONE:
             break;
     }
 
@@ -1079,14 +1079,14 @@ void CWeaponLevelUp::DrawMes() {
     int x;
     int y;
 
-    if (effect_active == 0 && operation_kind != -1) {
+    if (effect_active == 0 && operation_kind != WEP_EFFECT_NONE) {
         switch (effect_state) {
-            case 0:
-            case 1:
-            case 2:
-            case 4:
-            case 5:
-            case 7:
+            case WEP_EFFECT_STATE_IDLE:
+            case WEP_EFFECT_STATE_LEVELUP_LOAD:
+            case WEP_EFFECT_STATE_LEVELUP_ORBIT:
+            case WEP_EFFECT_STATE_BREAK_LOAD:
+            case WEP_EFFECT_STATE_BREAK_PLAY:
+            case WEP_EFFECT_STATE_BUILDUP_LOAD:
                 return;
         }
 
@@ -1095,62 +1095,62 @@ void CWeaponLevelUp::DrawMes() {
         int values[2] = {-1, -1};
 
         switch (effect_state) {
-            case 3:
+            case WEP_EFFECT_STATE_LEVELUP_DONE:
                 mes_id = 0x190;
                 mes_no[0] = GetCommonItemInfo(preview.item_no)->msg + 100;
                 values[0] = preview.level + 1;
                 break;
-            case 6:
+            case WEP_EFFECT_STATE_BREAK_DONE:
                 mes_id = 0x191;
                 mes_no[0] = GetCommonItemInfo(status_weapon_no)->msg + 100;
                 values[0] = status_weapon_level;
                 break;
-            case 9:
+            case WEP_EFFECT_STATE_BUILDUP_DONE:
                 mes_id = 0x192;
                 mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
                 values[0] = 0;
                 break;
-            case 11:
+            case WEP_EFFECT_STATE_RECOVER_DONE:
                 mes_id = 0x193;
                 mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
                 values[0] = weapon->level;
                 break;
-            case 21:
+            case WEP_EFFECT_STATE_CURE_STATUS_PLAY:
                 mes_id = 0x194;
                 mes_no[0] = message_no + 50;
                 values[0] = message_value;
                 break;
-            case 23:
+            case WEP_EFFECT_STATE_CURE_AILMENT_PLAY:
                 mes_id = message_no;
                 break;
-            case 29:
+            case WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_PLAY:
                 mes_id = 0x195;
                 mes_no[0] = message_no + 50;
                 break;
-            case 27:
+            case WEP_EFFECT_STATE_CURE_GOURD_PLAY:
                 mes_id = 0x196;
                 mes_no[0] = message_no + 50;
                 break;
-            case 31:
+            case WEP_EFFECT_STATE_CURE_POCKET_PLAY:
                 mes_id = 0x197;
                 values[0] = message_value;
                 break;
-            case 25:
+            case WEP_EFFECT_STATE_CURE_REVIVAL_POWDER_PLAY:
                 mes_id = 0x198;
                 mes_no[0] = message_no + 50;
                 break;
         }
 
         if (CommonMenuMes1.mes_made != mes_id || CommonMenuMes1.mes_no[0] != mes_no[0] || CommonMenuMes1.values[0] != values[0]) {
-            CommonMenuMes1.value_signed = 1;
-            CommonMenuMes1.value_show = 0;
-            CommonMenuMes1.value_narrow = 0;
-            CommonMenuMes1.auto_pos = 0;
+            CommonMenuMes1.value_signed = true;
+            CommonMenuMes1.value_show = false;
+            CommonMenuMes1.value_narrow = false;
+            CommonMenuMes1.auto_pos = MES_POS_AUTO;
 
-            if (effect_state == 29 || effect_state == 27 || effect_state == 31 || effect_state == 21 || effect_state == 23) {
-                CommonMenuMes1.value_signed = 0;
-                CommonMenuMes1.value_show = 1;
-                CommonMenuMes1.auto_pos = 5;
+            if (effect_state == WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_PLAY || effect_state == WEP_EFFECT_STATE_CURE_GOURD_PLAY || effect_state == WEP_EFFECT_STATE_CURE_POCKET_PLAY || effect_state == WEP_EFFECT_STATE_CURE_STATUS_PLAY || effect_state == WEP_EFFECT_STATE_CURE_AILMENT_PLAY) {
+                CommonMenuMes1.value_signed = false;
+                CommonMenuMes1.value_show = true;
+                CommonMenuMes1.auto_pos = MES_POS_CENTRE;
             }
 
             CommonMenuMes1.mes_no[0] = mes_no[0];
@@ -1159,23 +1159,23 @@ void CWeaponLevelUp::DrawMes() {
             CommonMenuMes1.MakeMesWin(mes_id);
         }
 
-        CommonMenuMes1.stay_frame = 1;
+        CommonMenuMes1.stay_frame = true;
         MenuTextureReload(CommonMenuMes1.tex_block);
         x = 0x164;
         y = 0x96;
 
-        if (effect_state == 29 || effect_state == 27 || effect_state == 31 || effect_state == 23 || effect_state == 21) {
+        if (effect_state == WEP_EFFECT_STATE_CURE_FRUIT_OF_EDEN_PLAY || effect_state == WEP_EFFECT_STATE_CURE_GOURD_PLAY || effect_state == WEP_EFFECT_STATE_CURE_POCKET_PLAY || effect_state == WEP_EFFECT_STATE_CURE_AILMENT_PLAY || effect_state == WEP_EFFECT_STATE_CURE_STATUS_PLAY) {
             x = 0x100;
             y = 0x96;
         }
 
-        if (operation_kind == 3) {
-            CommonMenuMes1.value_signed = 1;
-            CommonMenuMes1.value_show = 0;
-            CommonMenuMes1.value_narrow = 0;
+        if (operation_kind == WEP_EFFECT_RECOVER) {
+            CommonMenuMes1.value_signed = true;
+            CommonMenuMes1.value_show = false;
+            CommonMenuMes1.value_narrow = false;
             x = 0x100;
             y = 0x96;
-            CommonMenuMes1.auto_pos = 5;
+            CommonMenuMes1.auto_pos = MES_POS_CENTRE;
         }
 
         DrawMenuClsMes(&CommonMenuMes1, x, y);

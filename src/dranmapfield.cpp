@@ -57,7 +57,7 @@ void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
 }
 
 /**
- * Draws every active drainage-field model that has finished loading.
+ * Draws every active Dran field model that has finished loading.
  *
  * @mangled Draw__13CDranMapFieldFv
  * @address 0x1CD720
@@ -90,9 +90,9 @@ void CDranMapField::Step() {
                 continue;
             }
 
-            // Two starts the drain, and the motion runs while it stands at one.
+            // Two starts the model moving, and the motion runs while it stands at one.
             if (set->state[i] == 2) {
-                SndSePlay(0x6C9, -1, 0);
+                SndSePlay(SE_DRAN_FIELD_START, -1, 0);
                 set->state[i]--;
             }
 

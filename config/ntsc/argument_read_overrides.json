@@ -1,4 +1,1487 @@
 {
  "version": 1,
- "translation_units": {}
+ "translation_units": {
+  "btitem.cpp": {
+   "BtAtraGetShort_Loop__Fii": [
+    {
+     "ordinal": 29,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 31,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 46,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 48,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 85,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 87,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BtEscape_Loop__Fv": [
+    {
+     "ordinal": 26,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 27,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BtGetGateKey_Loop__Fv": [
+    {
+     "ordinal": 12,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 19,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 24,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 25,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 28,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 30,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 47,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BtGetTreasureboxBig_Init__Fv": [
+    {
+     "ordinal": 9,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 69,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BtGetTreasureboxBig_Loop__Fv": [
+    {
+     "ordinal": 65,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 80,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 81,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BtGetTreasureboxSmall_Init__Fi": [
+    {
+     "ordinal": 86,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BtGetTreasureboxSmall_Loop__Fv": [
+    {
+     "ordinal": 32,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 47,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 48,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "ItemThrowStep__FPfPf": [
+    {
+     "ordinal": 11,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ]
+  },
+  "editground.cpp": {
+   "DeleteMapParts__11CEditGroundFPiPifff": [
+    {
+     "ordinal": 52,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 54,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "DrawRipple__11CEditGroundFi": [
+    {
+     "ordinal": 16,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "DrawWaterSurface__11CEditGroundFP7CCamera": [
+    {
+     "ordinal": 52,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "Draw__12CPartsCursorFPfii": [
+    {
+     "ordinal": 12,
+     "kind": "0x09",
+     "evaluate_first": 1
+    }
+   ],
+   "Load__11CEditGroundFPc": [
+    {
+     "ordinal": 12,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 14,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 33,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    }
+   ],
+   "SetRiverParts__11CEditGroundFfffii": [
+    {
+     "ordinal": 25,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 27,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    }
+   ],
+   "StepWater__11CEditGroundFv": [
+    {
+     "ordinal": 8,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    }
+   ]
+  },
+  "editloop.cpp": {
+   "CopyCMapParts__FP9CMapPartsP9CMapPartsP14CDataAlloc2<1>": [
+    {
+     "ordinal": 2,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 8,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "DrawDay__Fv": [
+    {
+     "ordinal": 11,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 18,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 25,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 32,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 39,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 46,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 53,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 60,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 67,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 74,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 81,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 88,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "DrawSysGra__Fv": [
+    {
+     "ordinal": 21,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 23,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "EdDrawClock__Fii": [
+    {
+     "ordinal": 7,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 9,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 18,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 20,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "EdDrawSysCursor__FP14ED_EVENT_POINTi": [
+    {
+     "ordinal": 12,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 14,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "EditExit__Fv": [
+    {
+     "ordinal": 3,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 4,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 5,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "EditInit__FPv": [
+    {
+     "ordinal": 34,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 35,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 42,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 70,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 72,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 83,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 90,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 92,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 102,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 104,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 114,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 116,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 126,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 128,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 139,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 171,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 187,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 198,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 260,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 261,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 262,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "EditLoop__Fv": [
+    {
+     "ordinal": 9,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 15,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 163,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 172,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 243,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 247,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 309,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 393,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 397,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 417,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 461,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 501,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "EditPartsObjectOnOff__Fv": [
+    {
+     "ordinal": 5,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "EventMode__Fv": [
+    {
+     "ordinal": 67,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 68,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 69,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "GotoInterior__FPciiP14ED_EVENT_PARAMi": [
+    {
+     "ordinal": 113,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 114,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 115,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "LoadGroundData__Fv": [
+    {
+     "ordinal": 50,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 52,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 85,
+     "kind": "0x10",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 87,
+     "kind": "0x10",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 90,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 100,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "LoadObjectParts__Fv": [
+    {
+     "ordinal": 22,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    }
+   ],
+   "LoadTexture__Fv": [
+    {
+     "ordinal": 39,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 49,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 85,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 100,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 117,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 120,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 135,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 145,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "MainDraw__Fv": [
+    {
+     "ordinal": 23,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 24,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 25,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 26,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 54,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 55,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 177,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 203,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 211,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 212,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 216,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 229,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 297,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 298,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 299,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 300,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "MoveCamera__FP13CCameraFollow": [
+    {
+     "ordinal": 4,
+     "kind": "0x05",
+     "evaluate_first": 1
+    }
+   ],
+   "MoveChara__Fv": [
+    {
+     "ordinal": 20,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "MoveEditCursor__Fv": [
+    {
+     "ordinal": 96,
+     "kind": "0x0b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 237,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "ParamDraw__Fv": [
+    {
+     "ordinal": 16,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 28,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "__ct__10CCharacterFv": [
+    {
+     "ordinal": 2,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "__sinit_editloop.cpp": [
+    {
+     "ordinal": 61,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 91,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 93,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 94,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 96,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 101,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 103,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 104,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 106,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 111,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 113,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 114,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 116,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 121,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 123,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 124,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 126,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 131,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 133,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 134,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 136,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 141,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 143,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 144,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 146,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "set2DSpriteRot__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_iifUc": [
+    {
+     "ordinal": 48,
+     "kind": "0x1b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 56,
+     "kind": "0x1b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 64,
+     "kind": "0x1b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 72,
+     "kind": "0x1b",
+     "evaluate_first": 1
+    }
+   ]
+  },
+  "main.cpp": {
+   "MemCheckInit__Fv": [
+    {
+     "ordinal": 18,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 21,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "MemCheckLoop__Fv": [
+    {
+     "ordinal": 2,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 7,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 9,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 24,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 26,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "MenuLoop__Fv": [
+    {
+     "ordinal": 88,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "main": [
+    {
+     "ordinal": 158,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 176,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ]
+  },
+  "op_d.cpp": {
+   "HamonProcess__Fv": [
+    {
+     "ordinal": 7,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 36,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 37,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "LensFreaProcess__Fv": [
+    {
+     "ordinal": 16,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "OpD_DrawProcess__Fv": [
+    {
+     "ordinal": 2,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 26,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 28,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 29,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 74,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 109,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 116,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 118,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 131,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 133,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 146,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 148,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "OpD_InitProcess2__Fv": [
+    {
+     "ordinal": 40,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "OpD_InitProcess__Fv": [
+    {
+     "ordinal": 59,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 81,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "OpD_MotionProcess__Fv": [
+    {
+     "ordinal": 8,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 9,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 13,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 16,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 17,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 18,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "OpD_SoundProcess__Fv": [
+    {
+     "ordinal": 4,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 24,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 29,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 34,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 104,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 105,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 111,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 112,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "RollLight__FPf": [
+    {
+     "ordinal": 1,
+     "kind": "0x35",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 19,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 21,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "Setsumei__Fv": [
+    {
+     "ordinal": 1,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 3,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 12,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 14,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 23,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 25,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 34,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 36,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 45,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 47,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 56,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 58,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 67,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 69,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 78,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 80,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 89,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 91,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 100,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 102,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 111,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 113,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 122,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 124,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 133,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 135,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 144,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 146,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 155,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 157,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 166,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 168,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 177,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 179,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 188,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 191,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 193,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 195,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 197,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 209,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 211,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 213,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 215,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 227,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 229,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 231,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 233,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 242,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 243,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 245,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 247,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 249,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 251,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 263,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 265,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 267,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 269,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 278,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 280,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "__sinit_op_d.cpp": [
+    {
+     "ordinal": 4,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ]
+  }
+ }
 }

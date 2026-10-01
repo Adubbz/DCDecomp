@@ -2,6 +2,8 @@
 #pragma helper_mask_fpr 0x1000
 #include "shot_freefuncs.hpp"
 
+#include "itemdata.hpp"
+
 // These tables precede the template of CharaHeight's inline table in .data, so they stand
 // above the header that defines it.
 
@@ -13,7 +15,7 @@ static int maxFloorTbl[7] = {15, 17, 18, 18, 15, 25, 100};
 /**
  * Each character's default weapon.
  */
-static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+static int defWeapon[6] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN};
 
 #include <libvu0.h>
 
@@ -37,7 +39,6 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 #include "frame.hpp"
 #include "healeffect.hpp"
 #include "hitvalue.hpp"
-#include "itemdata.hpp"
 #include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "menu_inventory.hpp"
@@ -144,7 +145,7 @@ void WaterSplash_Init() {
     int i;
 
     Water_Splash_actFlag = 0;
-    CheckWaterInfo.in_water = 0;
+    CheckWaterInfo.in_water = false;
 
     for (i = 0; i < 6; i++) {
         WaterWaveLing[i].life = 0;
@@ -205,21 +206,21 @@ int CheckHealingWater() {
     if (nearest_distance < 160.0f && position[0] >= water_x + nearest_water->vertex[0][0] && position[0] < water_x + nearest_water->vertex[3][0] && position[2] >= water_z + nearest_water->vertex[0][2] && position[2] < water_z + nearest_water->vertex[3][2] && position[1] < water_y) {
         position[1] = water_y;
         sceVu0CopyVector(CheckWaterInfo.surface_position, position);
-        BtActStatus.in_water = 1;
+        BtActStatus.in_water = true;
 
         if (Water_Splash_actFlag == 0 && CheckWaterInfo.in_water == 0 && CheckWaterInfo.dry_position[1] - CheckWaterInfo.surface_position[1] > 0.5f) {
             Water_Splash.SetPosition(CheckWaterInfo.surface_position);
             Water_Splash.SetMotion(0, 6);
-            SndSePlay(0x223, -1, 0);
+            SndSePlay(SE_WATER_SPLASH, -1, 0);
             Water_Splash_actFlag = 1;
         }
 
-        CheckWaterInfo.in_water = 1;
+        CheckWaterInfo.in_water = true;
         return 1;
     }
 
     sceVu0CopyVector(CheckWaterInfo.dry_position, position);
-    CheckWaterInfo.in_water = 0;
+    CheckWaterInfo.in_water = false;
     return 0;
 }
 
@@ -253,7 +254,7 @@ int CheckHealZone() {
     HEAL_ZONE     *zone;
 
     sceVu0CopyVector(position, CharaMain.pos);
-    BtActStatus.in_water = 0;
+    BtActStatus.in_water = false;
 
     column = (80.0f + position[0]) / 160.0f;
     row = (80.0f + position[2]) / 160.0f;
@@ -282,7 +283,7 @@ int CheckHealZone() {
     high[2] += zone->depth / 2.0f;
 
     if (position[0] >= low[0] && position[0] <= high[0] && position[2] >= low[2] && position[2] < high[2] && position[1] < center[1]) {
-        BtActStatus.in_water = 1;
+        BtActStatus.in_water = true;
         return 1;
     }
 
@@ -323,7 +324,7 @@ void HealingWater() {
             if (!(now_hp == max_hp)) {
                 sceVu0CopyVector(position, CharaMain.pos);
                 HealEffect.Set(position);
-                SndSePlay(0x1B8, -1, 0);
+                SndSePlay(SE_CHARA_RECOVER, -1, 0);
                 healingSpeed_flg = 1;
             }
         } else if (healingSpeed_flg) {
@@ -394,13 +395,13 @@ void DrawWaterLing() {
             corner[3][1] = y;
             corner[3][2] = far;
 
-            visible = 1;
+            visible = true;
 
             for (j = 0; j < 4; j++) {
                 corner[j][3] = 1.0f;
 
                 if (MGRotTransPers(screen[j], corner[j], 0) == 0) {
-                    visible = 0;
+                    visible = false;
                 }
             }
 
@@ -609,8 +610,8 @@ void BtStatusAlarmInit() {
 void BtStatusAlarmAnime() {
     statusAlarmCounter += 0.10471976f;
 
-    if (!(statusAlarmCounter < 3.1415927f)) {
-        statusAlarmCounter -= 3.1415927f;
+    if (!(statusAlarmCounter < PI)) {
+        statusAlarmCounter -= PI;
     }
 
     statusAlarmRate = 192 - (int) (2.0f * (64.0f * sinf(statusAlarmCounter)));
@@ -829,19 +830,19 @@ void topStatusInfo(int y, int selected_item, int floor) {
 
     // Quick-use items; a speed-up item pulses while it is in force.
     /** Phase of the quick-item vertical animation. */
-    static float popupYRate = -3.1415927f;
+    static float popupYRate = -PI;
     popupYRate += 0.20943952f;
 
-    if (!(popupYRate < 3.1415927f)) {
-        popupYRate -= 6.2831855f;
+    if (!(popupYRate < PI)) {
+        popupYRate -= TWO_PI;
     }
 
     /** Phase of the active quick-item frame glow. */
-    static float popupRGBRate = -3.1415927f;
-    popupRGBRate += 0.19634955f;
+    static float popupRGBRate = -PI;
+    popupRGBRate += SIXTEENTH_PI;
 
     if (!(popupRGBRate < 0.0f)) {
-        popupRGBRate -= 3.1415927f;
+        popupRGBRate -= PI;
     }
 
     ITEM_PACK *pack = &UserStatus->item_pack;
@@ -850,7 +851,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
         int bob = 0;
         int glow = 0;
 
-        if (BtBySpeedFlag != 0 && pack->quick_item_slot[i] == 0x9C) {
+        if (BtBySpeedFlag != 0 && pack->quick_item_slot[i] == ITEM_UNUSED_156) {
             glow = (int) (64.0f * sinf(popupRGBRate)) + 0x3F;
             bob = 0;
         }
@@ -977,28 +978,28 @@ int BtStatusErrColorSet() {
     ailing = 0;
     status = UserStatus->ailments[UserStatus->cur_chara];
 
-    if (status & 4) {
+    if (status & AILMENT_FREEZE) {
         StatusColor[0] = 127.5f;
         StatusColor[1] = 127.5f;
         StatusColor[2] = 127.5f;
         ailing = 1;
     }
 
-    if (status & 0x40) {
+    if (status & AILMENT_GOO) {
         StatusColor[0] = 50.0f;
         StatusColor[1] = 75.0f;
         StatusColor[2] = 127.5f;
         ailing = 1;
     }
 
-    if (status & 0x10) {
+    if (status & AILMENT_POISON) {
         StatusColor[0] = 47.0f;
         StatusColor[1] = 0.5f;
         StatusColor[2] = 63.75f;
         ailing = 1;
     }
 
-    if (status & 8) {
+    if (status & AILMENT_STAMINA) {
         StatusColor[0] = 127.5f;
         StatusColor[1] = 80.0f;
         StatusColor[2] = 15.0f;
@@ -1029,7 +1030,7 @@ void BtStatusErrStep() {
     poison_counter++;
 
     // Poison takes 4% of the character's max HP every 180 steps and shows the loss over them.
-    if ((flags & 0x10) && poison_counter >= 180) {
+    if ((flags & AILMENT_POISON) && poison_counter >= 180) {
         int chara = *cur_chara;
         int max_hp = status->max_hp[chara];
         int damage = 0.04 * max_hp;
@@ -1041,7 +1042,7 @@ void BtStatusErrStep() {
 
         float position[4] = {0.0f, 0.0f, 0.0f, 1.0f};
         position[1] = CharaHeight(UserStatus);
-        HitValueEntry(NowHitValue, position, damage, 2, CharaMain.frame);
+        HitValueEntry(NowHitValue, position, damage, HIT_VALUE_PLAYER, CharaMain.frame);
     }
 
     if (poison_counter >= 180) {
@@ -1067,39 +1068,39 @@ void BtSetStatusErr(int status) {
     chara = UserStatus->cur_chara;
 
     switch (status) {
-        case 4:
+        case AILMENT_FREEZE:
             UserStatus->ailments[chara] |= status;
-            UserStatus->ailments[chara] &= ~0x58;
+            UserStatus->ailments[chara] &= ~(AILMENT_STAMINA | AILMENT_POISON | AILMENT_GOO);
             UserStatus->ailment_frames[chara] = 300;
-            SndSePlay(0x6B, -1, 0);
+            SndSePlay(SE_STATUS_AILMENT, -1, 0);
             break;
 
-        case 8:
-            if (!(UserStatus->ailments[chara] & 4)) {
+        case AILMENT_STAMINA:
+            if (!(UserStatus->ailments[chara] & AILMENT_FREEZE)) {
                 UserStatus->ailments[chara] |= status;
                 UserStatus->ailment_frames[chara] = 1800;
             }
 
             break;
 
-        case 0x10:
-            if (!(UserStatus->ailments[chara] & 0xC)) {
+        case AILMENT_POISON:
+            if (!(UserStatus->ailments[chara] & (AILMENT_FREEZE | AILMENT_STAMINA))) {
                 UserStatus->ailments[chara] |= status;
-                UserStatus->ailments[chara] &= ~0x40;
-                SndSePlay(0x6B, -1, 0);
+                UserStatus->ailments[chara] &= ~AILMENT_GOO;
+                SndSePlay(SE_STATUS_AILMENT, -1, 0);
             }
 
             break;
 
-        case 0x20:
+        case AILMENT_CURSE:
             UserStatus->ailments[chara] |= status;
-            SndSePlay(0x6B, -1, 0);
+            SndSePlay(SE_STATUS_AILMENT, -1, 0);
             break;
 
-        case 0x40:
-            if (!(UserStatus->ailments[chara] & 0x1C)) {
+        case AILMENT_GOO:
+            if (!(UserStatus->ailments[chara] & (AILMENT_FREEZE | AILMENT_STAMINA | AILMENT_POISON))) {
                 UserStatus->ailments[chara] |= status;
-                SndSePlay(0x6B, -1, 0);
+                SndSePlay(SE_STATUS_AILMENT, -1, 0);
             }
 
             break;
@@ -1115,7 +1116,7 @@ void BtSetStatusErr(int status) {
  */
 void BtStatusErrDraw(int y) {
     CTexture *texture = TexManager.GetTexture("itempack", -1);
-    int       status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
+    int       status_flags[5] = {AILMENT_FREEZE, AILMENT_STAMINA, AILMENT_POISON, AILMENT_CURSE, AILMENT_GOO};
     int       icon_cells[5][2] = {
         {1, 0},
         {0, 1},
@@ -1293,15 +1294,15 @@ int BtMapJumpLoad(char *map_name) {
         event->name[0] = '\0';
         event->script_no = -1;
         event->parts_id = -1;
-        event->switch_on = 0;
-        event->enabled = 0;
+        event->switch_on = false;
+        event->enabled = false;
     }
 
     for (int record = 0; record < 96; record++) {
         CDungeonEventData *data = &DngEventMan.event[record];
         data->event = NULL;
-        data->switch_on = 0;
-        data->enabled = 0;
+        data->switch_on = false;
+        data->enabled = false;
         data->hold = 0;
         data->chara_done = -1;
     }
@@ -1327,9 +1328,9 @@ int BtMapJumpLoad(char *map_name) {
     TEIGIMdsLoad(read_buffer, 0);
 
     CFrameAttr attr;
-    attr.fog_enable = 1;
+    attr.fog_enable = true;
     attr.clip_depth = 100.0f;
-    attr.clip_enable = 0;
+    attr.clip_enable = false;
     attr.program_option = 0;
     NowDngMap->box_body_model = LoadMDSFilePack(read_buffer, "ibox_0.mds", &MapModelBuffer);
     NowDngMap->box_lid_model = LoadMDSFilePack(read_buffer, "ibox_t.mds", &MapModelBuffer);

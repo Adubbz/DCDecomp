@@ -432,7 +432,7 @@ SPI_FUNC_PARAM func_table = {
      test
 };
 
-int GameMode = 1;
+int GameMode = ED_MODE_WALK;
 
 /** Directory prefixed to every file the map script names. */
 static char CurrentDir[0x40];
@@ -483,22 +483,22 @@ int test(void **argument) {
 void InitInfo() {
     memset(edit_info, 0, sizeof(EDIT_MAP_INFO));
 
-    edit_info->work.obj_anime[0].property = -1;
+    edit_info->work.obj_anime[0].property = OBJ_ANIME_PROPERTY_NONE;
 
     for (int i = 0; i < 128; i++) {
-        edit_info->work.obj_anime[i].property = -1;
+        edit_info->work.obj_anime[i].property = OBJ_ANIME_PROPERTY_NONE;
     }
 
-    edit_info->work.effects.second[0].kind = 0;
+    edit_info->work.effects.second[0].kind = EDIT_EFFECT_NONE;
 
     for (int i = 0; i < 64; i++) {
-        edit_info->work.effects.second[i].kind = 0;
+        edit_info->work.effects.second[i].kind = EDIT_EFFECT_NONE;
     }
 
-    edit_info->work.effects.first[0].kind = 0;
+    edit_info->work.effects.first[0].kind = EDIT_EFFECT_NONE;
 
     for (int i = 0; i < 64; i++) {
-        edit_info->work.effects.first[i].kind = 0;
+        edit_info->work.effects.first[i].kind = EDIT_EFFECT_NONE;
     }
 
     edit_info->work.object_timers.timers[0].name[0] = 0;
@@ -507,10 +507,10 @@ void InitInfo() {
         edit_info->work.object_timers.timers[i].name[0] = 0;
     }
 
-    edit_info->work.events.points[0].event_type = 0;
+    edit_info->work.events.points[0].event_type = ED_EVENT_POINT_NONE;
 
     for (int i = 0; i < 256; i++) {
-        edit_info->work.events.points[i].event_type = 0;
+        edit_info->work.events.points[i].event_type = ED_EVENT_POINT_NONE;
     }
 }
 
@@ -590,7 +590,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     edit_info->reverb_mode[1] = 4;
     edit_info->reverb_depth[0] = 5;
     edit_info->reverb_depth[1] = 30;
-    edit_info->ambient_sound_off = 0;
+    edit_info->ambient_sound_off = false;
     edit_info->wind[0] = 0.3f;
     edit_info->wind[1] = 0.0f;
     edit_info->wind[2] = 0.1f;
@@ -697,7 +697,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     edit_info->object_timer_count = objtimer_list;
     edit_info->event_count = event_list;
 
-    if (map_no >= 0 && map_no < 5) {
+    if (map_no >= 0 && map_no < TOWN_COUNT) {
         for (int i = 0; i < 16; i++) {
             VILLAGER_INFO         *villager = &edit_info->villagers[i];
             EDIT_CHARA_DATA_ENTRY *defaults = &EditCharaData[map_no][i];
@@ -718,7 +718,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     }
 
     if (edit_info->sound_set_no < 0) {
-        edit_info->ambient_sound_off = 1;
+        edit_info->ambient_sound_off = true;
     }
 
     return 1;
@@ -952,9 +952,9 @@ void CommandGROUND(void **arguments) {
     object->position[0] = *(float *) arguments[8];
     object->position[1] = *(float *) arguments[9];
     object->position[2] = *(float *) arguments[10];
-    object->rotation[0] = 3.1415927f * *(float *) arguments[11] / 180.0f;
-    object->rotation[1] = 3.1415927f * *(float *) arguments[12] / 180.0f;
-    object->rotation[2] = 3.1415927f * *(float *) arguments[13] / 180.0f;
+    object->rotation[0] = PI * *(float *) arguments[11] / 180.0f;
+    object->rotation[1] = PI * *(float *) arguments[12] / 180.0f;
+    object->rotation[2] = PI * *(float *) arguments[13] / 180.0f;
     objframe = NULL;
     mapobj = (CMapObject *) object;
     mapparts = NULL;
@@ -982,9 +982,9 @@ void CommandBUILD(void **arguments) {
     object->position[0] = *(float *) arguments[8];
     object->position[1] = *(float *) arguments[9];
     object->position[2] = *(float *) arguments[10];
-    object->rotation[0] = 3.1415927f * *(float *) arguments[11] / 180.0f;
-    object->rotation[1] = 3.1415927f * *(float *) arguments[12] / 180.0f;
-    object->rotation[2] = 3.1415927f * *(float *) arguments[13] / 180.0f;
+    object->rotation[0] = PI * *(float *) arguments[11] / 180.0f;
+    object->rotation[1] = PI * *(float *) arguments[12] / 180.0f;
+    object->rotation[2] = PI * *(float *) arguments[13] / 180.0f;
     objframe = NULL;
     mapobj = (CMapObject *) object;
     mapparts = NULL;
@@ -1012,9 +1012,9 @@ void CommandWATER(void **arguments) {
     object->position[0] = *(float *) arguments[8];
     object->position[1] = *(float *) arguments[9];
     object->position[2] = *(float *) arguments[10];
-    object->rotation[0] = 3.1415927f * *(float *) arguments[11] / 180.0f;
-    object->rotation[1] = 3.1415927f * *(float *) arguments[12] / 180.0f;
-    object->rotation[2] = 3.1415927f * *(float *) arguments[13] / 180.0f;
+    object->rotation[0] = PI * *(float *) arguments[11] / 180.0f;
+    object->rotation[1] = PI * *(float *) arguments[12] / 180.0f;
+    object->rotation[2] = PI * *(float *) arguments[13] / 180.0f;
     objframe = NULL;
     mapobj = (CMapObject *) object;
     mapparts = NULL;
@@ -1163,7 +1163,7 @@ void CommandBLD_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 2;
-    parts->subtype = 0;
+    parts->subtype = MAP_PARTS_SUBTYPE_NONE;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1194,7 +1194,7 @@ void CommandGRD_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 0;
+    parts->subtype = MAP_PARTS_SUBTYPE_NONE;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1281,7 +1281,7 @@ void CommandROAD_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 1;
+    parts->subtype = MAP_PARTS_SUBTYPE_ROAD;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1311,7 +1311,7 @@ void CommandROAD(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 1;
+    parts->subtype = MAP_PARTS_SUBTYPE_ROAD;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1342,7 +1342,7 @@ void CommandRIVER_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 2;
+    parts->subtype = MAP_PARTS_SUBTYPE_RIVER;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1377,10 +1377,10 @@ void CommandRIVER(void **arguments) {
         parts->kind = 0x15;
     }
 
-    parts->subtype = 2;
+    parts->subtype = MAP_PARTS_SUBTYPE_RIVER;
 
     if (index == 6) {
-        parts->subtype = 3;
+        parts->subtype = MAP_PARTS_SUBTYPE_BRIDGE;
     }
 
     if (index + 8 < 16) {
@@ -1423,7 +1423,7 @@ void CommandBRIDGE_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 3;
+    parts->subtype = MAP_PARTS_SUBTYPE_BRIDGE;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1455,7 +1455,7 @@ void CommandLAKE_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 4;
+    parts->subtype = MAP_PARTS_SUBTYPE_LAKE;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1487,7 +1487,7 @@ void CommandON_RIVER_PARTS(void **arguments) {
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
-    parts->subtype = 5;
+    parts->subtype = MAP_PARTS_SUBTYPE_ON_RIVER;
     objframe = NULL;
     mapobj = NULL;
     mapparts = (CMapParts *) parts;
@@ -1581,7 +1581,7 @@ void CommandENTRANCE(void **arguments) {
     event_list--;
     ED_EVENT_POINT *point = &edit_info->work.events.points[event_list];
     s16            *slots;
-    point->event_type = 1;
+    point->event_type = ED_EVENT_POINT_DOOR;
     char *side = (char *) arguments[0];
     strcpy(point->destination, mapjump_name);
     point->map_no = mapjump_id;
@@ -1642,7 +1642,7 @@ void CommandMAPJUMP(void **arguments) {
 
     ED_EVENT_POINT *point = &edit_info->work.events.points[event_list];
     s16            *slots;
-    point->event_type = 1;
+    point->event_type = ED_EVENT_POINT_DOOR;
     strcpy(point->destination, mapjump_name);
     point->map_no = mapjump_id;
     point->side = 0;
@@ -1728,7 +1728,7 @@ void CommandTIME_TABLE(void **arguments) {
  * Stops time progression for the current editor map.
  */
 void CommandTIME_STOP(void **arguments) {
-    edit_info->time_stop = 1;
+    edit_info->time_stop = true;
 }
 
 /**
@@ -1882,7 +1882,7 @@ void CommandPEOPLE2(void **arguments) {
  * Disables ambient sound for the current editor map.
  */
 void CommandSE_AMBIENT_OFF(void **arguments) {
-    edit_info->ambient_sound_off = 1;
+    edit_info->ambient_sound_off = true;
 }
 
 /**
@@ -1953,11 +1953,11 @@ void CommandPEOPLE_LIST(void **arguments) {
  * Reports whether the current editor state should draw the fishing interface.
  */
 int FishingDrawCheck() {
-    if (GameMode == 16) {
+    if (GameMode == ED_MODE_FISHING) {
         return 1;
     }
 
-    if (GameMode == 9 && oldGameMode == 16) {
+    if (GameMode == ED_MODE_RETURN_MENU_WALK && oldGameMode == ED_MODE_FISHING) {
         return 1;
     }
 

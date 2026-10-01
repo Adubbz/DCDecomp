@@ -50,7 +50,6 @@
 #include "title/script.hpp"
 #include "vutext.hpp"
 #include "wind.hpp"
-#define PI 3.14159265358979323846
 
 class OBJ_ANIME_SEQ {
 public:
@@ -369,8 +368,8 @@ void RushInit() {
     wait_now_loading_vsync();
 
     StartReadBG();
-    CScript.load_no = 0;
-    CScript.init_no = 0;
+    CScript.load_no = RUSH_SCENE_A;
+    CScript.init_no = RUSH_SCENE_A;
     DataLoad();
     wait_now_loading_vsync();
     CScript.Load("rmdat/rmdat.scr");
@@ -399,7 +398,7 @@ int RushLoop() {
     SoundProcess();
 
     if (!bEnd) {
-        if (GamePad.Down(2048)) {
+        if (GamePad.Down(PAD_START)) {
             while (ReadBGSync())
                 ;
 
@@ -453,37 +452,37 @@ int RushLoop() {
  */
 static void MotionProcess() {
     switch (CScript.fade) {
-        case 1:
+        case TSFADE_IN_BLACK:
 #ifdef PAL
             DispFade.FadeInStart(1.2f * CScript.fade_speed, 0);
 #else
             DispFade.FadeInStart(CScript.fade_speed, 0);
 #endif
-            CScript.fade = 0;
+            CScript.fade = TSFADE_NONE;
             break;
-        case 2:
+        case TSFADE_OUT_BLACK:
 #ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript.fade_speed, 0);
 #else
             DispFade.FadeOutStart(CScript.fade_speed, 0);
 #endif
-            CScript.fade = 0;
+            CScript.fade = TSFADE_NONE;
             break;
-        case 3:
+        case TSFADE_IN_WHITE:
 #ifdef PAL
             DispFade.FadeInStart(1.2f * CScript.fade_speed, 1);
 #else
             DispFade.FadeInStart(CScript.fade_speed, 1);
 #endif
-            CScript.fade = 0;
+            CScript.fade = TSFADE_NONE;
             break;
-        case 4:
+        case TSFADE_OUT_WHITE:
 #ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript.fade_speed, 1);
 #else
             DispFade.FadeOutStart(CScript.fade_speed, 1);
 #endif
-            CScript.fade = 0;
+            CScript.fade = TSFADE_NONE;
             break;
     }
 
@@ -491,7 +490,7 @@ static void MotionProcess() {
         return;
     }
 
-    if (CScript.scene == 9) {
+    if (CScript.scene == RUSH_SCENE_TITLE) {
         return;
     }
 
@@ -506,7 +505,7 @@ static void MotionProcess() {
 
         Cam[SceneNp].motion_type.state.time = (float) CScript.motion_start;
         Cam[SceneNp].motion_type.state.camera = &MainCamera__3;
-        CScript.motion_req = 0;
+        CScript.motion_req = false;
     }
 
     if (Cam[SceneNp].motion_type.state.time > (float) (CScript.motion_end - 1)) {
@@ -551,7 +550,7 @@ static void MotionProcess() {
 
     sceVu0FVECTOR wind_dir;
 
-    if (CScript.scene == 0) {
+    if (CScript.scene == RUSH_SCENE_A) {
         wind_dir[0] = 0.2f;
         wind_dir[2] = -0.2f;
         wind_dir[1] = 0.0f;
@@ -566,39 +565,39 @@ static void MotionProcess() {
     Wind__4.SetDir(wind_dir);
 
     switch (CScript.scene) {
-        case 0:
+        case RUSH_SCENE_A:
             Wind__4.SetVelocity(1.3f);
             break;
-        case 1:
+        case RUSH_SCENE_B:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 2:
+        case RUSH_SCENE_C:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 3:
+        case RUSH_SCENE_D:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 4:
+        case RUSH_SCENE_E:
             Wind__4.SetVelocity(0.0f);
             break;
-        case 5:
+        case RUSH_SCENE_F:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 6:
+        case RUSH_SCENE_G:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 7:
+        case RUSH_SCENE_H:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 8:
+        case RUSH_SCENE_I:
             Wind__4.SetVelocity(0.4f);
             break;
-        case 9:
+        case RUSH_SCENE_TITLE:
             Wind__4.SetVelocity(0.3f);
             break;
     }
 
-    if (CScript.scene == 7) {
+    if (CScript.scene == RUSH_SCENE_H) {
         Chara__3[1].wind = (int) &Wind__4;
     } else {
         Chara__3[0].wind = (int) &Wind__4;
@@ -616,14 +615,14 @@ static void MotionProcess() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            if (CScript.scene == 0) {
+            if (CScript.scene == RUSH_SCENE_A) {
                 frame = Cam[SceneNp].frame->SearchFrame(opening_frames[i]);
             } else {
                 frame = Cam[SceneNp].frame->SearchFrame(scene_frames[i]);
             }
 
             if (frame) {
-                if (CScript.scene == 0 || CScript.camera_start == 16 || (CScript.camera_start == 17 && i == 0)) {
+                if (CScript.scene == RUSH_SCENE_A || CScript.camera_start == 16 || (CScript.camera_start == 17 && i == 0)) {
                     Chara__3[i].SetPosition(0.0f, 0.0f, 0.0f);
                     Chara__3[i].SetRotation(0.0f, 0.0f, 0.0f);
                     Chara__3[i].frame->SetReference(frame);
@@ -649,8 +648,8 @@ static void MotionProcess() {
 
     int scene = CScript.scene;
 
-    if (scene == 1 || scene == 3 || scene == 5 || scene == 7) {
-        if (scene != 7) {
+    if (scene == RUSH_SCENE_B || scene == RUSH_SCENE_D || scene == RUSH_SCENE_F || scene == RUSH_SCENE_H) {
+        if (scene != RUSH_SCENE_H) {
             frame = Chara__3[0].frame->SearchFrame("weapon");
         } else {
             frame = Chara__3[1].frame->SearchFrame("weapon");
@@ -667,9 +666,9 @@ static void MotionProcess() {
         }
     }
 
-    if (scene == 1) {
+    if (scene == RUSH_SCENE_B) {
         if (CScript.camera_start == 5) {
-            CScript.obj[7].disp = 1;
+            CScript.obj[7].disp = true;
         }
 
         if (CScript.obj[7].disp) {
@@ -774,39 +773,39 @@ static void DrawProcess() {
     sceVif1PkTerminate(Vif1Packet);
 
     switch (CScript.scene) {
-        case 0:
+        case RUSH_SCENE_A:
             DrawProcA();
             break;
-        case 1:
+        case RUSH_SCENE_B:
             DrawProcB();
             break;
-        case 2:
+        case RUSH_SCENE_C:
             DrawProcC();
             break;
-        case 3:
+        case RUSH_SCENE_D:
             DrawProcD();
             break;
-        case 4:
+        case RUSH_SCENE_E:
             DrawProcE();
             break;
-        case 5:
+        case RUSH_SCENE_F:
             DrawProcF();
             break;
-        case 6:
+        case RUSH_SCENE_G:
             DrawProcG();
             break;
-        case 7:
+        case RUSH_SCENE_H:
             DrawProcH();
             break;
-        case 8:
+        case RUSH_SCENE_I:
             DrawProcI();
             break;
-        case 9:
+        case RUSH_SCENE_TITLE:
             DrawProcTitle();
             break;
     }
 
-    if (CScript.scene != 9) {
+    if (CScript.scene != RUSH_SCENE_TITLE) {
         static int fade = 0;
 
         if (StartDisp) {
@@ -819,7 +818,7 @@ static void DrawProcess() {
             fade = (fade + 2) & 127;
         }
 
-        if (GamePad.Down(240)) {
+        if (GamePad.Down(PAD_TRIANGLE | PAD_CIRCLE | PAD_CROSS | PAD_SQUARE)) {
             StartDisp ^= 1;
         }
 
@@ -852,7 +851,7 @@ static void SoundProcess() {
         CScript.bgm_fade = 0;
     }
 
-    if (CScript.scene == 0) {
+    if (CScript.scene == RUSH_SCENE_A) {
         static int mus = 0;
 
         if (CScript.camera_start == 1) {
@@ -867,7 +866,7 @@ static void SoundProcess() {
 
     static int ambi = 0;
 
-    if (CScript.scene == 9) {
+    if (CScript.scene == RUSH_SCENE_TITLE) {
         if (!ambi) {
             SndAmbientStop();
             ambi = 1;
@@ -878,7 +877,7 @@ static void SoundProcess() {
 
     static int bat = 0;
 
-    if (CScript.scene == 0 && Cam[SceneNp].motion_type.state.time > 10.0f) {
+    if (CScript.scene == RUSH_SCENE_A && Cam[SceneNp].motion_type.state.time > 10.0f) {
         if (!bat) {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("e04a5");
 
@@ -892,7 +891,7 @@ static void SoundProcess() {
                 position[0] = matrix[3][0];
                 position[1] = matrix[3][1];
                 position[2] = matrix[3][2];
-                SndSePlay(346, position, 100.0f, 1000.0f);
+                SndSePlay(SE_RUSH_IMPACT, position, 100.0f, 1000.0f);
             }
         }
 
@@ -905,10 +904,10 @@ static void SoundProcess() {
         bat = 0;
     }
 
-    if ((CScript.scene == 0 && Cam[SceneNp].motion_type.state.time > 10.0f) || (CScript.scene == 7 && Cam[SceneNp].motion_type.state.time > 10.0f)) {
+    if ((CScript.scene == RUSH_SCENE_A && Cam[SceneNp].motion_type.state.time > 10.0f) || (CScript.scene == RUSH_SCENE_H && Cam[SceneNp].motion_type.state.time > 10.0f)) {
         static int wait = 0;
 
-        if (CScript.scene == 0) {
+        if (CScript.scene == RUSH_SCENE_A) {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("c12a");
             int     chara_frame = (int) Chara__3[1].motion_type.state.time;
 
@@ -924,7 +923,7 @@ static void SoundProcess() {
                         position[0] = matrix[3][0];
                         position[1] = matrix[3][1];
                         position[2] = matrix[3][2];
-                        SndSePlay(374, position, 500.0f, 3000);
+                        SndSePlay(SE_RUSH_LOW_BUMP, position, 500.0f, 3000);
                     }
 
                     wait = 5;
@@ -948,7 +947,7 @@ static void SoundProcess() {
                         position[0] = matrix[3][0];
                         position[1] = matrix[3][1];
                         position[2] = matrix[3][2];
-                        SndSePlay(374, position, 500.0f, 3000);
+                        SndSePlay(SE_RUSH_LOW_BUMP, position, 500.0f, 3000);
                     }
 
                     wait = 5;
@@ -967,253 +966,253 @@ static void SoundProcess() {
         switch (CScript.camera_start) {
             case 4:
                 if (cam_frame == 30) {
-                    SndSePlay(54, -1, 0);
-                    SndSetSeVolf(54, 0.75f, 0);
+                    SndSePlay(SE_AMBIENT_TOWN_PATTER, -1, 0);
+                    SndSetSeVolf(SE_AMBIENT_TOWN_PATTER, 0.75f, 0);
                     wait = 5;
                 }
 
                 break;
             case 5:
                 if (cam_frame == 10) {
-                    SndSetSeVolf(54, 0.65f, 0);
-                    SndSePlay(616, -1, 0);
+                    SndSetSeVolf(SE_AMBIENT_TOWN_PATTER, 0.65f, 0);
+                    SndSePlay(SE_RUSH_CRACK, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 17) {
-                    SndSePlay(617, -1, 0);
+                    SndSePlay(SE_RUSH_CRACK_2, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 23) {
-                    SndSePlay(606, -1, 0);
+                    SndSePlay(SE_RUSH_TAP, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 31) {
-                    SndSePlay(607, -1, 0);
+                    SndSePlay(SE_RUSH_TAP_2, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 46) {
-                    SndSePlay(155, -1, 0);
+                    SndSePlay(SE_WORLD_MAP_OPEN, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 50) {
-                    SndSePlay(422, -1, 0);
-                    SndSePlay(403, -1, 0);
+                    SndSePlay(SE_CHARA_SHOUT_3, -1, 0);
+                    SndSePlay(SE_CHARA_ACTION_4, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 53) {
-                    SndSePlay(610, -1, 0);
+                    SndSePlay(SE_RUSH_HISS, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 62) {
-                    SndSePlay(607, -1, 0);
+                    SndSePlay(SE_RUSH_TAP_2, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 65) {
-                    SndSePlay(153, -1, 0);
+                    SndSePlay(SE_BOX_OPEN, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 97) {
-                    SndSePlay(606, -1, 0);
+                    SndSePlay(SE_RUSH_TAP, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 113) {
-                    SndSePlay(400, -1, 0);
-                    SndSePlay(617, -1, 0);
+                    SndSePlay(SE_CHARA_ACTION, -1, 0);
+                    SndSePlay(SE_RUSH_CRACK_2, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 119) {
-                    SndSePlay(401, -1, 0);
-                    SndSePlay(420, -1, 0);
-                    SndSePlay(160, -1, 0);
+                    SndSePlay(SE_CHARA_ACTION_2, -1, 0);
+                    SndSePlay(SE_CHARA_SHOUT, -1, 0);
+                    SndSePlay(SE_MONSTER_HIT, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 124) {
-                    SndSePlay(612, -1, 0);
+                    SndSePlay(SE_RUSH_RUSTLE, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 130) {
-                    SndSePlay(618, -1, 0);
+                    SndSePlay(SE_RUSH_CRACK_3, -1, 0);
                     wait = 5;
                 }
 
                 break;
             case 6:
                 if (cam_frame == 47) {
-                    SndSePlay(345, -1, 0);
+                    SndSePlay(SE_RUSH_BRIGHT_SWELL, -1, 0);
                     wait = 10;
                 }
 
                 if (cam_frame == 124) {
-                    SndSeStop(54, 0);
+                    SndSeStop(SE_AMBIENT_TOWN_PATTER, 0);
                     wait = 5;
                 }
 
                 break;
             case 8:
                 if (cam_frame == 20) {
-                    SndSePlay(395, -1, 0);
+                    SndSePlay(SE_RUSH_WHOOSH, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 37) {
-                    SndSePlay(155, -1, 0);
+                    SndSePlay(SE_WORLD_MAP_OPEN, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 57) {
-                    SndSePlay(400, -1, 0);
+                    SndSePlay(SE_CHARA_ACTION, -1, 0);
                     wait = 4;
                 }
 
                 if (cam_frame == 60) {
-                    SndSePlay(160, -1, 0);
+                    SndSePlay(SE_MONSTER_HIT, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 71) {
-                    SndSePlay(155, -1, 0);
+                    SndSePlay(SE_WORLD_MAP_OPEN, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 86) {
-                    SndSePlay(396, -1, 0);
+                    SndSePlay(SE_RUSH_LONG_SWELL, -1, 0);
                     wait = 5;
                 }
 
                 break;
             case 11:
                 if (cam_frame == 140) {
-                    SndSePlay(1746, -1, 0);
+                    SndSePlay(SE_RUSH_DULL_KNOCK, -1, 0);
                     wait = 10;
                 }
 
                 if (cam_frame == 145) {
-                    SndSePlay(1746, -1, 0);
+                    SndSePlay(SE_RUSH_DULL_KNOCK, -1, 0);
                     wait = 10;
                 }
 
                 if (cam_frame == 158) {
-                    SndSePlay(1755, -1, 0);
+                    SndSePlay(SE_RUSH_SWELLING_TONE, -1, 0);
                     wait = 10;
                 }
 
                 break;
             case 12:
                 if (cam_frame == 117) {
-                    SndSePlay(1747, -1, 0);
+                    SndSePlay(SE_RUSH_DULL_KNOCK_2, -1, 0);
                     wait = 10;
                 }
 
                 if (cam_frame == 160) {
-                    SndSePlay(1749, -1, 0);
+                    SndSePlay(SE_RUSH_DEEP_TONE, -1, 0);
                     wait = 10;
                 }
 
                 break;
             case 14:
                 if (cam_frame == 87) {
-                    SndSePlay(360, -1, 0);
+                    SndSePlay(SE_RUSH_LOW_THUMP, -1, 0);
                     wait = 3;
                 }
 
                 break;
             case 15:
                 if (cam_frame == 10) {
-                    SndSePlay(362, -1, 0);
-                    SndSePlay(366, -1, 0);
+                    SndSePlay(SE_RUSH_CLACK, -1, 0);
+                    SndSePlay(SE_RUSH_RISING_CHIRP, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 18) {
-                    SndSePlay(364, -1, 0);
+                    SndSePlay(SE_RUSH_KNOCK, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 40) {
-                    SndSePlay(363, -1, 0);
+                    SndSePlay(SE_RUSH_CLACK_2, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 52) {
-                    SndSePlay(364, -1, 0);
+                    SndSePlay(SE_RUSH_KNOCK, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 72) {
-                    SndSePlay(369, -1, 0);
+                    SndSePlay(SE_RUSH_FALLING_CHIRP, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 88) {
-                    SndSePlay(365, -1, 0);
-                    SndSePlay(370, -1, 0);
+                    SndSePlay(SE_RUSH_SCRAPE, -1, 0);
+                    SndSePlay(SE_RUSH_BRIGHT_HIT, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 94) {
-                    SndSePlay(368, -1, 0);
+                    SndSePlay(SE_RUSH_RISING_SWELL, -1, 0);
                     wait = 5;
                 }
 
                 break;
             case 17:
                 if (cam_frame == 2) {
-                    SndSePlay(1737, -1, 0);
+                    SndSePlay(SE_DRAN_FIELD_START, -1, 0);
                     wait = 3;
                 }
 
                 if (cam_frame == 40) {
-                    SndSePlay(1727, -1, 0);
+                    SndSePlay(SE_RUSH_LONG_NOISE, -1, 0);
                     wait = 3;
                 }
 
                 if (cam_frame == 70) {
-                    SndSePlay(1737, -1, 0);
-                    SndSePlay(1729, -1, 0);
+                    SndSePlay(SE_DRAN_FIELD_START, -1, 0);
+                    SndSePlay(SE_RUSH_LONG_RUMBLE, -1, 0);
                     wait = 3;
                 }
 
                 break;
             case 18:
                 if (cam_frame == 2) {
-                    SndSePlay(300, -1, 0);
-                    SndSePlay(302, -1, 0);
+                    SndSePlay(SE_RUSH_LOW_HUM, -1, 0);
+                    SndSePlay(SE_RUSH_LOW_SWELL, -1, 0);
                     wait = 5;
                 }
 
                 break;
             case 19:
                 if (cam_frame == 26) {
-                    SndSePlay(305, -1, 0);
+                    SndSePlay(SE_RUSH_LOW_TONE, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 56) {
-                    SndSePlay(305, -1, 0);
+                    SndSePlay(SE_RUSH_LOW_TONE, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 86) {
-                    SndSePlay(305, -1, 0);
+                    SndSePlay(SE_RUSH_LOW_TONE, -1, 0);
                     wait = 5;
                 }
 
                 if (cam_frame == 120) {
-                    SndSeStop(300, 0);
-                    SndSeStop(302, 0);
+                    SndSeStop(SE_RUSH_LOW_HUM, 0);
+                    SndSeStop(SE_RUSH_LOW_SWELL, 0);
                     wait = 5;
                 }
 
@@ -1255,7 +1254,7 @@ void WaterProcess() {
     zbuf.bits.zmsk = 1;
     MGSetGsZBUF(&zbuf);
 
-    if (CScript.scene == 1) {
+    if (CScript.scene == RUSH_SCENE_B) {
         sceVu0FVECTOR position = {0.0f, -0.4f, 0.0f, 0.0f};
 
         Water__2.frame.SetPosition(position);

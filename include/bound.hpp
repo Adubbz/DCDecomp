@@ -4,6 +4,18 @@
 
 #include <libvu0.h>
 
+/**
+ * How a bound follows its frame, as CBound::follow_mode holds it.
+ */
+// clang-format off
+enum BoundFollowMode {
+    BOUND_FOLLOW_NONE  = 0, /**< Stays put. */
+    BOUND_FOLLOW_FRAME = 1, /**< Follows one frame. */
+    BOUND_FOLLOW_SPAN  = 2, /**< Spans two frames. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -25,7 +37,7 @@ public:
     sceVu0FMATRIX inverse;     /**< 0x80: World-to-local orientation. */
     sceVu0FVECTOR position;    /**< 0xC0: World-space center. */
     sceVu0FVECTOR direction;   /**< Unit facing direction the box's orientation was last built from. */
-    s32           follow_mode; /**< How UpDate re-places the box: 1 follows one frame, 2 spans two frames, 0 leaves it where it is. */
+    s32           follow_mode; /**< How UpDate re-places the box. @see BoundFollowMode. */
     CFrame       *from_frame;  /**< Frame the box follows; in span mode, the frame its start point follows. */
     CFrame       *to_frame;    /**< Frame the end point follows in span mode. */
     u8            unk_EC[4];

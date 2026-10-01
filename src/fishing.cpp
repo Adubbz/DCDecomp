@@ -34,19 +34,19 @@ struct EsaInfo {
  * The kinds of bait, indexed by esa_type.
  */
 static EsaInfo esa_info[13] = {
-    {0xC1, 50.0f},
-    {0xC5, 25.0f},
-    {0xC7, 25.0f},
-    {0xA6, 25.0f},
-    {0xA7, 25.0f},
-    {0xA8, 25.0f},
-    {0xA9, 25.0f},
-    {0xAA, 25.0f},
-    {0xBA, 25.0f},
-    {0xBB, 25.0f},
-    {0xBC, 25.0f},
-    {0xBD, 25.0f},
-    {0xBE, 40.0f},
+    {ITEM_EVY,              50.0f},
+    {ITEM_MIMI,             25.0f},
+    {ITEM_PRICKLY,          25.0f},
+    {ITEM_THROBBING_CHERRY, 25.0f},
+    {ITEM_GOOEY_PEACH,      25.0f},
+    {ITEM_BOMB_NUTS,        25.0f},
+    {ITEM_POISONOUS_APPLE,  25.0f},
+    {ITEM_MELLOW_BANANA,    25.0f},
+    {ITEM_CARROT,           25.0f},
+    {ITEM_POTATO_CAKE,      25.0f},
+    {ITEM_MINON,            25.0f},
+    {ITEM_BATTAN,           25.0f},
+    {ITEM_PETITE_FISH,      40.0f},
 };
 
 int           draw_under_water = 1;
@@ -99,7 +99,7 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
     HookFrame = LoadMDSFile(GetPackFile(read_buffer, "hari.mds", NULL), alloc, 0, NULL, NULL);
     UkiFrame = LoadMDSFile(GetPackFile(read_buffer, "uki.mds", NULL), alloc, 0, NULL, NULL);
     CFrameAttr attr;
-    attr.use_color = 1;
+    attr.use_color = true;
 
     if (UkiFrame != NULL) {
         UkiFrame->SetAttr(attr, 1, 0x200);
@@ -141,21 +141,21 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     rare_interval = 30;
 
     switch (EdGetTime(SaveData->GetNowTime())) {
-        case 0:
+        case ED_TIME_DAY:
             rare_interval = 50;
             break;
-        case 1:
+        case ED_TIME_EVENING:
             rare_interval = 20;
             break;
-        case 2:
+        case ED_TIME_NIGHT:
             rare_interval = 35;
             break;
-        case 3:
+        case ED_TIME_MORNING:
             rare_interval = 25;
             break;
     }
 
-    loaded = 0;
+    loaded = false;
     LoadFile("chara/f00s.chr", read_buffer, NULL);
 
     for (int i = 0; i < FishNum; i++) {
@@ -272,7 +272,7 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
 
 #endif
         LoadFish(&Fish[i], kind, slot, alloc, loaded);
-        loaded = 1;
+        loaded = true;
     }
 }
 
@@ -498,7 +498,7 @@ void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc) {
 
         AngleFish->SetAngleMode();
         CFish *fish = AngleFish;
-        fish->use_angle_model = 1;
+        fish->use_angle_model = true;
     }
 }
 
@@ -518,7 +518,7 @@ void FishingAngleFish(int fish_no) {
             AngleFish = fish;
             fish->SetAngleMode();
             fish = &Fish[fish_no];
-            fish->use_angle_model = 1;
+            fish->use_angle_model = true;
         }
     }
 }
@@ -540,7 +540,7 @@ void FishingInitFishStatus() {
             CFish *fish = &Fish[i];
             fish->action = FISH_ACTION_NONE;
             fish->move_mode = FISH_MOVE_UNSET;
-            fish->use_angle_model = 0;
+            fish->use_angle_model = false;
         }
     }
 }
@@ -1070,15 +1070,15 @@ void FishLineDraw(int above_water) {
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 
-    draw = 1;
+    draw = true;
     VectorMax(uki_top, ukip[0], ukip[1], ukip[2], ukip[3]);
 
     if (above_water) {
         if (uki_top[1] < WaterLevel) {
-            draw = 0;
+            draw = false;
         }
     } else if (uki_top[1] > WaterLevel || draw_under_water == 0) {
-        draw = 0;
+        draw = false;
     }
 
     if (UkiFrame != NULL && draw) {
@@ -1101,15 +1101,15 @@ void FishLineDraw(int above_water) {
         MGDraw(UkiFrame);
     }
 
-    draw = 1;
+    draw = true;
     VectorMax(hook_top, hookp[0], hookp[1], hookp[2]);
 
     if (above_water) {
         if (hook_top[1] < WaterLevel) {
-            draw = 0;
+            draw = false;
         }
     } else if (hook_top[1] > WaterLevel || draw_under_water == 0) {
-        draw = 0;
+        draw = false;
     }
 
     if (HookFrame != NULL && draw) {

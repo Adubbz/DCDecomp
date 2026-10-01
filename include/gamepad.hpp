@@ -3,6 +3,62 @@
 #include "common.h"
 
 /**
+ * Steps of a controller's setup, as PAD_STATUS::phase holds them.
+ */
+// clang-format off
+enum PadSetupPhase {
+    PAD_PHASE_QUERY          = 0,  /**< Reading the controller type. */
+    PAD_PHASE_ANALOG_CHECK   = 40, /**< Checking for analog mode. */
+    PAD_PHASE_ANALOG_SET     = 41, /**< Locking analog mode. */
+    PAD_PHASE_ANALOG_WAIT    = 42, /**< Waiting for analog mode. */
+    PAD_PHASE_ACTUATOR_CHECK = 70, /**< Checking for actuators. */
+    PAD_PHASE_ACTUATOR_WAIT  = 71, /**< Waiting for the actuators. */
+    PAD_PHASE_READY          = 99, /**< Reading buttons. */
+};
+
+// clang-format on
+
+/**
+ * Controller types scePadInfoMode reports.
+ */
+// clang-format off
+enum PadTerminalId {
+    PAD_TERMINAL_NEGCON          = 2,     /**< NeGcon. */
+    PAD_TERMINAL_KONAMI_GUN      = 3,     /**< Konami gun. */
+    PAD_TERMINAL_DIGITAL         = 4,     /**< Digital controller. */
+    PAD_TERMINAL_ANALOG_JOYSTICK = 5,     /**< Analog joystick. */
+    PAD_TERMINAL_NAMCO_GUN       = 6,     /**< Namco gun. */
+    PAD_TERMINAL_DUALSHOCK       = 7,     /**< DualShock. */
+    PAD_TERMINAL_EX_TSURICON     = 0x100, /**< Fishing controller. */
+    PAD_TERMINAL_EX_JOGCON       = 0x300, /**< Jog controller. */
+};
+
+// clang-format on
+
+/**
+ * Bits of a controller's button word, one per button.
+ */
+enum PadButton {
+    PAD_L2 = 0x0001,       /**< L2 shoulder button. */
+    PAD_R2 = 0x0002,       /**< R2 shoulder button. */
+    PAD_L1 = 0x0004,       /**< L1 shoulder button. */
+    PAD_R1 = 0x0008,       /**< R1 shoulder button. */
+    PAD_TRIANGLE = 0x0010, /**< Triangle button. */
+    PAD_CIRCLE = 0x0020,   /**< Circle button. */
+    PAD_CROSS = 0x0040,    /**< Cross button. */
+    PAD_SQUARE = 0x0080,   /**< Square button. */
+    PAD_SELECT = 0x0100,   /**< Select button. */
+    PAD_L3 = 0x0200,       /**< Left stick press. */
+    PAD_R3 = 0x0400,       /**< Right stick press. */
+    PAD_START = 0x0800,    /**< Start button. */
+    PAD_UP = 0x1000,       /**< Up on the directional pad. */
+    PAD_RIGHT = 0x2000,    /**< Right on the directional pad. */
+    PAD_DOWN = 0x4000,     /**< Down on the directional pad. */
+    PAD_LEFT = 0x8000,     /**< Left on the directional pad. */
+    PAD_DPAD = 0xF000,     /**< Any direction on the directional pad. */
+};
+
+/**
  * Defines the state of one controller.
  */
 struct PAD_STATUS {
@@ -11,7 +67,7 @@ struct PAD_STATUS {
     int           left_x;             /**< Specifies the left stick horizontal position. */
     int           right_y;            /**< Specifies the right stick vertical position. */
     int           right_x;            /**< Specifies the right stick horizontal position. */
-    int           phase;              /**< Specifies the controller setup phase. */
+    int           phase;              /**< Specifies the controller setup phase. @see PadSetupPhase. */
     int           state;              /**< Specifies the controller connection state. */
     int           extended_id;        /**< Specifies the extended terminal ID the controller reports. */
     int           pad_mode;           /**< Specifies the terminal mode of the latest read. */

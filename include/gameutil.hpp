@@ -7,6 +7,46 @@
 #include "frame.hpp"
 #include "texture.hpp"
 
+/**
+ * Font colours of FontColorTbl.
+ */
+// clang-format off
+enum FontColor {
+    FONT_COLOR_WHITE        = 0x80BFBFBF, /**< White. */
+    FONT_COLOR_BROWN        = 0x80304045, /**< Dark brown. */
+    FONT_COLOR_YELLOW       = 0x8040BDBD, /**< Yellow. */
+    FONT_COLOR_CYAN         = 0x80BDBD40, /**< Cyan. */
+    FONT_COLOR_GREEN        = 0x8040BD40, /**< Green. */
+    FONT_COLOR_BROWN_OPAQUE = 0xFF304045, /**< Opaque dark brown. */
+    FONT_COLOR_GOLD         = 0x8066CEE7, /**< Gold. */
+    FONT_COLOR_GREY         = 0x808F8F8F, /**< Grey. */
+    FONT_COLOR_MAGENTA      = 0x80BF3FBF, /**< Magenta. */
+};
+
+// clang-format on
+
+/**
+ * What a motion key list sets, as Mot_List::type holds it.
+ */
+// clang-format off
+enum MotionKeyType {
+    MOTION_KEY_ROTATION        = 0,   /**< Rotation. */
+    MOTION_KEY_SCALE           = 1,   /**< Scale. */
+    MOTION_KEY_TRANSLATION     = 2,   /**< Translation. */
+    MOTION_KEY_VERTEX          = 12,  /**< Vertices. */
+    MOTION_KEY_CAMERA_POSITION = 30,  /**< Camera position. */
+    MOTION_KEY_CAMERA_TARGET   = 31,  /**< Camera target. */
+    MOTION_KEY_CAMERA_ROLL     = 32,  /**< Camera roll. */
+    MOTION_KEY_CAMERA_FOV      = 33,  /**< Camera field of view. */
+    MOTION_KEY_MATERIAL_ALPHA  = 40,  /**< Material alpha. */
+    MOTION_KEY_MATERIAL_COLOR  = 41,  /**< Material colour. */
+    MOTION_KEY_VISIBLE         = 50,  /**< Visibility. */
+    MOTION_KEY_UNK_33          = 51,  /**< Visibility, with the other pair of draw modes. */
+    MOTION_KEY_SKIP            = 200, /**< Skipped. */
+};
+
+// clang-format on
+
 class CCharacter;
 
 /**
@@ -197,7 +237,7 @@ STATIC_ASSERT(sizeof(Mot_Key) == 0x20);
 struct Mot_List {
     u32       frame;     /**< Frame of the model that the keys drive. */
     u32       target;    /**< Part of the frame that the keys drive: a vertex, a material or a bone. */
-    s32       type;      /**< What the keys set: 0 rotation, 1 scale, 2 translation, 12 vertices, 30-33 camera, 40-41 material, 50-51 visibility; 200 is skipped. */
+    s32       type;      /**< What the keys set. @see MotionKeyType. */
     u32       key_count; /**< Number of keys. */
     Mot_Key  *keys;      /**< The keys, in frame order. */
     Mot_List *next;      /**< The next driver, or NULL after the last. */

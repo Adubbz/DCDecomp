@@ -237,7 +237,7 @@ void CSHOT_EFFECT::Step() {
                         active[slot] = 0;
 
                         switch (effect_data->end_effect) {
-                            case 100:
+                            case SHOT_END_EFFECT_BOMB:
                                 SetBombEffect(hit_position, effect_data->target, effect_data->bomb_damage, effect_data->bomb_scale);
                                 break;
                         }
@@ -266,7 +266,7 @@ void CSHOT_EFFECT::Step() {
                 active[slot] = 0;
 
                 switch (effect_data->end_effect) {
-                    case 100:
+                    case SHOT_END_EFFECT_BOMB:
                         SetBombEffect(hit_position, effect_data->target, effect_data->bomb_damage, effect_data->bomb_scale);
                         break;
                 }
@@ -291,7 +291,7 @@ void CSHOT_EFFECT::Step() {
             active[slot] = 0;
 
             switch (effect_data->end_effect) {
-                case 100:
+                case SHOT_END_EFFECT_BOMB:
                     SetBombEffect(hit_position, effect_data->target, effect_data->bomb_damage, effect_data->bomb_scale);
                     break;
             }
@@ -449,7 +449,7 @@ int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id, int
         } else {
             chara[slot].frame->SetReference(parent);
             chara[slot].SetPosition(0.0f, 0.0f, 0.0f);
-            chara[slot].SetRotation(0.0f, -1.5707964f, 0.0f);
+            chara[slot].SetRotation(0.0f, -HALF_PI, 0.0f);
         }
 
         sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot], effect_data->speed[phase[slot]]);

@@ -9,6 +9,31 @@
 #include "dataalloc_fwd.hpp"
 #include "runscript.hpp"
 
+/**
+ * What CMonstorUnit::CheckDmg reports.
+ */
+// clang-format off
+enum MonsterDamageResult {
+    MONSTER_DMG_NONE   = 0, /**< Not hit. */
+    MONSTER_DMG_HIT    = 1, /**< Hit. */
+    MONSTER_DMG_KILLED = 2, /**< Killed. */
+};
+
+// clang-format on
+
+/**
+ * Kinds of monster model, as MONSTOR_MODEL::kind holds them.
+ */
+// clang-format off
+enum MonsterKind {
+    MONSTER_KIND_NORMAL      = 0, /**< Ordinary monster. */
+    MONSTER_KIND_NO_LOCK_ON  = 2, /**< Left alone by the lock-on cursor. */
+    MONSTER_KIND_MIMIC_SMALL = 3, /**< Mimic in a small box. */
+    MONSTER_KIND_MIMIC_LARGE = 4, /**< Mimic in a large box. */
+};
+
+// clang-format on
+
 class CDungeonMap;
 
 /**
@@ -30,7 +55,7 @@ struct MONSTOR {
     s32           money;                /**< Least amount of money the monster drops. */
     s32           money_chance;         /**< Percentage chance that the monster drops money. */
     s32           stolen_money;         /**< Money the monster has drained from the player and drops when defeated. */
-    s16           kind;                 /**< 2 for a monster the lock-on cursor leaves alone. */
+    s16           kind;                 /**< Kind of monster model. @see MonsterKind. */
     s16           name_no;              /**< Identifies the name the lock-on cursor shows. */
     float         body_radius;          /**< Radius the player and the walls keep from the monster. */
     float         collision_radius;     /**< Radius the monster keeps from other monsters. */
@@ -147,7 +172,7 @@ struct MONSTOR_MODEL {
     u8    unk_06E[2];
     s32   money;        /**< Least amount of money the monster drops. */
     s32   money_chance; /**< Percentage chance that the monster drops money. */
-    s16   kind;         /**< 2 for a monster the lock-on cursor leaves alone. */
+    s16   kind;         /**< Kind of monster model. @see MonsterKind. */
     u8    unk_07A[2];
     s16   name_no; /**< Identifies the name the lock-on cursor shows. */
     u8    unk_07E[2];
@@ -412,7 +437,7 @@ public:
     int SelectAttachi();
 
     /**
-     * Applies the hits a monster gives and takes this step; 1 when hit, 2 when killed.
+     * Applies the hits a monster gives and takes this step. @see MonsterDamageResult.
      *
      * @mangled CheckDmg__12CMonstorUnitFv
      * @address 0x1D9F10

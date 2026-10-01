@@ -18,16 +18,16 @@ void CDngMessageMan::LimmitZone() {
         insert_mes_1 = UserStatus->cur_chara + 0x32;
     }
 
-    if (UserStatus->res_limit_zone_current == 0xA) {
+    if (UserStatus->res_limit_zone_current == RES_LIMIT_ZONE_NO_WEAPON_CHANGE) {
         message = 0xD;
     }
 
-    if (UserStatus->res_limit_zone_current == 0xB) {
+    if (UserStatus->res_limit_zone_current == RES_LIMIT_ZONE_THIRST) {
         message = 0xE;
     }
 
     timer = 0xF0;
-    steev_window = 0;
+    steev_window = false;
 }
 
 void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float water_now) {
@@ -44,13 +44,13 @@ void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float wa
     if (threshold <= water_before + 0.5f && !(threshold <= water_now - 0.5f) && message == -1) {
         message = 0xAA;
         timer = 0xF0;
-        steev_window = 0;
+        steev_window = false;
     }
 
     if (water_now <= 0.0f && (message == -1 || message == 0xAB)) {
         message = 0xAB;
         timer = 0x9FFF6;
-        steev_window = 0;
+        steev_window = false;
     }
 }
 
@@ -59,7 +59,7 @@ void CDngMessageMan::SetSteevMes(int first) {
         // The ten Steev lines are shown in turn, so the index rides on.
         message = first + steev_index;
         timer = 0xF0;
-        steev_window = 1;
+        steev_window = true;
         steev_index++;
 
         if (steev_index > 9) {

@@ -417,8 +417,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[0].sequence_count = 0;
-    midi_state.port[0].fade[0].active = 0;
-    midi_state.port[0].fade[1].active = 0;
+    midi_state.port[0].fade[0].active = false;
+    midi_state.port[0].fade[1].active = false;
     midi_state.port[1].bank = 0;
     midi_state.port[1].spu_address = 0x7D010;
 
@@ -427,8 +427,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[1].sequence_count = 0;
-    midi_state.port[1].fade[0].active = 0;
-    midi_state.port[1].fade[1].active = 0;
+    midi_state.port[1].fade[0].active = false;
+    midi_state.port[1].fade[1].active = false;
     midi_state.port[2].bank = 0;
     midi_state.port[2].spu_address = 0x7D010;
 
@@ -437,8 +437,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[2].sequence_count = 0;
-    midi_state.port[2].fade[0].active = 0;
-    midi_state.port[2].fade[1].active = 0;
+    midi_state.port[2].fade[0].active = false;
+    midi_state.port[2].fade[1].active = false;
     midi_state.port[4].bank = 0;
     midi_state.port[4].spu_address = 0x16E900;
 
@@ -447,8 +447,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[4].sequence_count = 0;
-    midi_state.port[4].fade[0].active = 0;
-    midi_state.port[4].fade[1].active = 0;
+    midi_state.port[4].fade[0].active = false;
+    midi_state.port[4].fade[1].active = false;
     midi_state.port[3].bank = 0;
     midi_state.port[3].spu_address = 0x16E900;
 
@@ -457,8 +457,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[3].sequence_count = 0;
-    midi_state.port[3].fade[0].active = 0;
-    midi_state.port[3].fade[1].active = 0;
+    midi_state.port[3].fade[0].active = false;
+    midi_state.port[3].fade[1].active = false;
     midi_state.port[5].bank = 0;
     midi_state.port[5].spu_address = 0x16E900;
 
@@ -467,8 +467,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[5].sequence_count = 0;
-    midi_state.port[5].fade[0].active = 0;
-    midi_state.port[5].fade[1].active = 0;
+    midi_state.port[5].fade[0].active = false;
+    midi_state.port[5].fade[1].active = false;
     midi_state.port[6].bank = 0;
     midi_state.port[6].spu_address = 0x18AE20;
 
@@ -477,8 +477,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[6].sequence_count = 0;
-    midi_state.port[6].fade[0].active = 0;
-    midi_state.port[6].fade[1].active = 0;
+    midi_state.port[6].fade[0].active = false;
+    midi_state.port[6].fade[1].active = false;
     midi_state.port[7].bank = 0;
     midi_state.port[7].spu_address = 0x1B6D40;
 
@@ -487,8 +487,8 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     }
 
     midi_state.port[7].sequence_count = 0;
-    midi_state.port[7].fade[0].active = 0;
-    midi_state.port[7].fade[1].active = 0;
+    midi_state.port[7].fade[0].active = false;
+    midi_state.port[7].fade[1].active = false;
     return 0;
 }
 
@@ -497,7 +497,7 @@ void CSound::SQ_Play(int port, int seq_no) {
     int volume;
 
     switch (port) {
-        case 0:
+        case MIDI_PORT_BGM:
             if (seq_no < midi_state.port[0].sequence_count) {
                 address = (int) midi_state.port[0].sequence_address[seq_no];
                 volume = midi_state.port[0].sequence[seq_no]->volume;
@@ -506,7 +506,7 @@ void CSound::SQ_Play(int port, int seq_no) {
 
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
-        case 1:
+        case MIDI_PORT_AMBIENT:
             if (seq_no < midi_state.port[2].sequence_count) {
                 address = (int) midi_state.port[2].sequence_address[seq_no];
                 volume = midi_state.port[2].sequence[seq_no]->volume;
@@ -515,7 +515,7 @@ void CSound::SQ_Play(int port, int seq_no) {
 
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
-        case 2:
+        case MIDI_PORT_UNK_2:
             if (seq_no < midi_state.port[4].sequence_count) {
                 address = (int) midi_state.port[4].sequence_address[seq_no];
                 volume = midi_state.port[4].sequence[seq_no]->volume;
@@ -537,7 +537,7 @@ void CSound::SQ_Play(int port, int seq_no, int volume) {
     int address;
 
     switch (port) {
-        case 0:
+        case MIDI_PORT_BGM:
             if (seq_no < midi_state.port[0].sequence_count) {
                 address = (int) midi_state.port[0].sequence_address[seq_no];
                 break;
@@ -545,7 +545,7 @@ void CSound::SQ_Play(int port, int seq_no, int volume) {
 
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
-        case 1:
+        case MIDI_PORT_AMBIENT:
             if (seq_no < midi_state.port[2].sequence_count) {
                 address = (int) midi_state.port[2].sequence_address[seq_no];
                 break;
@@ -553,7 +553,7 @@ void CSound::SQ_Play(int port, int seq_no, int volume) {
 
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
-        case 2:
+        case MIDI_PORT_UNK_2:
             if (seq_no < midi_state.port[4].sequence_count) {
                 address = (int) midi_state.port[4].sequence_address[seq_no];
                 break;
@@ -581,22 +581,22 @@ void CSound::SE_Play(int port, int bank, int program, int pan, int velocity, int
     int           channel;
 
     switch (port) {
-        case 15:
+        case MIDI_PORT_SE_TITLE:
             channel = 5;
             break;
-        case 14:
+        case MIDI_PORT_SE_DEFAULT:
             channel = 4;
             break;
-        case 13:
+        case MIDI_PORT_UNK_D:
             channel = 3;
             break;
-        case 12:
+        case MIDI_PORT_SE_SPECIAL:
             channel = 2;
             break;
-        case 11:
+        case MIDI_PORT_UNK_B:
             channel = 1;
             break;
-        case 10:
+        case MIDI_PORT_UNK_A:
             channel = 0;
             break;
     }
@@ -645,22 +645,22 @@ void CSound::SE_SetVol(int port, int bank, int program, int volume, int voice) {
     int           channel;
 
     switch (port) {
-        case 15:
+        case MIDI_PORT_SE_TITLE:
             channel = 5;
             break;
-        case 14:
+        case MIDI_PORT_SE_DEFAULT:
             channel = 4;
             break;
-        case 13:
+        case MIDI_PORT_UNK_D:
             channel = 3;
             break;
-        case 12:
+        case MIDI_PORT_SE_SPECIAL:
             channel = 2;
             break;
-        case 11:
+        case MIDI_PORT_UNK_B:
             channel = 1;
             break;
-        case 10:
+        case MIDI_PORT_UNK_A:
             channel = 0;
             break;
     }
@@ -681,22 +681,22 @@ void CSound::SE_SetPan(int port, int bank, int program, int pan, int voice) {
     int           channel;
 
     switch (port) {
-        case 15:
+        case MIDI_PORT_SE_TITLE:
             channel = 5;
             break;
-        case 14:
+        case MIDI_PORT_SE_DEFAULT:
             channel = 4;
             break;
-        case 13:
+        case MIDI_PORT_UNK_D:
             channel = 3;
             break;
-        case 12:
+        case MIDI_PORT_SE_SPECIAL:
             channel = 2;
             break;
-        case 11:
+        case MIDI_PORT_UNK_B:
             channel = 1;
             break;
-        case 10:
+        case MIDI_PORT_UNK_A:
             channel = 0;
             break;
     }
@@ -721,22 +721,22 @@ void CSound::SE_Stop(int port, int bank, int program, int voice) {
     int           channel;
 
     switch (port) {
-        case 15:
+        case MIDI_PORT_SE_TITLE:
             channel = 5;
             break;
-        case 14:
+        case MIDI_PORT_SE_DEFAULT:
             channel = 4;
             break;
-        case 13:
+        case MIDI_PORT_UNK_D:
             channel = 3;
             break;
-        case 12:
+        case MIDI_PORT_SE_SPECIAL:
             channel = 2;
             break;
-        case 11:
+        case MIDI_PORT_UNK_B:
             channel = 1;
             break;
-        case 10:
+        case MIDI_PORT_UNK_A:
             channel = 0;
             break;
     }
@@ -754,56 +754,56 @@ void CSound::SE_Stop(int port, int bank, int program, int voice) {
 
 void CSound::Fade(int port, float step, int volume) {
     switch (port) {
-        case 0:
-            midi_state.port[0].fade[0].active = 1;
+        case MIDI_PORT_BGM:
+            midi_state.port[0].fade[0].active = true;
             midi_state.port[0].fade[0].target_volume = volume;
             midi_state.port[0].fade[0].step = step;
             midi_state.port[0].fade[0].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 1:
-            midi_state.port[2].fade[0].active = 1;
+        case MIDI_PORT_AMBIENT:
+            midi_state.port[2].fade[0].active = true;
             midi_state.port[2].fade[0].target_volume = volume;
             midi_state.port[2].fade[0].step = step;
             midi_state.port[2].fade[0].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 2:
-            midi_state.port[4].fade[0].active = 1;
+        case MIDI_PORT_UNK_2:
+            midi_state.port[4].fade[0].active = true;
             midi_state.port[4].fade[0].target_volume = volume;
             midi_state.port[4].fade[0].step = step;
             midi_state.port[4].fade[0].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 15:
-            midi_state.port[1].fade[1].active = 1;
+        case MIDI_PORT_SE_TITLE:
+            midi_state.port[1].fade[1].active = true;
             midi_state.port[1].fade[1].target_volume = volume;
             midi_state.port[1].fade[1].step = step;
             midi_state.port[1].fade[1].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 14:
-            midi_state.port[4].fade[1].active = 1;
+        case MIDI_PORT_SE_DEFAULT:
+            midi_state.port[4].fade[1].active = true;
             midi_state.port[4].fade[1].target_volume = volume;
             midi_state.port[4].fade[1].step = step;
             midi_state.port[4].fade[1].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 10:
-            midi_state.port[3].fade[1].active = 1;
+        case MIDI_PORT_UNK_A:
+            midi_state.port[3].fade[1].active = true;
             midi_state.port[3].fade[1].target_volume = volume;
             midi_state.port[3].fade[1].step = step;
             midi_state.port[3].fade[1].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 13:
-            midi_state.port[5].fade[1].active = 1;
+        case MIDI_PORT_UNK_D:
+            midi_state.port[5].fade[1].active = true;
             midi_state.port[5].fade[1].target_volume = volume;
             midi_state.port[5].fade[1].step = step;
             midi_state.port[5].fade[1].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 12:
-            midi_state.port[6].fade[1].active = 1;
+        case MIDI_PORT_SE_SPECIAL:
+            midi_state.port[6].fade[1].active = true;
             midi_state.port[6].fade[1].target_volume = volume;
             midi_state.port[6].fade[1].step = step;
             midi_state.port[6].fade[1].volume = ezMidi(port + 0x80E0, 0);
             break;
-        case 11:
-            midi_state.port[7].fade[1].active = 1;
+        case MIDI_PORT_UNK_B:
+            midi_state.port[7].fade[1].active = true;
             midi_state.port[7].fade[1].target_volume = volume;
             midi_state.port[7].fade[1].step = step;
             midi_state.port[7].fade[1].volume = ezMidi(port + 0x80E0, 0);
@@ -819,12 +819,12 @@ void CSound::Step() {
 
         if (midi_state.port[0].fade[0].step > 0.0f && midi_state.port[0].fade[0].volume > midi_state.port[0].fade[0].target_volume) {
             midi_state.port[0].fade[0].volume = midi_state.port[0].fade[0].target_volume;
-            midi_state.port[0].fade[0].active = 0;
+            midi_state.port[0].fade[0].active = false;
         }
 
         if (midi_state.port[0].fade[0].step < 0.0f && midi_state.port[0].fade[0].volume < midi_state.port[0].fade[0].target_volume) {
             midi_state.port[0].fade[0].volume = midi_state.port[0].fade[0].target_volume;
-            midi_state.port[0].fade[0].active = 0;
+            midi_state.port[0].fade[0].active = false;
         }
 
         SetVol(0, (int) midi_state.port[0].fade[0].volume);
@@ -835,12 +835,12 @@ void CSound::Step() {
 
         if (midi_state.port[2].fade[0].step > 0.0f && midi_state.port[2].fade[0].volume > midi_state.port[2].fade[0].target_volume) {
             midi_state.port[2].fade[0].volume = midi_state.port[2].fade[0].target_volume;
-            midi_state.port[2].fade[0].active = 0;
+            midi_state.port[2].fade[0].active = false;
         }
 
         if (midi_state.port[2].fade[0].step < 0.0f && midi_state.port[2].fade[0].volume < midi_state.port[2].fade[0].target_volume) {
             midi_state.port[2].fade[0].volume = midi_state.port[2].fade[0].target_volume;
-            midi_state.port[2].fade[0].active = 0;
+            midi_state.port[2].fade[0].active = false;
         }
 
         SetVol(1, (int) midi_state.port[2].fade[0].volume);
@@ -851,12 +851,12 @@ void CSound::Step() {
 
         if (midi_state.port[4].fade[0].step > 0.0f && midi_state.port[4].fade[0].volume > midi_state.port[4].fade[0].target_volume) {
             midi_state.port[4].fade[0].volume = midi_state.port[4].fade[0].target_volume;
-            midi_state.port[4].fade[0].active = 0;
+            midi_state.port[4].fade[0].active = false;
         }
 
         if (midi_state.port[4].fade[0].step < 0.0f && midi_state.port[4].fade[0].volume < midi_state.port[4].fade[0].target_volume) {
             midi_state.port[4].fade[0].volume = midi_state.port[4].fade[0].target_volume;
-            midi_state.port[4].fade[0].active = 0;
+            midi_state.port[4].fade[0].active = false;
         }
 
         SetVol(2, (int) midi_state.port[4].fade[0].volume);
@@ -867,12 +867,12 @@ void CSound::Step() {
 
         if (midi_state.port[1].fade[1].step > 0.0f && midi_state.port[1].fade[1].volume > midi_state.port[1].fade[1].target_volume) {
             midi_state.port[1].fade[1].volume = midi_state.port[1].fade[1].target_volume;
-            midi_state.port[1].fade[1].active = 0;
+            midi_state.port[1].fade[1].active = false;
         }
 
         if (midi_state.port[1].fade[1].step < 0.0f && midi_state.port[1].fade[1].volume < midi_state.port[1].fade[1].target_volume) {
             midi_state.port[1].fade[1].volume = midi_state.port[1].fade[1].target_volume;
-            midi_state.port[1].fade[1].active = 0;
+            midi_state.port[1].fade[1].active = false;
         }
 
         SetVol(15, (int) midi_state.port[1].fade[1].volume);
@@ -883,12 +883,12 @@ void CSound::Step() {
 
         if (midi_state.port[4].fade[1].step > 0.0f && midi_state.port[4].fade[1].volume > midi_state.port[4].fade[1].target_volume) {
             midi_state.port[4].fade[1].volume = midi_state.port[4].fade[1].target_volume;
-            midi_state.port[4].fade[1].active = 0;
+            midi_state.port[4].fade[1].active = false;
         }
 
         if (midi_state.port[4].fade[1].step < 0.0f && midi_state.port[4].fade[1].volume < midi_state.port[4].fade[1].target_volume) {
             midi_state.port[4].fade[1].volume = midi_state.port[4].fade[1].target_volume;
-            midi_state.port[4].fade[1].active = 0;
+            midi_state.port[4].fade[1].active = false;
         }
 
         SetVol(14, (int) midi_state.port[4].fade[1].volume);
@@ -899,12 +899,12 @@ void CSound::Step() {
 
         if (midi_state.port[3].fade[1].step > 0.0f && midi_state.port[3].fade[1].volume > midi_state.port[3].fade[1].target_volume) {
             midi_state.port[3].fade[1].volume = midi_state.port[3].fade[1].target_volume;
-            midi_state.port[3].fade[1].active = 0;
+            midi_state.port[3].fade[1].active = false;
         }
 
         if (midi_state.port[3].fade[1].step < 0.0f && midi_state.port[3].fade[1].volume < midi_state.port[3].fade[1].target_volume) {
             midi_state.port[3].fade[1].volume = midi_state.port[3].fade[1].target_volume;
-            midi_state.port[3].fade[1].active = 0;
+            midi_state.port[3].fade[1].active = false;
         }
 
         SetVol(10, (int) midi_state.port[3].fade[1].volume);
@@ -915,12 +915,12 @@ void CSound::Step() {
 
         if (midi_state.port[5].fade[1].step > 0.0f && midi_state.port[5].fade[1].volume > midi_state.port[5].fade[1].target_volume) {
             midi_state.port[5].fade[1].volume = midi_state.port[5].fade[1].target_volume;
-            midi_state.port[5].fade[1].active = 0;
+            midi_state.port[5].fade[1].active = false;
         }
 
         if (midi_state.port[5].fade[1].step < 0.0f && midi_state.port[5].fade[1].volume < midi_state.port[5].fade[1].target_volume) {
             midi_state.port[5].fade[1].volume = midi_state.port[5].fade[1].target_volume;
-            midi_state.port[5].fade[1].active = 0;
+            midi_state.port[5].fade[1].active = false;
         }
 
         SetVol(13, (int) midi_state.port[5].fade[1].volume);
@@ -931,12 +931,12 @@ void CSound::Step() {
 
         if (midi_state.port[6].fade[1].step > 0.0f && midi_state.port[6].fade[1].volume > midi_state.port[6].fade[1].target_volume) {
             midi_state.port[6].fade[1].volume = midi_state.port[6].fade[1].target_volume;
-            midi_state.port[6].fade[1].active = 0;
+            midi_state.port[6].fade[1].active = false;
         }
 
         if (midi_state.port[6].fade[1].step < 0.0f && midi_state.port[6].fade[1].volume < midi_state.port[6].fade[1].target_volume) {
             midi_state.port[6].fade[1].volume = midi_state.port[6].fade[1].target_volume;
-            midi_state.port[6].fade[1].active = 0;
+            midi_state.port[6].fade[1].active = false;
         }
 
         SetVol(12, (int) midi_state.port[6].fade[1].volume);
@@ -947,12 +947,12 @@ void CSound::Step() {
 
         if (midi_state.port[7].fade[1].step > 0.0f && midi_state.port[7].fade[1].volume > midi_state.port[7].fade[1].target_volume) {
             midi_state.port[7].fade[1].volume = midi_state.port[7].fade[1].target_volume;
-            midi_state.port[7].fade[1].active = 0;
+            midi_state.port[7].fade[1].active = false;
         }
 
         if (midi_state.port[7].fade[1].step < 0.0f && midi_state.port[7].fade[1].volume < midi_state.port[7].fade[1].target_volume) {
             midi_state.port[7].fade[1].volume = midi_state.port[7].fade[1].target_volume;
-            midi_state.port[7].fade[1].active = 0;
+            midi_state.port[7].fade[1].active = false;
         }
 
         SetVol(11, (int) midi_state.port[7].fade[1].volume);

@@ -21,7 +21,7 @@
 #include <cstdlib>
 
 /** Default weapon id per character. */
-static s32 defWeapon[6] = {257, 299, 314, 331, 347, 363};
+static s32 defWeapon[6] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN};
 
 static inline int GetMaxDungeonItems() {
     return 100;
@@ -56,7 +56,7 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
     int i;
     int valid;
 
-    if (!(valid = item_id < 132) && item_id < 257) {
+    if (!(valid = item_id < ITEM_DUNGEON_START) && item_id < ITEM_WEAPON_START) {
         for (i = 0; (valid = i < 3) != 0; i++) {
             if (this->item_pack.quick_item_slot[i] == item_id) {
                 return i;
@@ -64,7 +64,7 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
         }
     }
 
-    if (!(valid = item_id <= 131) && item_id < 257) {
+    if (!(valid = item_id <= ITEM_DUNGEON_START - 1) && item_id < ITEM_WEAPON_START) {
         for (i = 0; (valid = i < this->item_pack.num) != 0; i++) {
             if (this->item_pack.item[i] == item_id) {
                 return i;
@@ -72,7 +72,7 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
         }
     }
 
-    if (!(valid = item_id < 81) && item_id < 132) {
+    if (!(valid = item_id < ITEM_ATTACH_START) && item_id < ITEM_DUNGEON_START) {
         for (i = 0; (valid = i < 40) != 0; i++) {
             if (this->consumable_items[i].id == item_id) {
                 return i;
@@ -80,7 +80,7 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
         }
     }
 
-    if (!(valid = item_id < 257)) {
+    if (!(valid = item_id < ITEM_WEAPON_START)) {
         int j;
 
         for (j = 0; (valid = j < this->party_size) != 0; j++) {
@@ -142,43 +142,43 @@ void CDngStatusData::LostGateKey() {
     int valid;
 
     for (i = 0; (valid = i < 103) != 0; i++) {
-        if (this->item_pack.item[i] == 195) {
+        if (this->item_pack.item[i] == ITEM_DRAN_S_CREST) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 196) {
+        if (this->item_pack.item[i] == ITEM_SHINY_STONE) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 198) {
+        if (this->item_pack.item[i] == ITEM_RED_BERRY) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 201) {
+        if (this->item_pack.item[i] == ITEM_HOOK) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 202) {
+        if (this->item_pack.item[i] == ITEM_KING_S_SLATE) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 203) {
+        if (this->item_pack.item[i] == ITEM_GUN_POWDER) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 204) {
+        if (this->item_pack.item[i] == ITEM_CLOCK_HANDS) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 205) {
+        if (this->item_pack.item[i] == ITEM_POINTY_CHESTNUT) {
             this->item_pack.item[i] = -1;
         }
 
-        if (this->item_pack.item[i] == 206) {
+        if (this->item_pack.item[i] == ITEM_BLACK_KNIGHT_CREST) {
             this->item_pack.item[i] = -1;
         }
 
-        if (!(valid = this->item_pack.item[i] < 216) && this->item_pack.item[i] < 223) {
+        if (!(valid = this->item_pack.item[i] < ITEM_BONE_KEY) && this->item_pack.item[i] <= ITEM_SILVER_KEY) {
             this->item_pack.item[i] = -1;
         }
     }
@@ -203,7 +203,7 @@ int CDngStatusData::GetLiveUnit() {
 int CDngStatusData::CheckItemGet(int item_id) {
     int result = 0;
 
-    if ((u32) (item_id - 233) <= 1 || item_id == 238) {
+    if ((u32) (item_id - ITEM_MAP) <= 1 || item_id == ITEM_WORLDMAP) {
         return 0;
     }
 
@@ -216,7 +216,7 @@ int CDngStatusData::CheckItemGet(int item_id) {
             int k;
 
             for (i = 0; (valid = i < GetMaxDungeonItems()) != 0; i++) {
-                if (!(valid = this->item_pack.item[i] < 132) && this->item_pack.item[i] < 257) {
+                if (!(valid = this->item_pack.item[i] < ITEM_DUNGEON_START) && this->item_pack.item[i] < ITEM_WEAPON_START) {
                     count++;
                 }
             }
@@ -234,14 +234,14 @@ int CDngStatusData::CheckItemGet(int item_id) {
             }
         }
 
-        if (!(valid = item_id < 81) && item_id < 132) {
+        if (!(valid = item_id < ITEM_ATTACH_START) && item_id < ITEM_DUNGEON_START) {
             int count = 0;
             int j;
 
             for (j = 0; (valid = j < 40) != 0; j++) {
                 s16 held_id = this->consumable_items[j].id;
 
-                if (!(valid = held_id < 81) && held_id < 132) {
+                if (!(valid = held_id < ITEM_ATTACH_START) && held_id < ITEM_DUNGEON_START) {
                     count++;
                 }
             }
@@ -265,28 +265,28 @@ int CDngStatusData::CheckWeaponUser(int weapon_id) {
     int result = -1;
     int valid;
 
-    if (!(valid = weapon_id < 257) && weapon_id < 299) {
-        result = 0;
+    if (!(valid = weapon_id < ITEM_WEAPON_DAGGER_BROKEN) && weapon_id < ITEM_WEAPON_WOODENSLINGSHOT_BROKEN) {
+        result = CHARA_TOAN;
     }
 
-    if (!(valid = weapon_id < 299) && weapon_id < 314) {
-        result = 1;
+    if (!(valid = weapon_id < ITEM_WEAPON_WOODENSLINGSHOT_BROKEN) && weapon_id < ITEM_WEAPON_MALLET_BROKEN) {
+        result = CHARA_XIAO;
     }
 
-    if (!(valid = weapon_id < 314) && weapon_id < 331) {
-        result = 2;
+    if (!(valid = weapon_id < ITEM_WEAPON_MALLET_BROKEN) && weapon_id < ITEM_WEAPON_GOLD_RING_BROKEN) {
+        result = CHARA_GORO;
     }
 
-    if (!(valid = weapon_id < 331) && weapon_id < 347) {
-        result = 3;
+    if (!(valid = weapon_id < ITEM_WEAPON_GOLD_RING_BROKEN) && weapon_id < ITEM_WEAPON_FIGHTING_STICK_BROKEN) {
+        result = CHARA_RUBY;
     }
 
-    if (!(valid = weapon_id < 347) && weapon_id < 363) {
-        result = 4;
+    if (!(valid = weapon_id < ITEM_WEAPON_FIGHTING_STICK_BROKEN) && weapon_id < ITEM_WEAPON_MACHINE_GUN_BROKEN) {
+        result = CHARA_UNGAGA;
     }
 
-    if (!(valid = weapon_id < 363) && weapon_id < 377) {
-        result = 5;
+    if (!(valid = weapon_id < ITEM_WEAPON_MACHINE_GUN_BROKEN) && weapon_id < ITEM_WEAPON_END) {
+        result = CHARA_OSMOND;
     }
 
     return result;
@@ -306,7 +306,7 @@ int CDngStatusData::CheckWeaponRot(int weapon_id) {
      * The goto reproduces that exact block layout/branch-threading. */
     int valid;
 
-    if ((valid = weapon_id < 257) != 0) {
+    if ((valid = weapon_id < ITEM_WEAPON_START) != 0) {
         goto ret_minus1;
     }
 
@@ -315,7 +315,7 @@ int CDngStatusData::CheckWeaponRot(int weapon_id) {
         int i;
 
         for (i = 0; (valid = i < 10) != 0; i++) {
-            if (!(valid = this->chara_weapons[chara_no][i].item_no < 257)) {
+            if (!(valid = this->chara_weapons[chara_no][i].item_no < ITEM_WEAPON_START)) {
                 count++;
             }
         }
@@ -345,13 +345,13 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
     printf("GetITEM No === %d\n", item_id);
 
-    if (!(valid = item_id < 132) && item_id < 257) {
+    if (!(valid = item_id < ITEM_DUNGEON_START) && item_id < ITEM_WEAPON_START) {
         int i;
 
         for (i = 0; (valid = i < 103) != 0; i++) {
-            if (this->item_pack.item[i] < 132) {
-                if (item_id == 238) {
-                    this->special_flag_238 = 1;
+            if (this->item_pack.item[i] < ITEM_DUNGEON_START) {
+                if (item_id == ITEM_WORLDMAP) {
+                    this->special_flag_238 = true;
                     return 0;
                 }
 
@@ -359,7 +359,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 int j;
 
                 for (j = 0; (valid = j < 103) != 0; j++) {
-                    if (!(valid = this->item_pack.item[j] < 132)) {
+                    if (!(valid = this->item_pack.item[j] < ITEM_DUNGEON_START)) {
                         count++;
                     }
                 }
@@ -373,7 +373,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 }
 
                 if (count + 1 > this->item_pack.num) {
-                    this->overflow_flag = 1;
+                    this->overflow_flag = true;
                 }
 
                 int have_copy = ItemDataToHaveCopy(item_id);
@@ -398,11 +398,11 @@ int CDngStatusData::GetItem(int item_id, int qty) {
         }
     }
 
-    if (!(valid = item_id < 81) && item_id < 132) {
+    if (!(valid = item_id < ITEM_ATTACH_START) && item_id < ITEM_DUNGEON_START) {
         int n;
 
         for (n = 0; (valid = n < 43) != 0; n++) {
-            if (this->consumable_items[n].id < 81) {
+            if (this->consumable_items[n].id < ITEM_ATTACH_START) {
                 this->consumable_items[n].id = item_id;
                 SetAttachMentValue(item_id, n, qty, (ATTACH_LIST *) 0);
 
@@ -412,7 +412,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 for (ii = 0; (valid = ii < 43) != 0; ii++) {
                     s16 held_id = this->consumable_items[ii].id;
 
-                    if (!(valid = held_id < 81) && held_id < 132) {
+                    if (!(valid = held_id < ITEM_ATTACH_START) && held_id < ITEM_DUNGEON_START) {
                         count++;
                     }
                 }
@@ -426,27 +426,27 @@ int CDngStatusData::GetItem(int item_id, int qty) {
         }
     }
 
-    if (!(valid = item_id < 257)) {
+    if (!(valid = item_id < ITEM_WEAPON_START)) {
         printf("get weapon!! %d\n", item_id);
         int chara_no = ItemPutListTbl12_bytes[750 + item_id * 76];
 
         int jj;
 
         for (jj = 0; (valid = jj < 11) != 0; jj++) {
-            if (this->chara_weapons[chara_no][jj].item_no < 257) {
+            if (this->chara_weapons[chara_no][jj].item_no < ITEM_WEAPON_START) {
                 WepDataListToHaveCopy(item_id, &this->chara_weapons[chara_no][jj]);
 
                 int count = 0;
                 int kk;
 
                 for (kk = 0; (valid = kk < 10) != 0; kk++) {
-                    if (!(valid = this->chara_weapons[chara_no][kk].item_no < 257)) {
+                    if (!(valid = this->chara_weapons[chara_no][kk].item_no < ITEM_WEAPON_START)) {
                         count++;
                     }
                 }
 
                 if (!(valid = count < 10)) {
-                    this->overflow_flag = 1;
+                    this->overflow_flag = true;
                 }
 
                 return jj;
@@ -647,7 +647,7 @@ void CUserStatus::Step(int mode) {
         if (this->water_now[this->cur_chara] <= 0.0f) {
             this->water_now[this->cur_chara] = 0.0f;
         } else {
-            if (this->res_limit_zone_current == 11) {
+            if (this->res_limit_zone_current == RES_LIMIT_ZONE_THIRST) {
                 drain = 5.0f * drain;
             }
 
@@ -730,7 +730,7 @@ void CUserStatus::Init() {
 
     this->water_drain_disable = 0;
     this->step_disable = 0;
-    this->res_limit_zone_current = -1;
+    this->res_limit_zone_current = RES_LIMIT_ZONE_NONE;
 
     this->ClearEventFlag();
 
@@ -758,7 +758,7 @@ void CDngStatusData::SetDead() {
 void CDngStatusData::SetResLimmitZone() {
     int zone = this->res_limit_zone_id[this->cur_georama][this->cur_floor];
 
-    if (zone != -1) {
+    if (zone != RES_LIMIT_ZONE_NONE) {
         this->res_limit_zone_current = zone;
     }
 }
@@ -784,10 +784,10 @@ void CDngStatusData::InitResLimmitZone() {
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
 
         if (!(valid = roll < 50)) {
-            zone = 10;
+            zone = RES_LIMIT_ZONE_NO_WEAPON_CHANGE;
             valid = 0;
         } else {
-            zone = 11;
+            zone = RES_LIMIT_ZONE_THIRST;
             valid = 1;
         }
 
@@ -800,10 +800,10 @@ void CDngStatusData::InitResLimmitZone() {
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
 
         if (!(valid = roll < 50)) {
-            zone = 10;
+            zone = RES_LIMIT_ZONE_NO_WEAPON_CHANGE;
             valid = 0;
         } else {
-            zone = 11;
+            zone = RES_LIMIT_ZONE_THIRST;
             valid = 1;
         }
 
@@ -816,10 +816,10 @@ void CDngStatusData::InitResLimmitZone() {
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
 
         if (!(valid = roll < 50)) {
-            zone = 10;
+            zone = RES_LIMIT_ZONE_NO_WEAPON_CHANGE;
             valid = 0;
         } else {
-            zone = 11;
+            zone = RES_LIMIT_ZONE_THIRST;
             valid = 1;
         }
 
@@ -832,10 +832,10 @@ void CDngStatusData::InitResLimmitZone() {
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
 
         if (!(valid = roll < 50)) {
-            zone = 10;
+            zone = RES_LIMIT_ZONE_NO_WEAPON_CHANGE;
             valid = 0;
         } else {
-            zone = 11;
+            zone = RES_LIMIT_ZONE_THIRST;
             valid = 1;
         }
 
@@ -848,10 +848,10 @@ void CDngStatusData::InitResLimmitZone() {
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
 
         if (!(valid = roll < 50)) {
-            zone = 10;
+            zone = RES_LIMIT_ZONE_NO_WEAPON_CHANGE;
             valid = 0;
         } else {
-            zone = 11;
+            zone = RES_LIMIT_ZONE_THIRST;
             valid = 1;
         }
 
@@ -884,11 +884,11 @@ void CDngStatusData::Initialize() {
     this->unk_01[0] = 0;
     this->cur_floor = -1;
     this->prev_floor = -1;
-    this->cur_chara = 0;
+    this->cur_chara = CHARA_TOAN;
     this->party_size = 1;
 
     // The first weapon id of each character's range; copied but never read.
-    s32 weapon_base[6] = {257, 299, 314, 331, 347, 363};
+    s32 weapon_base[6] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN};
     s32 start_hp[6] = {70, 60, 100, 90, 110, 100};
     s32 start_stat[6] = {3, 1, 12, 23, 38, 46};
 
@@ -918,10 +918,10 @@ void CDngStatusData::Initialize() {
     }
 
     this->equipped_weapon_slot[0] = 0;
-    this->GetItem(258, 0);
-    this->special_flag_238 = 0;
+    this->GetItem(ITEM_WEAPON_DAGGER, 0);
+    this->special_flag_238 = false;
     this->minimap_status = 1;
-    this->overflow_flag = 0;
+    this->overflow_flag = false;
 
     for (k = 0; (valid = k < 7) != 0; k++) {
         this->floor_reached[k] = -1;
@@ -935,7 +935,7 @@ void CDngStatusData::Initialize() {
 
     for (t = 0; (valid = t < 6) != 0; t++) {
         for (k = 0; (valid = k < 25) != 0; k++) {
-            this->res_limit_zone_id[t][k] = -1;
+            this->res_limit_zone_id[t][k] = RES_LIMIT_ZONE_NONE;
         }
     }
 

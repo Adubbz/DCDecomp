@@ -27,12 +27,12 @@ void CCameraFollow::Step(int steps) {
         int i;
 
         // The angle that the eye turns to stays inside one turn.
-        if (this->next_angle > 6.283185307179586) {
-            this->next_angle -= 6.2831855f;
+        if (this->next_angle > TWO_PI_D) {
+            this->next_angle -= TWO_PI;
         }
 
         if (this->next_angle < 0.0f) {
-            this->next_angle += 6.2831855f;
+            this->next_angle += TWO_PI;
         }
 
         for (i = 0; i < steps; i++) {
@@ -43,7 +43,7 @@ void CCameraFollow::Step(int steps) {
                     turn = 1.0f;
                 }
 
-                this->angle = AngleInterpolate(this->angle, this->next_angle, turn, 1);
+                this->angle = AngleInterpolate(this->angle, this->next_angle, turn, INTERPOLATE_FRACTION);
 
                 // An eye that reaches its position in about one step turns at
                 // once as well.

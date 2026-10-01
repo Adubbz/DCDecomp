@@ -3,6 +3,24 @@
 #include "common.h"
 
 /**
+ * MIDI ports the sound functions address.
+ */
+// clang-format off
+enum MidiPort {
+    MIDI_PORT_BGM        = 0,  /**< Background music. */
+    MIDI_PORT_AMBIENT    = 1,  /**< Ambient loop. */
+    MIDI_PORT_UNK_2      = 2,  /**< Sequence port with no caller. */
+    MIDI_PORT_UNK_A      = 10, /**< Sound effect port. */
+    MIDI_PORT_UNK_B      = 11, /**< Sound effect port. */
+    MIDI_PORT_SE_SPECIAL = 12, /**< Special sound effects. */
+    MIDI_PORT_UNK_D      = 13, /**< Sound effect port. */
+    MIDI_PORT_SE_DEFAULT = 14, /**< Default sound effect port. */
+    MIDI_PORT_SE_TITLE   = 15, /**< Title sound effects. */
+};
+
+// clang-format on
+
+/**
  *          One sequence the MIDI player holds, which is what the music is
  *          played and faded through.
  */

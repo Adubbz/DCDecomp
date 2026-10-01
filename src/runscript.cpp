@@ -255,27 +255,27 @@ void CRunScript::exe(vmcode_t *entry) {
 
     for (;;) {
         switch (pc->op) {
-            case 1:
+            case RS_OP_LOAD:
                 switch (pc->arg2) {
-                    case 1:
+                    case RS_ADDR_LOCAL:
                         push(*(frame + pc->arg1));
                         break;
-                    case 2:
+                    case RS_ADDR_LOCAL_INDEX:
                         push(*(frame + pc->arg1 + chk_int(pop(), func)));
                         break;
-                    case 4:
+                    case RS_ADDR_POINTER_INDEX:
                         push(*(frame[pc->arg1].p + chk_int(pop(), func)));
                         break;
-                    case 8:
+                    case RS_ADDR_LOCAL_FLOAT:
                         (frame + pc->arg1)->type = RS_FLOAT;
                         push(*(frame + pc->arg1));
                         break;
-                    case 16:
+                    case RS_ADDR_LOCAL_INDEX_FLOAT:
                         rhs_i = chk_int(pop(), func);
                         (frame + pc->arg1 + rhs_i)->type = RS_FLOAT;
                         push(*(frame + pc->arg1 + rhs_i));
                         break;
-                    case 32:
+                    case RS_ADDR_POINTER_INDEX_FLOAT:
                         rhs_i = chk_int(pop(), func);
                         (frame[pc->arg1].p + rhs_i)->type = RS_FLOAT;
                         push(*(frame[pc->arg1].p + rhs_i));
@@ -283,35 +283,35 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 2:
+            case RS_OP_LOAD_ADDR:
                 switch (pc->arg2) {
-                    case 1:
+                    case RS_ADDR_LOCAL:
                         push_ptr(frame + pc->arg1);
                         break;
-                    case 2:
+                    case RS_ADDR_LOCAL_INDEX:
                         push_ptr(frame + pc->arg1 + chk_int(pop(), func));
                         break;
-                    case 4:
+                    case RS_ADDR_POINTER_INDEX:
                         push_ptr(frame[pc->arg1].p + chk_int(pop(), func));
                         break;
-                    case 8:
+                    case RS_ADDR_LOCAL_FLOAT:
                         push_ptr(frame + pc->arg1);
                         break;
-                    case 16:
+                    case RS_ADDR_LOCAL_INDEX_FLOAT:
                         push_ptr(frame + pc->arg1 + chk_int(pop(), func));
                         break;
-                    case 32:
+                    case RS_ADDR_POINTER_INDEX_FLOAT:
                         push_ptr(frame[pc->arg1].p + chk_int(pop(), func));
                         break;
                 }
 
                 break;
-            case 5:
+            case RS_OP_STORE:
                 value = pop();
                 *pop().p = value;
                 push(value);
                 break;
-            case 3:
+            case RS_OP_PUSH_CONST:
                 if (pc->arg1 == 1) {
                     push_int(pc->arg2);
                 } else if (pc->arg1 == 3) {
@@ -321,17 +321,17 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 4:
+            case RS_OP_POP:
                 sp--;
                 break;
-            case 16:
+            case RS_OP_JMP:
                 if (!skip_wait) {
                     pc = (vmcode_t *) (code + (int) pc->arg1);
                     continue;
                 }
 
                 break;
-            case 18:
+            case RS_OP_JMP_TRUE:
                 if (!skip_wait) {
                     if (is_true(pop())) {
                         if (pc->arg2) {
@@ -344,7 +344,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 17:
+            case RS_OP_JMP_FALSE:
                 if (!skip_wait) {
                     if (!is_true(pop())) {
                         if (pc->arg2) {
@@ -357,7 +357,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 14:
+            case RS_OP_CMP:
                 rhs = pop();
                 lhs = pop();
 
@@ -366,22 +366,22 @@ void CRunScript::exe(vmcode_t *entry) {
                     lhs_i = lhs.i;
 
                     switch (pc->arg1) {
-                        case 40:
+                        case RS_CMP_EQ:
                             push_int(rhs_i == lhs_i);
                             break;
-                        case 41:
+                        case RS_CMP_NE:
                             push_int(rhs_i != lhs_i);
                             break;
-                        case 42:
+                        case RS_CMP_LT:
                             push_int(lhs_i < rhs_i);
                             break;
-                        case 43:
+                        case RS_CMP_LE:
                             push_int(lhs_i <= rhs_i);
                             break;
-                        case 44:
+                        case RS_CMP_GT:
                             push_int(lhs_i > rhs_i);
                             break;
-                        case 45:
+                        case RS_CMP_GE:
                             push_int(lhs_i >= rhs_i);
                             break;
                     }
@@ -401,29 +401,29 @@ void CRunScript::exe(vmcode_t *entry) {
                     }
 
                     switch (pc->arg1) {
-                        case 40:
+                        case RS_CMP_EQ:
                             push_int(rhs_f == lhs_f);
                             break;
-                        case 41:
+                        case RS_CMP_NE:
                             push_int(rhs_f != lhs_f);
                             break;
-                        case 42:
+                        case RS_CMP_LT:
                             push_int(lhs_f < rhs_f);
                             break;
-                        case 43:
+                        case RS_CMP_LE:
                             push_int(lhs_f <= rhs_f);
                             break;
-                        case 44:
+                        case RS_CMP_GT:
                             push_int(lhs_f > rhs_f);
                             break;
-                        case 45:
+                        case RS_CMP_GE:
                             push_int(lhs_f >= rhs_f);
                             break;
                     }
                 }
 
                 break;
-            case 6:
+            case RS_OP_ADD:
                 rhs = pop();
                 lhs = pop();
 
@@ -441,7 +441,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 7:
+            case RS_OP_SUB:
                 rhs = pop();
                 lhs = pop();
 
@@ -459,7 +459,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 8:
+            case RS_OP_MUL:
                 rhs = pop();
                 lhs = pop();
 
@@ -477,7 +477,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 9:
+            case RS_OP_DIV:
                 rhs = pop();
 
                 if (rhs.i == 0) {
@@ -500,7 +500,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 10:
+            case RS_OP_MOD:
                 rhs_i = chk_int(pop(), func);
 
                 if (rhs_i == 0) {
@@ -509,15 +509,15 @@ void CRunScript::exe(vmcode_t *entry) {
 
                 push_int(chk_int(pop(), func) % rhs_i);
                 break;
-            case 24:
+            case RS_OP_AND:
                 rhs_i = chk_int(pop(), func);
                 push_int(rhs_i & chk_int(pop(), func));
                 break;
-            case 25:
+            case RS_OP_OR:
                 rhs_i = chk_int(pop(), func);
                 push_int(rhs_i | chk_int(pop(), func));
                 break;
-            case 11:
+            case RS_OP_NEG:
                 rhs = pop();
 
                 if (rhs.type == RS_INT) {
@@ -530,7 +530,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 29:
+            case RS_OP_SIN:
                 rhs = pop();
 
                 if (rhs.type == RS_INT) {
@@ -543,7 +543,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 30:
+            case RS_OP_COS:
                 rhs = pop();
 
                 if (rhs.type == RS_INT) {
@@ -556,7 +556,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 26:
+            case RS_OP_NOT:
                 rhs = pop();
 
                 if (rhs.type == RS_INT) {
@@ -569,7 +569,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 12:
+            case RS_OP_ITOF:
                 rhs = pop();
 
                 if (rhs.type == RS_INT) {
@@ -582,7 +582,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 13:
+            case RS_OP_FTOI:
                 rhs = pop();
 
                 if (rhs.type == RS_INT) {
@@ -595,11 +595,11 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 20:
+            case RS_OP_PRINT:
                 sp -= pc->arg1;
                 print(sp, pc->arg1);
                 break;
-            case 21:
+            case RS_OP_EXT:
                 sp -= pc->arg1;
 
                 if (!skip_wait) {
@@ -607,15 +607,15 @@ void CRunScript::exe(vmcode_t *entry) {
                 }
 
                 break;
-            case 27:
+            case RS_OP_END:
                 end = 1;
                 pc = 0;
                 return;
-            case 19:
+            case RS_OP_CALL:
                 pc = call_func((funcdata *) (code + (int) pc->arg2), pc);
                 pc--;
                 break;
-            case 15:
+            case RS_OP_RET:
                 value = pop();
 
                 if (call_sp != call) {
@@ -631,14 +631,14 @@ void CRunScript::exe(vmcode_t *entry) {
 
                 push(value);
                 break;
-            case 23:
+            case RS_OP_WAIT:
                 if (!skip_wait) {
                     pc++;
                     return;
                 }
 
                 break;
-            case 28:
+            case RS_OP_SKIP_END:
                 if (skip_wait) {
                     skip_wait = 0;
                     pc++;

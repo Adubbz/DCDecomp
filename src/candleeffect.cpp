@@ -8,7 +8,7 @@
 #include "texture.hpp"
 
 void CCandleEffect::Initialize() {
-    this->enabled = 1;
+    this->enabled = true;
     this->animation_frame = 0.0f;
     this->half_height = 1.0f;
     this->half_width = 1.0f;

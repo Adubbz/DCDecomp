@@ -2,6 +2,97 @@
 
 #include "common.h"
 
+/**
+ * What a message window is doing, as ClsMes::State reports it.
+ */
+// clang-format off
+enum ClsMesState {
+    CLSMES_CLOSED    = 0, /**< Closed. */
+    CLSMES_FADE_IN   = 1, /**< Fading in. */
+    CLSMES_REVEALING = 2, /**< Revealing text. */
+    CLSMES_SHOWN     = 3, /**< All text shown. */
+    CLSMES_FADE_OUT  = 4, /**< Fading out. */
+    CLSMES_PAGE_WAIT = 5, /**< Waiting on a page. */
+};
+
+// clang-format on
+
+/**
+ * Control codes in a message's text.
+ */
+// clang-format off
+enum MesCode {
+    MES_CODE_NEWLINE = -0x100, /**< Starts a new line. */
+    MES_CODE_END     = -0xFF,  /**< Ends the message. */
+    MES_CODE_SPACE   = -0xFE,  /**< A space. */
+    MES_CODE_PAGE    = -0xFD,  /**< Waits for input before the next page. */
+};
+
+// clang-format on
+
+/**
+ * Edge a message window draws around its text, as ClsMes::style holds it.
+ */
+// clang-format off
+enum MesEdgeStyle {
+    MES_EDGE_NONE   = 0, /**< No edge. */
+    MES_EDGE_WHITE  = 1, /**< One-pixel white edge. */
+    MES_EDGE_BLACK  = 2, /**< One-pixel black edge. */
+    MES_EDGE_TABLE  = 3, /**< Edge from FuchiTbl_E. */
+    MES_EDGE_DOUBLE = 4, /**< Grey and black double edge. */
+};
+
+// clang-format on
+
+/**
+ * Presets ClsMes::Preset applies.
+ */
+// clang-format off
+enum MesPreset {
+    MES_PRESET_FUKIDASHI = 0, /**< Speech bubble. */
+    MES_PRESET_SYSTEM    = 1, /**< White text with a black edge. */
+    MES_PRESET_AUTO_PAGE = 2, /**< No edge, turning pages by itself. */
+    MES_PRESET_NONE      = 3, /**< Changes nothing. */
+    MES_PRESET_NAME      = 4, /**< Gold text with a table edge. */
+};
+
+// clang-format on
+
+/**
+ * Window styles ClsMes::SetMesFukidashi applies.
+ */
+// clang-format off
+enum MesFukidashiStyle {
+    MES_FUKIDASHI_BUBBLE            = 0, /**< Speech bubble. */
+    MES_FUKIDASHI_NO_BUBBLE         = 1, /**< Bubble removed. */
+    MES_FUKIDASHI_SMALL_DOUBLE_EDGE = 2, /**< Small font with a double edge. */
+    MES_FUKIDASHI_SMALL_FRAMED      = 3, /**< Small font in a frame with a black edge. */
+    MES_FUKIDASHI_LARGE_TABLE_EDGE  = 4, /**< Large font with a table edge. */
+    MES_FUKIDASHI_LARGE_BLACK_EDGE  = 5, /**< Large font with a black edge. */
+};
+
+// clang-format on
+
+/**
+ * Screen positions a message window can take, as ClsMes::auto_pos holds them.
+ */
+// clang-format off
+enum MesAutoPos {
+    MES_POS_NONE         = -1, /**< No forced position; a stay window keeps its own placement. */
+    MES_POS_AUTO         = 0,  /**< Best position. */
+    MES_POS_TOP_LEFT     = 1,  /**< Top left. */
+    MES_POS_TOP          = 2,  /**< Top centre. */
+    MES_POS_TOP_RIGHT    = 3,  /**< Top right. */
+    MES_POS_LEFT         = 4,  /**< Middle left. */
+    MES_POS_CENTRE       = 5,  /**< Centre. */
+    MES_POS_RIGHT        = 6,  /**< Middle right. */
+    MES_POS_BOTTOM_LEFT  = 7,  /**< Bottom left. */
+    MES_POS_BOTTOM       = 8,  /**< Bottom centre. */
+    MES_POS_BOTTOM_RIGHT = 9,  /**< Bottom right. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -78,7 +169,7 @@ public:
     s32          win_y;                      /**< Distance of the window from the top of the screen. */
     s32          win_width;                  /**< How wide the window draws. */
     s32          win_height;                 /**< How tall the window draws. */
-    s32          auto_pos;                   /**< Forces which of nine positions the window takes; zero picks the best. */
+    s32          auto_pos;                   /**< Position the window is forced to take. @see MesAutoPos. */
     s32          tail_on;                    /**< Whether the window draws a tail pointing at its speaker. */
     s32          tail_to_x;                  /**< Where the tail points, from the left of the screen. */
     s32          tail_to_y;                  /**< Where the tail points, from the top of the screen. */
@@ -114,7 +205,7 @@ public:
     s32          blink;                      /**< Steps the window has drawn for, which drives what flashes. */
     s32          auto_page_wait;             /**< Steps the window holds a full page before turning it by itself. */
     s32          mes_made;                   /**< The message the window has laid out; negative where it has none. */
-    s32          style;                      /**< Which of the window's frames and colours to draw. */
+    s32          style;                      /**< Which of the window's frames and colours to draw. @see MesEdgeStyle. */
     s32          page_arrow;                 /**< Whether the window draws the mark that says more text follows. */
     s32          end_mark;                   /**< Whether the window always draws that mark, wherever the text is. */
     s32          centre_rows;                /**< Whether the text sits in the middle of the window's rows. */

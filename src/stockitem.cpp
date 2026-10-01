@@ -12,7 +12,7 @@
 #include "menu_draw.hpp"
 
 /** Selects the first item type for the next stock sort operation. */
-int sort_top_type__3 = 1;
+int sort_top_type__3 = ITEM_SORT_FOOD;
 
 /** Selects the first attachment type for the next stock sort operation. */
 int asort_top_type__3 = 1;
@@ -205,16 +205,16 @@ int CStockItem::SeitonChargeItemBoardSub() {
     int second_slot;
     int moved;
 
-    for (first_slot = 0; first_slot < 9; first_slot++) {
+    for (first_slot = 0; first_slot < ITEM_SORT_COUNT; first_slot++) {
         sort_table__3[sort_type] = first_slot;
         sort_type++;
 
-        if (sort_type >= 9) {
-            sort_type = 0;
+        if (sort_type >= ITEM_SORT_COUNT) {
+            sort_type = ITEM_SORT_NONE;
         }
     }
 
-    sort_table__3[0] = 9;
+    sort_table__3[ITEM_SORT_NONE] = 9;
 
     moved = false;
 
@@ -232,15 +232,15 @@ int CStockItem::SeitonChargeItemBoardSub() {
 }
 
 void CStockItem::SeitonItem() {
-    for (int attempt = 0; attempt < 9; attempt++) {
+    for (int attempt = 0; attempt < ITEM_SORT_COUNT; attempt++) {
         if (SeitonChargeItemBoardSub() != 0) {
             break;
         }
 
         sort_top_type__3++;
 
-        if (sort_top_type__3 >= 9) {
-            sort_top_type__3 = 1;
+        if (sort_top_type__3 >= ITEM_SORT_COUNT) {
+            sort_top_type__3 = ITEM_SORT_FOOD;
         }
     }
 }

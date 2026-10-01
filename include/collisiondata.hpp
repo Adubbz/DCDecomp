@@ -6,6 +6,47 @@
 
 #include "mathutil.hpp"
 
+/**
+ * Actions of the dungeon debug overlay, as DebugInfoCode and DebugInfomationIF give them.
+ */
+// clang-format off
+enum DebugInfoCodeId {
+    DEBUG_INFO_NONE           = 0,   /**< Nothing. */
+    DEBUG_INFO_CLOSE          = 1,   /**< Close the overlay. */
+    DEBUG_INFO_MINIMAP_VIEW   = 10,  /**< View the minimap. */
+    DEBUG_INFO_COLLISION      = 20,  /**< Show collision. */
+    DEBUG_INFO_ITEM_PUT_ZONE  = 30,  /**< Show item placement zones. */
+    DEBUG_INFO_UNK_28         = 40,  /**< Handled but never offered. */
+    DEBUG_INFO_BGM_PLAY       = 41,  /**< Play background music. */
+    DEBUG_INFO_VIEW_INFO      = 50,  /**< Show view information. */
+    DEBUG_INFO_UNK_3C         = 60,  /**< Handled but never offered. */
+    DEBUG_INFO_PARAMETER      = 70,  /**< Edit parameters. */
+    DEBUG_INFO_FLOOR_ATRA_GET = 80,  /**< Take the floor's Atla. */
+    DEBUG_INFO_EVENT_TEST     = 90,  /**< Test an event. */
+    DEBUG_INFO_RELOAD_ENEMY   = 100, /**< Reload the monsters. */
+    DEBUG_INFO_LIGHT_MODE     = 110, /**< Change the lighting. */
+    DEBUG_INFO_SET_STATUS     = 120, /**< Set a status ailment. */
+    DEBUG_INFO_SE_PLAY        = 130, /**< Play a sound effect. */
+    DEBUG_INFO_SET_CHR_KEY    = 140, /**< Place a character door. */
+    DEBUG_INFO_ULTRA_MAN      = 150, /**< Make the player invincible. */
+};
+
+// clang-format on
+
+/**
+ * Element bits of a hit, in WEAPON_ELEMENT_KIND order.
+ */
+// clang-format off
+enum HitElementFlag {
+    HIT_ELEMENT_FIRE    = 0x01, /**< Fire. */
+    HIT_ELEMENT_COLD    = 0x02, /**< Cold. */
+    HIT_ELEMENT_THUNDER = 0x04, /**< Thunder. */
+    HIT_ELEMENT_WIND    = 0x08, /**< Wind. */
+    HIT_ELEMENT_HOLY    = 0x10, /**< Holy. */
+};
+
+// clang-format on
+
 class CTexture;
 
 /**

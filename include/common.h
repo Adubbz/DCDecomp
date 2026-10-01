@@ -1,5 +1,9 @@
 #pragma once
 
+#include "dungeon.h"
+#include "language.h"
+#include "mathconst.h"
+#include "sound_effect.h"
 #include "types.h"
 
 // Every source can mark a function that is not decompiled yet.

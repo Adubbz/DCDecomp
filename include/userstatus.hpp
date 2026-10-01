@@ -5,6 +5,39 @@
 #include "itemdata.hpp"
 
 /**
+ * Restriction a dungeon floor places on the party, as CUserStatus::res_limit_zone_current holds it.
+ */
+// clang-format off
+enum ResLimitZone {
+    RES_LIMIT_ZONE_NONE             = -1, /**< No restriction. */
+    RES_LIMIT_ZONE_TOAN             = 0,  /**< Only Toan may fight. */
+    RES_LIMIT_ZONE_XIAO             = 1,  /**< Only Xiao may fight. */
+    RES_LIMIT_ZONE_GORO             = 2,  /**< Only Goro may fight. */
+    RES_LIMIT_ZONE_RUBY             = 3,  /**< Only Ruby may fight. */
+    RES_LIMIT_ZONE_UNGAGA           = 4,  /**< Only Ungaga may fight. */
+    RES_LIMIT_ZONE_OSMOND           = 5,  /**< Only Osmond may fight. */
+    RES_LIMIT_ZONE_NO_WEAPON_CHANGE = 10, /**< Weapons cannot be changed. */
+    RES_LIMIT_ZONE_THIRST           = 11, /**< Thirst drains five times as fast. */
+};
+
+// clang-format on
+
+/**
+ * Status ailment bits of CUserStatus::ailments.
+ */
+// clang-format off
+enum StatusAilment {
+    AILMENT_KNOCKED_OUT = 0x02, /**< Knocked out; treated like zero HP. */
+    AILMENT_FREEZE      = 0x04, /**< Frozen in place. */
+    AILMENT_STAMINA     = 0x08, /**< Stamina. */
+    AILMENT_POISON      = 0x10, /**< Poisoned. */
+    AILMENT_CURSE       = 0x20, /**< Cursed. */
+    AILMENT_GOO         = 0x40, /**< Covered in goo. */
+};
+
+// clang-format on
+
+/**
  * Stores one attachment slot in the dungeon inventory.
  */
 struct DNG_CONSUMABLE {
@@ -63,7 +96,7 @@ public:
     char      unk_42A6[25];
     s8        floor_reached[7]; /**< Deepest floor reached in each dungeon, or -1 if never entered. */
     char      unk_42C6[2];
-    s32       ailments[6];             /**< Status ailments each party member suffers, as bit flags. */
+    s32       ailments[6];             /**< Status ailments each party member suffers. @see StatusAilment. */
     s16       ailment_frames[6];       /**< Frames left of each party member's status ailment. */
     float     water_max[6];            /**< Most water each character can hold, ten to a drop. */
     float     water_now[6];            /**< Water each character holds now. */
@@ -104,7 +137,7 @@ public:
     float          thirst_damage[6];       /**< Progress towards the next point of life lost to an empty water gauge. */
     s32            water_drain_disable;    /**< 1 while the active character's water does not drain. */
     s32            step_disable;           /**< 1 while the gauges, and the player's status ailments, stand still. */
-    s32            res_limit_zone_current; /**< Restriction zone the party is fenced into, or -1 for none. */
+    s32            res_limit_zone_current; /**< Restriction zone the party is fenced into. @see ResLimitZone. */
     s32            active_item_vol[3];     /**< Uses left of the item in each quick-use slot. */
 
     /**

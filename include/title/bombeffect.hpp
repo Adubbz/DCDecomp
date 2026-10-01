@@ -4,6 +4,19 @@
 
 #include <libvu0.h>
 
+/**
+ * Phases of one billboard of the bomb effect, as CBombEffect::phases holds them.
+ */
+// clang-format off
+enum BombPhase {
+    BOMB_PHASE_BURST     = 0, /**< Growing fast. */
+    BOMB_PHASE_BLOOM     = 1, /**< Growing slowly. */
+    BOMB_PHASE_LINGER    = 2, /**< Lingering as it fades. */
+    BOMB_PHASE_DISSIPATE = 3, /**< Shrinking away. */
+};
+
+// clang-format on
+
 class CCamera;
 
 /**

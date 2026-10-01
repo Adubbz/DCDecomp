@@ -84,7 +84,7 @@ int CBound::InCheck(float *point, float *result) {
 }
 
 void CBound::SetDir(CFrame *frame, float *from_position, float *to_position, float *up_direction, float half_width, float half_height) {
-    follow_mode = 1;
+    follow_mode = BOUND_FOLLOW_FRAME;
     from_frame = frame;
     to_frame = NULL;
     ChangeDir(from_position, to_position, up_direction);
@@ -275,10 +275,10 @@ void CBound::UpDateDirPos() {
 
 void CBound::UpDate() {
     switch (follow_mode) {
-        case 1:
+        case BOUND_FOLLOW_FRAME:
             UpDateDir();
             break;
-        case 2:
+        case BOUND_FOLLOW_SPAN:
             UpDateDirPos();
             break;
     }

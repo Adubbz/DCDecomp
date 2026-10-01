@@ -349,14 +349,14 @@ int _GET_VECTOR(RS_STACKDATA *stack, int argc) {
             angle -= 360.0f;
         }
 
-        angle = 0.017453292f * angle;
+        angle = DEG_TO_RAD * angle;
 
-        if (angle > 6.2831855f) {
-            angle -= 6.2831855f;
+        if (angle > TWO_PI) {
+            angle -= TWO_PI;
         }
 
-        if (angle < -3.1415927f) {
-            angle += 6.2831855f;
+        if (angle < -PI) {
+            angle += TWO_PI;
         }
     }
 
@@ -387,14 +387,14 @@ int _GET_DIRECTION(RS_STACKDATA *stack, int argc) {
     if (argc == 4) {
         float angle = GetStackFloat(stack++);
 
-        rotation[1] += 0.017453292f * angle;
+        rotation[1] += DEG_TO_RAD * angle;
 
-        if (rotation[1] > 3.1415927f) {
-            rotation[1] -= 6.2831855f;
+        if (rotation[1] > PI) {
+            rotation[1] -= TWO_PI;
         }
 
-        if (rotation[1] < -3.1415927f) {
-            rotation[1] += 6.2831855f;
+        if (rotation[1] < -PI) {
+            rotation[1] += TWO_PI;
         }
     }
 
@@ -580,14 +580,14 @@ int _STATUS_GET_USER_VECTOR(RS_STACKDATA *stack, int argc) {
     }
 
     angle = 0.0f;
-    angle += 0.017453292f * GetStackFloat(stack++);
+    angle += DEG_TO_RAD * GetStackFloat(stack++);
 
-    if (angle > 3.1415927f) {
-        angle -= 6.2831855f;
+    if (angle > PI) {
+        angle -= TWO_PI;
     }
 
-    if (angle < -3.1415927f) {
-        angle += 6.2831855f;
+    if (angle < -PI) {
+        angle += TWO_PI;
     }
 
     getCharacterVector(vector, angle);
@@ -626,7 +626,7 @@ int _GET_RANDF(RS_STACKDATA *stack, int argc) {
 int _SIN_DEG(RS_STACKDATA *stack, int argc) {
     float angle = GetStackFloat(stack++);
 
-    angle = 0.017453292f * angle;
+    angle = DEG_TO_RAD * angle;
     SetStack(stack, sinf(angle));
     return 1;
 }
@@ -634,7 +634,7 @@ int _SIN_DEG(RS_STACKDATA *stack, int argc) {
 int _COS_DEG(RS_STACKDATA *stack, int argc) {
     float angle = GetStackFloat(stack++);
 
-    angle = 0.017453292f * angle;
+    angle = DEG_TO_RAD * angle;
     SetStack(stack, cosf(angle));
     return 1;
 }
@@ -1289,14 +1289,14 @@ int _GET_MONSTOR_VECTOR(RS_STACKDATA *stack, int argc) {
             angle -= 360.0f;
         }
 
-        angle = 0.017453292f * angle;
+        angle = DEG_TO_RAD * angle;
 
-        if (angle > 6.2831855f) {
-            angle -= 6.2831855f;
+        if (angle > TWO_PI) {
+            angle -= TWO_PI;
         }
 
-        if (angle < -3.1415927f) {
-            angle += 6.2831855f;
+        if (angle < -PI) {
+            angle += TWO_PI;
         }
     }
 

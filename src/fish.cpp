@@ -189,7 +189,7 @@ void CFish::Step() {
     }
 
     if (move_timer <= 0) {
-        if (move_mode == -1) {
+        if (move_mode == FISH_MOVE_UNSET) {
             move_mode = FISH_MOVE_SWIM;
         } else {
             move_mode = (FishMoveMode) (rand() % 2);
@@ -198,8 +198,8 @@ void CFish::Step() {
         move_timer = GetActCnt();
         target_speed = 0.0f;
 
-        if (move_mode != 0) {
-            target_yaw = 6.2831855f * ((float) rand() / 2147483648.0f);
+        if (move_mode != FISH_MOVE_STOP) {
+            target_yaw = TWO_PI * ((float) rand() / 2147483648.0f);
             target_yaw = AngleLimit(target_yaw);
             move_timer += 30;
             target_speed = 0.2f + (0.5f * (float) rand() / 2147483648.0f);
@@ -228,7 +228,7 @@ void CFish::Step() {
     }
 
     if (action == FISH_ACTION_BATTLE) {
-        target_yaw = 6.2831855f * ((float) rand() / 2147483648.0f);
+        target_yaw = TWO_PI * ((float) rand() / 2147483648.0f);
         target_yaw = AngleLimit(target_yaw);
         target_speed = 0.5f;
         turn_step *= 2.0f;
@@ -237,7 +237,7 @@ void CFish::Step() {
 
     if (action == FISH_ACTION_LEAVE) {
         target_yaw = atan2f(food_position[0] - position[0], food_position[2] - position[2]);
-        target_yaw = AngleLimit(target_yaw - 3.1415927f);
+        target_yaw = AngleLimit(target_yaw - PI);
         target_speed = 0.5f;
     }
 
@@ -246,7 +246,7 @@ void CFish::Step() {
     GetRotation(rotation);
     rotation[2] = 0.0f;
     rotation[0] = 0.0f;
-    rotation[1] = AngleInterpolate(rotation[1], target_yaw, turn_step, 0);
+    rotation[1] = AngleInterpolate(rotation[1], target_yaw, turn_step, INTERPOLATE_STEP);
     SetRotation(rotation);
 
     if (speed < target_speed) {
@@ -271,13 +271,13 @@ void CFish::Step() {
     velocity[3] = 0.0f;
 
     switch (move_mode) {
-        case 0:
+        case FISH_MOVE_STOP:
             SetMotion(6, 0);
             break;
-        case 1:
+        case FISH_MOVE_SWIM:
             SetMotion(0, 0);
             break;
-        case 2:
+        case FISH_MOVE_FAST:
             SetMotion(1, 0);
             break;
     }
@@ -435,7 +435,7 @@ void CFish::Initialize() {
     move_mode = FISH_MOVE_UNSET;
     move_timer = 0;
     action_timer = 0;
-    use_angle_model = 0;
+    use_angle_model = false;
     angle_model_scale = 1.0f;
     size = 10.0f;
     model_scale = 1.0f;

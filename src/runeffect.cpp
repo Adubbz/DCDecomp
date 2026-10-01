@@ -99,7 +99,7 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
 void initBlendCnt(int count, float scale) {
     for (int i = 0; i < count; i++) {
         float degrees = (360.0f / (float) count) * (float) i;
-        float wave = sinf(3.1415927f * degrees / 180.0f);
+        float wave = sinf(PI * degrees / 180.0f);
         waveAnimeCnt[i] = wave * scale;
     }
 }
@@ -374,5 +374,5 @@ CRunEffect::CRunEffect() {
         life[i] = 0;
     }
 
-    lighting = 0;
+    lighting = false;
 }

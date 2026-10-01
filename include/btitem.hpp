@@ -1,6 +1,19 @@
 #pragma once
 
 /**
+ * How the large treasure box shows its item, as TreasureboxBig_itemType holds it.
+ */
+// clang-format off
+enum TreasureboxItemPose {
+    TREASUREBOX_POSE_DEFAULT   = 0, /**< Default. */
+    TREASUREBOX_POSE_SLINGSHOT = 1, /**< Xiao's slingshot. */
+    TREASUREBOX_POSE_GUN       = 2, /**< Osmond's gun. */
+    TREASUREBOX_POSE_RING      = 3, /**< Ruby's ring, at double scale. */
+};
+
+// clang-format on
+
+/**
  * Base name of each item's model and texture files, beginning with attachments.
  */
 extern char *ITEM_NAME_TBL_NEW[];

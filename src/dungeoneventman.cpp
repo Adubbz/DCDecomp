@@ -42,7 +42,7 @@ void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
-            active = 0;
+            active = false;
         }
 
         if (active != 0) {
@@ -68,7 +68,7 @@ void CDungeonEventMan::SearchItemEventHold(int script_no) {
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
-            active = 0;
+            active = false;
         }
 
         if (active != 0 && script_no == event[i].event->script_no) {
@@ -86,7 +86,7 @@ int CDungeonEventMan::GetDataNum() {
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
-            active = 0;
+            active = false;
         }
 
         if (active == 0) {
@@ -104,7 +104,7 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlot() {
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
-            active = 0;
+            active = false;
         }
 
         if (active == 0) {
@@ -245,7 +245,7 @@ void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
                         direction = -1.0f;
                     }
 
-                    direction = (3.1415927f * (-90.0f * direction)) / 180.0f;
+                    direction = (PI * (-90.0f * direction)) / 180.0f;
                     definition->placement_frame->SetRotation(0.0f, direction, 0.0f);
                     definition->trigger_frame->GetLWMatrix(matrix);
                     runtime_event->dir[0] = 0.0f;
@@ -280,7 +280,7 @@ void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
                 direction = -1.0f;
             }
 
-            float angle = (3.1415927f * (-90.0f * direction)) / 180.0f;
+            float angle = (PI * (-90.0f * direction)) / 180.0f;
             definition->placement_frame->SetRotation(0.0f, angle, 0.0f);
             definition->trigger_frame->GetLWMatrix(part_matrix);
             runtime_event->dir[0] = 0.0f;

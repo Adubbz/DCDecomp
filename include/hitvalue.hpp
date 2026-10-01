@@ -6,6 +6,19 @@
 
 #include "rect.hpp"
 
+/**
+ * Kinds of floating hit value, as CHitValue::kind holds them.
+ */
+// clang-format off
+enum HitValueKind {
+    HIT_VALUE_ZERO    = -1, /**< No damage. */
+    HIT_VALUE_MONSTER = 0,  /**< Damage to a monster. */
+    HIT_VALUE_GOLD    = 1,  /**< Money. */
+    HIT_VALUE_PLAYER  = 2,  /**< Damage to the player. */
+};
+
+// clang-format on
+
 class CFrame;
 
 /**
@@ -41,7 +54,7 @@ public:
         s32 unk_44;
     };
 
-    s32  kind;   /**< What took the hit, which picks the digit sheet. */
+    s32  kind;   /**< What took the hit, which picks the digit sheet. @see HitValueKind. */
     RECT texel;  /**< Rectangle of the sheet one digit is cut from. */
     s32  active; /**< Indicates that the slot is showing a number. */
 

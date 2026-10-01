@@ -113,7 +113,7 @@ char mes_buff[65536];
 
 int SystemMesNo = -1;
 
-int SystemMesPosition = 8;
+int SystemMesPosition = MES_POS_BOTTOM;
 
 int SystemMesCount;
 
@@ -129,7 +129,7 @@ void InitSystemMes() {
 
     char name[64] = "meswin/system_a";
 
-    if (LanguageCode > 0) {
+    if (LanguageCode > LANG_JAPANESE) {
         sprintf(name, "meswin/system_a_%d", LanguageCode);
     }
 
@@ -139,18 +139,18 @@ void InitSystemMes() {
         LoadFile("meswin/system_ae.bin", data, &size);
     }
 
-    SystemMessage.Preset(1);
-    SystemMessage.fukidashi = 0;
-    SystemMessage.stay_frame = 1;
+    SystemMessage.Preset(MES_PRESET_SYSTEM);
+    SystemMessage.fukidashi = false;
+    SystemMessage.stay_frame = true;
     SystemMessage.text_rate = 0;
     SystemMessage.text_rate_set = 0;
-    SystemMessage.style = 0;
-    SystemMessage.page_arrow = 0;
+    SystemMessage.style = MES_EDGE_NONE;
+    SystemMessage.page_arrow = false;
     SystemMessage.fade_speed = 1.0f;
     SystemMessage.columns = 26;
     SystemMessage.rows = 1;
-    SystemMessage.centre_rows = 0;
-    SystemMessage.style = 2;
+    SystemMessage.centre_rows = false;
+    SystemMessage.style = MES_EDGE_BLACK;
     SystemMessage.tex_buff = mes_buff;
     SystemMessage.tex_block = 26;
     SystemMessage.SetBuff(data);
@@ -186,7 +186,7 @@ void SystemMesStep() {
         SystemMessage.Step();
     }
 
-    if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(64)) {
+    if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(PAD_CROSS)) {
         if (SystemMesCount > 0) {
             SystemMesCount--;
         }
@@ -231,26 +231,26 @@ void ItemGetMes(int item_no, int value, int frames, int input_key) {
 
     number_ptr = numbers;
     numbers[0] = value;
-    SystemMessage.value_show = 0;
-    SystemMessage.value_signed = 1;
+    SystemMessage.value_show = false;
+    SystemMessage.value_signed = true;
 
     if (value < 0) {
         numbers[0] = 0;
-        SystemMessage.value_signed = 0;
+        SystemMessage.value_signed = false;
     }
 
     mes_args[0] = item_no + 100;
     message_no = 10;
 
-    if (item_no >= 81) {
+    if (item_no >= ITEM_ATTACH_START) {
         message_no += 10;
     }
 
-    if (item_no >= 145) {
+    if (item_no >= ITEM_REGULAR_WATER) {
         message_no += 10;
     }
 
-    if (item_no >= 257) {
+    if (item_no >= ITEM_WEAPON_START) {
         message_no = 10;
         info = GetCommonItemInfo(item_no);
 
@@ -261,28 +261,28 @@ void ItemGetMes(int item_no, int value, int frames, int input_key) {
         }
     }
 
-    SetSystemMes(message_no, frames, 8, input_key, mes_args, number_ptr);
+    SetSystemMes(message_no, frames, MES_POS_BOTTOM, input_key, mes_args, number_ptr);
 }
 
 void AtraGetMes(int map_no, int element, int frames) {
     int mes_args[4] = {-1, -1, -1, -1};
 
     mes_args[0] = GetAtraMsgNo(map_no, element);
-    SetSystemMes(40, frames, 8, 1, mes_args, 0);
+    SetSystemMes(40, frames, MES_POS_BOTTOM, 1, mes_args, 0);
 }
 
 void TecGetMes(int technique, int frames) {
     int mes_args[4] = {-1, -1, -1, -1};
 
     mes_args[0] = technique + 500;
-    SetSystemMes(50, frames, 8, 1, mes_args, 0);
+    SetSystemMes(50, frames, MES_POS_BOTTOM, 1, mes_args, 0);
 }
 
 void MaxUpMes(int value, int frames) {
     int numbers[4] = {0, -1, -1, -1};
 
     numbers[0] = value;
-    SetSystemMes(51, frames, 8, 1, 0, numbers);
+    SetSystemMes(51, frames, MES_POS_BOTTOM, 1, 0, numbers);
 }
 
 /* A party member out of range names the first one rather than saying nothing, which is the clamp
@@ -295,11 +295,11 @@ void DeadMes(int member, int frames) {
     int mes_args[4] = {0, -1, -1, -1};
 
     mes_args[0] = member + 50;
-    SetSystemMes(60, frames, 8, 1, mes_args, 0);
+    SetSystemMes(60, frames, MES_POS_BOTTOM, 1, mes_args, 0);
 }
 
 void AllDeadMes(int frames) {
-    SetSystemMes(61, frames, 8, 1, 0, 0);
+    SetSystemMes(61, frames, MES_POS_BOTTOM, 1, 0, 0);
 }
 
 void NotGetAtraMes(int member, int frames) {
@@ -310,7 +310,7 @@ void NotGetAtraMes(int member, int frames) {
     int mes_args[4] = {0, -1, -1, -1};
 
     mes_args[0] = member + 50;
-    SetSystemMes(70, frames, 8, 0, mes_args, 0);
+    SetSystemMes(70, frames, MES_POS_BOTTOM, 0, mes_args, 0);
 }
 
 void DontGetItemMes(int kind) {
@@ -322,7 +322,7 @@ void DontGetItemMes(int kind) {
         message_no = 81;
     }
 
-    SetSystemMes(message_no, 40, 8, 1, 0, 0);
+    SetSystemMes(message_no, 40, MES_POS_BOTTOM, 1, 0, 0);
 }
 
 /* A negative entry in either list means *leave the slot empty* rather than substitute a negative

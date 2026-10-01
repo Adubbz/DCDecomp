@@ -201,12 +201,12 @@ void CCamera::GetCameraMatrix(float (*matrix)[4]) {
     matrix[3][3] = 1.0f;
 
     // The roll turns the view about the direction that it looks along.
-    if (this->roll > 3.1415927f) {
-        this->roll -= 6.2831855f;
+    if (this->roll > PI) {
+        this->roll -= TWO_PI;
     }
 
-    if (this->roll < -3.1415927f) {
-        this->roll += 6.2831855f;
+    if (this->roll < -PI) {
+        this->roll += TWO_PI;
     }
 
     sceVu0UnitMatrix(roll_matrix);

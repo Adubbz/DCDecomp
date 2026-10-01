@@ -5,6 +5,122 @@
 #include "menu_draw.hpp"
 #include "menuetc.hpp"
 
+/**
+ * What MenuAtoraSelectKey reports.
+ */
+// clang-format off
+enum AtoraSelectResult {
+    ATORA_SELECT_NONE        = 0,   /**< Nothing happened. */
+    ATORA_SELECT_PLACE       = 10,  /**< A part was picked to place. */
+    ATORA_SELECT_CHANGE_PAGE = 20,  /**< The town page changed. */
+    ATORA_SELECT_CLOSE       = 100, /**< The board was closed. */
+    ATORA_SELECT_PLACE_EXIT  = 110, /**< A board event was chosen and the board closed. */
+};
+
+// clang-format on
+
+/**
+ * What MenuSaveKey reports.
+ */
+// clang-format off
+enum MenuSaveResult {
+    MENU_SAVE_RUNNING = 0, /**< Still running. */
+    MENU_SAVE_LOADED  = 1, /**< Closed after a load. */
+    MENU_SAVE_CLOSED  = 2, /**< Closed otherwise. */
+};
+
+// clang-format on
+
+/**
+ * How an Atla chip links to the chip it needs, as AtoraTipStatusSearch codes it.
+ */
+// clang-format off
+enum AtoraLinkKind {
+    ATORA_LINK_NONE   = 0,  /**< No pending link. */
+    ATORA_LINK_BESIDE = 1,  /**< Needs the chip beside it. */
+    ATORA_LINK_ABOVE  = 2,  /**< Needs the chip above it. */
+    ATORA_LINK_HIDDEN = 50, /**< The chip cannot be shown. */
+};
+
+// clang-format on
+
+/**
+ * Sides of the Atla screen, as MENU_ATORA_SEL::mode and ATORA_TIP_HAVE::mode hold them.
+ */
+// clang-format off
+enum AtoraSide {
+    ATORA_SIDE_BOARD     = 0, /**< The town board. */
+    ATORA_SIDE_CHIP_LIST = 1, /**< The chip list. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the Atla screen, as MENU_ATORA_SEL::step holds them.
+ */
+// clang-format off
+enum AtoraStep {
+    ATORA_STEP_RUN            = 0,  /**< Taking input. */
+    ATORA_STEP_FADE_IN        = 1,  /**< Fading in. */
+    ATORA_STEP_FADE_OUT       = 2,  /**< Fading out. */
+    ATORA_STEP_EVENT_START    = 3,  /**< Starting a board event. */
+    ATORA_STEP_COMPLETE_FLASH = 4,  /**< Flashing a completed part. */
+    ATORA_STEP_CHANGE_MAP     = 6,  /**< Changing town. */
+    ATORA_STEP_EVENT_FADE_OUT = 7,  /**< Fading out into the East King event. */
+    ATORA_STEP_EVENT_PLAY     = 8,  /**< Running the East King event. */
+    ATORA_STEP_EVENT_FADE_IN  = 9,  /**< Fading back in after the East King event. */
+    ATORA_STEP_WARNING        = 10, /**< Warning shown. */
+};
+
+// clang-format on
+
+/**
+ * Why the Atla screen was opened, as MENU_ATORA_SEL::open_mode holds it.
+ */
+// clang-format off
+enum AtoraOpenMode {
+    ATORA_OPEN_VIEW  = 0, /**< For viewing. */
+    ATORA_OPEN_WARN  = 1, /**< Picking a part shows a warning. */
+    ATORA_OPEN_PLACE = 2, /**< Picking a part places it. */
+};
+
+// clang-format on
+
+/**
+ * Where the option screen was opened from, as InitMenuOption takes it.
+ */
+// clang-format off
+enum OptionOpenMode {
+    OPTION_OPEN_TITLE     = 0, /**< The title screen. */
+    OPTION_OPEN_GAME_MENU = 1, /**< An in-game menu. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the option screen, as OPTION_MENU_STATE::step holds them.
+ */
+// clang-format off
+enum OptionStep {
+    OPTION_STEP_RUN      = 0, /**< Taking input. */
+    OPTION_STEP_FADE_IN  = 1, /**< Fading in. */
+    OPTION_STEP_FADE_OUT = 2, /**< Fading out. */
+};
+
+// clang-format on
+
+/**
+ * Parts of the option screen the cursor can be on, as OPTION_MENU_STATE::buttons holds them.
+ */
+// clang-format off
+enum OptionCursorArea {
+    OPTION_AREA_ROWS        = 0, /**< The option rows. */
+    OPTION_AREA_EXIT_BUTTON = 1, /**< The exit button. */
+    OPTION_AREA_SCREEN_POS  = 2, /**< Screen position adjustment. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -19,7 +135,7 @@ struct RECT;
  * came from.
  */
 struct ATORA_TIP_HAVE {
-    s32 mode; /**< Where the chip came from: 0 for a part's chip slot, 1 for the chip list. */
+    s32 mode; /**< Where the chip came from. @see AtoraSide. */
     s32 unk_04;
     s32 parts_no; /**< Board position of the part whose slot the chip came from. */
     s32 slot;     /**< Chip slot of the part, or entry of the chip list, that the chip came from. */
@@ -32,10 +148,10 @@ STATIC_ASSERT(sizeof(ATORA_TIP_HAVE) == 0x14);
  * Holds the state of the georama board screen.
  */
 struct MENU_ATORA_SEL {
-    s32            mode;      /**< Which half of the screen holds the cursor: 0 the board, 1 the chip list. */
-    s32            open_mode; /**< How the screen was opened: 2 lets a part be picked for placing, 1 answers a pick with a warning. */
+    s32            mode;      /**< Which half of the screen holds the cursor. @see AtoraSide. */
+    s32            open_mode; /**< How the screen was opened. @see AtoraOpenMode. */
     s32            edit_map;  /**< Georama that the menu was opened for, which picks the chip list's first page. */
-    s16            map_no;    /**< Georama that the board shows. */
+    s16            map_no;    /**< Georama that the board shows. @see Town. */
     s16            board_pos; /**< Board position of the part that the cursor is on. */
     s32            scroll_y;  /**< Where the board has scrolled to, as the pixel offset of its first row. */
     PERSONAL_BOARD board;     /**< Board that lists the chips the player holds. */
@@ -44,7 +160,7 @@ struct MENU_ATORA_SEL {
     float          cursor_x;       /**< Where the board's cursor icon draws, from the left of the screen. */
     float          cursor_y;       /**< Where the board's cursor icon draws, from the top of the screen. */
     s32            cursor_icon_u;  /**< Column of the stay-frame texture that the cursor icon is cut from, which picks its pose. */
-    s32            step;           /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 3 starting an event, 4 a completion flash, 6 switching georama, 7 to 9 the completion event, 10 a warning. */
+    s32            step;           /**< What the screen is doing. @see AtoraStep. */
     s32            step_count;     /**< Frames the screen has spent on its current step. */
     s16            name_alpha;     /**< Opacity the part names draw at while the screen is not fading. */
     u8             unk_196[2];
@@ -262,8 +378,7 @@ void InitMenuAtoraSelect(int map_no);
 void DrawMenuAtoraSelect();
 
 /**
- * Steps the georama board screen and returns the code of the action it carried
- * out, 100 once the player closes it and zero when nothing happened.
+ * Steps the georama board screen and returns what the player did. @see AtoraSelectResult.
  *
  * @mangled MenuAtoraSelectKey__Fv
  * @address 0x21C2E0
@@ -331,8 +446,7 @@ int OptionMenuFadeOutStart();
 int InitMenuSave(int mode, int block_no, u_long128 *buffer);
 
 /**
- * Steps the save screen and returns zero while it runs, one once it has closed
- * after a load and two once it has closed otherwise.
+ * Steps the save screen and reports whether it runs or how it closed. @see MenuSaveResult.
  *
  * @mangled MenuSaveKey__Fv
  * @address 0x21FED0

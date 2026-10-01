@@ -72,12 +72,12 @@ struct RenderInfo {
     int    unk_344[3];
 
     RenderInfo() {
-        scissor = 0;
+        scissor = false;
         clip_flags = 0;
         scissoring = 0;
         frame_far_z = 0.0f;
         shadow_pass = 0;
-        fog_enabled = 0;
+        fog_enabled = false;
         fog_b = 0.0f;
         fog_a = 0.0f;
         fog_far = 0.0f;

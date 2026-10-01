@@ -13,7 +13,7 @@ void CDungeonEventData::Set(CDungeonEvent *source) {
     event = source;
     hold = source->hold;
     switch_on = source->switch_on;
-    enabled = 1;
+    enabled = true;
     chara_done = -1;
 }
 
@@ -30,9 +30,9 @@ int CDungeonEventData::CheckSwitch() {
 }
 
 void CDungeonEventData::Stop() {
-    switch_on = 0;
+    switch_on = false;
 }
 
 void CDungeonEventData::Start() {
-    switch_on = 1;
+    switch_on = true;
 }

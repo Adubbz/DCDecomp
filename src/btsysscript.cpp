@@ -47,19 +47,19 @@ void BtSystemScriptEventInfoInit() {
     BtEventInfo.script_no = -1;
     BtEventInfo.running_script_no = -1;
     BtEventInfo.init_flag_28 = 1;
-    BtEventInfo.ext_memory = 0;
+    BtEventInfo.ext_memory = false;
     BtEventInfo.init_flag_20 = 1;
     BtEventInfo.item_select_result = 0;
     BtEventInfo.entrance_result = NULL;
     BtEventInfo.escape_result = NULL;
-    BtEventInfo.request = 0;
+    BtEventInfo.request = BT_REQUEST_NONE;
     BtEventInfo.chained_script_no = -1;
     BtEventInfo.clear_script_no = -1;
     BtEventInfo.clear_script_ext_memory = 0;
     BtEventInfo.script_main_chr = -1;
     BtEventInfo.floor_title_off = 0;
     BtEventInfo.bee_npc = -1;
-    BtEventInfo.fade_on_start = 1;
+    BtEventInfo.fade_on_start = true;
     BtEventInfo.no_status_recover = 0;
     EdEventInfo.projection = -1.0f;
     EdEventInfo.main_character = &CharaMain;
@@ -182,14 +182,14 @@ void BtSystemScriptInit() {
         EdFadeInit();
     }
 
-    BtEventInfo.fade_on_start = 1;
+    BtEventInfo.fade_on_start = true;
 
     for (int i = 0; i < 32; i++) {
         BtObjHdl[i].frame = NULL;
         BtObjHdl[i].character = NULL;
     }
 
-    BtEventInfo.event_marker = 0;
+    BtEventInfo.event_marker = false;
     BtEventInfo.floor_title_off = 0;
     BtEventInfo.no_reset_chara = 0;
     BtActStatus.motion_no = 0;
@@ -214,9 +214,9 @@ void BtSystemScriptAfter() {
     BtActStatus.hand_motion = -1;
     BtActStatus.player_visible = 1;
     BtActStatus.weapon_visible = 1;
-    BtActStatus.shadow_visible = 1;
-    EdEventInfo.player_shadow_draw = 1;
-    EdEventInfo.player_draw = 1;
+    BtActStatus.shadow_visible = true;
+    EdEventInfo.player_shadow_draw = true;
+    EdEventInfo.player_draw = true;
     EdEventAllClear();
     UserStatus->step_disable = 0;
     BtMapJumpFloor = -1;
@@ -226,8 +226,8 @@ void BtSystemScriptAfter() {
         CharaMain.GetRotation(ref);
         float angle = ref[1] + EdEventInfo.reset_camera_yaw;
 
-        if (!(angle <= 3.141592f)) {
-            angle -= 6.2831855f;
+        if (!(angle <= PI_SHORT)) {
+            angle -= TWO_PI;
         }
 
         MainCamera__4.SetAngleSoon(angle);
@@ -367,14 +367,14 @@ int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int argument_count) {
         BtEventInfo.item_select_list[i] = GetStackInt(stack++);
     }
 
-    BtEventInfo.item_select_filtered = 0;
+    BtEventInfo.item_select_filtered = false;
 
     if (argument_count > 1) {
-        BtEventInfo.item_select_filtered = 1;
+        BtEventInfo.item_select_filtered = true;
     }
 
     BtEventInfo.item_select_list[i] = -1;
-    BtEventInfo.request = 1;
+    BtEventInfo.request = BT_REQUEST_ITEM_WINDOW;
     return 1;
 }
 
@@ -576,7 +576,7 @@ int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
-    BtEventInfo.request = 2;
+    BtEventInfo.request = BT_REQUEST_URA_DUNGEON;
     return 1;
 }
 
@@ -600,7 +600,7 @@ int _OPEN_ENTRANCE_WINDOW(RS_STACKDATA *stack, int argument_count) {
     }
 
     BtEventInfo.entrance_result = stack->p;
-    BtEventInfo.request = 3;
+    BtEventInfo.request = BT_REQUEST_ENTRANCE_WINDOW;
     return 1;
 }
 
@@ -611,12 +611,12 @@ int _OPEN_ESCAPE_WINDOW(RS_STACKDATA *stack, int argument_count) {
 
     BtEventInfo.escape_result = stack->p;
     BtBattleMusic_Stop();
-    BtEventInfo.request = 6;
+    BtEventInfo.request = BT_REQUEST_ESCAPE_WINDOW;
     return 1;
 }
 
 int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
-    BtEventInfo.request = 4;
+    BtEventInfo.request = BT_REQUEST_GO_DUNGEON;
     return 1;
 }
 
@@ -630,7 +630,7 @@ int _SET_DUNGEON_MAP(RS_STACKDATA *stack, int argument_count) {
 
 int _LOAD_DUNGEON_MAP2(RS_STACKDATA *stack, int argument_count) {
     CUserStatus *status = UserStatus;
-    status->res_limit_zone_current = -1;
+    status->res_limit_zone_current = RES_LIMIT_ZONE_NONE;
     BtMapJumpLoad(BtLoadMapFileName);
     return 1;
 }
@@ -725,7 +725,7 @@ int _SET_IBOX(RS_STACKDATA *stack, int argument_count) {
     pos[1] = GetStackFloat(stack++);
     pos[2] = GetStackFloat(stack++);
     pos[3] = 1.0f;
-    NowDngMap->SetTreasureBox(pos, GetStackInt(stack), 1, 0);
+    NowDngMap->SetTreasureBox(pos, GetStackInt(stack), TREASURE_BOX_SMALL, 0);
     return 1;
 }
 
@@ -739,7 +739,7 @@ int _GET_NOW_USER_ID(RS_STACKDATA *stack, int argument_count) {
 int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack++);
 
-    BtEventInfo.ext_memory = 0;
+    BtEventInfo.ext_memory = false;
 
     if (argument_count == 2) {
         BtEventInfo.ext_memory = GetStackInt(stack++);
@@ -750,7 +750,7 @@ int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
         BtEventInfo.fade_on_start = GetStackInt(stack);
     }
 
-    BtEventInfo.request = 5;
+    BtEventInfo.request = BT_REQUEST_RUN_SCRIPT;
     BtEventInfo.chained_script_no = script_no;
     return 1;
 }
@@ -913,7 +913,7 @@ int _SET_FLOOR_TITLE_OFF(RS_STACKDATA *stack, int argument_count) {
 int _SET_RES_LIMMIT_ZONE(RS_STACKDATA *stack, int argument_count) {
     ((CDngStatusData *) UserStatus)->SetResLimmitZone();
 
-    if (UserStatus->res_limit_zone_current != -1) {
+    if (UserStatus->res_limit_zone_current != RES_LIMIT_ZONE_NONE) {
         SndSPSeLoad(0x1B);
     }
 
@@ -1035,30 +1035,30 @@ int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count) {
 int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int argument_count) {
     int item_no = GetStackInt(stack++);
     int owner = -1;
-    int not_weapon = item_no < 0x101;
+    int not_weapon = item_no < ITEM_WEAPON_START;
 
     if (!not_weapon) {
-        if (!not_weapon && item_no < 0x12B) {
+        if (!not_weapon && item_no < ITEM_WEAPON_WOODENSLINGSHOT_BROKEN) {
             owner = 0;
         }
 
-        if (item_no >= 0x12B && item_no < 0x13A) {
+        if (item_no >= ITEM_WEAPON_WOODENSLINGSHOT_BROKEN && item_no < ITEM_WEAPON_MALLET_BROKEN) {
             owner = 1;
         }
 
-        if (item_no >= 0x13A && item_no < 0x14B) {
+        if (item_no >= ITEM_WEAPON_MALLET_BROKEN && item_no < ITEM_WEAPON_GOLD_RING_BROKEN) {
             owner = 2;
         }
 
-        if (item_no >= 0x14B && item_no < 0x15B) {
+        if (item_no >= ITEM_WEAPON_GOLD_RING_BROKEN && item_no < ITEM_WEAPON_FIGHTING_STICK_BROKEN) {
             owner = 3;
         }
 
-        if (item_no >= 0x15B && item_no < 0x16B) {
+        if (item_no >= ITEM_WEAPON_FIGHTING_STICK_BROKEN && item_no < ITEM_WEAPON_MACHINE_GUN_BROKEN) {
             owner = 4;
         }
 
-        if (item_no >= 0x16B) {
+        if (item_no >= ITEM_WEAPON_MACHINE_GUN_BROKEN) {
             owner = 5;
         }
     }

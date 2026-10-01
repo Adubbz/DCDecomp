@@ -16,7 +16,7 @@ void CStealItem::Initialize(CFrameVu1 *model) {
     this->frame = model;
 
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
-        this->state[i] = -1;
+        this->state[i] = STEAL_ITEM_NONE;
         this->aux_state[i] = -1;
     }
 }
@@ -25,7 +25,7 @@ void CStealItem::Set(float *position, int item_no) {
     int slot = -1;
 
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
-        if (this->state[i] == -1) {
+        if (this->state[i] == STEAL_ITEM_NONE) {
             slot = i;
             break;
         }
@@ -37,7 +37,7 @@ void CStealItem::Set(float *position, int item_no) {
 
     sceVu0CopyVector(this->pos[slot], position);
     this->base_height[slot] = position[1];
-    this->state[slot] = 0;
+    this->state[slot] = STEAL_ITEM_RISE;
     this->speed[slot] = 0.5f;
     this->phase[slot] = 0.0f;
     this->item[slot] = item_no;
@@ -53,15 +53,15 @@ void CStealItem::Step() {
 
     this->angle += 0.31415927f;
 
-    if (this->angle >= 6.2831855f) {
-        this->angle -= 6.2831855f;
+    if (this->angle >= TWO_PI) {
+        this->angle -= TWO_PI;
     }
 
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
         int state = this->state[i];
 
         switch (state) {
-            case 0:
+            case STEAL_ITEM_RISE:
                 this->speed[i] += 0.05f;
                 this->pos[i][1] = this->base_height[i] + 12.0f * sinf(this->phase[i]);
                 this->phase[i] += 0.034906585f;
@@ -76,15 +76,15 @@ void CStealItem::Step() {
                 this->pos[i][1] += direction[1];
                 this->pos[i][2] += direction[2];
 
-                if (this->phase[i] >= 1.5707964f) {
-                    this->state[i] = 1;
+                if (this->phase[i] >= HALF_PI) {
+                    this->state[i] = STEAL_ITEM_HOME;
                 }
 
                 break;
 
-            case 1:
+            case STEAL_ITEM_HOME:
                 if (DistVector(target, this->pos[i]) <= 5.0f) {
-                    this->state[i] = 2;
+                    this->state[i] = STEAL_ITEM_ARRIVED;
                     break;
                 }
 
@@ -100,10 +100,10 @@ void CStealItem::Step() {
                 this->pos[i][2] += direction[2];
                 break;
 
-            case 2:
+            case STEAL_ITEM_ARRIVED:
                 break;
 
-            case -1:
+            case STEAL_ITEM_NONE:
                 break;
         }
     }
@@ -111,7 +111,7 @@ void CStealItem::Step() {
 
 void CStealItem::Draw() {
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
-        if (this->state[i] == -1) {
+        if (this->state[i] == STEAL_ITEM_NONE) {
             continue;
         }
 
@@ -123,12 +123,12 @@ void CStealItem::Draw() {
 
 int CStealItem::checkEvent() {
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
-        if (this->state[i] == -1) {
+        if (this->state[i] == STEAL_ITEM_NONE) {
             continue;
         }
 
-        if (this->state[i] == 2) {
-            this->state[i] = -1;
+        if (this->state[i] == STEAL_ITEM_ARRIVED) {
+            this->state[i] = STEAL_ITEM_NONE;
             return this->item[i];
         }
     }

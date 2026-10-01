@@ -288,7 +288,7 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, R
     water->frame.GetLWMatrix(local_to_world);
     u_int *vu_packet = water->packet[!DBuffID + 1];
     water->CreateVUData(vu_packet, &mgRenderInfo);
-    info->fog_enabled = 0;
+    info->fog_enabled = false;
     int size = water->visual.DrawVu1(draw_packet, local_to_world, info, (VU1_PROGRAM) 15, NULL, 0, 0);
 
     sceVif1PkCnt(draw_packet, 0);

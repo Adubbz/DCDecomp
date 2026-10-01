@@ -14,7 +14,7 @@ unsigned char pad_dma_buf[1024] __attribute__((aligned(64)));
 unsigned char pad_dma_buf2[1024] __attribute__((aligned(64)));
 
 void CGamePad::Init() {
-    key_lock = 0;
+    key_lock = false;
     key_lock2 = 0;
     vibration_enabled = 1;
 
@@ -29,7 +29,7 @@ void CGamePad::Init() {
     int i;
 
     for (i = 0; i < 2; i++) {
-        pad[i].input.status.phase = 0;
+        pad[i].input.status.phase = PAD_PHASE_QUERY;
         pad[i].input.status.button = 0;
         pad[i].input.status.right_y = 0;
         pad[i].input.status.right_x = 0;
@@ -42,8 +42,8 @@ void CGamePad::Init() {
         }
 
         axis_threshold[i] = 0;
-        repeat[i].enabled = 0;
-        repeat[i].active = 0;
+        repeat[i].enabled = false;
+        repeat[i].active = false;
 
         for (int j = 0; j < 32; j++) {
             repeat[i].counter[j] = 0;
@@ -126,80 +126,80 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
 
     *state = scePadGetState(port, slot);
 
-    if (*state == 0) {
-        *phase = 0;
+    if (*state == scePadStateDiscon) {
+        *phase = PAD_PHASE_QUERY;
     }
 
     int valid = 0;
 
     switch (*phase) {
-        case 0:
-            if (*state == 6 || *state == 2) {
-                int terminal_id = scePadInfoMode(port, slot, 1, 0);
+        case PAD_PHASE_QUERY:
+            if (*state == scePadStateStable || *state == scePadStateFindCTP1) {
+                int terminal_id = scePadInfoMode(port, slot, InfoModeCurID, 0);
 
                 if (terminal_id != 0) {
-                    *mode_count = scePadInfoMode(port, slot, 2, 0);
+                    *mode_count = scePadInfoMode(port, slot, InfoModeCurExID, 0);
 
                     if (*mode_count > 0) {
                         terminal_id = *mode_count;
                     }
 
                     switch (terminal_id) {
-                        case 2:
-                            *phase = 99;
+                        case PAD_TERMINAL_NEGCON:
+                            *phase = PAD_PHASE_READY;
                             break;
-                        case 3:
-                            *phase = 99;
+                        case PAD_TERMINAL_KONAMI_GUN:
+                            *phase = PAD_PHASE_READY;
                             break;
-                        case 4:
-                            *phase = 40;
+                        case PAD_TERMINAL_DIGITAL:
+                            *phase = PAD_PHASE_ANALOG_CHECK;
                             break;
-                        case 5:
-                            *phase = 99;
+                        case PAD_TERMINAL_ANALOG_JOYSTICK:
+                            *phase = PAD_PHASE_READY;
                             break;
-                        case 6:
-                            *phase = 99;
+                        case PAD_TERMINAL_NAMCO_GUN:
+                            *phase = PAD_PHASE_READY;
                             break;
-                        case 7:
-                            *phase = 70;
+                        case PAD_TERMINAL_DUALSHOCK:
+                            *phase = PAD_PHASE_ACTUATOR_CHECK;
                             break;
-                        case 0x100:
-                            *phase = 99;
+                        case PAD_TERMINAL_EX_TSURICON:
+                            *phase = PAD_PHASE_READY;
                             break;
-                        case 0x300:
-                            *phase = 99;
+                        case PAD_TERMINAL_EX_JOGCON:
+                            *phase = PAD_PHASE_READY;
                             break;
                         default:
-                            *phase = 99;
+                            *phase = PAD_PHASE_READY;
                             break;
                     }
                 }
             }
 
             break;
-        case 40:
-            if (scePadInfoMode(port, slot, 2, 0) == 0) {
-                *phase = 99;
+        case PAD_PHASE_ANALOG_CHECK:
+            if (scePadInfoMode(port, slot, InfoModeCurExID, 0) == 0) {
+                *phase = PAD_PHASE_READY;
                 break;
             }
 
             (*phase)++;
             // Fall through.
-        case 41:
+        case PAD_PHASE_ANALOG_SET:
             if (scePadSetMainMode(port, slot, 1, 3) == 1) {
                 (*phase)++;
             }
 
             break;
-        case 42:
-            if (scePadGetState(port, slot) != 5) {
-                *phase = 0;
+        case PAD_PHASE_ANALOG_WAIT:
+            if (scePadGetState(port, slot) != scePadStateExecCmd) {
+                *phase = PAD_PHASE_QUERY;
             }
 
             break;
-        case 70:
+        case PAD_PHASE_ACTUATOR_CHECK:
             if (scePadInfoAct(port, slot, -1, 0) == 0) {
-                *phase = 99;
+                *phase = PAD_PHASE_READY;
             }
 
             status->actuator[0] = 0;
@@ -214,21 +214,21 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
             }
 
             break;
-        case 71:
-            if (scePadGetState(port, slot) != 5) {
-                *phase = 99;
+        case PAD_PHASE_ACTUATOR_WAIT:
+            if (scePadGetState(port, slot) != scePadStateExecCmd) {
+                *phase = PAD_PHASE_READY;
             }
 
             break;
         default:
-            if (*state == 6 || *state == 2) {
+            if (*state == scePadStateStable || *state == scePadStateFindCTP1) {
                 int result = pad_button_read(status, port, slot);
                 *read_result = result;
 
                 if (result != 0) {
                     if (*previous_read_result != 0 && *read_result != *previous_read_result) {
                         *previous_read_result = 0;
-                        *phase = 0;
+                        *phase = PAD_PHASE_QUERY;
                     } else {
                         valid = 1;
                     }
@@ -351,12 +351,12 @@ void CGamePad::UpDate() {
     }
 
     for (i = 0; i < 2; i++) {
-        if ((pad[i].input.status.button & 0x1000) && (pad[i].input.status.button & 0x4000)) {
-            pad[i].input.status.button &= ~0x5000;
+        if ((pad[i].input.status.button & PAD_UP) && (pad[i].input.status.button & PAD_DOWN)) {
+            pad[i].input.status.button &= ~(PAD_UP | PAD_DOWN);
         }
 
-        if ((pad[i].input.status.button & 0x2000) && (pad[i].input.status.button & 0x8000)) {
-            pad[i].input.status.button &= ~0xa000;
+        if ((pad[i].input.status.button & PAD_RIGHT) && (pad[i].input.status.button & PAD_LEFT)) {
+            pad[i].input.status.button &= ~(PAD_RIGHT | PAD_LEFT);
         }
     }
 
@@ -560,11 +560,11 @@ int CGamePad::On(int mask) {
     }
 
 #ifdef PAL
-    if (mask == 0x800 && On2(0x800)) {
+    if (mask == PAD_START && On2(PAD_START)) {
         return 1;
     }
 
-    if (mask != 0x800 && On2(0x100)) {
+    if (mask != PAD_START && On2(PAD_SELECT)) {
         return 1;
     }
 
@@ -586,11 +586,11 @@ int CGamePad::Down(int mask) {
     }
 
 #ifdef PAL
-    if (mask == 0x800 && On2(0x800)) {
+    if (mask == PAD_START && On2(PAD_START)) {
         return 1;
     }
 
-    if (mask != 0x800 && On2(0x100)) {
+    if (mask != PAD_START && On2(PAD_SELECT)) {
         return 1;
     }
 

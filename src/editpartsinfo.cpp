@@ -108,7 +108,7 @@ int CEditPartsInfo::GetNextParts(int index) {
 
 void CEditPartsInfo::Clear() {
     for (int plot = 0; plot < 24; plot++) {
-        parts[plot].placed = 0;
+        parts[plot].placed = false;
     }
 }
 
@@ -211,14 +211,14 @@ void CEditPartsInfo::Initialize(int georama_no) {
         parts[plot].obtained = 0;
         parts[plot].completion_flags = 0;
         parts[plot].stock = source->max;
-        parts[plot].placed = 0;
+        parts[plot].placed = false;
         parts[plot].tex_no = source->tex_no;
         parts[plot].kind = source->kind;
 
         for (element = 0; element < 6; element++) {
             parts[plot].elements[element].id = source->elements[element].id;
             parts[plot].elements[element].required_element = source->elements[element].required_element;
-            parts[plot].elements[element].enabled = 0;
+            parts[plot].elements[element].enabled = false;
             names = parts[plot].elements[element].names;
             names[0] = NULL;
 
@@ -239,7 +239,7 @@ void CEditPartsInfo::Initialize(int index, EPARTS_INFO_HEADER *header) {
     parts[index].parts_no = index;
     parts[index].obtained = 0;
     parts[index].completion_flags = 0;
-    parts[index].placed = 0;
+    parts[index].placed = false;
 
     for (int element = 0; element < 6; element++) {
     }

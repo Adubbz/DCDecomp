@@ -38,7 +38,7 @@
 #include "weaponeffect.hpp"
 #include "weaponlevelup.hpp"
 
-static int defWeapon[6] = {257, 299, 314, 331, 347, 363};
+static int defWeapon[6] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN};
 
 int   MenuWeaponModelData[42];
 int   MenuWeaponModelInfo[10][2];
@@ -89,17 +89,17 @@ s16 DngEscapeSelect = 1;
  */
 int NowGetGameFlagForBtlMenu(int game_flag) {
     switch (game_flag) {
-        case 0:
+        case MENU_MOVE_DUNGEON_ESCAPE:
             break;
-        case 5:
-        case 1:
+        case MENU_MOVE_WORLD_MAP_DIRECT:
+        case MENU_MOVE_WORLD_MAP:
             if (EdInteriorFlag == 1) {
-                game_flag = 2;
+                game_flag = MENU_MOVE_INTERIOR_OUT;
             } else if (BtlMenuStatusPt->special_flag_238 == 0) {
                 if (SaveData->QuestDungeon(0, 0) == 0) {
-                    game_flag = 11;
+                    game_flag = MENU_MOVE_LOCKED;
                 } else if (BtlMenuStatusPt->special_flag_238 == 0) {
-                    game_flag = 10;
+                    game_flag = MENU_MOVE_FIRST_DUNGEON;
                 }
             }
 
@@ -187,7 +187,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
         return 0;
     }
 
-    if ((data->kind_flags & ITEMKINDF_CONSUMABLE) && target == 1) {
+    if ((data->kind_flags & ITEMKINDF_CONSUMABLE) && target == ITEM_USE_ON_CHARA) {
         if (item_no != ITEM_MELLOW_BANANA) {
             if ((data->use_flags & ITEMUSE_HEAL_HP) && 0 < now_hp && now_hp < max_hp) {
                 int add = (&data->vol)[value_no];
@@ -245,7 +245,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
     }
 
     if (data->kind_flags & 1) {
-        if (target == 1) {
+        if (target == ITEM_USE_ON_CHARA) {
             if (data->use_flags & ITEMUSE_STATUS) {
                 switch (item_no) {
                     case ITEM_POCKET: {
@@ -276,7 +276,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     case ITEM_FRUIT_OF_EDEN: {
                         s16 limit[6] = {0xAA, 0x8C, 0xAA, 0x8C, 0xB4, 0xA0};
 
-                        if ((old_condition & 2) || now_hp <= 0 || !((s16) max_hp < limit[chara])) {
+                        if ((old_condition & AILMENT_KNOCKED_OUT) || now_hp <= 0 || !((s16) max_hp < limit[chara])) {
                             used = 0;
                         } else {
                             status->max_hp[chara] = max_hp + (&data->vol)[value_no];
@@ -308,37 +308,37 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             printf("prev status = %d\n", old_condition);
             u32 flags = data->use_flags;
 
-            if ((old_condition & 2) || now_hp <= 0) {
+            if ((old_condition & AILMENT_KNOCKED_OUT) || now_hp <= 0) {
                 if (item_no == ITEM_REVIVAL_POWDER) {
                     status->ailments[chara] = 0;
                     status->hp[chara] = max_hp >> 1;
                     used = 1;
                 }
             } else {
-                if ((flags & 0x4000) && (old_condition & 4)) {
-                    status->ailments[chara] ^= 4;
+                if ((flags & 0x4000) && (old_condition & AILMENT_FREEZE)) {
+                    status->ailments[chara] ^= AILMENT_FREEZE;
                     used = 1;
                 }
 
-                if ((data->use_flags & 0x8000) && (old_condition & 0x10)) {
-                    status->ailments[chara] ^= 0x10;
+                if ((data->use_flags & 0x8000) && (old_condition & AILMENT_POISON)) {
+                    status->ailments[chara] ^= AILMENT_POISON;
                     used = 1;
                 }
 
-                if ((data->use_flags & 0x10000) && (old_condition & 0x20)) {
-                    status->ailments[chara] ^= 0x20;
+                if ((data->use_flags & 0x10000) && (old_condition & AILMENT_CURSE)) {
+                    status->ailments[chara] ^= AILMENT_CURSE;
                     used = 1;
                 }
 
-                if ((data->use_flags & 0x20000) && (old_condition & 0x40)) {
-                    status->ailments[chara] ^= 0x40;
+                if ((data->use_flags & 0x20000) && (old_condition & AILMENT_GOO)) {
+                    status->ailments[chara] ^= AILMENT_GOO;
                     used = 1;
                 }
 
-                if (item_no == ITEM_MIGHTY_HEALING && (old_condition & 0x74)) {
-                    if (status->ailments[chara] & 8) {
+                if (item_no == ITEM_MIGHTY_HEALING && (old_condition & (AILMENT_FREEZE | AILMENT_POISON | AILMENT_CURSE | AILMENT_GOO))) {
+                    if (status->ailments[chara] & AILMENT_STAMINA) {
                         status->ailments[chara] = 0;
-                        status->ailments[chara] |= 8;
+                        status->ailments[chara] |= AILMENT_STAMINA;
                     } else {
                         status->ailments[chara] = 0;
                     }
@@ -346,11 +346,11 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     used = 1;
                 }
 
-                if (BtlMenuMode == 0 && (data->use_flags & 0x1000)) {
+                if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && (data->use_flags & 0x1000)) {
                     int now = status->ailments[chara];
 
-                    if (!(now & 4)) {
-                        status->ailments[chara] = now | 8;
+                    if (!(now & AILMENT_FREEZE)) {
+                        status->ailments[chara] = now | AILMENT_STAMINA;
                         status->ailment_frames[chara] = 0x708;
                         used = 1;
                     }
@@ -358,7 +358,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             }
         }
 
-        if (target == 4 || target == 2) {
+        if (target == ITEM_USE_ON_BOARD_WEAPON || target == ITEM_USE_ON_EQUIP_WEAPON) {
             if (weapon == NULL) {
                 return used;
             }
@@ -403,42 +403,42 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
         }
     }
 
-    if (BtlMenuMode == 0 && !(old_condition & 2) && now_hp > 0 && (data->kind_flags & 2) && target == 1) {
+    if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON && !(old_condition & AILMENT_KNOCKED_OUT) && now_hp > 0 && (data->kind_flags & 2) && target == ITEM_USE_ON_CHARA) {
         int before = status->ailments[chara];
 
         if (data->use_flags & 0x100) {
-            if (old_condition & 4) {
-                status->ailments[chara] = before ^ 4;
+            if (old_condition & AILMENT_FREEZE) {
+                status->ailments[chara] = before ^ AILMENT_FREEZE;
             } else {
-                status->ailments[chara] = before | 4;
-                status->ailments[chara] &= ~0x58;
+                status->ailments[chara] = before | AILMENT_FREEZE;
+                status->ailments[chara] &= ~(AILMENT_STAMINA | AILMENT_POISON | AILMENT_GOO);
                 status->ailment_frames[chara] = 300;
             }
 
-            ComMenuSePlay(0x6B);
+            ComMenuSePlay(SE_STATUS_AILMENT);
         }
 
         if (data->use_flags & 0x200) {
             int now = status->ailments[chara];
 
-            if (!(now & 0xC)) {
-                status->ailments[chara] = now | 0x10;
-                status->ailments[chara] &= ~0x40;
-                ComMenuSePlay(0x6B);
+            if (!(now & (AILMENT_FREEZE | AILMENT_STAMINA))) {
+                status->ailments[chara] = now | AILMENT_POISON;
+                status->ailments[chara] &= ~AILMENT_GOO;
+                ComMenuSePlay(SE_STATUS_AILMENT);
             }
         }
 
         if (data->use_flags & 0x400) {
-            status->ailments[chara] |= 0x20;
-            ComMenuSePlay(0x6B);
+            status->ailments[chara] |= AILMENT_CURSE;
+            ComMenuSePlay(SE_STATUS_AILMENT);
         }
 
         if (data->use_flags & 0x800) {
             int now = status->ailments[chara];
 
-            if (!(now & 0x1C)) {
-                status->ailments[chara] = now | 0x40;
-                ComMenuSePlay(0x6B);
+            if (!(now & (AILMENT_FREEZE | AILMENT_STAMINA | AILMENT_POISON))) {
+                status->ailments[chara] = now | AILMENT_GOO;
+                ComMenuSePlay(SE_STATUS_AILMENT);
             }
         }
 
@@ -460,7 +460,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
 float GetNowWeaponRate(WEAPON_HAVE *weapon) {
     float rate = 1.0f;
 
-    if (weapon != NULL && weapon->item_no == 0x110 && weapon->durability_f <= 0.2f * weapon->durability) {
+    if (weapon != NULL && weapon->item_no == ITEM_WEAPON_LAMB_S_SWORD && weapon->durability_f <= 0.2f * weapon->durability) {
         rate = 1.5f;
     }
 
@@ -474,10 +474,10 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *weapon) {
         return 0;
     }
 
-    enable = 0;
+    enable = false;
 
     if (weapon->level >= 5) {
-        enable = 1;
+        enable = true;
     }
 
     return enable;
@@ -518,7 +518,7 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
         return;
     }
 
-    if (weapon->item_no != 0x110) {
+    if (weapon->item_no != ITEM_WEAPON_LAMB_S_SWORD) {
         return;
     }
 
@@ -632,7 +632,7 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
         return 0;
     }
 
-    if (BtlMenuMode == 0) {
+    if (BtlMenuMode == BATTLE_MENU_MODE_DUNGEON) {
         buffer += (size >> 4) + 1;
         SetWepEffectMenuReadBuf(buffer);
         DngWepEffectReadStart();
@@ -828,7 +828,7 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
 
         int item_no = weapon->item_no;
 
-        if (item_no < 0x101) {
+        if (item_no < ITEM_WEAPON_START) {
             SetMenuWeaponModelReference(i, -2, -1);
             continue;
         }
@@ -1077,8 +1077,8 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     MenuExCashBuffer.used = 0;
     MenuCharaFrame.LoadPackData(pack, name, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
     CFrameAttr attr;
-    attr.fog_enable = 1;
-    attr.clip_enable = 0;
+    attr.fog_enable = true;
+    attr.clip_enable = false;
     attr.program_option = 0;
 
     if (MenuCharaFrame.frame != NULL) {
@@ -1283,9 +1283,9 @@ void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_
     mes->text_width = 0;
     mes->text_height = 0;
     mes->fade = 0.0f;
-    mes->fade_in = 1;
+    mes->fade_in = true;
     mes->text_rate = mes->text_rate_set;
-    mes->waiting = 0;
+    mes->waiting = false;
     mes->text_at = 0.0f;
     mes->text_no = 0;
     mes->text_from = 0;
@@ -1307,21 +1307,21 @@ void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_
     }
 
     mes->value = 0;
-    mes->value_signed = 0;
-    mes->value_show = 1;
-    mes->value_narrow = 0;
+    mes->value_signed = false;
+    mes->value_show = true;
+    mes->value_narrow = false;
     mes->space_width = -1;
     mes->space_area = -1;
     mes->cursor_row = -1;
     mes->cursor_y = 0;
-    mes->cursor_lit = 0;
+    mes->cursor_lit = false;
 
     for (int i = 0; i < 10; i++) {
         mes->line_pos[i].x = -1;
         mes->line_pos[i].y = -1;
     }
 
-    CharaNameMes->Preset(4);
+    CharaNameMes->Preset(MES_PRESET_NAME);
     CharaNameMes->tex_block = 0x1A;
     CharaNameMes->tex_buff = texture_buffer;
     CharaNameMes->rows = 1;
@@ -1345,9 +1345,9 @@ void MonsterNameMake(int mes_no) {
             CharaNameMes->MakeMesWin(mes);
 
             if (mes == 3000) {
-                CharaNameMes->stay_frame = 0;
+                CharaNameMes->stay_frame = false;
             } else {
-                CharaNameMes->stay_frame = 1;
+                CharaNameMes->stay_frame = true;
             }
         }
     }
@@ -1428,7 +1428,7 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     TexManager.CleanUpTextureList();
     TexManager.LoadTextureBlockEX(-1, texture);
     GamePad.MenuModeOn(0x78);
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 5);
     char name[8] = "d0%do";
     sprintf(name, name, georama_no);
     DngEscapeTex = TexManager.GetTexture(name, -1);
@@ -1466,7 +1466,7 @@ void DngEscapeMsgDraw() {
     DrawFullSizePicture(DngEscapeTex, 0, 0, 0x80);
     MenuTextureReload(CharaNameMes->tex_block);
     setbilinear(0);
-    CharaNameMes->stay_frame = 1;
+    CharaNameMes->stay_frame = true;
     CharaNameMes->Step();
     DngMenuMes->Step();
     CharaNameMes->DrawMesWin();
@@ -1493,27 +1493,27 @@ int DngEscapeMsgLoop() {
     int result = 0;
 
     if (DngEscapeEndFlag == 0) {
-        if (GamePad.Down(0x5000) != 0) {
+        if (GamePad.Down(PAD_UP | PAD_DOWN) != 0) {
             if (DngEscapeSelect == 2) {
                 DngEscapeSelect = 1;
             } else if (DngEscapeSelect == 1) {
                 DngEscapeSelect = 2;
             }
 
-            ComMenuSePlay(0);
+            ComMenuSePlay(MENU_SOUND_CURSOR);
         }
 
         int     row = DngEscapeSelect - 1;
         ClsMes *mes = CharaNameMes;
         mes->cursor_row = row;
 
-        if (GamePad.Down(0x40) != 0) {
+        if (GamePad.Down(PAD_CROSS) != 0) {
             DngEscapeEndFlag = 1;
-            ComMenuSePlay(1);
+            ComMenuSePlay(MENU_SOUND_CONFIRM);
         }
 
-        if (GamePad.Down(0x20) != 0) {
-            ComMenuSePlay(2);
+        if (GamePad.Down(PAD_CIRCLE) != 0) {
+            ComMenuSePlay(MENU_SOUND_REFUSE);
         }
     } else if (DngEscapeAlpha >= 0x80) {
         result = DngEscapeSelect;
@@ -1543,7 +1543,7 @@ int CheckItemThrow(int *items, int *values) {
     for (i = 0; i < 3; i++) {
         item_no = pack->item[pack->num + i];
 
-        if (item_no >= 0x84) {
+        if (item_no >= ITEM_DUNGEON_START) {
             found++;
 
             if (items != NULL) {
@@ -1560,7 +1560,7 @@ int CheckItemThrow(int *items, int *values) {
         weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[i];
         item_no = weapons[10].item_no;
 
-        if (item_no >= 0x101) {
+        if (item_no >= ITEM_WEAPON_START) {
             found++;
 
             if (items != NULL) {
@@ -1580,18 +1580,18 @@ int CheckItemThrow(int *items, int *values) {
     for (i = 0; i < 3; i++) {
         item_no = attachments[i + 40].item_no;
 
-        if (item_no >= 0x51) {
+        if (item_no >= ITEM_ATTACH_START) {
             found++;
 
             if (items != NULL) {
                 items[i + 4] = item_no;
             }
 
-            if (values != NULL && item_no >= 0x5B && item_no < 0x5F) {
-                values[i + 4] = (&attachments[i + 40].item_no)[item_no - 0x57];
+            if (values != NULL && item_no >= ITEM_ATTACH_STAT_START && item_no < ITEM_ATTACH_GEM_START) {
+                values[i + 4] = (&attachments[i + 40].item_no)[item_no - ITEM_ATTACH_STAT_START + 4];
             }
 
-            if (values != NULL && item_no == 0x5A) {
+            if (values != NULL && item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                 values[i + 4] = attachments[i + 40].sphere_weapon_no;
             }
         }
@@ -1788,7 +1788,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     }
 
     switch (kind) {
-        case 0:
+        case RGATE_ABS_FULL:
             printf("abs full\n");
 
             if (is_default == 1) {
@@ -1798,7 +1798,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
 
             break;
-        case 1:
+        case RGATE_STAT_DOWN:
             if (IsDefaultWeapon(weapon->item_no) >= 0) {
                 printf("default Weapon\n");
             } else {
@@ -1847,7 +1847,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
 
             break;
-        case 2:
+        case RGATE_WHP_UP:
             if (IsDefaultWeapon(weapon->item_no) >= 0) {
                 printf("this weapon No.%d is default\n", weapon->item_no);
             } else {
@@ -1863,7 +1863,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
 
             break;
-        case 3:
+        case RGATE_WHP_DOWN:
             if (IsDefaultWeapon(weapon->item_no) < 0) {
                 int loss = rand() % 3 + 3;
                 weapon->durability -= loss;
@@ -1882,7 +1882,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
 
             break;
-        case 4:
+        case RGATE_WHP_CURE:
             printf("whp cure\n");
 
             if (is_default == 1) {
@@ -1905,7 +1905,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             }
 
             break;
-        case 5: {
+        case RGATE_WHP_QUARTER: {
             float durability = weapon->durability_f / 4.0f;
             weapon->durability_f = durability;
 

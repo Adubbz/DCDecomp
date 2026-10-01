@@ -37,11 +37,11 @@ void LangsetInit() {
     };
     TexManager.Initialize(0x3FE0);
     TexManager.LoadTextureBlock(-1, textures, read_buffer);
-    GamePad.SetAutoRepeat(0x5000, 30, 9);
+    GamePad.SetAutoRepeat(PAD_UP | PAD_DOWN, 30, 9);
     GamePad.MenuModeOn(120);
     Fade.value = 0;
     Cursor = 0;
-    Proc = 0;
+    Proc = LANGSET_FADE_IN;
 }
 
 int LangsetLoop() {
@@ -49,19 +49,19 @@ int LangsetLoop() {
     sceVif1PkTerminate(Vif1Packet);
 
     switch (Proc) {
-        case 0:
+        case LANGSET_FADE_IN:
             if (Fade.In() != 0) {
-                Proc = 1;
+                Proc = LANGSET_SELECT;
             }
 
             break;
-        case 1:
+        case LANGSET_SELECT:
             if (LangsetProc() != 0) {
-                Proc = 2;
+                Proc = LANGSET_FADE_OUT;
             }
 
             break;
-        case 2:
+        case LANGSET_FADE_OUT:
             if (Fade.Out() != 0) {
                 // The first two codes are not offered here, so the cursor
                 // counts from the third.
@@ -77,11 +77,11 @@ int LangsetLoop() {
 }
 
 int LangsetProc() {
-    if (GamePad.Down(0x1000) != 0) {
+    if (GamePad.Down(PAD_UP) != 0) {
         Cursor--;
     }
 
-    if (GamePad.Down(0x4000) != 0) {
+    if (GamePad.Down(PAD_DOWN) != 0) {
         Cursor++;
     }
 
@@ -93,7 +93,7 @@ int LangsetProc() {
         Cursor = 0;
     }
 
-    if (GamePad.Down(0x800) != 0 || GamePad.Down(0x40) != 0) {
+    if (GamePad.Down(PAD_START) != 0 || GamePad.Down(PAD_CROSS) != 0) {
         return 1;
     }
 

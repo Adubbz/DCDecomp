@@ -35,10 +35,10 @@ void CMemoryCardAccess::Initialize() {
     strcpy(this->dir_name, "BESCES-50295dkcloud");
 #else
     switch (GetMenuLangFlag()) {
-        case 0:
+        case LANG_JAPANESE:
             strcpy(this->dir_name, "BISCPS-15004dkcloud");
             break;
-        case 1:
+        case LANG_ENGLISH_US:
         default:
             strcpy(this->dir_name, "BASCUS-97111dkcloud");
             break;
@@ -81,19 +81,19 @@ int CMemoryCardAccess::InitForMC() {
     int result;
 
     switch (status) {
-        case 0:
+        case sceMcIniSucceed:
             printf("Memory Card Initialized Successed!!\n\n\n\n");
             result = 0;
             break;
-        case -101:
+        case sceMcIniErrKernel:
             result = 1;
             printf("Initialized Failed!!\n");
             break;
-        case -120:
+        case sceMcIniOldMcserv:
             result = 1;
             printf("mcserv.irx is old file\n");
             break;
-        case -121:
+        case sceMcIniOldMcman:
             result = 1;
             printf("mcman.irx is old file \n");
             break;
@@ -222,7 +222,7 @@ int CMemoryCardAccess::Step() {
             result = McUnFormatForDebug();
             break;
         case MC_OPERATION_DELETE:
-            if (error.code == 0) {
+            if (error.code == MC_ERROR_NONE) {
                 target_file = file_no;
             } else {
                 target_file = error.file_no;
@@ -299,12 +299,12 @@ int CMemoryCardAccess::SearchMcType() {
             card->result = status;
 
             switch (status) {
-                case 0:
+                case sceMcResSucceed:
                     break;
-                case -1:
+                case sceMcResChangedCard:
                     card->formatted = 1;
                     break;
-                case -2:
+                case sceMcResNoFormat:
                     card->formatted = 0;
                     break;
                 default:
@@ -396,7 +396,7 @@ int CMemoryCardAccess::GetDir() {
             }
 
             if (result < 0) {
-                if (result == -4 || result == -2) {
+                if (result == sceMcResNoEntry || result == sceMcResNoFormat) {
                     return 1;
                 }
 
@@ -975,7 +975,7 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
             }
 
             if (result < 0) {
-                if (result == -4 || result == -2) {
+                if (result == sceMcResNoEntry || result == sceMcResNoFormat) {
                     printf("not found\n");
                     info->state = 0;
                     this->step += 3;
@@ -1064,12 +1064,12 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
                 this->step++;
                 error->step = this->step;
                 error->file_no = file_no;
-                error->code = 1;
+                error->code = MC_ERROR_VERSION;
                 return 1;
             }
 
             if (this->transferred < this->transfer_size) {
-                error->code = 3;
+                error->code = MC_ERROR_SHORT_READ;
                 error->file_no = this->file_no;
                 this->step++;
                 printf("not enough size\n");
@@ -1620,7 +1620,7 @@ int CMemoryCardAccess::GetMsgNo(int msg_no) {
         case MC_OPERATION_DELETE:
             result = msg_no + 41;
             break;
-        case 8:
+        case MC_OPERATION_UNK_8:
             result = msg_no + 43;
             break;
     }
@@ -1632,28 +1632,28 @@ int CMemoryCardAccess::McError(int result) {
     MC_ERROR_INFO *info = &this->error;
 
     switch (result) {
-        case -2:
-        case -12:
+        case sceMcResNoFormat:
+        case sceMcResFailDetect:
             printf("mc is unformat\n");
-            info->code = 6;
+            info->code = MC_ERROR_UNFORMATTED;
             break;
-        case -3:
+        case sceMcResFullDevice:
             printf("memory is over or noting, break!\n");
-            info->code = 4;
+            info->code = MC_ERROR_FULL;
             break;
-        case -4:
+        case sceMcResNoEntry:
             printf("file not open or not exist\n");
             break;
-        case -5:
+        case sceMcResDeniedPermit:
             printf("not open by write mode \n");
             break;
-        case -8:
+        case sceMcResFailReplace:
             printf("write failed\n");
             break;
     }
 
     if (result < -10) {
-        info->code = 7;
+        info->code = MC_ERROR_NOT_CARD;
         printf("not memory card or (read write)error = %d\n", result);
     }
 

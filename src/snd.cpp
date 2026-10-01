@@ -304,13 +304,13 @@ void SndInitialize(int unused0, int unused1, int unused2, int unused3) {
 }
 
 void SndExit() {
-    CSnd.Stop(0);
-    CSnd.Stop(15);
-    CSnd.Stop(1);
-    CSnd.Stop(14);
-    CSnd.Stop(10);
-    CSnd.Stop(13);
-    CSnd.Stop(12);
+    CSnd.Stop(MIDI_PORT_BGM);
+    CSnd.Stop(MIDI_PORT_SE_TITLE);
+    CSnd.Stop(MIDI_PORT_AMBIENT);
+    CSnd.Stop(MIDI_PORT_SE_DEFAULT);
+    CSnd.Stop(MIDI_PORT_UNK_A);
+    CSnd.Stop(MIDI_PORT_UNK_D);
+    CSnd.Stop(MIDI_PORT_SE_SPECIAL);
     CSnd.StopVoice(0);
     CSnd.StopVoice(1);
     SndSeSeqInit();
@@ -608,7 +608,7 @@ int SndBgmSyncBG() {
 
 void SndBgmPlay(int track_no) {
     if (bgm_off == 0 && now_bgm_no >= 0 && now_bgm_play != 1) {
-        CSnd.SQ_Play(0, track_no);
+        CSnd.SQ_Play(MIDI_PORT_BGM, track_no);
         now_bgm_vol = SndGetDefaultBgmVol();
         now_bgm_play = 1;
     }
@@ -616,7 +616,7 @@ void SndBgmPlay(int track_no) {
 
 void SndBgmStop() {
     if (now_bgm_no >= 0 && now_bgm_play != 0) {
-        CSnd.Stop(0);
+        CSnd.Stop(MIDI_PORT_BGM);
         CSnd.StopVoice(0);
         now_bgm_vol = 0;
         now_bgm_play = 0;
@@ -626,7 +626,7 @@ void SndBgmStop() {
 #ifdef PAL
 void SndBgmPause() {
     if (now_bgm_no >= 0 && now_bgm_play != 0) {
-        CSnd.Stop(0);
+        CSnd.Stop(MIDI_PORT_BGM);
         now_bgm_play = 2;
     }
 }
@@ -634,7 +634,7 @@ void SndBgmPause() {
 
 void SndBgmRePlay() {
     if (now_bgm_no >= 0 && now_bgm_play == 2) {
-        CSnd.SQ_RePlay(0);
+        CSnd.SQ_RePlay(MIDI_PORT_BGM);
         now_bgm_play = 1;
     }
 }
@@ -677,7 +677,7 @@ void SndSetBgmVol(int volume) {
 
         if (now_bgm_play != 0) {
             now_bgm_vol = volume;
-            CSnd.SetVol(0, volume);
+            CSnd.SetVol(MIDI_PORT_BGM, volume);
         }
     }
 }
@@ -831,7 +831,7 @@ static int GetPortNo(int se_no) {
         return info->port;
     }
 
-    return 14;
+    return MIDI_PORT_SE_DEFAULT;
 }
 
 /**
@@ -865,11 +865,11 @@ static void SetSoundFile(int set_no, unsigned int *buffer, char *config_name) {
     int           size;
 
     CSnd.LoadSoundFileFromPack(config_name, buffer);
-    CSnd.SetVol(15, 0x100);
-    CSnd.SetVol(14, 0x100);
-    CSnd.SetVol(10, 0x100);
-    CSnd.SetVol(13, 0x100);
-    CSnd.SetVol(12, 0x100);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 0x100);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 0x100);
+    CSnd.SetVol(MIDI_PORT_UNK_A, 0x100);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 0x100);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 0x100);
     now_sound_set = set_no;
     snd_id = 0;
     now_amb_no = -1;
@@ -905,13 +905,13 @@ int SndGetNowSetNo() {
 }
 
 void SndStopAllSe() {
-    CSnd.Stop(15);
-    CSnd.Stop(1);
-    CSnd.Stop(14);
-    CSnd.Stop(10);
-    CSnd.Stop(13);
-    CSnd.Stop(12);
-    CSnd.Stop(11);
+    CSnd.Stop(MIDI_PORT_SE_TITLE);
+    CSnd.Stop(MIDI_PORT_AMBIENT);
+    CSnd.Stop(MIDI_PORT_SE_DEFAULT);
+    CSnd.Stop(MIDI_PORT_UNK_A);
+    CSnd.Stop(MIDI_PORT_UNK_D);
+    CSnd.Stop(MIDI_PORT_SE_SPECIAL);
+    CSnd.Stop(MIDI_PORT_UNK_B);
     SndAmbientInit();
     CSnd.StopVoice(1);
 }
@@ -1313,7 +1313,7 @@ int SndAmbientInit() {
 void SndAmbientPlay(int ambient_no) {
     if (now_amb_no != ambient_no || now_amb_play != 1) {
         SndAmbientStop();
-        CSnd.SQ_Play(1, ambient_no);
+        CSnd.SQ_Play(MIDI_PORT_AMBIENT, ambient_no);
         now_amb_no = ambient_no;
         now_amb_vol = SndGetAmbientDefaultVol();
         now_amb_play = 1;
@@ -1322,7 +1322,7 @@ void SndAmbientPlay(int ambient_no) {
 
 void SndAmbientStop() {
     if (now_amb_no >= 0 && now_amb_play != 0) {
-        CSnd.Stop(1);
+        CSnd.Stop(MIDI_PORT_AMBIENT);
         now_amb_play = 0;
     }
 }
@@ -1341,7 +1341,7 @@ void SndAmbientSetVol(int volume) {
         }
 
         now_amb_vol = volume;
-        CSnd.SetVol(1, volume);
+        CSnd.SetVol(MIDI_PORT_AMBIENT, volume);
     }
 }
 
@@ -1392,7 +1392,7 @@ static void GetVoiceFile(int set_no, char *archive_name, char *config_name) {
  */
 static void SetVoiceFile(int set_no, u_int *buffer, char *config_name) {
     CSnd.LoadSoundFileFromPack(config_name, buffer);
-    CSnd.SetVol(11, 0x100);
+    CSnd.SetVol(MIDI_PORT_UNK_B, 0x100);
     now_voice_set = set_no;
 }
 
@@ -1498,7 +1498,7 @@ static void GetSPSeFile(int set_no, char *archive_name, char *config_name) {
  */
 static void SetSPSeFile(int set_no, u_int *buffer, char *config_name) {
     CSnd.LoadSoundFileFromPack(config_name, buffer);
-    CSnd.SetVol(12, 0x100);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 0x100);
     now_sp_no = set_no;
 }
 
@@ -1576,9 +1576,9 @@ void SndSPSePlay(int se_no, int vol) {
         }
 
         if (vol < 0) {
-            CSnd.SE_Play(12, info->vol_no, 0);
+            CSnd.SE_Play(MIDI_PORT_SE_SPECIAL, info->vol_no, 0);
         } else {
-            CSnd.SE_Play(12, info->bank, info->prog, vol, 0);
+            CSnd.SE_Play(MIDI_PORT_SE_SPECIAL, info->bank, info->prog, vol, 0);
         }
     }
 }
@@ -1587,7 +1587,7 @@ void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
     if (info != 0) {
-        CSnd.SE_Stop(12, info->bank, info->prog, 0);
+        CSnd.SE_Stop(MIDI_PORT_SE_SPECIAL, info->bank, info->prog, 0);
     }
 }
 
@@ -1615,7 +1615,7 @@ void SndSetSPSeVolf(int se_no, float volume) {
             level = 127;
         }
 
-        CSnd.SE_SetVol(12, info->bank, info->prog, level, 0);
+        CSnd.SE_SetVol(MIDI_PORT_SE_SPECIAL, info->bank, info->prog, level, 0);
     }
 }
 
@@ -1638,7 +1638,7 @@ void SndSetSPSePanf(int se_no, float pan) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
     if (info != 0) {
-        CSnd.SE_SetPan(12, info->vol_no, (int) (63.0f * pan) + 64, 0);
+        CSnd.SE_SetPan(MIDI_PORT_SE_SPECIAL, info->vol_no, (int) (63.0f * pan) + 64, 0);
     }
 }
 

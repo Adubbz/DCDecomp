@@ -260,19 +260,19 @@ static void QuatToMat(float *quaternion, sceVu0FMATRIX matrix) {
 
 void CFrameAttr::Initialize() {
     clip_depth = 0.0f;
-    far_clip_enable = program_option = clip_enable = remake_pending = unk_09 = fog_enable = 0;
+    far_clip_enable = program_option = clip_enable = remake_pending = unk_09 = fog_enable = false;
     far_clip = 0.0f;
-    use_color = 0;
+    use_color = false;
     color[0] = color[1] = color[2] = color[3] = 128.0f;
     alpha_ref = -1;
     draw_on = 1;
-    depth_write = 1;
-    ignore_depth = 0;
-    eye_relative = 0;
+    depth_write = true;
+    ignore_depth = false;
+    eye_relative = false;
     billboard = 0;
     blend_mode = 0;
-    cull_enable = 1;
-    ambient_boost = 0;
+    cull_enable = true;
+    ambient_boost = false;
     unk_40[0] = unk_40[2] = unk_40[3] = 0.0f;
     unk_40[1] = 1.0f;
 }
@@ -284,8 +284,8 @@ CFrameAttr::CFrameAttr() {
 void CFrame::Initialize() {
     int i;
 
-    world_valid = 0;
-    no_rotation = 1;
+    world_valid = false;
+    no_rotation = true;
 
     parent = child = brother = elder = 0;
 
@@ -313,12 +313,12 @@ void CFrame::Initialize() {
     collision = 0;
     name[0] = '\0';
     rot_type = 0;
-    srt = 0;
-    reference = 0;
+    srt = false;
+    reference = false;
 }
 
 void CFrame::SetPosition(float x, float y, float z) {
-    srt = 1;
+    srt = true;
 
     if (position[0] == x && position[1] == y && position[2] == z) {
         return;
@@ -327,11 +327,11 @@ void CFrame::SetPosition(float x, float y, float z) {
     position[0] = x;
     position[1] = y;
     position[2] = z;
-    world_valid = 0;
+    world_valid = false;
 }
 
 void CFrame::SetPosition(float *position) {
-    srt = 1;
+    srt = true;
 
     if (this->position[0] == position[0] && this->position[1] == position[1] && this->position[2] == position[2]) {
         return;
@@ -340,7 +340,7 @@ void CFrame::SetPosition(float *position) {
     this->position[0] = position[0];
     this->position[1] = position[1];
     this->position[2] = position[2];
-    world_valid = 0;
+    world_valid = false;
 }
 
 void CFrame::SetScale(float x, float y, float z) {
@@ -351,7 +351,7 @@ void CFrame::SetScale(float x, float y, float z) {
     scale[0] = x;
     scale[1] = y;
     scale[2] = z;
-    world_valid = 0;
+    world_valid = false;
 }
 
 void CFrame::SetScale(float *scale) {
@@ -362,7 +362,7 @@ void CFrame::SetScale(float *scale) {
     this->scale[0] = scale[0];
     this->scale[1] = scale[1];
     this->scale[2] = scale[2];
-    world_valid = 0;
+    world_valid = false;
 }
 
 int CFrame::GetFrameNum() {
@@ -427,12 +427,12 @@ void CFrame::SetReference(CFrame *reference) {
     }
 
     parent = reference;
-    this->reference = 1;
+    this->reference = true;
 }
 
 void CFrame::DeleteReference() {
     parent = 0;
-    reference = 0;
+    reference = false;
 }
 
 /* The frame's world matrix, rebuilt unless the cache and every cache above it in the chain are
@@ -448,7 +448,7 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     /* A referenced frame follows a frame that is not its parent, so nothing on that frame's side
        clears this cache when it moves and it can never be trusted. */
     if (reference) {
-        world_valid = 0;
+        world_valid = false;
     }
 
     if (world_valid) {
@@ -474,12 +474,12 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     }
 
     if (this->child) {
-        this->child->world_valid = 0;
+        this->child->world_valid = false;
         sibling = this->child;
 
         if (sibling->brother) {
             while (sibling->brother) {
-                sibling->brother->world_valid = 0;
+                sibling->brother->world_valid = false;
                 sibling = sibling->brother;
             }
         }
@@ -523,7 +523,7 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     if (!frame) {
         sceVu0CopyMatrix(world, local_matrix);
         sceVu0CopyMatrix(matrix, world);
-        world_valid = 1;
+        world_valid = true;
         return;
     }
 
@@ -535,7 +535,7 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
 
     MulFrameMatrix(world, parent_world, local_matrix);
     sceVu0CopyMatrix(matrix, world);
-    world_valid = 1;
+    world_valid = true;
 }
 
 float (*CFrame::GetInverseMatrix())[4] {
@@ -549,7 +549,7 @@ float (*CFrame::GetInverseMatrix())[4] {
 
 void CFrame::SetTransMatrix(sceVu0FMATRIX matrix) {
     sceVu0CopyMatrix(local, matrix);
-    world_valid = 0;
+    world_valid = false;
 }
 
 /* A quaternion says nothing about where the frame is, so the translation row of the local matrix
@@ -557,7 +557,7 @@ void CFrame::SetTransMatrix(sceVu0FMATRIX matrix) {
 void CFrame::SetTransMatrix(float *quaternion) {
     sceVu0FVECTOR translation;
 
-    world_valid = 0;
+    world_valid = false;
     *(u_long128 *) translation = *(u_long128 *) local[3];
     QuatToMat(quaternion, local);
     *(u_long128 *) local[3] = *(u_long128 *) translation;
@@ -824,15 +824,15 @@ void CFrame::GetWorldPosition(float *world_point, float *local_point) {
 }
 
 void CFrame::SetRotation(float x, float y, float z) {
-    srt = 1;
-    no_rotation = 0;
+    srt = true;
+    no_rotation = false;
     rotation[3] = 0.0f;
 
     if (rotation[0] == x && rotation[1] == y && rotation[2] == z) {
         return;
     }
 
-    world_valid = 0;
+    world_valid = false;
     rot_type |= 1;
     rotation[0] = x;
     rotation[1] = y;
@@ -862,8 +862,8 @@ CFrame &CFrame::operator=(CFrame &other) {
     memcpy(this, &other, sizeof(CFrame));
 
     parent = child = brother = 0;
-    world_valid = 0;
-    no_rotation = 0;
+    world_valid = false;
+    no_rotation = false;
 
     return *this;
 }
@@ -1032,7 +1032,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     sceVu0FVECTOR color;
     int           near_clip = 0;
     int           far_clip = 0;
-    int           visible = 1;
+    int           visible = true;
     sceGsTest     test = mgPixelTest;
     sceGsZbuf     zbuf = mgZBuffer;
     sceGsAlpha    alpha;
@@ -1052,7 +1052,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     int           done;
 
     if (attr.billboard) {
-        world_valid = 0;
+        world_valid = false;
         GetWorldPosition(world_position, origin);
         GetLWMatrix(world_matrix);
         axis_x = DistVector(world_matrix[0]);
@@ -1102,18 +1102,18 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         CopyMatrix(this->world, matrix);
 
         if (this->child) {
-            this->child->world_valid = 0;
+            this->child->world_valid = false;
             sibling = this->child;
 
             if (sibling->brother) {
                 while (sibling->brother) {
-                    sibling->brother->world_valid = 0;
+                    sibling->brother->world_valid = false;
                     sibling = sibling->brother;
                 }
             }
         }
 
-        world_valid = 1;
+        world_valid = true;
     } else {
         GetLWMatrix(matrix);
     }
@@ -1143,7 +1143,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         far_z = info->frame_far_z;
 
         while (done == 0) {
-            visible = 0;
+            visible = false;
 
             if (attr.remake_pending) {
                 half_width = 2.0f * (320.0f * inv_scale);
@@ -1183,7 +1183,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
                 far_clip = 8;
             }
 
-            visible = 1;
+            visible = true;
             break;
         }
     }
@@ -1199,7 +1199,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     }
 
     if (attr.remake_pending) {
-        visible = 1;
+        visible = true;
     }
 
     if (info->scissor) {

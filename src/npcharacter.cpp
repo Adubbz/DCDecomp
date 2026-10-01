@@ -81,7 +81,7 @@ void CNPCharacter::PlaySeq() {
                 sceVu0AddVector(destination, position, movement);
             }
 
-            float angle = AngleInterpolate(rotation.y, atan2f(movement[0], movement[2]), 0.1f, 0);
+            float angle = AngleInterpolate(rotation.y, atan2f(movement[0], movement[2]), 0.1f, INTERPOLATE_STEP);
             SetRotation(0, angle, 0);
             SetPosition(destination);
             SetMotion(1, 0);
@@ -270,8 +270,8 @@ int CCharacter::PickUpPoly(float *position, CCPoly *polygons) {
 
 void CNPCharacter::Initialize() {
     CCharacter::Initialize();
-    initialized = 0;
-    near_camera = 0;
+    initialized = false;
+    near_camera = false;
     ambient_offset[0] = 0;
     ambient_offset[1] = 0;
     ambient_offset[2] = 0;
@@ -280,9 +280,9 @@ void CNPCharacter::Initialize() {
     alpha_step_override = -1;
     body_width = 7.0f;
     texture_block = 0;
-    talk_target = 0;
+    talk_target = false;
     event_status = 0;
-    draw_enabled = 0;
+    draw_enabled = false;
     resource_name[0] = 0;
     ClearSeq();
     map_parts_no = 0;

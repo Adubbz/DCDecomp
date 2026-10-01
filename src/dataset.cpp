@@ -201,7 +201,7 @@ void SetFrameAttr(CFrame *frame, int recurse) {
     char    blend_code[3];
     CFrame *child;
 
-    frame->attr.clip_enable = 1;
+    frame->attr.clip_enable = true;
     frame->attr.clip_depth = 150.0f;
     has_codes = 1;
     cursor = frame->name;
@@ -233,7 +233,7 @@ void SetFrameAttr(CFrame *frame, int recurse) {
         switch (*cursor) {
             case 'c':
             case 'C':
-                frame->attr.use_color = 1;
+                frame->attr.use_color = true;
                 frame->attr.color[0] = 128.0f;
                 frame->attr.color[1] = 128.0f;
                 frame->attr.color[2] = 128.0f;
@@ -241,7 +241,7 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 break;
             case 'n':
             case 'N':
-                frame->attr.clip_enable = 0;
+                frame->attr.clip_enable = false;
                 break;
             case 'a':
             case 'A':
@@ -269,11 +269,11 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 break;
             case 'z':
             case 'Z':
-                frame->attr.depth_write = 0;
+                frame->attr.depth_write = false;
                 break;
             case 'f':
             case 'F':
-                frame->attr.fog_enable = 0;
+                frame->attr.fog_enable = false;
                 break;
             case 's':
             case 'S':
@@ -281,7 +281,7 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 break;
             case 'm':
             case 'M':
-                frame->attr.eye_relative = 1;
+                frame->attr.eye_relative = true;
                 break;
             case 'b':
             case 'B':
@@ -303,11 +303,11 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 break;
             case 't':
             case 'T':
-                frame->attr.ambient_boost = 1;
+                frame->attr.ambient_boost = true;
                 break;
             case 'o':
             case 'O':
-                frame->attr.ignore_depth = 1;
+                frame->attr.ignore_depth = true;
                 break;
             case 'v':
             case 'V':
@@ -546,7 +546,7 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
         }
 
         if (attr & 0x10) {
-            visual->copy_on_draw = 1;
+            visual->copy_on_draw = true;
         }
 
         if ((attr & 4) && !(attr & 0x10)) {
@@ -622,21 +622,21 @@ static void ArrangeShadowMDT(u_int *data) {
             edges[edge_count].v1 = corner[1].index;
             edges[edge_count].done = 0;
             edges[edge_count].edge_flag = &corner[0].edge;
-            corner[0].edge = 0;
+            corner[0].edge = false;
             edge_count++;
 
             edges[edge_count].v0 = corner[1].index;
             edges[edge_count].v1 = corner[2].index;
             edges[edge_count].done = 0;
             edges[edge_count].edge_flag = &corner[1].edge;
-            corner[1].edge = 0;
+            corner[1].edge = false;
             edge_count++;
 
             edges[edge_count].v0 = corner[2].index;
             edges[edge_count].v1 = corner[0].index;
             edges[edge_count].done = 0;
             edges[edge_count].edge_flag = &corner[2].edge;
-            corner[2].edge = 0;
+            corner[2].edge = false;
             edge_count++;
 
             if (edge_count > 1020) {

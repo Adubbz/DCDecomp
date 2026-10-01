@@ -11,6 +11,20 @@
  * Declares the marks that a hit throws off.
  */
 
+/**
+ * Kinds of hit mark, as CHitMark::kind holds them.
+ */
+// clang-format off
+enum HitMarkKind {
+    HIT_MARK_HIT   = 0, /**< Hit. */
+    HIT_MARK_UNK_1 = 1, /**< Never set. */
+    HIT_MARK_GUARD = 2, /**< Guard. */
+    HIT_MARK_UNK_3 = 3, /**< 32x32 half-transparent mark; never set. */
+    HIT_MARK_UNK_4 = 4, /**< 24x24 mark; never set. */
+};
+
+// clang-format on
+
 /** Number of marks that one hit can throw off. */
 #define HIT_MARK_MAX 32
 
@@ -31,7 +45,7 @@ public:
     s32           capacity;           /**< Number of mark slots, set when the burst is emptied. */
     s32           used[HIT_MARK_MAX]; /**< 1 while the mark of the slot still draws. */
     s32           count;              /**< Number of marks that still draw. */
-    s32           kind;               /**< Part of the texture that every mark draws. */
+    s32           kind;               /**< Part of the texture that every mark draws. @see HitMarkKind. */
     float         floor_y;            /**< Height that a mark bounces off. */
 
     /**

@@ -1,5 +1,39 @@
 #pragma once
 
+/**
+ * Steps of town fishing, as chara_fishing holds them.
+ */
+// clang-format off
+enum EdFishingState {
+    ED_FISHING_INIT       = 0,  /**< Starting. */
+    ED_FISHING_STAND      = 1,  /**< Standing with the rod. */
+    ED_FISHING_CAST_START = 2,  /**< Starting the cast. */
+    ED_FISHING_CASTING    = 3,  /**< Casting. */
+    ED_FISHING_WAIT_BITE  = 4,  /**< Watching the float. */
+    ED_FISHING_REEL_IN    = 5,  /**< Reeling in. */
+    ED_FISHING_BITE_CHECK = 6,  /**< Checking for a bite. */
+    ED_FISHING_HOOKED     = 7,  /**< Hooked. */
+    ED_FISHING_LANDED     = 8,  /**< Landed. */
+    ED_FISHING_SINK       = 9,  /**< Float sunk and bait lost. */
+    ED_FISHING_BATTLE     = 10, /**< Fighting the fish. */
+    ED_FISHING_RESULT     = 11, /**< Showing the catch. */
+    ED_FISHING_FINISH     = 12, /**< Finishing. */
+};
+
+// clang-format on
+
+/**
+ * Steps of the fishing catch message, as fishing_mes holds them.
+ */
+// clang-format off
+enum EdFishingMessageStep {
+    ED_FISHING_MES_EVALUATE = 0, /**< Measuring the catch. */
+    ED_FISHING_MES_WAIT     = 1, /**< Waiting for the window to close. */
+    ED_FISHING_MES_DONE     = 2, /**< Done. */
+};
+
+// clang-format on
+
 class CCharacter;
 class CCamera;
 class CRect_i_;

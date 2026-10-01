@@ -40,6 +40,18 @@
 #include "vector.hpp"
 #include "vutext.hpp"
 
+/**
+ * Steps of the camera-pack read LoadSceneBG runs, as SceneFlg holds them.
+ */
+// clang-format off
+enum SceneReadStep {
+    SCENE_READ_START = 0, /**< Start reading the next camera pack. */
+    SCENE_READ_WAIT  = 1, /**< Wait for the read, then unpack it. */
+    SCENE_READ_IDLE  = 2, /**< Nothing to do until the next pack is requested. */
+};
+
+// clang-format on
+
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h for the
    reason title.cpp declares its own: the rectangles this file builds are temporaries whose four
    stores come out ascending, and the constructor rect.h states assigns them in the other order. */
@@ -209,7 +221,7 @@ void OpeningInit() {
     SceneNp__2 = 0;
     SceneRp = 0;
     SceneCnt = 3;
-    SceneFlg = 2;
+    SceneFlg = SCENE_READ_IDLE;
     SceneSw = 0;
     Pause = 0;
     End = 0;
@@ -230,12 +242,12 @@ void OpeningInit() {
  * @unknownret
  */
 static void LoadMessage() {
-    Mes1.Preset(2);
+    Mes1.Preset(MES_PRESET_AUTO_PAGE);
     Mes1.text_x = 90;
     Mes1.text_y = 350;
     Mes1.text_rate = 1.0f;
     Mes1.text_rate_set = 1.0f;
-    Mes1.end_mark = 0;
+    Mes1.end_mark = false;
     Mes1.tex_block = 26;
     Mes1.tex_buff = MesWinTexBuff_01;
     Mes1.tail_to_x = 320;
@@ -247,49 +259,49 @@ static void LoadMessage() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             LoadFile("opdat/optext_0.mes", MesBuffer, 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             LoadFile("opdat/optext_1.mes", MesBuffer, 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             LoadFile("opdat/optext_2.mes", MesBuffer, 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             LoadFile("opdat/optext_3.mes", MesBuffer, 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             LoadFile("opdat/optext_4.mes", MesBuffer, 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             LoadFile("opdat/optext_5.mes", MesBuffer, 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             LoadFile("opdat/optext_6.mes", MesBuffer, 0);
             break;
     }
 #else
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             LoadFile("opdat/fconv.bin", MesBuffer, 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             LoadFile("opdat/optext_3.mes", MesBuffer, 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             LoadFile("opdat/optext_4.mes", MesBuffer, 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             LoadFile("opdat/optext_5.mes", MesBuffer, 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
             break;
     }
@@ -464,7 +476,7 @@ void LoadSceneBG() {
     }
 
     switch (SceneFlg) {
-        case 0:
+        case SCENE_READ_START:
             while (ReadBGSync())
                 ;
 
@@ -473,9 +485,9 @@ void LoadSceneBG() {
             }
 
             LoadFileBG(files[SceneCnt][0], (u_long128 *) PassReadBuffer, 0);
-            SceneFlg = 1;
+            SceneFlg = SCENE_READ_WAIT;
             break;
-        case 1:
+        case SCENE_READ_WAIT:
             if (ReadBGSync()) {
                 break;
             }
@@ -491,9 +503,9 @@ void LoadSceneBG() {
                 SceneRp = 0;
             }
 
-            SceneFlg = 2;
+            SceneFlg = SCENE_READ_IDLE;
             break;
-        case 2:
+        case SCENE_READ_IDLE:
             break;
     }
 }
@@ -546,65 +558,65 @@ int OpeningLoop() {
  */
 static void SceneChange() {
     switch (CScript__2.load_no) {
-        case 1:
+        case OP_SCENE_NORUNE:
             OpB_LoadDataBG();
             break;
-        case 2:
+        case OP_SCENE_TOAN_HOUSE:
             OpB_LoadDataBG2();
             break;
-        case 3:
+        case OP_SCENE_NORUNE_NIGHT:
             OpC_LoadDataBG();
             break;
-        case 4:
+        case OP_SCENE_DANCE:
             OpC_LoadDataBG2();
             break;
-        case 5:
+        case OP_SCENE_MAJIN:
             OpC_LoadDataBG3();
             break;
-        case 6:
+        case OP_SCENE_NORUNE_RUINED:
             OpC_LoadDataBG4();
             break;
-        case 7:
+        case OP_SCENE_NORUNE_BURNING:
             OpC_LoadDataBG5();
             break;
-        case 8:
+        case OP_SCENE_SEIREI_KING:
             OpD_LoadDataBG();
             break;
-        case 9:
+        case OP_SCENE_MEADOW:
             OpD_LoadDataBG2();
             break;
     }
 
     switch (CScript__2.init_no) {
-        case 1:
+        case OP_SCENE_NORUNE:
             SoundStop();
             OpB_InitProcess();
             break;
-        case 2:
+        case OP_SCENE_TOAN_HOUSE:
             OpB_InitProcess2();
             break;
-        case 3:
+        case OP_SCENE_NORUNE_NIGHT:
             SoundStop();
             OpC_InitProcess();
             break;
-        case 4:
+        case OP_SCENE_DANCE:
             OpC_InitProcess2();
             break;
-        case 5:
+        case OP_SCENE_MAJIN:
             SoundStop();
             OpC_InitProcess3();
             break;
-        case 6:
+        case OP_SCENE_NORUNE_RUINED:
             OpC_InitProcess4();
             break;
-        case 7:
+        case OP_SCENE_NORUNE_BURNING:
             OpC_InitProcess5();
             break;
-        case 8:
+        case OP_SCENE_SEIREI_KING:
             SoundStop();
             OpD_InitProcess();
             break;
-        case 9:
+        case OP_SCENE_MEADOW:
             SoundStop();
             OpD_InitProcess2();
             break;
@@ -632,39 +644,39 @@ static void PauseProcess() {
         }
 
         if (Pause == 0) {
-            if (!GamePad.Down(2048)) {
+            if (!GamePad.Down(PAD_START)) {
                 return;
             }
 
-            CSnd.Stop(0);
+            CSnd.Stop(MIDI_PORT_BGM);
 
             if (CScript__2.scene) {
-                CSnd.Stop(1);
+                CSnd.Stop(MIDI_PORT_AMBIENT);
             }
 
-            CSnd.SetVol(15, 0);
-            CSnd.SetVol(14, 0);
-            CSnd.SetVol(13, 0);
-            CSnd.SetVol(12, 0);
+            CSnd.SetVol(MIDI_PORT_SE_TITLE, 0);
+            CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 0);
+            CSnd.SetVol(MIDI_PORT_UNK_D, 0);
+            CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 0);
             Pause = 1;
             endflg = 0;
             PauseFrame = Cam__2[SceneNp__2].motion_type.state.time;
         } else if (Pause == 1) {
-            if (GamePad.Down(32)) {
+            if (GamePad.Down(PAD_CIRCLE)) {
                 endflg = 1;
-                CSnd.SetVol(15, 256);
-                CSnd.SetVol(14, 256);
-                CSnd.SetVol(13, 256);
-                CSnd.SetVol(12, 256);
+                CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+                CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+                CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+                CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
 
                 if (CScript__2.scene) {
-                    CSnd.SQ_RePlay(1);
+                    CSnd.SQ_RePlay(MIDI_PORT_AMBIENT);
                 }
 
                 if (OpBgmSqPort != -1) {
-                    CSnd.SQ_RePlay(0);
+                    CSnd.SQ_RePlay(MIDI_PORT_BGM);
                 }
-            } else if (GamePad.Down(64)) {
+            } else if (GamePad.Down(PAD_CROSS)) {
                 while (ReadBGSync())
                     ;
 
@@ -688,7 +700,7 @@ static void PauseProcess() {
  */
 static void SoundStop() {
     SndStopAllSe();
-    CSnd.Stop(0);
+    CSnd.Stop(MIDI_PORT_BGM);
     CSnd.StopVoice(0);
 }
 
@@ -714,13 +726,13 @@ static void WaitKeyProcess() {
             return;
         }
 
-        if (GamePad.Down(32) || GamePad.Down(64)) {
-            if (Mes1.State() == 5) {
+        if (GamePad.Down(PAD_CIRCLE) || GamePad.Down(PAD_CROSS)) {
+            if (Mes1.State() == CLSMES_PAGE_WAIT) {
                 Mes1.text_rate = 1.0f;
                 Mes1.text_rate_set = 1.0f;
                 Mes1.GoNextPage();
-            } else if (Mes1.State() == 3) {
-                CScript__2.mes_wait = 0;
+            } else if (Mes1.State() == CLSMES_SHOWN) {
+                CScript__2.mes_wait = false;
                 flg = 0;
             } else {
                 Mes1.text_rate = 0;
@@ -746,37 +758,37 @@ static void WaitKeyProcess() {
 static void MotionProcess() {
     // PAL runs at 50 frames a second, so its fade speeds are raised by a fifth.
     switch (CScript__2.fade) {
-        case 1:
+        case TSFADE_IN_BLACK:
 #ifdef PAL
             DispFade.FadeInStart(1.2f * CScript__2.fade_speed, 0);
 #else
             DispFade.FadeInStart(CScript__2.fade_speed, 0);
 #endif
-            CScript__2.fade = 0;
+            CScript__2.fade = TSFADE_NONE;
             break;
-        case 2:
+        case TSFADE_OUT_BLACK:
 #ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript__2.fade_speed, 0);
 #else
             DispFade.FadeOutStart(CScript__2.fade_speed, 0);
 #endif
-            CScript__2.fade = 0;
+            CScript__2.fade = TSFADE_NONE;
             break;
-        case 3:
+        case TSFADE_IN_WHITE:
 #ifdef PAL
             DispFade.FadeInStart(1.2f * CScript__2.fade_speed, 1);
 #else
             DispFade.FadeInStart(CScript__2.fade_speed, 1);
 #endif
-            CScript__2.fade = 0;
+            CScript__2.fade = TSFADE_NONE;
             break;
-        case 4:
+        case TSFADE_OUT_WHITE:
 #ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript__2.fade_speed, 1);
 #else
             DispFade.FadeOutStart(CScript__2.fade_speed, 1);
 #endif
-            CScript__2.fade = 0;
+            CScript__2.fade = TSFADE_NONE;
             break;
     }
 
@@ -785,7 +797,7 @@ static void MotionProcess() {
             Op_MotionInfo.start = CScript__2.motion_start;
             Op_MotionInfo.end = CScript__2.motion_end;
             Op_MotionInfo.speed = CScript__2.motion_step;
-            CScript__2.motion_req = 0;
+            CScript__2.motion_req = false;
 
             if (SceneSw == 1) {
                 SceneNp__2++;
@@ -794,7 +806,7 @@ static void MotionProcess() {
                     SceneNp__2 = 0;
                 }
 
-                SceneFlg = 0;
+                SceneFlg = SCENE_READ_START;
             }
 
             SceneSw = 1;
@@ -830,34 +842,34 @@ static void MotionProcess() {
 
     if (!Pause) {
         switch (CScript__2.scene) {
-            case 0:
+            case OP_SCENE_DUNGEON_SQUARE:
                 OpA_MotionProcess();
                 break;
-            case 1:
+            case OP_SCENE_NORUNE:
                 OpB_MotionProcess();
                 break;
-            case 2:
+            case OP_SCENE_TOAN_HOUSE:
                 OpB_MotionProcess();
                 break;
-            case 3:
+            case OP_SCENE_NORUNE_NIGHT:
                 OpC_MotionProcess();
                 break;
-            case 4:
+            case OP_SCENE_DANCE:
                 OpC_MotionProcess();
                 break;
-            case 5:
+            case OP_SCENE_MAJIN:
                 OpC_MotionProcess();
                 break;
-            case 6:
+            case OP_SCENE_NORUNE_RUINED:
                 OpC_MotionProcess();
                 break;
-            case 7:
+            case OP_SCENE_NORUNE_BURNING:
                 OpC_MotionProcess();
                 break;
-            case 8:
+            case OP_SCENE_SEIREI_KING:
                 OpD_MotionProcess();
                 break;
-            case 9:
+            case OP_SCENE_MEADOW:
                 OpD_MotionProcess();
                 break;
         }
@@ -876,11 +888,11 @@ static void SoundProcess() {
     if (CScript__2.se_stop == 0) {
         if (CScript__2.se_voice != 0) {
             switch (CScript__2.se_kind) {
-                case 0:
-                    OpPlayVolSE(14, CScript__2.se_no, CScript__2.se_voice, 1.0f);
+                case TSSE_EFFECT:
+                    OpPlayVolSE(MIDI_PORT_SE_DEFAULT, CScript__2.se_no, CScript__2.se_voice, 1.0f);
                     break;
-                case 1:
-                    OpPlayVolSE(12, CScript__2.se_no, CScript__2.se_voice, 1.0f);
+                case TSSE_SPECIAL:
+                    OpPlayVolSE(MIDI_PORT_SE_SPECIAL, CScript__2.se_no, CScript__2.se_voice, 1.0f);
                     break;
             }
 
@@ -888,30 +900,30 @@ static void SoundProcess() {
         }
     } else {
         switch (CScript__2.se_kind) {
-            case 0:
-                CSnd.SE_Stop(14, CScript__2.se_no, CScript__2.se_voice, 0);
+            case TSSE_EFFECT:
+                CSnd.SE_Stop(MIDI_PORT_SE_DEFAULT, CScript__2.se_no, CScript__2.se_voice, 0);
                 break;
-            case 1:
-                CSnd.SE_Stop(12, CScript__2.se_no, CScript__2.se_voice, 0);
+            case TSSE_SPECIAL:
+                CSnd.SE_Stop(MIDI_PORT_SE_SPECIAL, CScript__2.se_no, CScript__2.se_voice, 0);
                 break;
         }
 
-        CScript__2.se_stop = 0;
+        CScript__2.se_stop = false;
     }
 
     if (CScript__2.bgm_fade != 0) {
         switch (CScript__2.se_kind) {
-            case -1:
+            case TSSE_ALL:
 #ifdef PAL
                 CScript__2.bgm_fade = 1.2f * CScript__2.bgm_fade;
 #endif
-                CSnd.Fade(0, (float) CScript__2.bgm_fade / 2.0f, CScript__2.se_fade_time);
-                CSnd.Fade(1, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
-                CSnd.Fade(2, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
-                CSnd.Fade(15, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
-                CSnd.Fade(14, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
-                CSnd.Fade(13, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
-                CSnd.Fade(12, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_BGM, (float) CScript__2.bgm_fade / 2.0f, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_AMBIENT, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_UNK_2, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_SE_TITLE, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_SE_DEFAULT, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_UNK_D, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(MIDI_PORT_SE_SPECIAL, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
                 break;
         }
 
@@ -919,34 +931,34 @@ static void SoundProcess() {
     }
 
     switch (CScript__2.scene) {
-        case 0:
+        case OP_SCENE_DUNGEON_SQUARE:
             OpA_SoundProcess();
             break;
-        case 1:
+        case OP_SCENE_NORUNE:
             OpB_SoundProcess();
             break;
-        case 2:
+        case OP_SCENE_TOAN_HOUSE:
             OpB_SoundProcess();
             break;
-        case 3:
+        case OP_SCENE_NORUNE_NIGHT:
             OpC_SoundProcess();
             break;
-        case 4:
+        case OP_SCENE_DANCE:
             OpC_SoundProcess();
             break;
-        case 5:
+        case OP_SCENE_MAJIN:
             OpC_SoundProcess();
             break;
-        case 6:
+        case OP_SCENE_NORUNE_RUINED:
             OpC_SoundProcess();
             break;
-        case 7:
+        case OP_SCENE_NORUNE_BURNING:
             OpC_SoundProcess();
             break;
-        case 8:
+        case OP_SCENE_SEIREI_KING:
             OpD_SoundProcess();
             break;
-        case 9:
+        case OP_SCENE_MEADOW:
             OpD_SoundProcess();
             break;
     }
@@ -971,14 +983,14 @@ static void DrawProcess() {
     SndSetCamera(&OP_MainCamera);
     OP_MainCamera.GetCameraMatrix(camera);
 
-    if (CScript__2.scene == 5 || CScript__2.scene == 8) {
+    if (CScript__2.scene == OP_SCENE_MAJIN || CScript__2.scene == OP_SCENE_SEIREI_KING) {
         OP_MainCamera.Step(1);
     }
 
     sceVu0UnitMatrix(unit);
     sceVu0MulMatrix(view, unit, camera);
 
-    if (CScript__2.scene != 1) {
+    if (CScript__2.scene != OP_SCENE_NORUNE) {
         MGSetViewMatrix(view, position);
     } else {
         MGSetViewMatrix(view);
@@ -988,34 +1000,34 @@ static void DrawProcess() {
     sceVif1PkTerminate(Vif1Packet);
 
     switch (CScript__2.scene) {
-        case 0:
+        case OP_SCENE_DUNGEON_SQUARE:
             OpA_DrawProcess();
             break;
-        case 1:
+        case OP_SCENE_NORUNE:
             OpB_DrawProcess();
             break;
-        case 2:
+        case OP_SCENE_TOAN_HOUSE:
             OpB_DrawProcess();
             break;
-        case 3:
+        case OP_SCENE_NORUNE_NIGHT:
             OpC_DrawProcess();
             break;
-        case 4:
+        case OP_SCENE_DANCE:
             OpC_DrawProcess();
             break;
-        case 5:
+        case OP_SCENE_MAJIN:
             OpC_DrawProcess();
             break;
-        case 6:
+        case OP_SCENE_NORUNE_RUINED:
             OpC_DrawProcess();
             break;
-        case 7:
+        case OP_SCENE_NORUNE_BURNING:
             OpC_DrawProcess();
             break;
-        case 8:
+        case OP_SCENE_SEIREI_KING:
             OpD_DrawProcess();
             break;
-        case 9:
+        case OP_SCENE_MEADOW:
             OpD_DrawProcess();
             break;
     }
@@ -1029,25 +1041,25 @@ static void DrawProcess() {
 
 #ifdef PAL
         switch (LanguageCode) {
-            case 0:
+            case LANG_JAPANESE:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
-            case 1:
+            case LANG_ENGLISH_US:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
-            case 2:
+            case LANG_ENGLISH_UK:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
-            case 3:
+            case LANG_FRENCH:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_f", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
-            case 4:
+            case LANG_GERMAN:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_g", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
-            case 5:
+            case LANG_ITALIAN:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_i", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
-            case 6:
+            case LANG_SPANISH:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_s", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
         }
@@ -1084,8 +1096,8 @@ static void DrawMess() {
     int offset;
     int center;
 
-    if (CScript__2.scene > 6) {
-        Mes1.auto_page = 0;
+    if (CScript__2.scene > OP_SCENE_NORUNE_RUINED) {
+        Mes1.auto_page = false;
     }
 
     if (CScript__2.mes_no == 0) {
@@ -1108,18 +1120,18 @@ static void DrawMess() {
             }
         }
 
-        Mes1.end_mark = 0;
+        Mes1.end_mark = false;
 
         if (CScript__2.mes_wait) {
             CScript__2.mes_timer = 2.0f * CScript__2.motion_step;
 
-            if (Mes1.State() == 3 || (Mes1.auto_page == 0 && Mes1.State() == 5)) {
+            if (Mes1.State() == CLSMES_SHOWN || (Mes1.auto_page == 0 && Mes1.State() == CLSMES_PAGE_WAIT)) {
                 static int cnt = 0;
 
                 if (cnt < 16) {
-                    Mes1.end_mark = 1;
+                    Mes1.end_mark = true;
                 } else {
-                    Mes1.end_mark = 0;
+                    Mes1.end_mark = false;
                 }
 
                 cnt++;
@@ -1128,7 +1140,7 @@ static void DrawMess() {
                     cnt = 0;
                 }
             } else {
-                Mes1.end_mark = 0;
+                Mes1.end_mark = false;
             }
         }
     }
@@ -1182,9 +1194,9 @@ void OpBgmPlay() {
     int volumes[8] = {82, 106, 64, 69, 91, 92, 95, 108};
 
     if (BgmOff == 0) {
-        CSnd.SQ_Play(0, 0);
+        CSnd.SQ_Play(MIDI_PORT_BGM, 0);
     } else {
-        CSnd.SQ_Play(0, 0, 0);
+        CSnd.SQ_Play(MIDI_PORT_BGM, 0, 0);
     }
 
     BgmVol = volumes[BgmNo];
@@ -1299,25 +1311,18 @@ void FadeCansel() {
     MIDI_STATE *state;
 
     state = CSnd.GetMidiState();
-    state->port[0].fade[0].active = 0;
-    state->port[2].fade[0].active = 0;
-    state->port[1].fade[1].active = 0;
-    state->port[4].fade[1].active = 0;
-    state->port[5].fade[1].active = 0;
-    state->port[6].fade[1].active = 0;
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
+    state->port[0].fade[0].active = false;
+    state->port[2].fade[0].active = false;
+    state->port[1].fade[1].active = false;
+    state->port[4].fade[1].active = false;
+    state->port[5].fade[1].active = false;
+    state->port[6].fade[1].active = false;
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
     CSnd.Step();
 }
-
-/* Spelled here rather than reached through a header because the image holds it only as an
-   anonymous pooled constant, which is what a macro gives and a file-scope object does not. The
-   suffix is what keeps the degree conversions below in single precision: without it every one of
-   them is a run of calls into the double-precision library, which this compiler has no hardware
-   for and the image does not contain. */
-#define PI 3.14159265358979323846f
 
 /* The classes the loader places in the world, declared here rather than reached through headers of
    their own because each is another unit's to type. Only the members this file touches are named;
@@ -1433,47 +1438,46 @@ static int animeSpeed2;
    takes, and one type per argument. A type-0 argument is a quoted string, a type-1 one a number
    behind a comma and a type-2 one a number standing on its own. The rows are read as plain `int`
    because that is how the reader takes them. */
-static int TEIGI_GRD_IMG[] = {0, 2, 0, 1};
-static int TEIGI_BLD_IMG[] = {1, 2, 0, 1};
-static int TEIGI_SKY_IMG[] = {2, 2, 0, 1};
-static int TEIGI_FIRE_IMG[] = {31, 1, 0};
-static int TEIGI_GRD[] = {3, 7, 0, 1, 1, 1, 1, 1, 1};
-static int TEIGI_BLD[] = {4, 8, 0, 1, 1, 1, 1, 1, 1, 1};
-static int TEIGI_LOD[] = {5, 1, 0};
-static int TEIGI_CRD[] = {6, 1, 0};
-static int TEIGI_SKY[] = {7, 2, 0, 1};
-static int TEIGI_FOG[] = {8, 7, 2, 1, 1, 1, 1, 1, 1};
-static int TEIGI_AMBIENT[] = {9, 3, 2, 1, 1};
-static int TEIGI_LIGHT_COL[] = {10, 7, 2, 1, 1, 1, 1, 1, 1};
-static int TEIGI_FARCLIP[] = {11, 1, 2};
-static int TEIGI_BG_COL2[] = {12, 3, 2, 1, 1};
-static int TEIGI_BG_COL[] = {12, 3, 2, 1, 1};
-static int TEIGI_NORMALCLIP_OFF[] = {13, 1, 2};
-static int TEIGI_RUN_SPEED[] = {14, 1, 2};
-static int TEIGI_EDIT_FOG[] = {16, 7, 2, 1, 1, 1, 1, 1, 1};
-static int TEIGI_WATER_SET[] = {17, 5, 2, 1, 1, 1, 1};
-static int TEIGI_WATER_RGB[] = {18, 3, 2, 1, 1};
-static int TEIGI_WATER_PARAM[] = {19, 7, 2, 1, 1, 1, 1, 1, 1};
-static int TEIGI_LEVEL_FAR[] = {21, 4, 2, 1, 1, 1};
-static int TEIGI_DebugFlag[] = {22, 1, 2};
-static int TEIGI_AnimeSpeed[] = {23, 2, 2, 1};
-static int TEIGI_UPER[] = {24, 8, 0, 1, 1, 1, 1, 1, 1, 1};
-static int TEIGI_UPR_IMG[] = {25, 2, 0, 1};
-static int TEIGI_PLIGHT[] = {26, 9, 2, 1, 1, 1, 1, 1, 1, 1, 1};
-static int TEIGI_ADD_CRD[] = {27, 7, 0, 1, 1, 1, 1, 1, 1};
+static int TEIGI_GRD_IMG[] = {0, 2, TSARG_STRING, TSARG_COMMA_VALUE};
+static int TEIGI_BLD_IMG[] = {1, 2, TSARG_STRING, TSARG_COMMA_VALUE};
+static int TEIGI_SKY_IMG[] = {2, 2, TSARG_STRING, TSARG_COMMA_VALUE};
+static int TEIGI_FIRE_IMG[] = {31, 1, TSARG_STRING};
+static int TEIGI_GRD[] = {3, 7, TSARG_STRING, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_BLD[] = {4, 8, TSARG_STRING, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_LOD[] = {5, 1, TSARG_STRING};
+static int TEIGI_CRD[] = {6, 1, TSARG_STRING};
+static int TEIGI_SKY[] = {7, 2, TSARG_STRING, TSARG_COMMA_VALUE};
+static int TEIGI_FOG[] = {8, 7, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_AMBIENT[] = {9, 3, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_LIGHT_COL[] = {10, 7, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_FARCLIP[] = {11, 1, TSARG_VALUE};
+static int TEIGI_BG_COL2[] = {12, 3, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_BG_COL[] = {12, 3, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_NORMALCLIP_OFF[] = {13, 1, TSARG_VALUE};
+static int TEIGI_RUN_SPEED[] = {14, 1, TSARG_VALUE};
+static int TEIGI_EDIT_FOG[] = {16, 7, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_WATER_SET[] = {17, 5, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_WATER_RGB[] = {18, 3, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_WATER_PARAM[] = {19, 7, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_LEVEL_FAR[] = {21, 4, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_DebugFlag[] = {22, 1, TSARG_VALUE};
+static int TEIGI_AnimeSpeed[] = {23, 2, TSARG_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_UPER[] = {24, 8, TSARG_STRING, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_UPR_IMG[] = {25, 2, TSARG_STRING, TSARG_COMMA_VALUE};
+static int TEIGI_PLIGHT[] = {26, 9, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_ADD_CRD[] = {27, 7, TSARG_STRING, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
 static int TEIGI_DEF_PATS[] = {50, 0};
 static int TEIGI_DEF_ENDS[] = {51, 0};
-static int TEIGI_S_VOLUME[] = {28, 7, 0, 1, 1, 1, 1, 1, 1};
-static int TEIGI_PROJECTION[] = {29, 1, 2};
-static int TEIGI_OBJ_ROT[] = {30, 7, 0, 1, 1, 1, 1, 1, 1};
-static int TEIGI_FIRE[] = {32, 5, 2, 1, 1, 1, 1};
-static int TEIGI_MAPINFO[] = {80, 1, 0};
-static int TEIGI_PT_BASE[] = {52, 2, 0, 1};
-static int TEIGI_PT_COLS[] = {54, 1, 0};
-static int TEIGI_MAPD[] = {53, 32, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-static int TEIGI_PT_FIRE[] = {55, 3, 2, 1, 1};
-static int TEIGI_PT_WATER[] = {56, 9, 2, 1, 1, 1, 1, 1, 1, 1, 1};
+static int TEIGI_S_VOLUME[] = {28, 7, TSARG_STRING, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_PROJECTION[] = {29, 1, TSARG_VALUE};
+static int TEIGI_OBJ_ROT[] = {30, 7, TSARG_STRING, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_FIRE[] = {32, 5, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_MAPINFO[] = {80, 1, TSARG_STRING};
+static int TEIGI_PT_BASE[] = {52, 2, TSARG_STRING, TSARG_COMMA_VALUE};
+static int TEIGI_PT_COLS[] = {54, 1, TSARG_STRING};
+static int TEIGI_MAPD[] = {53, 32, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_PT_FIRE[] = {55, 3, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
+static int TEIGI_PT_WATER[] = {56, 9, TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE};
 
 /* The projection the scene is drawn with, and the editor's own fog beside the renderer's. */
 static float  Projection = 800.0f;
@@ -2072,7 +2076,7 @@ void OPMdsLoad() {
     float         light_x;
 
     attr.clip_depth = 20.0f;
-    attr.clip_enable = 1;
+    attr.clip_enable = true;
     attr.program_option = 0;
 
     nowObjCnt = 0;
@@ -2150,7 +2154,7 @@ void OPMdsLoad() {
         }
 
         if (TEIGI_FARCLIP[0] == (int) argValBuff[i][0]) {
-            attr.far_clip_enable = 1;
+            attr.far_clip_enable = true;
             attr.far_clip = argValBuff[i][1];
         }
 
@@ -2198,7 +2202,7 @@ void OPMdsLoad() {
             op_fogColor[1] = argValBuff[i][4];
             op_fogColor[2] = argValBuff[i][5];
             MGSetFogParm(op_fogRate[0], op_fogRate[1], op_fogColor[0], op_fogColor[1], op_fogColor[2], op_fogRate[2], op_fogRate[3]);
-            attr.fog_enable = 1;
+            attr.fog_enable = true;
         }
 
         if (TEIGI_EDIT_FOG[0] == (int) argValBuff[i][0]) {
@@ -2209,7 +2213,7 @@ void OPMdsLoad() {
             editFogColor[0] = argValBuff[i][3];
             editFogColor[1] = argValBuff[i][4];
             editFogColor[2] = argValBuff[i][5];
-            attr.fog_enable = 1;
+            attr.fog_enable = true;
         }
 
         if (TEIGI_PLIGHT[0] == (int) argValBuff[i][0]) {
@@ -2546,7 +2550,7 @@ static int checkArg(char *buffer, int position, int *command) {
         argValBuff[argLevel][0] = (float) command[0];
 
         switch (command[2 + i]) {
-            case 0:
+            case TSARG_STRING:
                 if (buffer[cursor] != '"') {
                     return -1;
                 }
@@ -2571,7 +2575,7 @@ static int checkArg(char *buffer, int position, int *command) {
                 cursor = skipSpace(buffer, cursor);
                 break;
 
-            case 1:
+            case TSARG_COMMA_VALUE:
                 if (buffer[cursor] != ',') {
                     return -1;
                 }
@@ -2632,7 +2636,7 @@ static int checkArg(char *buffer, int position, int *command) {
                 cursor = skipSpace(buffer, cursor);
                 break;
 
-            case 2:
+            case TSARG_VALUE:
                 if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     argValBuff[argLevel][1 + i] = 1.0f;
                     cursor += 2;

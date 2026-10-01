@@ -168,13 +168,13 @@ void CMajinBeem::Step() {
     int element;
 
     switch (state) {
-        case 0:
+        case MAJIN_BEEM_AIM:
             pitch = atan2f(target[0] - positions[0][0], target[1] - positions[0][1]);
             yaw = atan2f(target[0] - positions[0][0], target[2] - positions[0][2]);
             state++;
             break;
 
-        case 1:
+        case MAJIN_BEEM_TRAVEL:
             for (substep = 0; substep < 3; substep++) {
                 for (element = 0; element < 58; element++) {
                     sceVu0CopyVector(positions[58 - element], positions[57 - element]);
@@ -187,7 +187,7 @@ void CMajinBeem::Step() {
             }
 
             if (counters[58] >= 200) {
-                active = 0;
+                active = false;
             }
 
             break;

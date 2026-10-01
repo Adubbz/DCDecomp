@@ -33,10 +33,6 @@
 #include "vector.hpp"
 #include "wind.hpp"
 
-/* Spelled here rather than reached through a header because the image holds it only as an
-   anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
-#define PI 3.14159265358979323846
-
 /* The rectangle a texture transfer takes, declared here rather than reached through rect.h for the
    reason op_b.cpp declares its own: rect.h's four-argument constructor assigns h, w, y and x in
    that order and every rectangle this file builds assigns them the other way round. The default
@@ -368,7 +364,7 @@ void FaceChange(int actor_no) {
         }
     } else {
         CScript__2.obj[actor_no].mouth = 0;
-        CScript__2.obj[actor_no].talk = 0;
+        CScript__2.obj[actor_no].talk = false;
     }
 
     face[actor_no].mouth = CScript__2.obj[actor_no].mouth;
@@ -393,7 +389,7 @@ void OpC_LoadDataBG() {
         ;
 
     LoadFileBG("opdat/norn2/norn2.pim", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 void OpC_LoadDataBG2() {
@@ -401,7 +397,7 @@ void OpC_LoadDataBG2() {
         ;
 
     LoadFileBG("opdat/norn2/ndance.pak", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 void OpC_LoadDataBG3() {
@@ -409,7 +405,7 @@ void OpC_LoadDataBG3() {
         ;
 
     LoadFileBG("opdat/norn2/majin.pak", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 void OpC_LoadDataBG4() {
@@ -417,7 +413,7 @@ void OpC_LoadDataBG4() {
         ;
 
     LoadFileBG("opdat/norn2/norn2.pim", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 void OpC_LoadDataBG5() {
@@ -425,7 +421,7 @@ void OpC_LoadDataBG5() {
         ;
 
     LoadFileBG("opdat/norn3/norn3.pak", (u_long128 *) read_buffer, 0);
-    CScript__2.load_no = -1;
+    CScript__2.load_no = OP_SCENE_NONE;
 }
 
 /* The set-up for the scene the dance is danced in: the whole of Norune at night, its scenery placed
@@ -487,25 +483,25 @@ void OpC_InitProcess() {
 
 #ifdef PAL
     switch (LanguageCode) {
-        case 0:
+        case LANG_JAPANESE:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 1:
+        case LANG_ENGLISH_US:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 2:
+        case LANG_ENGLISH_UK:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
             break;
-        case 3:
+        case LANG_FRENCH:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
             break;
-        case 4:
+        case LANG_GERMAN:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
             break;
-        case 5:
+        case LANG_ITALIAN:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
             break;
-        case 6:
+        case LANG_SPANISH:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
@@ -521,45 +517,45 @@ void OpC_InitProcess() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "t0201.img", 0);
     tex[0].block_no = 12;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = (char *) GetPackFile(read_buffer, "t0206.img", 0);
     tex[1].block_no = 12;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     tex[2].block_no = 2;
-    tex[2].mipmap = 0;
+    tex[2].mipmap = false;
     tex[3].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
     tex[3].block_no = 2;
-    tex[3].mipmap = 0;
+    tex[3].mipmap = false;
     tex[4].name = (char *) GetPackFile(read_buffer, "p03a01.img", 0);
 #ifdef PAL
     tex[4].block_no = 14;
 #else
     tex[4].block_no = 13;
 #endif
-    tex[4].mipmap = 0;
+    tex[4].mipmap = false;
     tex[5].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
 #ifdef PAL
     tex[5].block_no = 15;
 #else
     tex[5].block_no = 14;
 #endif
-    tex[5].mipmap = 0;
+    tex[5].mipmap = false;
     tex[6].name = (char *) GetPackFile(read_buffer, "p07a01.img", 0);
     tex[6].block_no = 7;
-    tex[6].mipmap = 0;
+    tex[6].mipmap = false;
     tex[7].name = (char *) GetPackFile(read_buffer, "yokobue.img", 0);
     tex[7].block_no = 7;
-    tex[7].mipmap = 0;
+    tex[7].mipmap = false;
     tex[8].name = (char *) GetPackFile(read_buffer, "p02a01.img", 0);
     tex[8].block_no = 8;
-    tex[8].mipmap = 0;
+    tex[8].mipmap = false;
     tex[9].name = (char *) GetPackFile(read_buffer, "guiter.img", 0);
     tex[9].block_no = 8;
-    tex[9].mipmap = 0;
+    tex[9].mipmap = false;
     tex[10].name = 0;
     tex[10].block_no = 0;
-    tex[10].mipmap = 0;
+    tex[10].mipmap = false;
 
     TexManager.LoadTextureBlock(-1, tex);
 
@@ -602,23 +598,23 @@ void OpC_InitProcess() {
     CSnd.SetReverb(0, 3, 20);
     CSnd.SetReverb(1, 4, 5);
     CSnd.LoadSoundFileFromPack("o03a.txt", read_buffer);
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
-    CSnd.SQ_Play(1, 0);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
+    CSnd.SQ_Play(MIDI_PORT_AMBIENT, 0);
 
     sceVu0FVECTOR river1 = {50.0f, 100.0f, -100.0f, 0.0f};
 
-    OpPlayVolPanSE(river1, 50.0f, 500.0f, 15, 16, 21);
+    OpPlayVolPanSE(river1, 50.0f, 500.0f, MIDI_PORT_SE_TITLE, 16, 21);
 
     sceVu0FVECTOR river2 = {0.0f, 0.0f, 0.0f, 0.0f};
 
-    OpPlayVolPanSE(river2, 50.0f, 500.0f, 15, 16, 22);
+    OpPlayVolPanSE(river2, 50.0f, 500.0f, MIDI_PORT_SE_TITLE, 16, 22);
 
     sceVu0FVECTOR river3 = {0.0f, 0.0f, 300.0f, 0.0f};
 
-    OpPlayVolPanSE(river3, 100.0f, 300.0f, 15, 16, 24);
+    OpPlayVolPanSE(river3, 100.0f, 300.0f, MIDI_PORT_SE_TITLE, 16, 24);
     CSnd.Step();
     DanceBgmStart = 0;
     DanceBgmCnt = 0;
@@ -628,7 +624,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr11;
 
-    attr11.clip_enable = 0;
+    attr11.clip_enable = false;
     Chara__3[11].frame->SetAttr(attr11, 1, 4);
     Chara__3[11].motion_type.state.time = 10.0f;
     Chara__3[11].motion_type.state.blend_step = 0.05f;
@@ -639,7 +635,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr17;
 
-    attr17.clip_enable = 0;
+    attr17.clip_enable = false;
     Chara__3[17].frame->SetAttr(attr17, 1, 4);
     Chara__3[17].motion_type.state.time = 10.0f;
     Chara__3[17].motion_type.state.blend_step = 0.05f;
@@ -650,7 +646,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr18;
 
-    attr18.clip_enable = 0;
+    attr18.clip_enable = false;
     Chara__3[18].frame->SetAttr(attr18, 1, 4);
     Chara__3[18].motion_type.state.time = 10.0f;
     Chara__3[18].motion_type.state.blend_step = 0.05f;
@@ -661,7 +657,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr12;
 
-    attr12.clip_enable = 0;
+    attr12.clip_enable = false;
     Chara__3[12].frame->SetAttr(attr12, 1, 4);
     Chara__3[12].motion_type.state.time = 10.0f;
     Chara__3[12].motion_type.state.blend_step = 0.05f;
@@ -673,7 +669,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr13;
 
-    attr13.clip_enable = 0;
+    attr13.clip_enable = false;
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
     Chara__3[13].motion_type.state.time = 10.0f;
     Chara__3[13].motion_type.state.blend_step = 0.05f;
@@ -746,7 +742,7 @@ void OpC_InitProcess() {
     }
 
     for (int i = 0; i < 3; i++) {
-        CBeem[i].active = 0;
+        CBeem[i].active = false;
         CBeem[i].alphas[59] = 0.0f;
     }
 
@@ -790,7 +786,7 @@ void OpC_InitProcess2() {
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(0, tex);
@@ -801,7 +797,7 @@ void OpC_InitProcess2() {
 #else
     tex[0].block_no = 17;
 #endif
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
 #ifdef PAL
@@ -820,7 +816,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p05b01.img", 0);
     tex[0].block_no = 4;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(4, tex);
@@ -828,7 +824,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr14;
 
-    attr14.clip_enable = 0;
+    attr14.clip_enable = false;
     Chara__3[14].frame->SetAttr(attr14, 1, 4);
     Chara__3[14].motion_type.state.time = 1.0f;
     Chara__3[14].motion_type.state.blend_step = 1.0f;
@@ -837,7 +833,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p15a01.img", 0);
     tex[0].block_no = 9;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(9, tex);
@@ -845,7 +841,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr19;
 
-    attr19.clip_enable = 0;
+    attr19.clip_enable = false;
     Chara__3[19].frame->SetAttr(attr19, 1, 4);
     Chara__3[19].motion_type.state.time = 1.0f;
     Chara__3[19].motion_type.state.blend_step = 1.0f;
@@ -856,7 +852,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr20;
 
-    attr20.clip_enable = 0;
+    attr20.clip_enable = false;
     Chara__3[20].frame->SetAttr(attr20, 1, 4);
     Chara__3[20].motion_type.state.time = 1.0f;
     Chara__3[20].motion_type.state.blend_step = 1.0f;
@@ -865,7 +861,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p01a01.img", 0);
     tex[0].block_no = 5;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(5, tex);
@@ -873,7 +869,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr15;
 
-    attr15.clip_enable = 0;
+    attr15.clip_enable = false;
     Chara__3[15].frame->SetAttr(attr15, 1, 4);
     Chara__3[15].motion_type.state.time = 300.0f;
     Chara__3[15].motion_type.state.blend_step = 0.5f;
@@ -882,7 +878,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p12a01.img", 0);
     tex[0].block_no = 6;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(6, tex);
@@ -890,7 +886,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr16;
 
-    attr16.clip_enable = 0;
+    attr16.clip_enable = false;
     Chara__3[16].frame->SetAttr(attr16, 1, 4);
     Chara__3[16].motion_type.state.time = 300.0f;
     Chara__3[16].motion_type.state.blend_step = 0.5f;
@@ -922,13 +918,13 @@ void OpC_InitProcess3() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "b0203.img", 0);
     tex[0].block_no = 10;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = (char *) GetPackFile(read_buffer, "b0204.img", 0);
     tex[1].block_no = 10;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = (char *) GetPackFile(read_buffer, "tukikage.img", 0);
     tex[2].block_no = 10;
-    tex[2].mipmap = 0;
+    tex[2].mipmap = false;
     tex[3].name = 0;
 
     TexManager.LoadTextureBlock(10, tex);
@@ -939,7 +935,7 @@ void OpC_InitProcess3() {
 #else
     tex[0].block_no = 15;
 #endif
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
 #ifdef PAL
@@ -954,7 +950,7 @@ void OpC_InitProcess3() {
 #else
     tex[0].block_no = 16;
 #endif
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
 #ifdef PAL
@@ -969,7 +965,7 @@ void OpC_InitProcess3() {
 #else
     tex[0].block_no = 17;
 #endif
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
 #ifdef PAL
@@ -983,7 +979,7 @@ void OpC_InitProcess3() {
 
     CFrameAttr attr1;
 
-    attr1.clip_enable = 0;
+    attr1.clip_enable = false;
     Chara__3[1].frame->SetAttr(attr1, 1, 4);
     Chara__3[1].motion_type.state.time = 10.0f;
     Chara__3[1].motion_type.state.blend_step = 0.5f;
@@ -994,7 +990,7 @@ void OpC_InitProcess3() {
 
     CFrameAttr attr3;
 
-    attr3.clip_enable = 0;
+    attr3.clip_enable = false;
     Chara__3[3].frame->SetAttr(attr3, 1, 4);
     Chara__3[3].motion_type.state.time = 10.0f;
     Chara__3[3].motion_type.state.blend_step = 0.5f;
@@ -1003,8 +999,8 @@ void OpC_InitProcess3() {
 
     CFrameAttr sky_attr;
 
-    sky_attr.use_color = 1;
-    sky_attr.depth_write = 0;
+    sky_attr.use_color = true;
+    sky_attr.depth_write = false;
 
     CFrameVu1 *frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0203.mds", 0), &MapDataBuffer, 2, 0, 0);
 
@@ -1055,10 +1051,10 @@ void OpC_InitProcess3() {
     CSnd.SetReverb(0, 4, 50);
     CSnd.SetReverb(1, 4, 5);
     CSnd.LoadSoundFileFromPack("o03b.txt", read_buffer);
-    CSnd.SetVol(15, 256);
-    CSnd.SetVol(14, 256);
-    CSnd.SetVol(13, 256);
-    CSnd.SetVol(12, 256);
+    CSnd.SetVol(MIDI_PORT_SE_TITLE, 256);
+    CSnd.SetVol(MIDI_PORT_SE_DEFAULT, 256);
+    CSnd.SetVol(MIDI_PORT_UNK_D, 256);
+    CSnd.SetVol(MIDI_PORT_SE_SPECIAL, 256);
     MajinBgmStart = 0;
     SndCnt = 0;
     CScript__2.init_no = 0;
@@ -1095,55 +1091,55 @@ void OpC_InitProcess4() {
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = (char *) GetPackFile(read_buffer, "t0203.img", 0);
     tex[2].block_no = 10;
-    tex[2].mipmap = 0;
+    tex[2].mipmap = false;
     tex[3].name = (char *) GetPackFile(read_buffer, "e01b01.img", 0);
     tex[3].block_no = 10;
-    tex[3].mipmap = 0;
+    tex[3].mipmap = false;
     tex[4].name = (char *) GetPackFile(read_buffer, "e01b02.img", 0);
     tex[4].block_no = 10;
-    tex[4].mipmap = 0;
+    tex[4].mipmap = false;
     tex[5].name = (char *) GetPackFile(read_buffer, "e01b03.img", 0);
     tex[5].block_no = 10;
-    tex[5].mipmap = 0;
+    tex[5].mipmap = false;
     tex[6].name = (char *) GetPackFile(read_buffer, "e01t01.img", 0);
 #ifdef PAL
     tex[6].block_no = 13;
 #else
     tex[6].block_no = 10;
 #endif
-    tex[6].mipmap = 0;
+    tex[6].mipmap = false;
     tex[7].name = (char *) GetPackFile(read_buffer, "t0205.img", 0);
     tex[7].block_no = 10;
-    tex[7].mipmap = 0;
+    tex[7].mipmap = false;
     tex[8].name = (char *) GetPackFile(read_buffer, "t0003.img", 0);
     tex[8].block_no = 11;
-    tex[8].mipmap = 0;
+    tex[8].mipmap = false;
     tex[9].name = (char *) GetPackFile(read_buffer, "e01s03.img", 0);
     tex[9].block_no = 11;
-    tex[9].mipmap = 0;
+    tex[9].mipmap = false;
     tex[10].name = (char *) GetPackFile(read_buffer, "e01s06.img", 0);
     tex[10].block_no = 11;
-    tex[10].mipmap = 0;
+    tex[10].mipmap = false;
     tex[11].name = (char *) GetPackFile(read_buffer, "t0001.img", 0);
     tex[11].block_no = 11;
-    tex[11].mipmap = 0;
+    tex[11].mipmap = false;
     tex[12].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
 #ifdef PAL
     tex[12].block_no = 18;
 #else
     tex[12].block_no = 17;
 #endif
-    tex[12].mipmap = 0;
+    tex[12].mipmap = false;
     tex[13].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
 #ifdef PAL
     tex[13].block_no = 18;
 #else
     tex[13].block_no = 17;
 #endif
-    tex[13].mipmap = 0;
+    tex[13].mipmap = false;
     tex[14].name = 0;
 
     TexManager.LoadTextureBlock(-1, tex);
@@ -1189,7 +1185,7 @@ void OpC_InitProcess5() {
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(0, tex);
@@ -1200,28 +1196,28 @@ void OpC_InitProcess5() {
 #else
     tex[0].block_no = 17;
 #endif
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
 #ifdef PAL
     tex[1].block_no = 18;
 #else
     tex[1].block_no = 17;
 #endif
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
 #ifdef PAL
     tex[2].block_no = 18;
 #else
     tex[2].block_no = 17;
 #endif
-    tex[2].mipmap = 0;
+    tex[2].mipmap = false;
     tex[3].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
 #ifdef PAL
     tex[3].block_no = 18;
 #else
     tex[3].block_no = 17;
 #endif
-    tex[3].mipmap = 0;
+    tex[3].mipmap = false;
     tex[4].name = 0;
 
 #ifdef PAL
@@ -1237,7 +1233,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr11;
 
-    attr11.clip_enable = 0;
+    attr11.clip_enable = false;
     Chara__3[11].frame->SetAttr(attr11, 1, 4);
     Chara__3[11].motion_type.state.time = 10.0f;
     Chara__3[11].motion_type.state.blend_step = 0.05f;
@@ -1247,10 +1243,10 @@ void OpC_InitProcess5() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p09a01.img", 0);
     tex[0].block_no = 3;
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
     tex[1].block_no = 3;
-    tex[1].mipmap = 0;
+    tex[1].mipmap = false;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(3, tex);
@@ -1258,7 +1254,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr9;
 
-    attr9.clip_enable = 0;
+    attr9.clip_enable = false;
     Chara__3[9].frame->SetAttr(attr9, 1, 4);
     Chara__3[9].motion_type.state.time = 5.0f;
     Chara__3[9].motion_type.state.blend_step = 1.0f;
@@ -1271,7 +1267,7 @@ void OpC_InitProcess5() {
 #else
     tex[0].block_no = 14;
 #endif
-    tex[0].mipmap = 0;
+    tex[0].mipmap = false;
     tex[1].name = 0;
 
 #ifdef PAL
@@ -1283,7 +1279,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr13;
 
-    attr13.clip_enable = 0;
+    attr13.clip_enable = false;
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
     Chara__3[13].motion_type.state.time = 5.0f;
     Chara__3[13].motion_type.state.blend_step = 1.0f;
@@ -1294,7 +1290,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr18;
 
-    attr18.clip_enable = 0;
+    attr18.clip_enable = false;
     Chara__3[18].frame->SetAttr(attr18, 1, 4);
     Chara__3[18].motion_type.state.time = 10.0f;
     Chara__3[18].motion_type.state.blend_step = 0.5f;
@@ -1305,7 +1301,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr1;
 
-    attr1.clip_enable = 0;
+    attr1.clip_enable = false;
     Chara__3[1].frame->SetAttr(attr1, 1, 4);
     Chara__3[1].motion_type.state.time = 10.0f;
     Chara__3[1].motion_type.state.blend_step = 0.5f;
@@ -1316,7 +1312,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr3;
 
-    attr3.clip_enable = 0;
+    attr3.clip_enable = false;
     Chara__3[3].frame->SetAttr(attr3, 1, 4);
     Chara__3[3].motion_type.state.time = 10.0f;
     Chara__3[3].motion_type.state.blend_step = 0.5f;
@@ -1480,7 +1476,7 @@ static void MapLoad() {
     int        i;
     CFrameVu1 *ground_frame;
 
-    attr.fog_enable = 1;
+    attr.fog_enable = true;
     MapDataBuffer.used = 0;
 
     for (i = 0; i < 75; i++) {
@@ -1512,7 +1508,7 @@ static void MapLoad() {
         OP_NornMapObj[i].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180), (float) (PI * norn[i].rotation[1] / 180), (float) (PI * norn[i].rotation[2] / 180)));
+        object.SetRotation(CVector3_f_((float) (PI_D * norn[i].rotation[0] / 180), (float) (PI_D * norn[i].rotation[1] / 180), (float) (PI_D * norn[i].rotation[2] / 180)));
 
         object.FrameObjectOnOff("win1", 0);
         object.FrameObjectOnOff("light1", 0);
@@ -1648,7 +1644,7 @@ static void MapLoad() {
         OP_NornMapObj2[j].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * ground[j].position[0], 10.0f * ground[j].position[1], 10.0f * ground[j].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * ground[j].rotation[0] / 180), (float) (PI * ground[j].rotation[1] / 180), (float) (PI * ground[j].rotation[2] / 180)));
+        object.SetRotation(CVector3_f_((float) (PI_D * ground[j].rotation[0] / 180), (float) (PI_D * ground[j].rotation[1] / 180), (float) (PI_D * ground[j].rotation[2] / 180)));
     }
 }
 
@@ -1746,7 +1742,7 @@ static void MapLoad2() {
     int        i;
     CFrameVu1 *ground_frame;
 
-    attr.fog_enable = 1;
+    attr.fog_enable = true;
     CharaDataBuffer__2[0].used = 0;
 
     for (i = 0; i < 76; i++) {
@@ -1777,7 +1773,7 @@ static void MapLoad2() {
         OP_NornMapObj[i].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180), (float) (PI * norn[i].rotation[1] / 180), (float) (PI * norn[i].rotation[2] / 180)));
+        object.SetRotation(CVector3_f_((float) (PI_D * norn[i].rotation[0] / 180), (float) (PI_D * norn[i].rotation[1] / 180), (float) (PI_D * norn[i].rotation[2] / 180)));
 
         object.FrameObjectOnOff("win1", 0);
         object.FrameObjectOnOff("light1", 0);
@@ -1876,7 +1872,7 @@ static void MapLoad2() {
         OP_NornMapObj2[j].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * ground[j].position[0], 10.0f * ground[j].position[1], 10.0f * ground[j].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * ground[j].rotation[0] / 180), (float) (PI * ground[j].rotation[1] / 180), (float) (PI * ground[j].rotation[2] / 180)));
+        object.SetRotation(CVector3_f_((float) (PI_D * ground[j].rotation[0] / 180), (float) (PI_D * ground[j].rotation[1] / 180), (float) (PI_D * ground[j].rotation[2] / 180)));
 
         if (j == 0) {
             object.FrameObjectOnOff("sun3", 0);
@@ -1991,7 +1987,7 @@ void OpC_MotionProcess() {
     if (!Pause) {
         ObjAnimePlay(&Fuusya[0]);
 
-        if (CScript__2.scene != 7) {
+        if (CScript__2.scene != OP_SCENE_NORUNE_BURNING) {
             ObjAnimePlay(&Fuusya[1]);
         } else if (CScript__2.camera_start > 34) {
             ObjAnimePlay(&Fuusya[1]);
@@ -1999,7 +1995,7 @@ void OpC_MotionProcess() {
     }
 
     if (!Pause) {
-        if (CScript__2.scene == 7) {
+        if (CScript__2.scene == OP_SCENE_NORUNE_BURNING) {
             for (int i = 0; i < 5; i++) {
                 ObjAnimePlay(&Taimatsu[i]);
             }
@@ -2101,19 +2097,19 @@ void OpC_MotionProcess() {
  */
 static void LoadCharaMajin() {
     switch (CScript__2.obj[4].load_step) {
-        case 0:
+        case TSLOAD_START:
             LoadFileBG("opdat/norn2/majinb.pak", (u_long128 *) read_buffer, 0);
-            CScript__2.obj[4].load_step = 1;
+            CScript__2.obj[4].load_step = TSLOAD_WAIT;
             break;
 
-        case 1:
+        case TSLOAD_WAIT:
             if (!ReadBGSync()) {
-                CScript__2.obj[4].load_step = 2;
+                CScript__2.obj[4].load_step = TSLOAD_UNPACK;
             }
 
             break;
 
-        case 2:
+        case TSLOAD_UNPACK:
             Chara__3[4].Initialize();
             Chara__3[4].LoadPackData(read_buffer, "04c08b.cfg", &CharaDataBuffer__2[6], 0);
             Chara__3[4].motion_type.state.time = 5.0f;
@@ -2121,7 +2117,7 @@ static void LoadCharaMajin() {
             Chara__3[4].motion_type.state.motion_no = 0;
             Chara__3[4].motion_type.state.playing_no = 0;
             CScript__2.obj[4].load = -1;
-            CScript__2.obj[4].load_step = -1;
+            CScript__2.obj[4].load_step = TSLOAD_NONE;
             break;
     }
 }
@@ -2157,7 +2153,7 @@ void OpC_SoundProcess() {
 
     if (CScript__2.camera_start == 70) {
         if (!se) {
-            CSnd.SQ_Play(1, 0);
+            CSnd.SQ_Play(MIDI_PORT_AMBIENT, 0);
             se = 1;
         }
     } else {
@@ -2280,9 +2276,9 @@ void OpC_SoundProcess() {
             if (motion_frame > 73.0f && motion_frame < 75.0f) {
 #endif
                 if (footstep_ground == 40) {
-                    OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
+                    OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 20);
                 } else {
-                    OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 32);
+                    OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 32);
                 }
 
                 wait = 4;
@@ -2292,9 +2288,9 @@ void OpC_SoundProcess() {
             } else if (motion_frame > 83.0f && motion_frame < 85.0f) {
 #endif
                 if (footstep_ground == 40) {
-                    OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 21);
+                    OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 } else {
-                    OpPlayVolPanSE(position, 10.0f, (float) (footstep_ground - footstep_ground + 400), 14, 21, 33);
+                    OpPlayVolPanSE(position, 10.0f, (float) (footstep_ground - footstep_ground + 400), MIDI_PORT_SE_DEFAULT, 21, 33);
                 }
 
                 wait = 4;
@@ -2318,14 +2314,14 @@ void OpC_SoundProcess() {
 #else
             if (motion_frame > 258.0f && motion_frame < 260.0f) {
 #endif
-                OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
+                OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
 #ifdef PAL
             } else if (motion_frame > 268.0f && motion_frame < 271) {
 #else
             } else if (motion_frame > 268.0f && motion_frame < 270.0f) {
 #endif
-                OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 21);
+                OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
         } else {
@@ -2347,14 +2343,14 @@ void OpC_SoundProcess() {
 #else
             if (motion_frame > 123.0f && motion_frame < 125.0f) {
 #endif
-                OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 20);
+                OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
 #ifdef PAL
             } else if (motion_frame > 133.0f && motion_frame < 136.0f) {
 #else
             } else if (motion_frame > 133.0f && motion_frame < 135.0f) {
 #endif
-                OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 21);
+                OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
         } else {
@@ -2362,7 +2358,7 @@ void OpC_SoundProcess() {
         }
     }
 
-    if (CScript__2.scene == 6 && CScript__2.obj[12].disp) {
+    if (CScript__2.scene == OP_SCENE_NORUNE_RUINED && CScript__2.obj[12].disp) {
         static int    wait = 0;
         sceVu0FVECTOR position;
         float         motion_frame;
@@ -2376,14 +2372,14 @@ void OpC_SoundProcess() {
 #else
             if (motion_frame > 33.0f && motion_frame < 35.0f) {
 #endif
-                OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 20);
+                OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
 #ifdef PAL
             } else if (motion_frame > 43.0f && motion_frame < 46.0f) {
 #else
             } else if (motion_frame > 43.0f && motion_frame < 45.0f) {
 #endif
-                OpPlayVolPanSE(position, 10.0f, 300.0f, 14, 21, 21);
+                OpPlayVolPanSE(position, 10.0f, 300.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
         } else {
@@ -2441,7 +2437,7 @@ void OpC_DrawProcess() {
     MGSetFogParm(op_fogRate[0], far_fog, op_fogColor[0], op_fogColor[1], op_fogColor[2], op_fogRate[2], op_fogRate[3]);
 
     switch (CScript__2.scene) {
-        case 5:
+        case OP_SCENE_MAJIN:
             TexManager.ReloadTexture(Vif1Packet, 10);
 
             for (int i = 0; i < 3; i++) {
@@ -2454,7 +2450,7 @@ void OpC_DrawProcess() {
 
             break;
 
-        case 7:
+        case OP_SCENE_NORUNE_BURNING:
             TexManager.ReloadTexture(Vif1Packet, 10);
 
 #ifdef PAL
@@ -2673,7 +2669,7 @@ void OpC_DrawProcess() {
         } break;
     }
 
-    if (CScript__2.scene == 5 && CScript__2.camera_start > 76 && CScript__2.camera_start < 86) {
+    if (CScript__2.scene == OP_SCENE_MAJIN && CScript__2.camera_start > 76 && CScript__2.camera_start < 86) {
         sceGsTex0 back;
 
         MGGetFBuffBackTex(&back);
@@ -2693,7 +2689,7 @@ void OpC_DrawProcess() {
                 Chara__3[i].ShadowStep();
             }
 
-            if (CScript__2.scene != 5) {
+            if (CScript__2.scene != OP_SCENE_MAJIN) {
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, Chara__3[i].pos);
@@ -2714,7 +2710,7 @@ void OpC_DrawProcess() {
                 Chara__3[i].ClothStep(0);
             }
 
-            if (CScript__2.scene != 5) {
+            if (CScript__2.scene != OP_SCENE_MAJIN) {
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, Chara__3[i].pos);
@@ -2726,7 +2722,7 @@ void OpC_DrawProcess() {
         }
     }
 
-    if (CScript__2.scene == 4) {
+    if (CScript__2.scene == OP_SCENE_DANCE) {
         InchikiShadow();
         DrawDancer();
     }
@@ -2736,11 +2732,11 @@ void OpC_DrawProcess() {
         WaterProcess();
     }
 
-    if (CScript__2.scene != 5 && CScript__2.camera_start < 60) {
+    if (CScript__2.scene != OP_SCENE_MAJIN && CScript__2.camera_start < 60) {
         TexManager.ReloadTexture(Vif1Packet, 23);
         MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buff", -1)->tex0);
 
-        if (CScript__2.scene != 7) {
+        if (CScript__2.scene != OP_SCENE_NORUNE_BURNING) {
             for (int i = 0; i < 75; i++) {
                 CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
@@ -2763,7 +2759,7 @@ void OpC_DrawProcess() {
         MGEndDrawShadow(52);
     }
 
-    if (CScript__2.scene != 5 && OP_FireList > 0) {
+    if (CScript__2.scene != OP_SCENE_MAJIN && OP_FireList > 0) {
         TexManager.ReloadTexture(GetVif1Packet(), 0);
 
         if (!Pause && FireStep >= 1.0f) {
@@ -2777,7 +2773,7 @@ void OpC_DrawProcess() {
 
         sceVu0CopyVector(eye, OP_CharaFrame__2->position);
 
-        if (CScript__2.scene != 7) {
+        if (CScript__2.scene != OP_SCENE_NORUNE_BURNING) {
             for (int i = 0; i < 22; i++) {
                 float z = OP_FirePosition[i][2];
                 float y = OP_FirePosition[i][1];
@@ -2822,18 +2818,18 @@ void OpC_DrawProcess() {
         }
     }
 
-    if (CScript__2.scene >= 5) {
+    if (CScript__2.scene >= OP_SCENE_MAJIN) {
         if (CScript__2.camera_start == 77 && Cam__2[SceneNp__2].motion_type.state.time > 37.5f && !MajinBgmStart) {
             MajinBgmStart = 1;
             OpBgmSqPort = 0;
             OpBgmPlay();
-            CSnd.Fade(1, -1.0f, 0);
+            CSnd.Fade(MIDI_PORT_AMBIENT, -1.0f, 0);
         }
 
         MajinBeemProcess();
     }
 
-    if (CScript__2.scene == 7) {
+    if (CScript__2.scene == OP_SCENE_NORUNE_BURNING) {
 #ifdef PAL
         TexManager.ReloadTexture(Vif1Packet, 18);
 #else
@@ -2842,26 +2838,26 @@ void OpC_DrawProcess() {
         SmokeProcess();
     }
 
-    if (CScript__2.scene >= 6) {
+    if (CScript__2.scene >= OP_SCENE_NORUNE_RUINED) {
         if (CScript__2.bom_req) {
             int   bomb = CScript__2.bom_no;
             float size = CScript__2.bom_size[bomb];
 
             for (int i = 0; i < 8; i++) {
                 sceVu0CopyVector(CBomb[bomb].positions[i], CScript__2.bom_pos[bomb]);
-                CBomb[bomb].phases[i] = 0;
+                CBomb[bomb].phases[i] = BOMB_PHASE_BURST;
                 CBomb[bomb].counters[i] = -(i * 3);
                 CBomb[bomb].alphas[i] = 128.0f;
                 CBomb[bomb].sizes[i] = size;
                 CBomb[bomb].active[i] = 1;
             }
 
-            CBomb[bomb].phases[0] = 2;
-            CBomb[bomb].phases[1] = 1;
+            CBomb[bomb].phases[0] = BOMB_PHASE_LINGER;
+            CBomb[bomb].phases[1] = BOMB_PHASE_BLOOM;
             CBomb[bomb].alphas[5] = 32.0f;
             CBomb[bomb].alphas[6] = 32.0f;
             CBomb[bomb].alphas[7] = 32.0f;
-            CScript__2.bom_req = 0;
+            CScript__2.bom_req = false;
         }
 
 #ifdef PAL
@@ -3196,13 +3192,13 @@ static void MajinBeemProcess() {
         float speed;
 
 #ifdef PAL
-        if (CScript__2.scene == 5) {
+        if (CScript__2.scene == OP_SCENE_MAJIN) {
             speed = 5.4f;
         } else {
             speed = 9.6f;
         }
 #else
-        if (CScript__2.scene == 5) {
+        if (CScript__2.scene == OP_SCENE_MAJIN) {
             speed = 4.5f;
         } else {
             speed = 8.0f;
@@ -3242,7 +3238,7 @@ static void MajinBeemProcess() {
 
                 for (int i = 0; i < 60; i++) {
                     sceVu0CopyVector(CBeem[beam].positions[i], pos);
-                    CBeem[beam].state = 0;
+                    CBeem[beam].state = MAJIN_BEEM_AIM;
                     CBeem[beam].counters[i] = -i;
                     CBeem[beam].alphas[i] = 128.0f - (float) (2 * i);
                     CBeem[beam].sizes[i] = 20.0f - (float) (i / 3);
@@ -3251,7 +3247,7 @@ static void MajinBeemProcess() {
                         CBeem[beam].sizes[i] = 8.0f;
                     }
 
-                    CBeem[beam].active = 1;
+                    CBeem[beam].active = true;
                 }
 
                 for (int i = 0; i < 10; i++) {
@@ -3266,7 +3262,7 @@ static void MajinBeemProcess() {
 
                 for (int i = 0; i < 60; i++) {
                     sceVu0CopyVector(CBeem[beam].positions[i], pos);
-                    CBeem[beam].state = 0;
+                    CBeem[beam].state = MAJIN_BEEM_AIM;
                     CBeem[beam].counters[i] = -i;
                     CBeem[beam].alphas[i] = 128.0f - (float) (2 * i);
                     CBeem[beam].sizes[i] = 20.0f - (float) (i / 3);
@@ -3275,7 +3271,7 @@ static void MajinBeemProcess() {
                         CBeem[beam].sizes[i] = 8.0f;
                     }
 
-                    CBeem[beam].active = 1;
+                    CBeem[beam].active = true;
                 }
 
                 for (int i = 0; i < 10; i++) {
@@ -3291,7 +3287,7 @@ static void MajinBeemProcess() {
 
             for (int i = 0; i < 60; i++) {
                 sceVu0CopyVector(CBeem[beam].positions[i], CScript__2.beem_from[beam]);
-                CBeem[beam].state = 0;
+                CBeem[beam].state = MAJIN_BEEM_AIM;
                 CBeem[beam].counters[i] = -i;
                 CBeem[beam].alphas[i] = 128.0f - (float) (2 * i);
                 CBeem[beam].sizes[i] = 20.0f - (float) (i / 3);
@@ -3300,7 +3296,7 @@ static void MajinBeemProcess() {
                     CBeem[beam].sizes[i] = 8.0f;
                 }
 
-                CBeem[beam].active = 1;
+                CBeem[beam].active = true;
             }
 
             for (int i = 0; i < 10; i++) {
@@ -3311,7 +3307,7 @@ static void MajinBeemProcess() {
             CBeem[beam].sizes[59] = 0.0f;
         }
 
-        CScript__2.beem_req = 0;
+        CScript__2.beem_req = false;
     }
 
 #ifdef PAL
@@ -3328,7 +3324,7 @@ static void MajinBeemProcess() {
         CBeem[i].Draw(&OP_MainCamera);
     }
 
-    if (CScript__2.obj[1].disp && CScript__2.scene == 5) {
+    if (CScript__2.obj[1].disp && CScript__2.scene == OP_SCENE_MAJIN) {
         sceVu0FVECTOR head;
         int           part;
 
@@ -3385,7 +3381,7 @@ static void SmokeProcess() {
         sceVu0CopyVector(param.position, position);
         param.position_oscillation_flags = 1;
         param.wobble_scale = 0.5f * rand() / 2147483648.0f;
-        param.wobble_rate = (float) PI / (20.0f + 10 * rand() / 2147483648.0f);
+        param.wobble_rate = (float) PI_D / (20.0f + 10 * rand() / 2147483648.0f);
         param.opacity_mode = 2;
         param.render_flags = 1;
         param.opacity = 0.15f;
@@ -3428,7 +3424,7 @@ static void SmokeProcess() {
         sceVu0CopyVector(param2.position, position);
         param2.position_oscillation_flags = 1;
         param2.wobble_scale = 0.5f * rand() / 2147483648.0f;
-        param2.wobble_rate = (float) PI / (20.0f + 10 * rand() / 2147483648.0f);
+        param2.wobble_rate = (float) PI_D / (20.0f + 10 * rand() / 2147483648.0f);
         param2.opacity_mode = 2;
         param2.render_flags = 1;
         param2.opacity = 0.15f;
@@ -3544,7 +3540,7 @@ static int KageCheck(int actor) {
         return 0;
     }
 
-    if (CScript__2.scene < 7 && actor == 18) {
+    if (CScript__2.scene < OP_SCENE_NORUNE_BURNING && actor == 18) {
         return 0;
     }
 
@@ -3628,7 +3624,7 @@ static void LightSet(float x, float y, float z, int actor) {
 
     sceVu0CopyVector(ambient, ambientlight);
 
-    if (CScript__2.scene != 7) {
+    if (CScript__2.scene != OP_SCENE_NORUNE_BURNING) {
         falloff = (int) DistVector(from, to) / 10;
 
         if (falloff > 20) {

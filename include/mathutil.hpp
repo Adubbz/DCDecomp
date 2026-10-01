@@ -8,6 +8,17 @@
  */
 
 /**
+ * How VectorInterpolate and AngleInterpolate move toward their target.
+ */
+// clang-format off
+enum InterpolateMode {
+    INTERPOLATE_STEP     = 0, /**< A fixed step, snapping when closer. */
+    INTERPOLATE_FRACTION = 1, /**< The gap divided by the step. */
+};
+
+// clang-format on
+
+/**
  * Runs a constructor over every element of an array.
  *
  * @mangled __construct_array

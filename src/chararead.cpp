@@ -14,6 +14,7 @@
 #include "framevu1.hpp"
 #include "gameutil.hpp"
 #include "mds.hpp"
+#include "scriptinterpreter.hpp"
 #include "sysmes.hpp"
 #include "texture.hpp"
 
@@ -24,7 +25,7 @@ typedef MOTION_INFO tagMOTION_KEY;
  */
 struct COMMAND_INFO {
     char *name;          /**< Keyword that introduces the command. */
-    int   arg_types[16]; /**< Type of each argument (0 string, 1 integer, 2 float), ended by -1. */
+    int   arg_types[16]; /**< SCRIPT_ARGUMENT_TYPE of each argument, ended by -1. */
 };
 
 u_int *GetPackFile(u_int *pack, char *name, int *size = 0);
@@ -89,25 +90,25 @@ static char   alloc_sdbuff[9][16];
 static u_int *load_img[4];
 
 static COMMAND_INFO Command[19] = {
-    {"VERTEX_ANIME",        {1, -1}         },
-    {"SHADOW_VERTEX_ANIME", {1, -1}         },
-    {"MODEL",               {0, -1}         },
-    {"SHADOW_MODEL",        {0, -1}         },
-    {"MOTION",              {1, 0, 0, 0, -1}},
-    {"SHADOW_MOTION",       {0, 0, 0, -1}   },
-    {"KEY",                 {1, 1, 2, -1}   },
-    {"KEY_START",           {1, -1}         },
-    {"MOTION_END",          {-1}            },
-    {"CLOTH",               {0, -1}         },
-    {"BODY_SIZE",           {2, 2, 2, -1}   },
-    {"ALLOC_MDT",           {0, -1}         },
-    {"ALLOC_DBUFF",         {0, -1}         },
-    {"ALLOC_SHADOW_MDT",    {0, -1}         },
-    {"ALLOC_SHADOW_DBUFF",  {0, -1}         },
-    {"IMG",                 {1, 0, -1}      },
-    {"IMG_END",             {-1}            },
-    {"FOOT",                {2, 2, -1}      },
-    {"EVENT",               {2, 1, 1, -1}   }
+    {"VERTEX_ANIME",        {SCRIPT_ARGUMENT_INTEGER, -1}                                                                        },
+    {"SHADOW_VERTEX_ANIME", {SCRIPT_ARGUMENT_INTEGER, -1}                                                                        },
+    {"MODEL",               {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"SHADOW_MODEL",        {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"MOTION",              {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, -1}},
+    {"SHADOW_MOTION",       {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, -1}                         },
+    {"KEY",                 {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                        },
+    {"KEY_START",           {SCRIPT_ARGUMENT_INTEGER, -1}                                                                        },
+    {"MOTION_END",          {-1}                                                                                                 },
+    {"CLOTH",               {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"BODY_SIZE",           {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                            },
+    {"ALLOC_MDT",           {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"ALLOC_DBUFF",         {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"ALLOC_SHADOW_MDT",    {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"ALLOC_SHADOW_DBUFF",  {SCRIPT_ARGUMENT_STRING, -1}                                                                         },
+    {"IMG",                 {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, -1}                                                },
+    {"IMG_END",             {-1}                                                                                                 },
+    {"FOOT",                {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                   },
+    {"EVENT",               {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                        }
 };
 
 static void (*CommandExe[19])(void **) = {
@@ -426,7 +427,7 @@ static void CommandMOTION_END(void **argv) {
     motion->state.blend_step = 0.1f;
     motion->state.motion_no = 0;
     motion->state.playing_no = 0;
-    motion->state.blending = 0;
+    motion->state.blending = false;
 
     if (shadow_motion != 0) {
         tagMOTION_TYPE *shadow_motion_type = character->shadow_motion[now_motion_data];
@@ -435,7 +436,7 @@ static void CommandMOTION_END(void **argv) {
         shadow_motion_type->state.blend_step = 0.1f;
         shadow_motion_type->state.motion_no = 0;
         shadow_motion_type->state.playing_no = 0;
-        shadow_motion_type->state.blending = 0;
+        shadow_motion_type->state.blending = false;
     }
 
     character->motion_end[now_motion_data] = key_start + key_no;
@@ -508,7 +509,7 @@ static void CommandIMG(void **argv) {
 static void CommandIMG_END(void **argv) {
     LOADTEXTURE_INFO2 textures[5];
     textures[0].block_no = 0;
-    textures[0].mipmap = 0;
+    textures[0].mipmap = false;
     textures[0].name = 0;
     int i;
     int texture_count = 0;
@@ -522,14 +523,14 @@ static void CommandIMG_END(void **argv) {
 
         if (load_img[i] != 0) {
             textures[texture_count].block_no = texture_block;
-            textures[texture_count].mipmap = 0;
+            textures[texture_count].mipmap = false;
             textures[texture_count].name = (char *) load_img[i];
             texture_count++;
         }
     }
 
     textures[texture_count].block_no = 0;
-    textures[texture_count].mipmap = 0;
+    textures[texture_count].mipmap = false;
     textures[texture_count].name = 0;
 
     if (texture_count > 0) {
@@ -594,12 +595,12 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
 
         word[length] = 0;
 
-        if (arg_types[i] != 2) {
+        if (arg_types[i] != SCRIPT_ARGUMENT_FLOAT) {
             length = 1;
 
-            if (arg_types[i] != 1) {
+            if (arg_types[i] != SCRIPT_ARGUMENT_INTEGER) {
                 switch (arg_types[i]) {
-                    case 0:
+                    case SCRIPT_ARGUMENT_STRING:
                         break;
                     default:
                         goto invalid_type;
@@ -785,7 +786,7 @@ void CCharacter::StopCloth(int unused) {
 
     for (i = 0; i < 4; i++) {
         if (cloth[i] != 0) {
-            cloth[i]->stop = 1;
+            cloth[i]->stop = true;
         }
     }
 }

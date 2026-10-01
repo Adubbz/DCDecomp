@@ -910,13 +910,13 @@ sceVif1Packet *GetVif1Packet() {
    the plane rather than divided by. */
 int MGRotTransPers(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
-    int           visible = 1;
+    int           visible = true;
     float         w;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_scaled, position);
 
     if (point[2] < 1.0f) {
-        visible = 0;
+        visible = false;
         point[2] = 1.0f;
     }
 
@@ -950,7 +950,7 @@ int MGRotTransPers(int *screen, float *position, int fog) {
     }
 
     if (point[0] < 0.0f || point[1] < 0.0f || point[0] > 4095 || point[1] > 4095) {
-        visible = 0;
+        visible = false;
     }
 
     return visible;
@@ -961,13 +961,13 @@ int MGRotTransPers(int *screen, float *position, int fog) {
    scaled into 12.4, and the pair is moved off the screen centre the offset put it at. */
 int MGRotTransPers2D(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
-    int           visible = 1;
+    int           visible = true;
     float         w;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_scaled, position);
 
     if (point[2] < 1.0f) {
-        visible = 0;
+        visible = false;
         point[2] = 1.0f;
     }
 
@@ -1001,7 +1001,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
     }
 
     if (point[0] < 0.0f || point[1] < 0.0f || point[0] > 4095 || point[1] > 4095) {
-        visible = 0;
+        visible = false;
     }
 
     screen[0] -= 1728;
@@ -1021,7 +1021,7 @@ int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, r
     sceVu0FVECTOR   half;
     register float *half_size;
     register float *view;
-    register int    visible = 0;
+    register int    visible = false;
 
     half[0] = 0.5f * width * mgRenderInfo.scale[0];
     half[1] = 0.5f * height * mgRenderInfo.scale[1];

@@ -106,32 +106,32 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position) {
  */
 void makeWeaponName(char *name, int weapon_no) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
-    int   first_weapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+    int   first_weapon[6] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN};
     char  number[16];
     int   chara_no = 0;
 
-    if (weapon_no >= 0x101) {
-        if (weapon_no >= 0x101 && weapon_no < 0x12B) {
+    if (weapon_no >= ITEM_WEAPON_DAGGER_BROKEN) {
+        if (weapon_no >= ITEM_WEAPON_DAGGER_BROKEN && weapon_no < ITEM_WEAPON_WOODENSLINGSHOT_BROKEN) {
             chara_no = 0;
         }
 
-        if (weapon_no >= 0x12B && weapon_no < 0x13A) {
+        if (weapon_no >= ITEM_WEAPON_WOODENSLINGSHOT_BROKEN && weapon_no < ITEM_WEAPON_MALLET_BROKEN) {
             chara_no = 1;
         }
 
-        if (weapon_no >= 0x13A && weapon_no < 0x14B) {
+        if (weapon_no >= ITEM_WEAPON_MALLET_BROKEN && weapon_no < ITEM_WEAPON_GOLD_RING_BROKEN) {
             chara_no = 2;
         }
 
-        if (weapon_no >= 0x14B && weapon_no < 0x15B) {
+        if (weapon_no >= ITEM_WEAPON_GOLD_RING_BROKEN && weapon_no < ITEM_WEAPON_FIGHTING_STICK_BROKEN) {
             chara_no = 3;
         }
 
-        if (weapon_no >= 0x15B && weapon_no < 0x16B) {
+        if (weapon_no >= ITEM_WEAPON_FIGHTING_STICK_BROKEN && weapon_no < ITEM_WEAPON_MACHINE_GUN_BROKEN) {
             chara_no = 4;
         }
 
-        if (weapon_no >= 0x16B) {
+        if (weapon_no >= ITEM_WEAPON_MACHINE_GUN_BROKEN) {
             chara_no = 5;
         }
     }
@@ -160,11 +160,11 @@ void makeWeaponName(char *name, int weapon_no) {
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);
 
-    if (item_no >= 0x101) {
+    if (item_no >= ITEM_WEAPON_START) {
         makeWeaponName(model_path, item_no);
     } else {
         if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
-            item_no = 0x91;
+            item_no = ITEM_REGULAR_WATER;
         }
 
         strcpy(model_path, "dun/item/main_data/");
@@ -214,7 +214,7 @@ void BtGetWeaponNamePath3(char *chr_name, char *cfg_name, int weapon_no) {
     WEAPON_DATA *weapon_data;
     int          chara_no;
 
-    if (weapon_no <= 0x100) {
+    if (weapon_no < ITEM_WEAPON_START) {
         weapon_data = NULL;
     } else {
         weapon_data = GetWeaponData(weapon_no);
@@ -257,7 +257,7 @@ void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int 
 int createAttachVolume(int item_no, int dungeon) {
     int volume;
 
-    if (item_no < 0x5B || item_no > 0x5E) {
+    if (item_no < ITEM_ATTACH_STAT_START || item_no > ITEM_ATTACH_MAGICAL_POWER) {
         return 0;
     }
 

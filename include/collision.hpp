@@ -4,6 +4,20 @@
 
 #include <libvu0.h>
 
+/**
+ * What a collision polygon's area does, as CCPolyInfo::area_kind holds it.
+ */
+// clang-format off
+enum AreaKind {
+    AREA_KIND_NONE        = 0,  /**< Nothing. */
+    AREA_KIND_FADE_OUT    = 2,  /**< Fades the character out. */
+    AREA_KIND_AMBIENT_0   = 3,  /**< Selects ground ambient set 0. */
+    AREA_KIND_AMBIENT_1   = 4,  /**< Selects ground ambient set 1. */
+    AREA_KIND_HIGH_CAMERA = 10, /**< Holds the battle camera higher. */
+};
+
+// clang-format on
+
 struct MDT_HEADER;
 
 /**
@@ -40,7 +54,7 @@ public:
         struct {
             s16 ground_kind; /**< What the surface is made of. */
             s16 foot_sound;  /**< Sound the character's feet play on it. */
-            s16 area_kind;   /**< Kind of area the surface marks; 10 holds the battle camera higher above it. */
+            s16 area_kind;   /**< Kind of area the surface marks. @see AreaKind. */
             s16 ignore_mask; /**< Collision query modes that pass through the surface. */
             u8  unk_48[8];
         } attr;

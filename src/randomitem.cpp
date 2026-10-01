@@ -37,21 +37,21 @@ void CRandomItem::Draw() {
             texel_y = 0;
         } else {
             switch (item_no[i]) {
-                case 195:
-                case 201:
-                case 202:
-                case 203:
-                case 204:
-                case 205:
-                case 206:
+                case ITEM_DRAN_S_CREST:
+                case ITEM_HOOK:
+                case ITEM_KING_S_SLATE:
+                case ITEM_GUN_POWDER:
+                case ITEM_CLOCK_HANDS:
+                case ITEM_POINTY_CHESTNUT:
+                case ITEM_BLACK_KNIGHT_CREST:
                     texel_x = 0;
                     texel_y = 0;
                     break;
-                case 196:
+                case ITEM_SHINY_STONE:
                     texel_x = 0x40;
                     texel_y = 0x40;
                     break;
-                case 198:
+                case ITEM_RED_BERRY:
                     texel_x = 0;
                     texel_y = 0x40;
                     break;
@@ -61,12 +61,12 @@ void CRandomItem::Draw() {
                     break;
             }
 
-            if (item_no[i] >= 81 && item_no[i] < 86) {
+            if (item_no[i] >= ITEM_ATTACH_START && item_no[i] < ITEM_ATTACH_ELEMENT_END) {
                 texel_x = 0;
                 texel_y = 0x80;
             }
 
-            if (item_no[i] >= 111 && item_no[i] < 121) {
+            if (item_no[i] >= ITEM_ATTACH_SLAYER_START && item_no[i] < ITEM_ATTACH_SLAYER_END) {
                 texel_x = 0x40;
                 texel_y = 0x80;
             }
@@ -119,7 +119,7 @@ int CRandomItem::CheckPosition() {
     sceVu0CopyVector(player_position, CharaMain.pos);
 
     for (int i = 0; i < 32; i++) {
-        if (id[i] == -1 || state[i] != 1) {
+        if (id[i] == -1 || state[i] != RANDOM_ITEM_WAITING) {
             continue;
         }
 
@@ -143,15 +143,15 @@ int CRandomItem::CheckPosition() {
                 pickup_blocked[i] = blocked;
             }
         } else {
-            state[i] = 2;
+            state[i] = RANDOM_ITEM_TAKEN;
 
             if (item_no[i] == -1) {
-                SndSePlay(0xDF, -1, 0);
+                SndSePlay(SE_ITEM_GET, -1, 0);
             }
 
             gold += amount[i];
             position[i][1] += 5.0f;
-            HitValueEntry(NowHitValue, position[i], gold, 1, NULL);
+            HitValueEntry(NowHitValue, position[i], gold, HIT_VALUE_GOLD, NULL);
             position[i][1] -= 5.0f;
         }
     }
@@ -169,7 +169,7 @@ void CRandomItem::Set(float *drop_position, int slot_id, int gold, int item) {
         amount[slot] = gold;
         item_no[slot] = item;
         pickup_event[slot] = -1;
-        state[slot] = 0;
+        state[slot] = RANDOM_ITEM_RISING;
         phase[slot] = 0.0f;
         pickup_blocked[slot] = 0;
     }
@@ -199,8 +199,8 @@ int CRandomItem::CheckItemNo(int item) {
 void CRandomItem::Step() {
     bob_phase += 0.05235988f;
 
-    if (bob_phase > 3.1415927f) {
-        bob_phase -= 3.1415927f;
+    if (bob_phase > PI) {
+        bob_phase -= PI;
     }
 
     for (int i = 0; i < 32; i++) {
@@ -209,24 +209,24 @@ void CRandomItem::Step() {
         }
 
         switch (state[i]) {
-            case 0:
+            case RANDOM_ITEM_RISING:
                 phase[i] += 0.10471976f;
 
-                if (phase[i] > 3.1415927f) {
-                    state[i] = 1;
+                if (phase[i] > PI) {
+                    state[i] = RANDOM_ITEM_WAITING;
                     phase[i] = 0.0f;
 
                     if (item_no[i] == -1) {
-                        SndSePlay(0xDD, -1, 0);
+                        SndSePlay(SE_RANDOM_ITEM_EMPTY, -1, 0);
                     } else {
-                        SndSePlay(0xDE, -1, 0);
+                        SndSePlay(SE_RANDOM_ITEM, -1, 0);
                     }
                 }
 
                 break;
-            case 1:
+            case RANDOM_ITEM_WAITING:
                 break;
-            case 2:
+            case RANDOM_ITEM_TAKEN:
                 phase[i] += 0.10471976f;
 
                 if (phase[i] > 2.5132742f) {

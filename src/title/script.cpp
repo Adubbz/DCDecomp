@@ -12,33 +12,33 @@
 /* The command table the parser matches a line against, in the order it matches them: a name is
    compared by the length the row carries rather than by its own, so a name that is another's prefix
    has to stand in front of it ([title-script.md](../../docs/formats/title-script.md)). */
-CSCRIPT_COMMAND Command[26] = {
-    {"OBJ_MOTION2", 11, 3, {2, 1, 1}            },
-    {"OBJ_MOTION",  10, 3, {2, 1, 0}            },
-    {"OBJ_MOVE",    8,  2, {2, 1}               },
-    {"OBJ_TALK",    8,  7, {2, 1, 1, 1, 1, 1, 1}},
-    {"OBJ_EYE",     7,  3, {2, 1, 1}            },
-    {"OBJ_MOUTH",   9,  3, {2, 1, 1}            },
-    {"OBJ_DISP",    8,  2, {2, 1}               },
-    {"OBJ_STEP",    8,  2, {2, 1}               },
-    {"CAMERA",      6,  4, {2, 1, 1, 1}         },
-    {"SE_STOP",     7,  3, {2, 1, 1}            },
-    {"SE",          2,  4, {2, 1, 1, 1}         },
-    {"SOUND_FADE",  10, 3, {2, 1, 1}            },
-    {"FADE_IN",     7,  2, {2, 1}               },
-    {"FADE_OUT",    8,  2, {2, 1}               },
-    {"MESSAGE",     7,  6, {2, 1, 1, 1, 1, 1}   },
-    {"NEXT_MES",    8,  1, {2}                  },
-    {"MES_CLR",     7,  0, {0}                  },
-    {"LOAD_OBJ",    8,  2, {2, 1}               },
-    {"SPRITE",      6,  1, {2}                  },
-    {"BOM",         3,  4, {2, 1, 1, 1}         },
-    {"BEEM",        4,  6, {2, 1, 1, 1, 1, 1}   },
-    {"SCENE_LOAD",  10, 1, {2}                  },
-    {"SCENE",       5,  1, {2}                  },
-    {"END",         3,  0, {0}                  },
-    {"WAIT_KEY",    8,  1, {2}                  },
-    {"WAIT",        4,  1, {2}                  },
+CSCRIPT_COMMAND Command[TSC_COMMAND_COUNT] = {
+    {"OBJ_MOTION2", 11, 3, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                                            },
+    {"OBJ_MOTION",  10, 3, {TSARG_VALUE, TSARG_COMMA_VALUE, 0}                                                                                            },
+    {"OBJ_MOVE",    8,  2, {TSARG_VALUE, TSARG_COMMA_VALUE}                                                                                               },
+    {"OBJ_TALK",    8,  7, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}},
+    {"OBJ_EYE",     7,  3, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                                            },
+    {"OBJ_MOUTH",   9,  3, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                                            },
+    {"OBJ_DISP",    8,  2, {TSARG_VALUE, TSARG_COMMA_VALUE}                                                                                               },
+    {"OBJ_STEP",    8,  2, {TSARG_VALUE, TSARG_COMMA_VALUE}                                                                                               },
+    {"CAMERA",      6,  4, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                         },
+    {"SE_STOP",     7,  3, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                                            },
+    {"SE",          2,  4, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                         },
+    {"SOUND_FADE",  10, 3, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                                            },
+    {"FADE_IN",     7,  2, {TSARG_VALUE, TSARG_COMMA_VALUE}                                                                                               },
+    {"FADE_OUT",    8,  2, {TSARG_VALUE, TSARG_COMMA_VALUE}                                                                                               },
+    {"MESSAGE",     7,  6, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                   },
+    {"NEXT_MES",    8,  1, {TSARG_VALUE}                                                                                                                  },
+    {"MES_CLR",     7,  0, {0}                                                                                                                            },
+    {"LOAD_OBJ",    8,  2, {TSARG_VALUE, TSARG_COMMA_VALUE}                                                                                               },
+    {"SPRITE",      6,  1, {TSARG_VALUE}                                                                                                                  },
+    {"BOM",         3,  4, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                                                         },
+    {"BEEM",        4,  6, {TSARG_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE, TSARG_COMMA_VALUE}                   },
+    {"SCENE_LOAD",  10, 1, {TSARG_VALUE}                                                                                                                  },
+    {"SCENE",       5,  1, {TSARG_VALUE}                                                                                                                  },
+    {"END",         3,  0, {0}                                                                                                                            },
+    {"WAIT_KEY",    8,  1, {TSARG_VALUE}                                                                                                                  },
+    {"WAIT",        4,  1, {TSARG_VALUE}                                                                                                                  },
 };
 
 /* The one script the overlay runs. It is 58112 bytes because the file is held whole inside it and
@@ -65,13 +65,13 @@ void CScript::Load(const char *name) {
         end = 0;
         scene = 0;
         load_no = -1;
-        mes_wait = 0;
+        mes_wait = false;
         bom_no = 0;
         beem_no = 0;
         reset_flag = 0;
         se_no = 0;
         se_voice = 0;
-        se_stop = 0;
+        se_stop = false;
         bgm_fade = 0;
 
         for (i = 0; i < 128; i++) {
@@ -79,18 +79,18 @@ void CScript::Load(const char *name) {
         }
 
         for (i = 0; i < 23; i++) {
-            obj[i].disp = 1;
+            obj[i].disp = true;
             obj[i].motion = 0;
             obj[i].motion_end = -1;
             obj[i].move = 0;
-            obj[i].move_req = 0;
+            obj[i].move_req = false;
             obj[i].eye = 0;
             obj[i].eye_time = 0;
             obj[i].mouth = 0;
             obj[i].mouth_time = 0;
-            obj[i].talk = 0;
+            obj[i].talk = false;
             obj[i].load = -1;
-            obj[i].load_step = -1;
+            obj[i].load_step = TSLOAD_NONE;
             obj[i].step = 0.05f;
         }
     }
@@ -120,14 +120,14 @@ void CScript::Step() {
         do {
             unmatched = true;
 
-            for (i = 0; i < 26; i++) {
+            for (i = 0; i < TSC_COMMAND_COUNT; i++) {
                 if (memcmp(&p[pos], Command[i].name, Command[i].length) == 0) {
                     unmatched = false;
                     pos = SkipSpace(p, pos + Command[i].length);
                     pos = CheckScript(p, pos, &Command[i], i);
 
                     if (pos != -1) {
-                        if (i == 23 || i == 24 || i == 25) {
+                        if (i == TSC_END || i == TSC_WAIT_KEY || i == TSC_WAIT) {
                             done = true;
                         }
                     }
@@ -158,23 +158,23 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
     }
 
     switch (command_no) {
-        case 0:
+        case TSC_OBJ_MOTION2:
             obj[(int) arg[0]].motion = (int) arg[1];
             obj[(int) arg[0]].motion_end = (int) arg[2];
             break;
 
-        case 1:
+        case TSC_OBJ_MOTION:
             obj[(int) arg[0]].motion = (int) arg[1];
             obj[(int) arg[0]].motion_end = -1;
             break;
 
-        case 2:
+        case TSC_OBJ_MOVE:
             obj[(int) arg[0]].move = (int) arg[1];
-            obj[(int) arg[0]].move_req = 1;
+            obj[(int) arg[0]].move_req = true;
             break;
 
-        case 3:
-            obj[(int) arg[0]].talk = 1;
+        case TSC_OBJ_TALK:
+            obj[(int) arg[0]].talk = true;
             mes_no = (int) arg[1];
             mes_timer = arg[2];
             obj[(int) arg[0]].mouth_time = arg[2];
@@ -185,30 +185,30 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
             mes_tail_y = (int) arg[6];
             break;
 
-        case 4:
+        case TSC_OBJ_EYE:
             obj[(int) arg[0]].eye = (char) arg[1];
             obj[(int) arg[0]].eye_time = arg[2];
             break;
 
-        case 5:
+        case TSC_OBJ_MOUTH:
             obj[(int) arg[0]].mouth = (char) arg[1];
             obj[(int) arg[0]].mouth_time = arg[2];
             break;
 
-        case 6:
+        case TSC_OBJ_DISP:
             if (arg[1] == 1.0f) {
-                obj[(int) arg[0]].disp = 1;
+                obj[(int) arg[0]].disp = true;
             } else {
-                obj[(int) arg[0]].disp = 0;
+                obj[(int) arg[0]].disp = false;
             }
 
             break;
 
-        case 7:
+        case TSC_OBJ_STEP:
             obj[(int) arg[0]].step = arg[1];
             break;
 
-        case 8:
+        case TSC_CAMERA:
             camera_no = camera_start;
             camera_start = (int) arg[0];
             motion_start = (int) arg[1];
@@ -218,50 +218,50 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
 #else
             motion_step = arg[3];
 #endif
-            motion_req = 1;
+            motion_req = true;
             break;
 
-        case 9:
+        case TSC_SE_STOP:
             se_kind = (int) arg[0];
             se_no = (int) arg[1];
             se_voice = (int) arg[2];
-            se_stop = 1;
+            se_stop = true;
             break;
 
-        case 10:
+        case TSC_SE:
             se_kind = (int) arg[0];
             se_no = (int) arg[1];
             se_voice = (int) arg[2];
             se_fade_time = (int) arg[3];
             break;
 
-        case 11:
+        case TSC_SOUND_FADE:
             se_kind = (int) arg[0];
             se_fade_time = (int) arg[1];
             bgm_fade = (int) arg[2];
             break;
 
-        case 12:
+        case TSC_FADE_IN:
             if (arg[0] == 0.0f) {
-                fade = 1;
+                fade = TSFADE_IN_BLACK;
             } else {
-                fade = 3;
+                fade = TSFADE_IN_WHITE;
             }
 
             fade_speed = arg[1];
             break;
 
-        case 13:
+        case TSC_FADE_OUT:
             if (arg[0] == 0.0f) {
-                fade = 2;
+                fade = TSFADE_OUT_BLACK;
             } else {
-                fade = 4;
+                fade = TSFADE_OUT_WHITE;
             }
 
             fade_speed = arg[1];
             break;
 
-        case 14:
+        case TSC_MESSAGE:
             mes_no = (int) arg[0];
             mes_timer = arg[1];
             mes_x = (int) arg[2];
@@ -271,24 +271,24 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
             mes_tail_y = (int) arg[5];
             break;
 
-        case 15:
+        case TSC_NEXT_MES:
             mes_page_wait = (int) arg[0];
             break;
 
-        case 16:
+        case TSC_MES_CLR:
             mes_no = 0;
             break;
 
-        case 17:
+        case TSC_LOAD_OBJ:
             obj[(int) arg[1]].load = (int) arg[0];
-            obj[(int) arg[1]].load_step = 0;
+            obj[(int) arg[1]].load_step = TSLOAD_START;
             break;
 
-        case 18:
+        case TSC_SPRITE:
             sprite = (char) arg[0];
             break;
 
-        case 19:
+        case TSC_BOM:
             bom_no++;
 
             if (bom_no > 2) {
@@ -299,10 +299,10 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
             bom_pos[bom_no][1] = arg[1];
             bom_pos[bom_no][2] = arg[2];
             bom_size[bom_no] = arg[3];
-            bom_req = 1;
+            bom_req = true;
             break;
 
-        case 20:
+        case TSC_BEEM:
             beem_no++;
 
             if (beem_no > 2) {
@@ -310,9 +310,9 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
             }
 
             if (arg[0] == -1.0f) {
-                beem_end = 1;
+                beem_end = true;
             } else {
-                beem_end = 0;
+                beem_end = false;
                 beem_from[beem_no][0] = arg[0];
                 beem_from[beem_no][1] = arg[1];
                 beem_from[beem_no][2] = arg[2];
@@ -321,27 +321,27 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
                 beem_to[beem_no][2] = arg[5];
             }
 
-            beem_req = 1;
+            beem_req = true;
             break;
 
-        case 21:
+        case TSC_SCENE_LOAD:
             load_no = (int) arg[0];
             break;
 
-        case 22:
+        case TSC_SCENE:
             scene = (int) arg[0];
             init_no = (int) arg[0];
             break;
 
-        case 25:
+        case TSC_WAIT:
             wait = arg[0] - 1.0f;
             break;
 
-        case 24:
+        case TSC_WAIT_KEY:
             mes_wait = (int) (1.0f + arg[0]);
             break;
 
-        case 23:
+        case TSC_END:
             end = 1;
             break;
     }
@@ -363,7 +363,7 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
 
     for (i = 0; i < command->arg_count; i++) {
         switch (command->arg_type[i]) {
-            case 1:
+            case TSARG_COMMA_VALUE:
                 if (buffer[cursor] != ',') {
                     return -1;
                 }
@@ -424,7 +424,7 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
                 cursor = SkipSpace(buffer, cursor);
                 break;
 
-            case 2:
+            case TSARG_VALUE:
                 if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     arg[i] = 1.0f;
                     cursor += 2;

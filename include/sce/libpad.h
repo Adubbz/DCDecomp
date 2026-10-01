@@ -1,5 +1,15 @@
 #pragma once
 
+#define scePadStateDiscon 0
+#define scePadStateFindPad 1
+#define scePadStateFindCTP1 2
+#define scePadStateExecCmd 5
+#define scePadStateStable 6
+#define scePadStateError 7
+
+#define InfoModeCurID 1
+#define InfoModeCurExID 2
+
 #ifdef __cplusplus
 extern "C" {
 #endif

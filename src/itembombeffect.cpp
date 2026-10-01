@@ -43,36 +43,36 @@ int checkItemUsed(int slot) {
     }
 
     switch (item) {
-        case 0x91:
-        case 0x92:
-        case 0x93:
+        case ITEM_REGULAR_WATER:
+        case ITEM_TASTY_WATER:
+        case ITEM_PREMIUM_WATER:
             if (!(0.2f + water_now < water_max)) {
                 usable = 0;
             }
 
             break;
-        case 0x97:
-            if ((condition & 0x10) == 0) {
+        case ITEM_ANTIDOTE_DRINK:
+            if ((condition & AILMENT_POISON) == 0) {
                 usable = 0;
             }
 
             break;
-        case 0x99:
-            if ((condition & 0x40) == 0) {
+        case ITEM_SOAP:
+            if ((condition & AILMENT_GOO) == 0) {
                 usable = 0;
             }
 
             break;
-        case 0x9A:
-            if ((condition & 0x74) == 0) {
+        case ITEM_MIGHTY_HEALING:
+            if ((condition & (AILMENT_FREEZE | AILMENT_POISON | AILMENT_CURSE | AILMENT_GOO)) == 0) {
                 usable = 0;
             }
 
             break;
-        case 0x94:
-        case 0x95:
-        case 0x9B:
-        case 0xAA:
+        case ITEM_BREAD:
+        case ITEM_PREMIUM_CHICKEN:
+        case ITEM_CHEESE:
+        case ITEM_MELLOW_BANANA:
             if (hp >= max_hp) {
                 usable = 0;
             }
@@ -94,13 +94,13 @@ void usedActiveItem(CUserStatus *status, int item) {
     int vol_index;
     int character = status->cur_chara;
 
-    if (item == 0xAA) {
+    if (item == ITEM_MELLOW_BANANA) {
         status->AddNowLife(character, 200, 100.0f);
         status->AddDrink(status->cur_chara, -20, 5.0f);
         return;
     }
 
-    item -= 0x51;
+    item -= ITEM_ATTACH_START;
 
     if ((ITEM_LIST[item].kind_flags & ITEMKINDF_CONSUMABLE) != 0) {
         vol_index = 0;
@@ -119,19 +119,19 @@ void usedActiveItem(CUserStatus *status, int item) {
 
     if ((ITEM_LIST[item].kind_flags & 1) != 0) {
         if ((ITEM_LIST[item].use_flags & 0x1000) != 0) {
-            BtSetStatusErr(8);
-            SndSePlay(0x6F, -1, 0);
+            BtSetStatusErr(AILMENT_STAMINA);
+            SndSePlay(SE_POWER_UP, -1, 0);
         }
 
-        if ((ITEM_LIST[item].use_flags & 0x20000) != 0 && (UserStatus->ailments[character] & 0x40) != 0) {
+        if ((ITEM_LIST[item].use_flags & 0x20000) != 0 && (UserStatus->ailments[character] & AILMENT_GOO) != 0) {
             UserStatus->ailments[character] = 0;
         }
 
-        if ((ITEM_LIST[item].use_flags & 0x8000) != 0 && (UserStatus->ailments[character] & 0x10) != 0) {
+        if ((ITEM_LIST[item].use_flags & 0x8000) != 0 && (UserStatus->ailments[character] & AILMENT_POISON) != 0) {
             UserStatus->ailments[character] = 0;
         }
 
-        if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 && (UserStatus->ailments[character] != 0 || UserStatus->ailments[character] != 8)) {
+        if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 && (UserStatus->ailments[character] != 0 || UserStatus->ailments[character] != AILMENT_STAMINA)) {
             UserStatus->ailments[character] = 0;
         }
     }
@@ -153,7 +153,7 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
         }
 
         NowBombEffect[bomb].SetBomb(position, scale);
-        SndSePlay(0x6C, -1, 0);
+        SndSePlay(SE_EXPLOSION, -1, 0);
         collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale, 0.0f, owner, 3, 0, 0);
 
         if (collision_slot != -1) {
@@ -171,7 +171,7 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
             wave->expand_steps = 15.0f * scale;
             wave->phase = 0.0f;
             wave->alpha = 0.0f;
-            wave->active = 1;
+            wave->active = true;
         }
 
         break;
@@ -461,7 +461,7 @@ void CShockWave::Step() {
         return;
     }
 
-    const float half_pi = 1.5707964f;
+    const float half_pi = HALF_PI;
 
     if (phase < half_pi) {
         phase += half_pi / expand_steps;
@@ -475,7 +475,7 @@ void CShockWave::Step() {
 
         if (alpha <= 0.0f) {
             alpha = 0.0f;
-            active = 0;
+            active = false;
         }
     }
 }

@@ -4,6 +4,19 @@
 
 #include <libvu0.h>
 
+/**
+ * Steps of a stolen item flying back, as CStealItem::state holds them.
+ */
+// clang-format off
+enum StealItemState {
+    STEAL_ITEM_NONE    = -1, /**< Free. */
+    STEAL_ITEM_RISE    = 0,  /**< Arcing toward the player. */
+    STEAL_ITEM_HOME    = 1,  /**< Flying straight to the player. */
+    STEAL_ITEM_ARRIVED = 2,  /**< Arrived. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.

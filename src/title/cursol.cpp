@@ -5,14 +5,14 @@
 #include "mathutil.hpp"
 
 CCursol::CCursol() {
-    select = 0;
+    select = TITLE_MENU_NEW_GAME;
     y = 288.0f;
     target_y = 288.0f;
     alpha[0] = alpha[1] = alpha[2] = alpha[3] = alpha[4] = 0;
 }
 
 void CCursol::Init() {
-    select = 0;
+    select = TITLE_MENU_NEW_GAME;
 #ifdef PAL
     y = 304.0f;
 #else
@@ -32,9 +32,9 @@ int CCursol::Move() {
 
         if (target_y - y < 1.0f) {
             y = target_y;
-            arrived = 1;
+            arrived = true;
         } else {
-            arrived = 0;
+            arrived = false;
         }
     }
 
@@ -43,14 +43,14 @@ int CCursol::Move() {
 
         if (y - target_y < 1.0f) {
             y = target_y;
-            arrived = 1;
+            arrived = true;
         } else {
-            arrived = 0;
+            arrived = false;
         }
     }
 
     switch (select) {
-        case 0:
+        case TITLE_MENU_NEW_GAME:
             if (alpha[0] < 127) {
                 alpha[0] += 8;
             }
@@ -72,7 +72,7 @@ int CCursol::Move() {
             }
 
             break;
-        case 1:
+        case TITLE_MENU_LOAD:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
@@ -94,7 +94,7 @@ int CCursol::Move() {
             }
 
             break;
-        case 2:
+        case TITLE_MENU_OPTION:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
@@ -116,7 +116,7 @@ int CCursol::Move() {
             }
 
             break;
-        case 3:
+        case TITLE_MENU_ATTRACT:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
@@ -138,7 +138,7 @@ int CCursol::Move() {
             }
 
             break;
-        case 4:
+        case TITLE_MENU_UNK_4:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }

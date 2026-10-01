@@ -9,6 +9,7 @@
 #include "btitem.hpp"
 #include "btmisc.hpp"
 #include "character.hpp"
+#include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dngmessageman.hpp"
@@ -49,7 +50,7 @@
 #include "weaponeffect.hpp"
 
 /** Weapon each party member is handed when first brought into the party. */
-static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+static int defWeapon[6] = {ITEM_WEAPON_DAGGER_BROKEN, ITEM_WEAPON_WOODENSLINGSHOT_BROKEN, ITEM_WEAPON_MALLET_BROKEN, ITEM_WEAPON_GOLD_RING_BROKEN, ITEM_WEAPON_FIGHTING_STICK_BROKEN, ITEM_WEAPON_MACHINE_GUN_BROKEN};
 
 // clang-format off
 char *charaNameTbl[6] = {
@@ -165,17 +166,17 @@ void BtGetTreasureboxBig_Init() {
     ResetMovePower();
 
     if (((CDngStatusData *) UserStatus)->CheckWeaponRot(item_no) >= 10) {
-        SndSePlay(0xCE, -1, 0);
-        SetSystemMes(((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) + 0x49, -1, 5, 0, NULL, NULL);
+        SndSePlay(SE_CHEST_OPEN_BIG, -1, 0);
+        SetSystemMes(((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) + 0x49, -1, MES_POS_CENTRE, 0, NULL, NULL);
         int index = NowDngMap->events[iventActive].index;
         NowDngMap->boxes[index].lid_angle = -20.0f;
         SetMIniMapStatus(0);
-        iventInfo = -1;
+        iventInfo = DNG_EVENT_NONE;
         CMonUnitHold = 1;
         CMonUnitHyde = 1;
         CEffectHold = 1;
         CEffectHyde = 1;
-        DngMessMan.enabled = 0;
+        DngMessMan.enabled = false;
 
         CUserStatus *user = UserStatus;
 
@@ -187,22 +188,22 @@ void BtGetTreasureboxBig_Init() {
         return;
     }
 
-    if (item_no == 0x12F && PlayerAllItemCheck(0x12F) != 0) {
-        item_no = 0x130;
+    if (item_no == ITEM_WEAPON_STEVE && PlayerAllItemCheck(ITEM_WEAPON_STEVE) != 0) {
+        item_no = ITEM_WEAPON_BONE_SLINGSHOT;
     }
 
-    TreasureboxBig_itemType = 0;
+    TreasureboxBig_itemType = TREASUREBOX_POSE_DEFAULT;
 
-    if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 1) {
-        TreasureboxBig_itemType = 1;
+    if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == CHARA_XIAO) {
+        TreasureboxBig_itemType = TREASUREBOX_POSE_SLINGSHOT;
     }
 
-    if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 5) {
-        TreasureboxBig_itemType = 2;
+    if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == CHARA_OSMOND) {
+        TreasureboxBig_itemType = TREASUREBOX_POSE_GUN;
     }
 
-    if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 3) {
-        TreasureboxBig_itemType = 3;
+    if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == CHARA_RUBY) {
+        TreasureboxBig_itemType = TREASUREBOX_POSE_RING;
     }
 
     char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
@@ -213,7 +214,7 @@ void BtGetTreasureboxBig_Init() {
     int   size;
 
     TreasureboxBig_itemNo = item_no;
-    NowDngMap->events[iventActive].kind = -1;
+    NowDngMap->events[iventActive].kind = DNG_EVENT_NONE;
     BtGetItemNamePath(model_path, texture_path, item_no);
     BtCashBuffer.base = (u_char *) read_buffer;
     BtCashBuffer.limit = 0x445C0;
@@ -234,7 +235,7 @@ void BtGetTreasureboxBig_Init() {
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenBig.frame->SetRotation(0.0f, 0.0f, 0.0f);
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
 
     CUserStatus *user = UserStatus;
 
@@ -263,7 +264,7 @@ int BtGetTreasureboxBig_Loop() {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
                 CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
-                BtActStatus.shadow_visible = 0;
+                BtActStatus.shadow_visible = false;
                 BtGetTreasurebox_Sled++;
             }
 
@@ -271,7 +272,7 @@ int BtGetTreasureboxBig_Loop() {
             break;
         case 1: {
             SetMIniMapStatus(0);
-            iventInfo = -1;
+            iventInfo = DNG_EVENT_NONE;
             CMonUnitHold = 1;
             CMonUnitHyde = 1;
             CEffectHold = 1;
@@ -288,25 +289,25 @@ int BtGetTreasureboxBig_Loop() {
             item_position[1] += 13.0f;
 
             switch (TreasureboxBig_itemType) {
-                case 0:
-                    itemBoxModel->SetRotation(1.5707964f, 0.0f, 1.5707964f);
+                case TREASUREBOX_POSE_DEFAULT:
+                    itemBoxModel->SetRotation(HALF_PI, 0.0f, HALF_PI);
                     itemBoxModel->SetPosition(item_position);
                     TreasureboxBig_itemScale = 1.0f;
                     break;
-                case 1:
-                    itemBoxModel->SetRotation(-1.5707964f, -1.5707964f, 0.0f);
+                case TREASUREBOX_POSE_SLINGSHOT:
+                    itemBoxModel->SetRotation(-HALF_PI, -HALF_PI, 0.0f);
                     item_position[0] += 3.5f;
                     itemBoxModel->SetPosition(item_position);
                     TreasureboxBig_itemScale = 1.0f;
                     break;
-                case 2:
-                    itemBoxModel->SetRotation(-1.5707964f, 3.141592f, 0.0f);
+                case TREASUREBOX_POSE_GUN:
+                    itemBoxModel->SetRotation(-HALF_PI, PI_SHORT, 0.0f);
                     item_position[0] += 2.5f;
                     itemBoxModel->SetPosition(item_position);
                     TreasureboxBig_itemScale = 1.0f;
                     break;
-                case 3:
-                    itemBoxModel->SetRotation(0.0f, 1.570796f, 0.0f);
+                case TREASUREBOX_POSE_RING:
+                    itemBoxModel->SetRotation(0.0f, HALF_PI_SHORT, 0.0f);
                     item_position[0] += 3.5f;
                     itemBoxModel->SetPosition(item_position);
                     TreasureboxBig_itemScale = 2.0f;
@@ -342,7 +343,7 @@ int BtGetTreasureboxBig_Loop() {
             float sound_time = itemOpenBigFx.motion.state.time;
 
             if (!(sound_time <= 14.0f) && sound_time < 15.0f) {
-                SndSePlay(0xCE, -1, 0);
+                SndSePlay(SE_CHEST_OPEN_BIG, -1, 0);
                 SndSPSePlay(2, -1);
             }
 
@@ -367,8 +368,8 @@ int BtGetTreasureboxBig_Loop() {
             CCameraFollow *camera = NowCamera__3;
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
 
-            if (GamePad.Down(0x60) != 0) {
-                BtActStatus.shadow_visible = 1;
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                BtActStatus.shadow_visible = true;
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
                 ((CDngStatusData *) UserStatus)->GetItem(TreasureboxBig_itemNo, 0);
@@ -376,9 +377,9 @@ int BtGetTreasureboxBig_Loop() {
                 sceVu0CopyVector(position, CharaMain.pos);
                 position[2] += 10.0f;
                 CharaMain.SetPosition(position);
-                CharaMain.SetRotation(0.0f, -3.1415927f, 0.0f);
+                CharaMain.SetRotation(0.0f, -PI, 0.0f);
                 BtActStatus.motion_no = 0;
-                DngMessMan.enabled = 1;
+                DngMessMan.enabled = true;
                 UserStatus->step_disable = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -395,9 +396,9 @@ int BtGetTreasureboxBig_Loop() {
             break;
         }
         case 10:
-            if (GamePad.Down(0x60) != 0) {
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
                 ClearSystemMes();
-                DngMessMan.enabled = 1;
+                DngMessMan.enabled = true;
                 UserStatus->step_disable = 0;
                 BtActStatus.in_presentation = 0;
                 NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = 0.0f;
@@ -432,25 +433,25 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
     int refusal = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no);
 
     if (refusal != 0) {
-        SndSePlay(0xCF, -1, 0);
+        SndSePlay(SE_CHEST_OPEN_SMALL, -1, 0);
 
         if (refusal == 1) {
-            SetSystemMes(0x48, -1, 5, 0, NULL, NULL);
+            SetSystemMes(0x48, -1, MES_POS_CENTRE, 0, NULL, NULL);
         }
 
         if (refusal == 2) {
-            SetSystemMes(0x51, -1, 5, 0, NULL, NULL);
+            SetSystemMes(0x51, -1, MES_POS_CENTRE, 0, NULL, NULL);
         }
 
         int index = NowDngMap->events[iventActive].index;
         NowDngMap->boxes[index].lid_angle = -20.0f;
         SetMIniMapStatus(0);
-        iventInfo = -1;
+        iventInfo = DNG_EVENT_NONE;
         CMonUnitHold = 1;
         CMonUnitHyde = 1;
         CEffectHold = 1;
         CEffectHyde = 1;
-        DngMessMan.enabled = 0;
+        DngMessMan.enabled = false;
 
         CUserStatus *user = UserStatus;
 
@@ -469,10 +470,10 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
     char  texture_path[64];
     int   size;
 
-    NowDngMap->events[iventActive].kind = -1;
+    NowDngMap->events[iventActive].kind = DNG_EVENT_NONE;
 
     if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
-        item_no = 0x66;
+        item_no = ITEM_ATTACH_PERIDOT;
     }
 
     int volume = createAttachVolume(item_no, dungeon);
@@ -505,7 +506,7 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenSmall.frame->SetRotation(0.0f, 0.0f, 0.0f);
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
 
     CUserStatus *user = UserStatus;
 
@@ -533,7 +534,7 @@ int BtGetTreasureboxSmall_Loop() {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
                 CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
-                BtActStatus.shadow_visible = 0;
+                BtActStatus.shadow_visible = false;
                 BtGetTreasurebox_Sled++;
             }
 
@@ -543,7 +544,7 @@ int BtGetTreasureboxSmall_Loop() {
             sceVu0FVECTOR position;
 
             SetMIniMapStatus(0);
-            iventInfo = -1;
+            iventInfo = DNG_EVENT_NONE;
             CMonUnitHold = 1;
             CMonUnitHyde = 1;
             CEffectHold = 1;
@@ -586,7 +587,7 @@ int BtGetTreasureboxSmall_Loop() {
             float sound_time = itemOpenSmallFx.motion.state.time;
 
             if (!(sound_time <= 19.0f) && sound_time < 20.4f) {
-                SndSePlay(0xCF, -1, 0);
+                SndSePlay(SE_CHEST_OPEN_SMALL, -1, 0);
                 SndSPSePlay(2, -1);
             }
 
@@ -616,17 +617,17 @@ int BtGetTreasureboxSmall_Loop() {
         case 3:
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
 
-            if (GamePad.Down(0x60) != 0) {
-                BtActStatus.shadow_visible = 1;
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                BtActStatus.shadow_visible = true;
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
 
-                if ((unsigned int) (BtGetTreasureboxSmall_itemNo - 0xE9) < 2U) {
-                    if (BtGetTreasureboxSmall_itemNo == 0xE9) {
+                if ((unsigned int) (BtGetTreasureboxSmall_itemNo - ITEM_MAP) < 2U) {
+                    if (BtGetTreasureboxSmall_itemNo == ITEM_MAP) {
                         BtEquipMap = 1;
                     }
 
-                    if (BtGetTreasureboxSmall_itemNo == 0xEA) {
+                    if (BtGetTreasureboxSmall_itemNo == ITEM_MAGICAL_CRYSTAL) {
                         BtEquipMasuisyou = 1;
                     }
                 } else {
@@ -638,10 +639,10 @@ int BtGetTreasureboxSmall_Loop() {
                 sceVu0CopyVector(position, CharaMain.pos);
                 position[2] += 10.0f;
                 CharaMain.SetPosition(position);
-                CharaMain.SetRotation(0.0f, -3.1415927f, 0.0f);
+                CharaMain.SetRotation(0.0f, -PI, 0.0f);
                 ClearSystemMes();
                 BtActStatus.motion_no = 0;
-                DngMessMan.enabled = 1;
+                DngMessMan.enabled = true;
                 UserStatus->step_disable = 0;
                 BtActStatus.in_presentation = 0;
                 SetMIniMapStatus(1);
@@ -656,9 +657,9 @@ int BtGetTreasureboxSmall_Loop() {
 
             break;
         case 10:
-            if (GamePad.Down(0x60) != 0) {
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
                 ClearSystemMes();
-                DngMessMan.enabled = 1;
+                DngMessMan.enabled = true;
                 UserStatus->step_disable = 0;
                 BtActStatus.in_presentation = 0;
                 NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = 0.0f;
@@ -697,7 +698,7 @@ void BtAtraGetShort_Init() {
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(1, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
     ResetMovePower();
     CUserStatus *status = UserStatus;
     int          one = 1;
@@ -725,10 +726,10 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
         case 0:
             if (SndSPSeSyncBG() == 0 && ReadBGSync() == 0) {
                 CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
-                BtActStatus.shadow_visible = 0;
+                BtActStatus.shadow_visible = false;
                 shortAtraEffect.LoadPackData2((u_int *) shortAtraEffectPtr, "info.cfg", &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
                 SetMIniMapStatus(0);
-                iventInfo = -1;
+                iventInfo = DNG_EVENT_NONE;
                 atraGetStatus = 1;
                 CMonUnitHold = 1;
                 CMonUnitHyde = 1;
@@ -746,7 +747,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 int             atra_id = status->atra_registry[map_no][NowDngMap->atra[index].atra_no].id;
                 BtAtraGetID = atra_id;
                 NowDngMap->atra[NowDngMap->events[BtAtraGetNo].index].used = 0;
-                NowDngMap->events[BtAtraGetNo].kind = -1;
+                NowDngMap->events[BtAtraGetNo].kind = DNG_EVENT_NONE;
                 getAtraToSaveData(atra_id, NowDngMap->atra[index].atra_no, SaveData, map_no, floor);
                 sceVu0CopyVector(position, NowDngMap->atra[index].pos);
                 CharaMain.SetPosition(position);
@@ -801,7 +802,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
 
             break;
         case 3:
-            if (GamePad.Down(0x60) != 0) {
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
                 DispFade__3.FadeInit(0.0f);
                 DispFade__3.FadeOutStart(8.0f);
                 BtGetAtraBoll_Sled++;
@@ -817,13 +818,13 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
 
             break;
         case 5:
-            BtActStatus.shadow_visible = 1;
+            BtActStatus.shadow_visible = true;
             ClearSystemMes();
             SetMIniMapStatus(1);
-            DngMessMan.enabled = 1;
+            DngMessMan.enabled = true;
             atraGetStatus = 0;
             NowCamera__3 = &MainCamera__4;
-            CharaMain.SetRotation(0.0f, -3.1415927f, 0.0f);
+            CharaMain.SetRotation(0.0f, -PI, 0.0f);
             CMonUnitHold = 0;
             CMonUnitHyde = 0;
             CEffectHold = 0;
@@ -850,7 +851,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
  */
 void BtMiniChrSelect_Init(int type) {
     SetMIniMapStatus(0);
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
     BtMiniChrSelecter_Sled = 0;
     BtMiniChrSel_Type = type;
 }
@@ -886,7 +887,7 @@ int BtMiniChrSelect_Loop() {
             driveStepHold = 0;
             int blocks[2] = {0x128, 0xD8};
             StartQuickChange((u_long128 *) read_buffer, 0x17, blocks, BtMiniChrSel_Type);
-            BtGameModeFlag = 5;
+            BtGameModeFlag = BT_GAME_MODE_CHARA_CHANGE;
             BtMiniChrSelecter_Sled++;
             autoCamTrial();
             break;
@@ -894,7 +895,7 @@ int BtMiniChrSelect_Loop() {
         case 3:
             SetMIniMapStatus(1);
             done = 1;
-            DngMessMan.enabled = 1;
+            DngMessMan.enabled = true;
             nowUnitNow = UserStatus->cur_chara;
             ResetStatusInfo();
             autoCamTrial();
@@ -920,7 +921,7 @@ int escape_sled;
  */
 void BtMiniItemSelect() {
     SetMIniMapStatus(0);
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
     BtMiniItemSelect_Sled = 0;
     driveStepHold = 1;
 }
@@ -953,7 +954,7 @@ int BtMiniItemSelect_Loop() {
             ITEM_PACK *pack = &UserStatus->item_pack;
 
             InitEventItemSelect(0x18, BtEventInfo.item_select_list, pack, 0xB4, 0xD2, BtEventInfo.item_select_filtered, 0);
-            BtGameModeFlag = 3;
+            BtGameModeFlag = BT_GAME_MODE_ITEM_SELECT;
             BtMiniItemSelect_Sled++;
             break;
         }
@@ -1002,7 +1003,7 @@ void BtGetGateKey_Init(int item_no) {
     LoadFileBG(texture_path, (u_long128 *) texture, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     ResetMovePower();
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
 
     CUserStatus *user = UserStatus;
 
@@ -1043,7 +1044,7 @@ int BtGetGateKey_Loop() {
             break;
         case 1:
             SetMIniMapStatus(0);
-            iventInfo = -1;
+            iventInfo = DNG_EVENT_NONE;
             CMonUnitHold = 1;
             CMonUnitHyde = 1;
             CEffectHold = 1;
@@ -1063,7 +1064,7 @@ int BtGetGateKey_Loop() {
             NowCamera__3 = &SubCamera;
             NowCamera__3->Step(-1);
             NowCamera__3->FollowOff();
-            SndSePlay(0x128, -1, 0);
+            SndSePlay(SE_GATE_KEY_GET, -1, 0);
             autoCamTrial();
             GateKey_Sled++;
             break;
@@ -1080,10 +1081,10 @@ int BtGetGateKey_Loop() {
             break;
         }
         case 3:
-            if (GamePad.Down(0x60) != 0) {
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
-                DngMessMan.enabled = 1;
+                DngMessMan.enabled = true;
                 UserStatus->step_disable = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -1106,7 +1107,7 @@ int BtGetGateKey_Loop() {
 void BtGetAttach_Init(int dungeon, int item_no) {
     int volume = 0;
 
-    if (item_no >= 0x51 && item_no < 0x79) {
+    if (item_no >= ITEM_ATTACH_START && item_no < ITEM_ATTACH_SLAYER_END) {
         volume = createAttachVolume(item_no, dungeon);
     }
 
@@ -1130,7 +1131,7 @@ int BtGetAttach_Loop() {
     switch (GateKey_Sled) {
         case 0:
             SetMIniMapStatus(0);
-            iventInfo = -1;
+            iventInfo = DNG_EVENT_NONE;
             CMonUnitHold = 1;
             CEffectHold = 1;
             ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x28, 1);
@@ -1138,8 +1139,8 @@ int BtGetAttach_Loop() {
             break;
 
         case 1:
-            if (GamePad.Down(0x60) != 0) {
-                DngMessMan.enabled = 1;
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                DngMessMan.enabled = true;
                 UserStatus->step_disable = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -1177,7 +1178,7 @@ void BtEscape_Init() {
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(8, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    DngMessMan.enabled = 0;
+    DngMessMan.enabled = false;
 
     CUserStatus *user = UserStatus;
 
@@ -1187,7 +1188,7 @@ void BtEscape_Init() {
     CEffectHold = 1;
     CEffectHyde = 1;
     SetMIniMapStatus(0);
-    iventInfo = -1;
+    iventInfo = DNG_EVENT_NONE;
     ResetMovePower();
     BtActStatus.motion_no = 0;
     BtActStatus.in_presentation = 1;

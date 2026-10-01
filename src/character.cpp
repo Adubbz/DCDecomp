@@ -663,7 +663,7 @@ void CCharacter::Step() {
             }
 
             switch (event->kind) {
-                case 0:
+                case CHARA_EVENT_FOOT_SOUND:
                     foot_sound_enabled = this->foot_sound_enable;
 
                     if (foot_sound_enabled != 0) {
@@ -671,7 +671,7 @@ void CCharacter::Step() {
                     }
 
                     break;
-                case 1:
+                case CHARA_EVENT_SOUND_EFFECT:
                     SndSePlay(event->no, -1, 0);
                     break;
             }
@@ -1039,10 +1039,10 @@ void CCharacter::DeleteExtendTexture(int block_no) {
     // character alone asks for.
     if (this->images[1] != 0 || this->images[2] != 0 || this->images[3] != 0) {
         info[0].block_no = block_no;
-        info[0].mipmap = 0;
+        info[0].mipmap = false;
         info[0].name = (char *) this->images[0];
         info[1].block_no = 0;
-        info[1].mipmap = 0;
+        info[1].mipmap = false;
         info[1].name = NULL;
         TexManager.DeleteTextureBlock(block_no);
         TexManager.LoadTextureBlockEX(block_no, info);

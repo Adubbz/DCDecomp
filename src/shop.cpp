@@ -45,7 +45,7 @@
  */
 struct ShopMenuWork {
     s16            shop_no;  /**< Shop being run. */
-    s16            side;     /**< Board the cursor is on: 0 the shop's stock, 1 the player's own board. */
+    s16            side;     /**< Board the cursor is on. @see ShopSide */
     s16            mode;     /**< How the shop was opened. */
     s16            key_used; /**< Set once this frame's confirm or sell press has been handled, so the frame's cancel press is ignored. */
     PERSONAL_BOARD board;    /**< The player's side of the shop: the personal board and the records it holds. */
@@ -57,7 +57,7 @@ struct ShopMenuWork {
     u8             unk_177;
     float          cursor_x;  /**< Screen X of the cursor, eased toward its cell. */
     float          cursor_y;  /**< Screen Y of the cursor, eased toward its cell. */
-    s16            talk_mode; /**< What the shopkeeper is saying or waiting on; 0 while the player shops. */
+    s16            talk_mode; /**< What the shopkeeper is saying or waiting on. @see ShopTalkMode */
     s16            unk_182;
     s32            step_count; /**< Frames the shop has spent in its talk mode. */
     s16            ready;      /**< Nonzero once the shop's textures are entered. */
@@ -69,7 +69,7 @@ struct ShopMenuWork {
     s16            person_state;     /**< Shopkeeper model: 1 while it is read, 2 once it is built, 0 when there is none. */
     s16            person_tex_block; /**< Texture block the shopkeeper's textures are entered into. */
     s16            unk_198;
-    s16            msg_mode;   /**< How the shopkeeper's message is shown. */
+    s16            msg_mode;   /**< How the shopkeeper's message is shown. @see ShopMsgMode */
     s16            motion;     /**< Motion the shopkeeper's model is playing: 0 idle, 3 talking. */
     s16            msg_no;     /**< Shopkeeper line the speech window was last made for. */
     s32            draw_delay; /**< Frames the shopkeeper has been stepped; the model and its speech are drawn once it reaches four. */
@@ -107,7 +107,7 @@ CStockItem *ShopStockPt;
 /** Per-slot state of the charge shop's personal board. */
 s32 *ShopBoardInfo;
 
-/** Per-slot state (0 = empty, 1 = held, 2 = just moved) of the personal item board. */
+/** Per-slot state of the personal item board. @see ShopSlotState */
 s32 *ItemBoardInfo;
 
 /** Per-slot state of the personal weapon board, indexed by character then slot. */
@@ -135,7 +135,7 @@ IHAVEITEM   *ShopHaveItemPt;
 WEAPON_HAVE *ShopHaveWepPt;
 ATTACH_LIST *ShopHaveAttachPt;
 
-/** Nonzero while the item shop is open, zero while the charge shop is open. */
+/** Which shop is open. @see ShopKind */
 s16 ChargeOrShopFlag;
 
 static int ChargeSelectKey();
@@ -153,7 +153,7 @@ struct FishMenuWork {
     s16        mode;       /**< How the exchange was opened. */
     s16        confirm;    /**< Choice the confirmation window's cursor is on: 0 yes, 1 no. */
     s16        cursor;     /**< Prize the cursor is on. */
-    s16        fade_mode;  /**< What the exchange is doing: 0 opening, 1 closing, 3 choosing, 4 confirming, 5 refusing. */
+    s16        fade_mode;  /**< What the exchange is doing. @see FishExchangeMode */
     s16        top;        /**< Prize the list shows first. */
     u8         unk_1A[6];
     s32        fade_count; /**< Frames the current fade has run for. */
@@ -172,7 +172,7 @@ struct FishRecordMenuWork {
     s32 cursor;     /**< Rank the cursor is on. */
     s32 top;        /**< Rank the board shows first. */
     s32 mode;       /**< The mode the record view was opened in. */
-    s32 fade_mode;  /**< Whether the record view is fading in (0) or out (1). */
+    s32 fade_mode;  /**< What the record view is doing. @see FishRecordMode */
     s32 fade_count; /**< Frames the current fade has run for. */
     s32 cursor_y;   /**< Screen Y of the cursor, eased toward its row. */
     s32 ready;      /**< Nonzero once the record view's contents may be drawn. */
@@ -201,7 +201,7 @@ struct ITEM_MONEY_ENTRY {
     s16 sell_price; /**< Money the shop pays for the item. */
 };
 
-/** The buy and sell price of every item from 0x51 on, indexed by item number less 0x51. */
+/** The buy and sell price of every item from ITEM_ATTACH_START on, indexed by item number less ITEM_ATTACH_START. */
 ITEM_MONEY_ENTRY PriceList[296] = {
     {300,  150 },
     {300,  150 },
@@ -507,24 +507,24 @@ ITEM_MONEY_ENTRY PriceList[296] = {
  * One shop's twenty-item goods list, eighteen shops long, each ended by -1.
  */
 static s16 ItemShopList2[18][20] = {
-    {0x94, 0x91, 0xB1, 0xB7, 0xAF, 0xAE, 0xB0, 0x97, 0x99, 0x9F, 0xEB, 0x5B, 0x5C, 0x51, 0x52, 0x53, 0x54, 0x55, 0x6F, 0xC0},
-    {0x94, 0x9B, 0x92, 0xB0, 0xB1, 0xB7, 0xAE, 0xAF, 0x73, 0x97, 0x99, 0xEB, 0xC0, 0x105, 0xC5, 0xC7, -1},
-    {0xE2, 0xE2, 0xE2, 0xC1, 0xC1, 0xBE, 0xBE, 0xF5, 0xF5, 0xF5, 0x91, 0x92, 0x93, 0xAE, -1},
-    {0x91, 0x92, 0x93, 0x96, 0x97, 0x98, -1},
-    {0x91, 0x92, 0x93, 0x94, 0x96, 0x5B, 0x5C, 0x5D, 0x5E, -1},
-    {0x91, 0x92, 0x93, 0x96, 0x9B, 0x51, 0x52, 0x53, 0x54, 0x55, -1},
-    {0x91, 0x92, 0x93, 0x96, 0x95, 0x9F, 0x71, 0x78, 0x70, -1},
-    {0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xB1, 0xB0, 0xAE, -1},
-    {0x109, 0x104, 0x130, 0x140, 0x14F, 0xB1, 0xB7, 0xAE, 0xB0, 0xAF, 0xEB, 0xC0, -1},
-    {0x93, 0x9B, 0x95, 0x9A, 0x9F, 0xB1, 0xB7, 0xAE, 0xB0, 0xAF, 0x54, 0x72, 0x75, 0xEB, 0xC0, 0xBB, -1},
-    {0x91, 0x92, 0x93, 0x95, 0x9F, 0x74, 0xAE, 0xB0, 0xAF, 0xB1, 0xB7, 0xEB, 0x16D, 0x176, 0xC0, -1},
-    {0x93, 0x95, 0x9A, 0xAE, 0xB0, 0xAF, 0xB1, 0xB7, 0xEB, 0xC0, -1},
-    {0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0x51, 0x52, 0x53, 0x54, 0x55, 0x71, 0x78, 0xC0, -1},
-    {0x94, 0x91, 0xB1, 0xB7, 0xB0, 0xAE, 0xAF, 0x97, 0xC0, -1},
-    {0x94, 0x9B, 0x92, 0xB0, 0xB1, 0xB7, 0xAE, 0xAF, 0x73, 0x97, 0x99, 0xEB, 0xC0, -1},
-    {0x93, 0x9B, 0x98, 0x99, 0x9A, 0x9F, 0xAE, 0xB0, 0xAF, 0xB1, 0xB7, 0xEB, 0xC0, -1},
-    {0x5F, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, -1},
-    {0x5B, 0x5C, 0x5D, 0x5E, 0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x78, -1},
+    {ITEM_BREAD, ITEM_REGULAR_WATER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_ESCAPE_POWDER, ITEM_STAND_IN_POWDER, ITEM_REVIVAL_POWDER, ITEM_ANTIDOTE_DRINK, ITEM_SOAP, ITEM_BOMB, ITEM_DRAN_S_FEATHER, ITEM_ATTACH_ATTACK, ITEM_ATTACH_ENDURANCE, ITEM_ATTACH_FIRE, ITEM_ATTACH_ICE, ITEM_ATTACH_THUNDER, ITEM_ATTACH_WIND, ITEM_ATTACH_HOLY, ITEM_ATTACH_DINOSLAYER, ITEM_GOLD_BULLION},
+    {ITEM_BREAD, ITEM_CHEESE, ITEM_TASTY_WATER, ITEM_REVIVAL_POWDER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_STAND_IN_POWDER, ITEM_ESCAPE_POWDER, ITEM_ATTACH_PLANT_BUSTER, ITEM_ANTIDOTE_DRINK, ITEM_SOAP, ITEM_DRAN_S_FEATHER, ITEM_GOLD_BULLION, ITEM_WEAPON_WISE_OWL_SWORD, ITEM_MIMI, ITEM_PRICKLY, -1},
+    {ITEM_FLAPPING_FISH, ITEM_FLAPPING_FISH, ITEM_FLAPPING_FISH, ITEM_EVY, ITEM_EVY, ITEM_PETITE_FISH, ITEM_PETITE_FISH, ITEM_ICE_BLOCK, ITEM_ICE_BLOCK, ITEM_ICE_BLOCK, ITEM_REGULAR_WATER, ITEM_TASTY_WATER, ITEM_PREMIUM_WATER, ITEM_STAND_IN_POWDER, -1},
+    {ITEM_REGULAR_WATER, ITEM_TASTY_WATER, ITEM_PREMIUM_WATER, ITEM_STAMINA_DRINK, ITEM_ANTIDOTE_DRINK, ITEM_HOLY_WATER, -1},
+    {ITEM_REGULAR_WATER, ITEM_TASTY_WATER, ITEM_PREMIUM_WATER, ITEM_BREAD, ITEM_STAMINA_DRINK, ITEM_ATTACH_ATTACK, ITEM_ATTACH_ENDURANCE, ITEM_ATTACH_SPEED, ITEM_ATTACH_MAGICAL_POWER, -1},
+    {ITEM_REGULAR_WATER, ITEM_TASTY_WATER, ITEM_PREMIUM_WATER, ITEM_STAMINA_DRINK, ITEM_CHEESE, ITEM_ATTACH_FIRE, ITEM_ATTACH_ICE, ITEM_ATTACH_THUNDER, ITEM_ATTACH_WIND, ITEM_ATTACH_HOLY, -1},
+    {ITEM_REGULAR_WATER, ITEM_TASTY_WATER, ITEM_PREMIUM_WATER, ITEM_STAMINA_DRINK, ITEM_PREMIUM_CHICKEN, ITEM_BOMB, ITEM_ATTACH_SEA_KILLER, ITEM_ATTACH_MAGE_SLAYER, ITEM_ATTACH_UNDEAD_BUSTER, -1},
+    {ITEM_THROBBING_CHERRY, ITEM_GOOEY_PEACH, ITEM_BOMB_NUTS, ITEM_POISONOUS_APPLE, ITEM_MELLOW_BANANA, ITEM_REPAIR_POWDER, ITEM_REVIVAL_POWDER, ITEM_STAND_IN_POWDER, -1},
+    {ITEM_WEAPON_KITCHEN_KNIFE, ITEM_WEAPON_GLADIUS, ITEM_WEAPON_BONE_SLINGSHOT, ITEM_WEAPON_BIG_BUCKS_HAMMER, ITEM_WEAPON_PLATINUM_RING, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_STAND_IN_POWDER, ITEM_REVIVAL_POWDER, ITEM_ESCAPE_POWDER, ITEM_DRAN_S_FEATHER, ITEM_GOLD_BULLION, -1},
+    {ITEM_PREMIUM_WATER, ITEM_CHEESE, ITEM_PREMIUM_CHICKEN, ITEM_MIGHTY_HEALING, ITEM_BOMB, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_STAND_IN_POWDER, ITEM_REVIVAL_POWDER, ITEM_ESCAPE_POWDER, ITEM_ATTACH_WIND, ITEM_ATTACH_STONE_BREAKER, ITEM_ATTACH_SKY_HUNTER, ITEM_DRAN_S_FEATHER, ITEM_GOLD_BULLION, ITEM_POTATO_CAKE, -1},
+    {ITEM_REGULAR_WATER, ITEM_TASTY_WATER, ITEM_PREMIUM_WATER, ITEM_PREMIUM_CHICKEN, ITEM_BOMB, ITEM_ATTACH_BEAST_BUSTER, ITEM_STAND_IN_POWDER, ITEM_REVIVAL_POWDER, ITEM_ESCAPE_POWDER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_DRAN_S_FEATHER, ITEM_WEAPON_JACKAL, ITEM_WEAPON_SNAIL, ITEM_GOLD_BULLION, -1},
+    {ITEM_PREMIUM_WATER, ITEM_PREMIUM_CHICKEN, ITEM_MIGHTY_HEALING, ITEM_STAND_IN_POWDER, ITEM_REVIVAL_POWDER, ITEM_ESCAPE_POWDER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_DRAN_S_FEATHER, ITEM_GOLD_BULLION, -1},
+    {ITEM_FIRE_GEM, ITEM_ICE_GEM, ITEM_THUNDER_GEM, ITEM_WIND_GEM, ITEM_HOLY_GEM, ITEM_ATTACH_FIRE, ITEM_ATTACH_ICE, ITEM_ATTACH_THUNDER, ITEM_ATTACH_WIND, ITEM_ATTACH_HOLY, ITEM_ATTACH_SEA_KILLER, ITEM_ATTACH_MAGE_SLAYER, ITEM_GOLD_BULLION, -1},
+    {ITEM_BREAD, ITEM_REGULAR_WATER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_REVIVAL_POWDER, ITEM_STAND_IN_POWDER, ITEM_ESCAPE_POWDER, ITEM_ANTIDOTE_DRINK, ITEM_GOLD_BULLION, -1},
+    {ITEM_BREAD, ITEM_CHEESE, ITEM_TASTY_WATER, ITEM_REVIVAL_POWDER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_STAND_IN_POWDER, ITEM_ESCAPE_POWDER, ITEM_ATTACH_PLANT_BUSTER, ITEM_ANTIDOTE_DRINK, ITEM_SOAP, ITEM_DRAN_S_FEATHER, ITEM_GOLD_BULLION, -1},
+    {ITEM_PREMIUM_WATER, ITEM_CHEESE, ITEM_HOLY_WATER, ITEM_SOAP, ITEM_MIGHTY_HEALING, ITEM_BOMB, ITEM_STAND_IN_POWDER, ITEM_REVIVAL_POWDER, ITEM_ESCAPE_POWDER, ITEM_REPAIR_POWDER, ITEM_AUTO_REPAIR_POWDER, ITEM_DRAN_S_FEATHER, ITEM_GOLD_BULLION, -1},
+    {ITEM_ATTACH_GARNET, ITEM_ATTACH_AMETHYST, ITEM_ATTACH_AQUAMARINE, ITEM_ATTACH_DIAMOND, ITEM_ATTACH_EMERALD, ITEM_ATTACH_PEARL, ITEM_ATTACH_RUBY, ITEM_ATTACH_PERIDOT, ITEM_ATTACH_SAPPHIRE, ITEM_ATTACH_OPAL, ITEM_ATTACH_TOPAZ, ITEM_ATTACH_TURQUOISE, -1},
+    {ITEM_ATTACH_ATTACK, ITEM_ATTACH_ENDURANCE, ITEM_ATTACH_SPEED, ITEM_ATTACH_MAGICAL_POWER, ITEM_ATTACH_DINOSLAYER, ITEM_ATTACH_UNDEAD_BUSTER, ITEM_ATTACH_SEA_KILLER, ITEM_ATTACH_STONE_BREAKER, ITEM_ATTACH_PLANT_BUSTER, ITEM_ATTACH_BEAST_BUSTER, ITEM_ATTACH_SKY_HUNTER, ITEM_ATTACH_MAGE_SLAYER, -1},
 };
 
 static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int alpha);
@@ -559,7 +559,7 @@ void ShopIconMove::IconMoveTarSet(int slot_no, int icon_no, int item_no, MENU_IT
 }
 
 int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
-    if (item_no < 0x51) {
+    if (item_no < ITEM_ATTACH_START) {
         return -1;
     }
 
@@ -584,7 +584,7 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
     pos_x += (float) (target_x - (int) pos_x) / 4.0f;
     pos_y += (float) (target_y - (int) pos_y) / 4.0f;
 
-    int arrived = 0;
+    int arrived = false;
 
     if (force_arrive || (float) abs((int) (pos_x - (float) target_x)) < 4.0f) {
         pos_x = target_x;
@@ -600,7 +600,7 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
         s32 *board_info;
 
         switch (WhatIsKindofItem(item_no)) {
-            case 0:
+            case BOARD_PAGE_ITEM:
                 if (to_stock) {
                     s16 item = item_no;
                     s16 volume = data.volume;
@@ -613,7 +613,7 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
                 }
 
                 break;
-            case 2:
+            case BOARD_PAGE_ATTACH:
                 if (to_stock) {
                     ShopStockPt->SetAttachToPos(slot_no, &data.attach);
                 } else {
@@ -624,7 +624,7 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
                 }
 
                 break;
-            case 1:
+            case BOARD_PAGE_WEAPON:
                 if (to_stock) {
                     ShopStockPt->SetWepToPos(slot_no, &data.weapon);
                 } else {
@@ -641,7 +641,7 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
         }
 
         if (ChargeOrShopFlag) {
-            *board_info = 2;
+            *board_info = SHOP_SLOT_PLAYER_ITEM;
         }
 
         spare = -1;
@@ -657,19 +657,19 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
 }
 
 void ShopIconMove::IconAutoMoveDraw() {
-    if (item_no >= 0x51) {
+    if (item_no >= ITEM_ATTACH_START) {
         int kind = WhatIsKindofItem(item_no);
 
         if (ShopMenu.board.page == kind) {
             int num = 0;
             int item = item_no;
 
-            if (item == 0x5A) {
+            if (item == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                 num = data.param[1];
             }
 
-            if (item >= 0x5B && item < 0x5F) {
-                num = data.param[item - 0x57];
+            if (item >= ITEM_ATTACH_STAT_START && item < ITEM_ATTACH_GEM_START) {
+                num = data.param[item - ITEM_ATTACH_STAT_START + 4];
             }
 
             DrawIconParts(item, pos_x, pos_y, 0, 0x280, 0x80, num);
@@ -686,10 +686,10 @@ void ShopIconMove::IconAutoMoveDraw() {
  */
 static s16 GetItemMoney(int item_no, int sell) {
     if (sell != 0) {
-        return PriceList[item_no - 0x51].sell_price;
+        return PriceList[item_no - ITEM_ATTACH_START].sell_price;
     }
 
-    return PriceList[item_no - 0x51].buy_price;
+    return PriceList[item_no - ITEM_ATTACH_START].buy_price;
 }
 
 int ShopNoInput(int *tex_block, int shop_no, int mode) {
@@ -703,7 +703,7 @@ int ShopNoInput(int *tex_block, int shop_no, int mode) {
         }
 
         InitItemShop2(tex_block, shop_no, mode);
-        ChargeOrShopFlag = 1;
+        ChargeOrShopFlag = SHOP_KIND_ITEM;
     } else {
         shop_no -= 100;
 
@@ -712,7 +712,7 @@ int ShopNoInput(int *tex_block, int shop_no, int mode) {
         }
 
         InitChargeShop(tex_block, shop_no, mode);
-        ChargeOrShopFlag = 0;
+        ChargeOrShopFlag = SHOP_KIND_CHARGE;
     }
 
     return 1;
@@ -722,7 +722,7 @@ void InitAllHaveData() {
     InitHaveData(ShopHaveItemPt);
     InitHaveWep(ShopHaveWepPt);
     InitHaveAttach(ShopHaveAttachPt);
-    ShopHaveItemPt->slot_state = 0;
+    ShopHaveItemPt->slot_state = SHOP_SLOT_EMPTY;
 }
 
 int CommonShopLoop() {
@@ -731,10 +731,10 @@ int CommonShopLoop() {
     ShopMenu.key_used = 0;
 
     switch (ChargeOrShopFlag) {
-        case 0:
+        case SHOP_KIND_CHARGE:
             done = ChargeShopLoop();
             break;
-        case 1:
+        case SHOP_KIND_ITEM:
             done = ItemShopLoop2();
             break;
     }
@@ -872,7 +872,7 @@ static void SetItemShopTalkMode(int talk_mode, int msg_mode) {
         ShopMenu.msg_mode = msg_mode;
     }
 
-    if (ShopMenu.msg_mode == 1) {
+    if (ShopMenu.msg_mode == SHOP_MSG_TALKING) {
         CommonMenuMes3.mes_made = -1;
         ShopMenu.msg_no = -1;
     }
@@ -913,11 +913,11 @@ static void ChargeShopLRDraw(int alpha) {
     int gap = x;
 
     switch (ShopMenu.side) {
-        case 0:
+        case SHOP_SIDE_STOCK:
             x = 0x38;
             gap = 0xD8;
             break;
-        case 1:
+        case SHOP_SIDE_PERSONAL:
             x = 0x146;
             gap = 0xE6;
             break;
@@ -925,7 +925,7 @@ static void ChargeShopLRDraw(int alpha) {
 
     if (0 < x) {
         CRect_i_ texel(0x62, 0x14, 0x1A, 0x18);
-        int      y = 66.0f + 4.0f * sinf(3.1415927f * (CursorVibeCnt % 79 - 40) / 40.0f);
+        int      y = 66.0f + 4.0f * sinf(PI * (CursorVibeCnt % 79 - 40) / 40.0f);
 
         DrawMenu2DSprite(PerBoardTex, CRect_i_(x, y, texel.width, texel.height), texel, alpha);
         texel.x += texel.width;
@@ -966,7 +966,7 @@ static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, in
 
             cur_y = y + row * 0x28;
 
-            if (ShopMenu.board.cursor_area == 2) {
+            if (ShopMenu.board.cursor_area == PERSONAL_BOARD_AREA_TRASH) {
 #ifdef PAL
                 cur_x = x + 0xE2;
 #else
@@ -1037,9 +1037,9 @@ static void DrawShopIcon(int x, int y, int selected, int alpha) {
  * @size 0x10C
  */
 static int IsEnableCharge(int item_no) {
-    int enable = 0;
+    int enable = false;
 
-    if (item_no >= 0x101) {
+    if (item_no >= ITEM_WEAPON_START) {
         int          chara_no = WhoIsWeaponEquip(item_no);
         CUserStatus *status = ShopUserStatusPt;
         WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
@@ -1049,23 +1049,23 @@ static int IsEnableCharge(int item_no) {
             int weapon_no = weapons[i].item_no;
 
             if (weapon_no == default_no || weapon_no == default_no + 1) {
-                enable = 1;
+                enable = true;
                 break;
             }
         }
 
         if (ShopUserStatusPt->party_size - 1 < chara_no) {
-            enable = 1;
+            enable = true;
         }
 
         if (ShopMenu.board.held_equipped_slot >= 0) {
-            enable = 0;
+            enable = false;
         }
     } else {
-        enable = 1;
+        enable = true;
 
-        if (item_no == 0xF2) {
-            enable = 0;
+        if (item_no == ITEM_MOON_ORB) {
+            enable = false;
         }
     }
 
@@ -1100,15 +1100,15 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     ShopMenu.person_tex_block = tex_block[1];
     ShopMenu.person_state = 1;
     ShopMenu.alpha = 0;
-    ShopMenu.side = 1;
-    InitPersonalBoardMode(ShopUserStatusPt, &ShopMenu.board, 0, 0);
+    ShopMenu.side = SHOP_SIDE_PERSONAL;
+    InitPersonalBoardMode(ShopUserStatusPt, &ShopMenu.board, PERSONAL_BOARD_ITEM, BOARD_PAGE_ITEM);
     ShopHaveItemPt = &ShopMenu.board.held_item;
     ShopHaveWepPt = &ShopMenu.board.weapon;
     ShopHaveAttachPt = &ShopMenu.board.held_attach;
     ShopMenu.stock_top_row = 0;
     ShopMenu.stock_row_offset = 0;
     ShopMenu.step_count = 0;
-    ShopMenu.talk_mode = 1;
+    ShopMenu.talk_mode = SHOP_TALK_FADE_IN;
     StayTex = TexManager.GetTexture("stayframe", -1);
     ItemVolumeStep.CheckItemVolume();
     ShopDataMove.spare = -1;
@@ -1119,7 +1119,7 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     ShopDataMove.pos_x = 0.0f;
     memset(&ShopDataMove.data, 0, sizeof(ShopDataMove.data));
     SetMenuTrushMark(ShopUserItemPack(ShopUserStatusPt));
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
 
@@ -1150,7 +1150,7 @@ static void ShopMenuExit() {
     }
 
     DeleteMenuTrushMark();
-    CommonMenuMes3.auto_pos = -1;
+    CommonMenuMes3.auto_pos = MES_POS_NONE;
     AtoraNameMes.rows = 4;
     TexManager.DeleteTextureBlock(ShopMenu.tex_block);
     TexManager.DeleteTextureBlock(ShopMenu.person_tex_block);
@@ -1180,7 +1180,7 @@ void ShopTextureLoadFix() {
     ShopMenu.ready = 1;
     s16 *shop_messages = (s16 *) GetPackFile((u_int *) file->buffer, "itemshop.bin", NULL);
     s16 *keeper_messages = (s16 *) GetPackFile((u_int *) file->buffer, "shopman.bin", NULL);
-    InitMenuMesSet(2, shop_messages);
+    InitMenuMesSet(MENU_MES_SET_SHOP, shop_messages);
     CommonMenuMes3.SetBuff(keeper_messages);
 }
 
@@ -1195,10 +1195,10 @@ static void ShopFadeoutDraw() {
     int alpha = 0;
 
     switch (ShopMenu.talk_mode) {
-        case 1:
+        case SHOP_TALK_FADE_IN:
             alpha = 0x80 - ShopMenu.step_count * 3;
             break;
-        case 2:
+        case SHOP_TALK_FADE_OUT:
             alpha = ShopMenu.step_count * 3 + 0x40;
             break;
     }
@@ -1214,8 +1214,8 @@ static void ShopFadeoutDraw() {
     FrameImageDraw(0x40, alpha);
 
     switch (ShopMenu.talk_mode) {
-        case 0:
-        case 0x19:
+        case SHOP_TALK_NONE:
+        case SHOP_TALK_GOODBYE:
             ShopMenu.step_count = 0;
             break;
         default:
@@ -1315,7 +1315,7 @@ static int ShopPersonBuild(int shop_kind, int shop_no) {
 
     ShopMenu.motion = 3;
     MenuCharaFrame.SetMotion(ShopMenu.motion, 0);
-    SetItemShopTalkMode(3, 1);
+    SetItemShopTalkMode(SHOP_TALK_GREETING, SHOP_MSG_TALKING);
     ShopMenu.idle_count = 0;
     ShopMenu.msg_no = 0;
     ShopMasterVectorSet(0);
@@ -1385,7 +1385,7 @@ static void ShopMasterVectorSet(int mode) {
     MenuCharaFrame.GetRotation(rotation);
     sceVu0SubVector(offset, pos, camera_pos);
     angle = atan2f(-offset[0], -offset[2]);
-    rotation[1] = AngleInterpolate(rotation[1], angle, 0.1f, 0);
+    rotation[1] = AngleInterpolate(rotation[1], angle, 0.1f, INTERPOLATE_STEP);
     MenuCharaFrame.SetRotation(rotation);
 }
 
@@ -1398,7 +1398,7 @@ void InitChargeShop(int *tex_block, int shop_no, int mode) {
 
     ShopMenuInit(tex_block, shop_no, mode);
     ShopMenu.board.cursor = 0;
-    ShopMenu.side = 1;
+    ShopMenu.side = SHOP_SIDE_PERSONAL;
     ShopMenu.cursor_x = (ShopMenu.board.cursor % 5) * 0x28 + 0x154;
     ShopMenu.cursor_y = 120.0f;
     ShopStockPt = SaveData->GetStockItem();
@@ -1422,7 +1422,7 @@ void ChargeShopLimmitCheck() {
 
     int cursor = ShopMenu.board.cursor;
 
-    if (max - 1 < cursor && ShopMenu.side == 0) {
+    if (max - 1 < cursor && ShopMenu.side == SHOP_SIDE_STOCK) {
         while (ShopMenu.board.cursor >= max) {
             ShopMenu.board.cursor -= 5;
         }
@@ -1505,11 +1505,11 @@ int ChargeShopKey() {
 #ifdef PAL
             printf("Model Read Start\n");
 #endif
-            ShopPersonReadStart(0, ShopMenu.shop_no);
+            ShopPersonReadStart(SHOP_KIND_CHARGE, ShopMenu.shop_no);
         }
     } else {
         switch (ShopMenu.talk_mode) {
-            case 1:
+            case SHOP_TALK_FADE_IN:
                 ShopMenu.alpha += 8;
 
                 if (ShopMenu.alpha >= 0x80) {
@@ -1517,11 +1517,11 @@ int ChargeShopKey() {
                 }
 
                 if (ShopMenu.step_count > 20 && ShopMenu.ready != 0 && ShopMenu.alpha >= 0x80) {
-                    ShopMenu.talk_mode = 0;
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
                 }
 
                 break;
-            case 2:
+            case SHOP_TALK_FADE_OUT:
                 ShopMenu.alpha -= 8;
 
                 if (ShopMenu.alpha <= 0) {
@@ -1533,40 +1533,40 @@ int ChargeShopKey() {
                 }
 
                 break;
-            case 3:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_GREETING:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0xF000) != 0 || GamePad.AllOn() != 0) {
-                    ShopMenu.talk_mode = 0;
-                    ComMenuSePlay(2);
-                    CommonMenuMes3.page_arrow = 0;
+                if (GamePad.Down(PAD_DPAD) != 0 || GamePad.AllOn() != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    CommonMenuMes3.page_arrow = false;
                 }
 
                 break;
-            case 8:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_STOCK_FULL:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0xF000) != 0) {
-                    ShopMenu.talk_mode = 0;
-                    ComMenuSePlay(2);
-                    CommonMenuMes3.page_arrow = 0;
+                if (GamePad.Down(PAD_DPAD) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    CommonMenuMes3.page_arrow = false;
                 }
-            case 7:
-            case 10:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_CANNOT_CHARGE:
+            case SHOP_TALK_INVENTORY_OVERFLOW:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0x60) != 0) {
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(2);
-                    CommonMenuMes3.page_arrow = 0;
+                if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    CommonMenuMes3.page_arrow = false;
                 }
 
                 break;
-            case 17:
-                if (GamePad.Down(0x20) != 0) {
-                    ShopMenu.talk_mode = 0;
-                    ComMenuSePlay(2);
-                } else if (GamePad.Down(0x50) != 0) {
+            case SHOP_TALK_CHARGE_PUT_PROMPT:
+                if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                } else if (GamePad.Down(PAD_TRIANGLE | PAD_CROSS) != 0) {
                     ShopDataMoveFinish();
                     int space = ShopStockPt->GetNowModeSpace(ShopMenu.board.page);
                     int icon = space - ShopMenu.stock_top_row * 5;
@@ -1574,7 +1574,7 @@ int ChargeShopKey() {
                     int item_no;
 
                     switch (ShopMenu.board.page) {
-                        case 0: {
+                        case BOARD_PAGE_ITEM: {
                             ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                             item_no = pack->item[cursor];
                             record.volume = pack->item_vol[cursor];
@@ -1583,14 +1583,14 @@ int ChargeShopKey() {
                             pack->item_vol[cursor] = 0;
                             break;
                         }
-                        case 2: {
+                        case BOARD_PAGE_ATTACH: {
                             ATTACH_LIST *list = &((ATTACH_LIST *) ShopUserStatusPt->consumable_items)[cursor];
                             item_no = list->item_no;
                             memcpy(&record, list, sizeof(ATTACH_LIST));
                             memset(list, 0, sizeof(ATTACH_LIST));
                             break;
                         }
-                        case 1: {
+                        case BOARD_PAGE_WEAPON: {
                             WEAPON_HAVE *have = &ShopWeaponRow(ShopUserStatusPt, cursor / 10)[cursor % 10];
                             item_no = have->item_no;
                             memcpy(&record, have, sizeof(WEAPON_HAVE));
@@ -1609,13 +1609,13 @@ int ChargeShopKey() {
                         ShopDataMoveClear();
                     }
 
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(1);
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
 
                 break;
-            case 18:
-                if (GamePad.Down(0x50) != 0) {
+            case SHOP_TALK_CHARGE_TAKE_PROMPT:
+                if (GamePad.Down(PAD_TRIANGLE | PAD_CROSS) != 0) {
                     int page;
                     s16 stock_item;
                     s16 volume;
@@ -1624,16 +1624,16 @@ int ChargeShopKey() {
                     memset(&stock, 0, sizeof(stock));
 
                     switch (ShopMenu.board.page) {
-                        case 0:
+                        case BOARD_PAGE_ITEM:
                             volume = 0;
                             ShopStockPt->SetItemToPos(ShopMenu.board.cursor, &stock_item, &volume);
                             stock.volume = volume;
                             break;
-                        case 2:
+                        case BOARD_PAGE_ATTACH:
                             ShopStockPt->SetAttachToPos(ShopMenu.board.cursor, &stock.attach);
                             stock_item = stock.attach.item_no;
                             break;
-                        case 1:
+                        case BOARD_PAGE_WEAPON:
                             ShopStockPt->SetWepToPos(ShopMenu.board.cursor, &stock.weapon);
                             stock_item = stock.weapon.item_no;
                             break;
@@ -1651,42 +1651,42 @@ int ChargeShopKey() {
                         ShopDataMoveClear();
                     }
 
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(1);
-                } else if (GamePad.Down(0x20) != 0) {
-                    ShopMenu.talk_mode = 0;
-                    ComMenuSePlay(2);
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
-            case 25:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_GOODBYE:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0x60) != 0) {
-                    ShopMenu.talk_mode = 2;
+                if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_FADE_OUT;
                     ShopMenu.step_count = 0;
-                    CommonMenuMes3.page_arrow = 0;
-                    ComMenuSePlay(1);
+                    CommonMenuMes3.page_arrow = false;
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
 
                 break;
-            case 24:
-                CommonMenuMes3.page_arrow = 0;
+            case SHOP_TALK_LEAVE_PROMPT:
+                CommonMenuMes3.page_arrow = false;
 
-                if (GamePad.Down(0x40) != 0) {
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(1);
-                    CommonMenuMes3.page_arrow = 0;
-                } else if (GamePad.Down(0x20) != 0) {
-                    SetItemShopTalkMode(25, 1);
-                    ComMenuSePlay(2);
-                    CommonMenuMes3.page_arrow = 0;
+                if (GamePad.Down(PAD_CROSS) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
+                    CommonMenuMes3.page_arrow = false;
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_GOODBYE, SHOP_MSG_TALKING);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    CommonMenuMes3.page_arrow = false;
                 }
 
                 break;
-            case 0: {
+            case SHOP_TALK_NONE: {
                 if (ShopMenu.person_state == 0) {
-                    ShopMenu.person_state = ShopPersonBuild(0, ShopMenu.shop_no);
+                    ShopMenu.person_state = ShopPersonBuild(SHOP_KIND_CHARGE, ShopMenu.shop_no);
                 }
 
                 int page = ShopMenu.board.page;
@@ -1694,11 +1694,11 @@ int ChargeShopKey() {
                 int board_exit = 0;
 
                 switch (ShopMenu.side) {
-                    case 0:
+                    case SHOP_SIDE_STOCK:
                         board_exit = ChargeSelectKey();
                         break;
-                    case 1:
-                        if (ShopHaveItemPt->item_no < 0x51) {
+                    case SHOP_SIDE_PERSONAL:
+                        if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
                             BoardModeChangeKey();
                             PersonalBoardLimmitCheck();
                             ChargeShopLimmitCheck();
@@ -1706,14 +1706,14 @@ int ChargeShopKey() {
 
                         board_exit = PersonalBoardKeySub();
 
-                        if (board_exit == 0 && GamePad.Down(0x40) != 0) {
+                        if (board_exit == 0 && GamePad.Down(PAD_CROSS) != 0) {
                             s16             held = ShopHaveItemPt->item_no;
                             PERSONAL_BOARD *board = &ShopMenu.board;
 
                             switch (board->cursor_area) {
-                                case 2: {
-                                    if (held < 0x51) {
-                                        ComMenuSePlay(2);
+                                case PERSONAL_BOARD_AREA_TRASH: {
+                                    if (held < ITEM_ATTACH_START) {
+                                        ComMenuSePlay(MENU_SOUND_REFUSE);
                                     } else {
                                         if (IsEnableTrushThrow(held) != 0) {
                                             board->trash_anim = 1;
@@ -1721,69 +1721,69 @@ int ChargeShopKey() {
                                             InitAllHaveData();
                                         }
 
-                                        ComMenuSePlay(2);
+                                        ComMenuSePlay(MENU_SOUND_REFUSE);
                                     }
 
                                     break;
                                 }
-                                case 1:
+                                case PERSONAL_BOARD_AREA_CELLS:
                                     if (PersonalBoardItemGetorSwap(ShopMenu.board.cursor) != 0) {
-                                        if (ShopHaveItemPt->item_no >= 0x51) {
-                                            ShopHaveItemPt->slot_state = 1;
+                                        if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                                            ShopHaveItemPt->slot_state = SHOP_SLOT_SHOP_GOOD;
                                         } else {
                                             InitAllHaveData();
                                             ShopMenu.board.held_equipped_slot = -1;
                                         }
 
-                                        ComMenuSePlay(1);
+                                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                                     } else {
-                                        ComMenuSePlay(2);
+                                        ComMenuSePlay(MENU_SOUND_REFUSE);
                                     }
 
                                     break;
                             }
-                        } else if (board_exit == 0 && GamePad.Down(0x80) != 0) {
+                        } else if (board_exit == 0 && GamePad.Down(PAD_SQUARE) != 0) {
                             switch (ShopMenu.board.page) {
-                                case 0:
+                                case BOARD_PAGE_ITEM:
                                     SeitonItemBoard(&ShopUserStatusPt->item_pack);
                                     SetMenuTrushMark(&ShopUserStatusPt->item_pack);
                                     break;
-                                case 2:
+                                case BOARD_PAGE_ATTACH:
                                     SeitonAttachBoard((ATTACH_LIST *) ShopUserStatusPt->consumable_items);
                                     break;
                             }
 
-                            ComMenuSePlay(1);
-                        } else if (board_exit == 0 && GamePad.Down(0x10) != 0) {
-                            int enable = 1;
+                            ComMenuSePlay(MENU_SOUND_CONFIRM);
+                        } else if (board_exit == 0 && GamePad.Down(PAD_TRIANGLE) != 0) {
+                            int enable = true;
 
-                            if (ShopMenu.board.cursor_area == 2) {
-                                ComMenuSePlay(2);
-                            } else if (ShopHaveItemPt->item_no >= 0x51) {
-                                ComMenuSePlay(2);
+                            if (ShopMenu.board.cursor_area == PERSONAL_BOARD_AREA_TRASH) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
+                            } else if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
                                 s16 target = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
 
                                 switch (ShopMenu.board.page) {
-                                    case 0:
-                                    case 2:
+                                    case BOARD_PAGE_ITEM:
+                                    case BOARD_PAGE_ATTACH:
                                         break;
-                                    case 1: {
+                                    case BOARD_PAGE_WEAPON: {
                                         int owner = WhoIsWeaponEquip(target);
 
-                                        if (target < 0x101) {
-                                            ComMenuSePlay(2);
+                                        if (target < ITEM_WEAPON_START) {
+                                            ComMenuSePlay(MENU_SOUND_REFUSE);
                                         } else {
                                             if (owner == IsDefaultWeapon(target)) {
-                                                SetItemShopTalkMode(7, 1);
-                                                enable = 0;
+                                                SetItemShopTalkMode(SHOP_TALK_CANNOT_CHARGE, SHOP_MSG_TALKING);
+                                                enable = false;
                                             }
 
                                             s8 slot = ShopUserStatusPt->equipped_weapon_slot[owner];
 
                                             if (ShopMenu.board.cursor % 10 == slot) {
-                                                SetItemShopTalkMode(7, 1);
-                                                enable = 0;
+                                                SetItemShopTalkMode(SHOP_TALK_CANNOT_CHARGE, SHOP_MSG_TALKING);
+                                                enable = false;
                                             }
                                         }
 
@@ -1795,25 +1795,25 @@ int ChargeShopKey() {
                                     enable = IsEnableCharge(target);
 
                                     if (enable == 0) {
-                                        SetItemShopTalkMode(7, 1);
+                                        SetItemShopTalkMode(SHOP_TALK_CANNOT_CHARGE, SHOP_MSG_TALKING);
                                     }
                                 }
 
                                 if (ShopStockPt->GetNowModeSpace(ShopMenu.board.page) < 0) {
-                                    enable = 0;
-                                    SetItemShopTalkMode(8, 1);
+                                    enable = false;
+                                    SetItemShopTalkMode(SHOP_TALK_STOCK_FULL, SHOP_MSG_TALKING);
                                 }
 
-                                if (target < 0x51) {
-                                    SetItemShopTalkMode(0, 0);
-                                    enable = 0;
+                                if (target < ITEM_ATTACH_START) {
+                                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                                    enable = false;
                                 }
 
                                 if (enable != 0) {
-                                    ShopMenu.talk_mode = 17;
-                                    ComMenuSePlay(1);
+                                    ShopMenu.talk_mode = SHOP_TALK_CHARGE_PUT_PROMPT;
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 } else {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 }
                             }
                         }
@@ -1821,29 +1821,29 @@ int ChargeShopKey() {
                         break;
                 }
 
-                if (GamePad.Down(0x20) != 0) {
-                    ComMenuSePlay(2);
+                if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
 
-                    if (ShopHaveItemPt->item_no < 0x51) {
-                        SetItemShopTalkMode(24, 1);
+                    if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
+                        SetItemShopTalkMode(SHOP_TALK_LEAVE_PROMPT, SHOP_MSG_TALKING);
                     } else {
                         switch (ShopHaveItemPt->slot_state) {
-                            case 1:
+                            case SHOP_SLOT_SHOP_GOOD:
                                 PersonalBoardItemCancel();
                                 break;
-                            case 0:
+                            case SHOP_SLOT_EMPTY:
                                 switch (ShopHaveItemPt->from_page) {
-                                    case 0:
+                                    case BOARD_PAGE_ITEM:
                                         ShopStockPt->SetItemToPos(ShopHaveItemPt->from_slot, &ShopHaveItemPt->item_no, &ShopHaveItemPt->volume);
                                         break;
-                                    case 1: {
+                                    case BOARD_PAGE_WEAPON: {
                                         ShopStockPt->GetWeaponInfo(ShopHaveItemPt->from_slot, &weapon.weapon);
                                         s16 stock_item = weapon.weapon.item_no;
                                         ShopStockPt->SetWepToPos(ShopHaveItemPt->from_slot, ShopHaveWepPt);
                                         ShopHaveItemPt->item_no = stock_item;
                                         break;
                                     }
-                                    case 2: {
+                                    case BOARD_PAGE_ATTACH: {
                                         ShopStockPt->GetAttachInfo(ShopHaveItemPt->from_slot, &attach);
                                         s16 stock_item = attach.item_no;
                                         ShopStockPt->SetAttachToPos(ShopHaveItemPt->from_slot, ShopHaveAttachPt);
@@ -1852,7 +1852,7 @@ int ChargeShopKey() {
                                     }
                                 }
 
-                                if (ShopHaveItemPt->item_no < 0x51) {
+                                if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
                                     InitAllHaveData();
                                 }
 
@@ -1869,11 +1869,11 @@ int ChargeShopKey() {
 
                     step = 0;
 
-                    if (GamePad.On2(0x1000) && money < 9999) {
+                    if (GamePad.On2(PAD_UP) && money < 9999) {
                         step++;
                     }
 
-                    if (GamePad.On2(0x4000) && 0 < money) {
+                    if (GamePad.On2(PAD_DOWN) && 0 < money) {
                         step--;
                     }
 
@@ -1892,7 +1892,7 @@ int ChargeShopKey() {
                     case 0:
                         break;
                     case 1:
-                        ShopMenu.side = 0;
+                        ShopMenu.side = SHOP_SIDE_STOCK;
                         ShopMenu.board.cursor = (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
                         break;
                 }
@@ -1923,7 +1923,7 @@ int ChargeShopKey() {
                         ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
                     }
 
-                    ComMenuSePlay(0);
+                    ComMenuSePlay(MENU_SOUND_CURSOR);
                 }
 
                 break;
@@ -1936,24 +1936,24 @@ int ChargeShopKey() {
         int name_mes = -1;
         int cursor = ShopMenu.board.cursor;
 
-        if (ShopHaveItemPt->item_no >= 0x51) {
+        if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
             item = ShopHaveItemPt->item_no;
             COM_ITEM_INFO *info = GetCommonItemInfo(item);
             mes_no = info != NULL ? info->msg + 500 : mes_no;
             value = GetAttachVolumeForMsg(ShopHaveAttachPt);
 
-            if (ShopHaveItemPt->item_no == 0x5A) {
+            if (ShopHaveItemPt->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                 name_mes = ShopHaveAttachPt->sphere_weapon_no + 100;
             }
         }
 
         switch (ShopMenu.side) {
-            case 0:
+            case SHOP_SIDE_STOCK:
                 switch (ShopMenu.board.page) {
-                    case 0:
+                    case BOARD_PAGE_ITEM:
                         item = ShopStockPt->dungeon_items[cursor];
                         break;
-                    case 1: {
+                    case BOARD_PAGE_WEAPON: {
                         COM_ITEM_INFO *info = GetCommonItemInfo(ShopStockPt->weapons[cursor].item_no);
 
                         if (info != NULL) {
@@ -1962,20 +1962,20 @@ int ChargeShopKey() {
                             item = -1;
                         }
 
-                        if (item >= 0x101) {
+                        if (item >= ITEM_WEAPON_START) {
                             value = ShopStockPt->weapons[cursor].level;
                         }
 
                         break;
                     }
-                    case 2:
+                    case BOARD_PAGE_ATTACH:
                         item = ShopStockPt->attachments[cursor].item_no;
 
-                        if (item >= 0x51) {
+                        if (item >= ITEM_ATTACH_START) {
                             mes_no = item + 500;
                             value = GetAttachVolumeForMsg(&ShopStockPt->attachments[cursor]);
 
-                            if (item == 0x5A) {
+                            if (item == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                                 name_mes = ShopStockPt->attachments[cursor].sphere_weapon_no + 100;
                             }
                         }
@@ -1984,19 +1984,19 @@ int ChargeShopKey() {
                 }
 
                 break;
-            case 1:
+            case SHOP_SIDE_PERSONAL:
                 switch (ShopMenu.board.page) {
-                    case 0: {
+                    case BOARD_PAGE_ITEM: {
                         ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                         item = pack->item[cursor];
 
-                        if (item >= 0x84) {
+                        if (item >= ITEM_DUNGEON_START) {
                             mes_no = item + 500;
                         }
 
                         break;
                     }
-                    case 1: {
+                    case BOARD_PAGE_WEAPON: {
                         CUserStatus   *status = ShopUserStatusPt;
                         WEAPON_HAVE   *row = status->chara_weapons[cursor / 10];
                         WEAPON_HAVE   *have = &row[cursor % 10];
@@ -2015,15 +2015,15 @@ int ChargeShopKey() {
 
                         break;
                     }
-                    case 2: {
+                    case BOARD_PAGE_ATTACH: {
                         ATTACH_LIST *list = &((ATTACH_LIST *) ShopUserStatusPt->consumable_items)[cursor];
                         item = list->item_no;
 
-                        if (item >= 0x51) {
+                        if (item >= ITEM_ATTACH_START) {
                             mes_no = item + 500;
                             value = GetAttachVolumeForMsg(list);
 
-                            if (item == 0x5A) {
+                            if (item == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                                 name_mes = list->sphere_weapon_no + 100;
                             }
                         }
@@ -2032,7 +2032,7 @@ int ChargeShopKey() {
                     }
                 }
 
-                if (ShopMenu.board.cursor_area == 2) {
+                if (ShopMenu.board.cursor_area == PERSONAL_BOARD_AREA_TRASH) {
                     mes_no = 1000;
                 }
 
@@ -2044,7 +2044,7 @@ int ChargeShopKey() {
         }
 
         if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes) || CommonMenuMes2.value != value) {
-            CommonMenuMes2.value_signed = 1;
+            CommonMenuMes2.value_signed = true;
             CommonMenuMes2.value = value;
 
             if (name_mes > 0) {
@@ -2072,14 +2072,14 @@ int ChargeShopKey() {
  * @size 0x8C0
  */
 static int ChargeSelectKey() {
-    if (ShopHaveItemPt->item_no < 0x51 && BoardModeChangeKey()) {
+    if (ShopHaveItemPt->item_no < ITEM_ATTACH_START && BoardModeChangeKey()) {
         PersonalBoardLimmitCheck();
         ChargeShopLimmitCheck();
     }
 
     int count = ChargeShopMax[ShopMenu.board.page];
 
-    if (GamePad.Down(0x1000)) {
+    if (GamePad.Down(PAD_UP)) {
         ShopMenu.board.cursor -= 5;
 
         if (ShopMenu.board.cursor < 0) {
@@ -2091,7 +2091,7 @@ static int ChargeSelectKey() {
         }
     }
 
-    if (GamePad.Down(0x4000)) {
+    if (GamePad.Down(PAD_DOWN)) {
         if (ShopMenu.board.cursor < count - 5) {
             ShopMenu.board.cursor += 5;
         }
@@ -2101,13 +2101,13 @@ static int ChargeSelectKey() {
         }
     }
 
-    if (GamePad.Down(0x8000) && ShopMenu.board.cursor % 5 != 0) {
+    if (GamePad.Down(PAD_LEFT) && ShopMenu.board.cursor % 5 != 0) {
         ShopMenu.board.cursor--;
     }
 
-    if (GamePad.Down(0x2000)) {
+    if (GamePad.Down(PAD_RIGHT)) {
         if (ShopMenu.board.cursor % 5 == 4) {
-            ShopMenu.side = 1;
+            ShopMenu.side = SHOP_SIDE_PERSONAL;
             ShopMenu.board.cursor = (ShopMenu.board.top_row + (ShopMenu.board.cursor / 5 - ShopMenu.stock_top_row)) * 5;
         } else {
             ShopMenu.board.cursor++;
@@ -2115,33 +2115,33 @@ static int ChargeSelectKey() {
     }
 
     switch (ShopMenu.side) {
-        case 0:
+        case SHOP_SIDE_STOCK:
             int       se = 2;
             IHAVEITEM saved;
             memcpy(&saved, ShopHaveItemPt, sizeof(IHAVEITEM));
 
-            if (GamePad.Down(0x40)) {
+            if (GamePad.Down(PAD_CROSS)) {
                 // Put the held item into the stock slot under the cursor.
-                if (ShopHaveItemPt->item_no >= 0x51 && !IsEnableCharge(ShopHaveItemPt->item_no)) {
-                    ComMenuSePlay(2);
-                    SetItemShopTalkMode(7, 1);
+                if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START && !IsEnableCharge(ShopHaveItemPt->item_no)) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    SetItemShopTalkMode(SHOP_TALK_CANNOT_CHARGE, SHOP_MSG_TALKING);
                     return 0;
                 }
 
                 int mode = ShopMenu.board.page;
                 int kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
 
-                if (mode != kind && kind != -1) {
+                if (mode != kind && kind != BOARD_PAGE_NONE) {
                     se = 2;
                 } else {
                     switch (mode) {
-                        case 0:
+                        case BOARD_PAGE_ITEM:
                             ShopStockPt->SetItemToPos(ShopMenu.board.cursor, &ShopHaveItemPt->item_no, &ShopHaveItemPt->volume);
                             break;
-                        case 1:
+                        case BOARD_PAGE_WEAPON:
                             ShopStockPt->SetWepToPos(ShopMenu.board.cursor, ShopHaveWepPt);
 
-                            if (ShopHaveWepPt->item_no < 0x51) {
+                            if (ShopHaveWepPt->item_no < ITEM_ATTACH_START) {
                                 ShopHaveItemPt->item_no = -1;
                                 InitHaveWep(ShopHaveWepPt);
                                 ShopMenu.board.held_equipped_slot = -1;
@@ -2150,10 +2150,10 @@ static int ChargeSelectKey() {
                             }
 
                             break;
-                        case 2:
+                        case BOARD_PAGE_ATTACH:
                             ShopStockPt->SetAttachToPos(ShopMenu.board.cursor, ShopHaveAttachPt);
 
-                            if (ShopHaveAttachPt->item_no < 0x51) {
+                            if (ShopHaveAttachPt->item_no < ITEM_ATTACH_START) {
                                 ShopHaveItemPt->item_no = -1;
                                 InitHaveAttach(ShopHaveAttachPt);
                                 ShopMenu.board.held_equipped_slot = -1;
@@ -2164,27 +2164,27 @@ static int ChargeSelectKey() {
                             break;
                     }
 
-                    ShopHaveItemPt->slot_state = 0;
+                    ShopHaveItemPt->slot_state = SHOP_SLOT_EMPTY;
                 }
 
-                if (ShopHaveItemPt->item_no < 0x51) {
+                if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
                     InitAllHaveData();
                 } else {
-                    ShopHaveItemPt->slot_state = 0;
+                    ShopHaveItemPt->slot_state = SHOP_SLOT_EMPTY;
                     ShopHaveItemPt->from_page = ShopMenu.board.page;
                     ShopHaveItemPt->from_slot = ShopMenu.board.cursor;
                     se = 1;
                 }
 
                 if (memcmp(&saved, ShopHaveItemPt, sizeof(IHAVEITEM)) != 0 || se != 2) {
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
-            } else if (GamePad.Down(0x10)) {
+            } else if (GamePad.Down(PAD_TRIANGLE)) {
                 // Check whether the good under the cursor can be taken for charging.
-                if (ShopHaveItemPt->item_no >= 0x51) {
-                    ComMenuSePlay(2);
+                if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                     return 0;
                 }
 
@@ -2197,14 +2197,14 @@ static int ChargeSelectKey() {
                 s16         volume;
 
                 switch (ShopMenu.board.page) {
-                    case 0:
+                    case BOARD_PAGE_ITEM:
                         ShopStockPt->GetItemInfo(ShopMenu.board.cursor, &item, &volume);
                         break;
-                    case 2:
+                    case BOARD_PAGE_ATTACH:
                         ShopStockPt->GetAttachInfo(ShopMenu.board.cursor, &attach);
                         item = attach.item_no;
                         break;
-                    case 1:
+                    case BOARD_PAGE_WEAPON:
                         ShopStockPt->GetWeaponInfo(ShopMenu.board.cursor, &weapon);
                         item = weapon.item_no;
                         break;
@@ -2217,26 +2217,26 @@ static int ChargeSelectKey() {
                 GetNowModeMaxNum(ShopMenu.board.page, &full);
 
                 switch (kind) {
-                    case 0: {
+                    case BOARD_PAGE_ITEM: {
                         ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
 
                         max = pack->num;
 
                         for (int i = 0; i < 3; i++) {
-                            if (pack->quick_item_slot[i] >= 0x84) {
+                            if (pack->quick_item_slot[i] >= ITEM_DUNGEON_START) {
                                 used += pack->quick_item_qty[i];
                             }
                         }
 
                         for (int i = 0; i < max; i++) {
-                            if (pack->item[i] >= 0x84) {
+                            if (pack->item[i] >= ITEM_DUNGEON_START) {
                                 used++;
                             }
                         }
 
                         break;
                     }
-                    case 1: {
+                    case BOARD_PAGE_WEAPON: {
                         int i;
                         max = 10;
                         int          chara_no = WhoIsWeaponEquip(item);
@@ -2244,20 +2244,20 @@ static int ChargeSelectKey() {
                         WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
 
                         for (i = 0; i < 10; i++) {
-                            if (weapons[i].item_no >= 0x101) {
+                            if (weapons[i].item_no >= ITEM_WEAPON_START) {
                                 used++;
                             }
                         }
 
                         break;
                     }
-                    case 2: {
+                    case BOARD_PAGE_ATTACH: {
                         int i;
                         max = 40;
                         DNG_CONSUMABLE *attachments = ShopUserStatusPt->consumable_items;
 
                         for (i = 0; i < 40; i++) {
-                            if (attachments[i].id >= 0x51) {
+                            if (attachments[i].id >= ITEM_ATTACH_START) {
                                 used++;
                             }
                         }
@@ -2274,35 +2274,35 @@ static int ChargeSelectKey() {
                     full = 1;
                 }
 
-                if (full && item >= 0x51) {
+                if (full && item >= ITEM_ATTACH_START) {
                     ok = 0;
-                    SetItemShopTalkMode(0xA, 1);
+                    SetItemShopTalkMode(SHOP_TALK_INVENTORY_OVERFLOW, SHOP_MSG_TALKING);
                 }
 
-                if (item < 0x51) {
+                if (item < ITEM_ATTACH_START) {
                     ok = 0;
-                    SetItemShopTalkMode(0, 0);
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
                 }
 
                 if (ok) {
-                    ShopMenu.talk_mode = 0x12;
-                    ComMenuSePlay(1);
+                    ShopMenu.talk_mode = SHOP_TALK_CHARGE_TAKE_PROMPT;
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
-            } else if (GamePad.Down(0x80)) {
+            } else if (GamePad.Down(PAD_SQUARE)) {
                 switch (ShopMenu.board.page) {
-                    case 0:
+                    case BOARD_PAGE_ITEM:
                         ShopStockPt->SeitonItem();
                         break;
-                    case 1:
+                    case BOARD_PAGE_WEAPON:
                         break;
-                    case 2:
+                    case BOARD_PAGE_ATTACH:
                         ShopStockPt->SeitonAttach();
                         break;
                 }
 
-                ComMenuSePlay(1);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
             }
 
             break;
@@ -2325,10 +2325,10 @@ void DrawChargeShop() {
     int bright = 0x40;
 
     switch (ShopMenu.talk_mode) {
-        case 1:
+        case SHOP_TALK_FADE_IN:
             bright = 0x80 - ShopMenu.step_count * 3;
             break;
-        case 2:
+        case SHOP_TALK_FADE_OUT:
             bright = ShopMenu.step_count * 3 + 0x40;
             break;
     }
@@ -2353,31 +2353,31 @@ void DrawChargeShop() {
         CommonMoneyBoardDraw(0x163, 0x12C, ShopUserStatusPt->money, 0x80);
         ChargeShopBoardDraw(0x32, 0x84, 0x80);
 
-        if (ShopHaveItemPt->item_no < 0x51) {
+        if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
             ChargeShopLRDraw(0x80);
         }
 
         switch (ShopMenu.talk_mode) {
-            case 25:
-            case 24:
+            case SHOP_TALK_GOODBYE:
+            case SHOP_TALK_LEAVE_PROMPT:
                 break;
             default:
                 switch (ShopMenu.side) {
-                    case 0:
+                    case SHOP_SIDE_STOCK:
                         cur_x = 0x22;
                         top_row = ShopMenu.stock_top_row;
                         break;
-                    case 1:
+                    case SHOP_SIDE_PERSONAL:
                         cur_x = 0x144;
                         top_row = ShopMenu.board.top_row;
                         break;
                 }
 
-                if (ShopHaveItemPt->item_no >= 0x51) {
+                if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
                     state = 2;
                 } else {
                     switch (ShopMenu.side) {
-                        case 1:
+                        case SHOP_SIDE_PERSONAL:
                             state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
 
                             if (state <= 0) {
@@ -2387,7 +2387,7 @@ void DrawChargeShop() {
                             }
 
                             break;
-                        case 0:
+                        case SHOP_SIDE_STOCK:
                             state = ShopStockPt->SearchSpace(ShopMenu.board.cursor, ShopMenu.board.page);
 
                             if (state > 0) {
@@ -2406,25 +2406,25 @@ void DrawChargeShop() {
         ShopDataMove.IconAutoMoveDraw();
         ShopDataMove.IconAutoMove(ChargeOrShopFlag, 0);
 
-        if (ShopMenu.talk_mode == 17 || ShopMenu.talk_mode == 18) {
+        if (ShopMenu.talk_mode == SHOP_TALK_CHARGE_PUT_PROMPT || ShopMenu.talk_mode == SHOP_TALK_CHARGE_TAKE_PROMPT) {
             int prompt[2] = {0x516, 0x517};
 
-            if (CommonMenuMes1.mes_made != prompt[ShopMenu.talk_mode - 17]) {
-                CommonMenuMes1.MakeMesWin(prompt[ShopMenu.talk_mode - 17]);
+            if (CommonMenuMes1.mes_made != prompt[ShopMenu.talk_mode - SHOP_TALK_CHARGE_PUT_PROMPT]) {
+                CommonMenuMes1.MakeMesWin(prompt[ShopMenu.talk_mode - SHOP_TALK_CHARGE_PUT_PROMPT]);
             }
 
             CommonMenuMes1.text_x = 0x14A;
             CommonMenuMes1.text_y = 0xBE;
 
-            if (ShopMenu.talk_mode == 17) {
+            if (ShopMenu.talk_mode == SHOP_TALK_CHARGE_PUT_PROMPT) {
                 CommonMenuMes1.text_x = 0x96;
             }
 
-            CommonMenuMes1.stay_frame = 1;
+            CommonMenuMes1.stay_frame = true;
             CommonMenuMes1.Step();
             CommonMenuMes1.DrawMesWin();
         } else {
-            CommonMenuMes1.stay_frame = 0;
+            CommonMenuMes1.stay_frame = false;
         }
 
         MenuHelpWinDraw((int) ShopHelpWinPos[0], (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
@@ -2442,7 +2442,7 @@ void DrawChargeShop() {
         CommonMenuMes2.Step();
         CommonMenuMes2.DrawMesWin();
 
-        if (ShopHaveItemPt->item_no < 0x51) {
+        if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
             int mes_no = 0x519;
 #ifdef PAL
             u8 plate_x[7][2] = {
@@ -2467,7 +2467,7 @@ void DrawChargeShop() {
 #endif
             AtoraNameMes.text_x = plate_x[ShopMenu.lang][0];
 
-            if (ShopMenu.side == 1) {
+            if (ShopMenu.side == SHOP_SIDE_PERSONAL) {
                 mes_no = 0x518;
                 AtoraNameMes.text_x = plate_x[ShopMenu.lang][1];
             }
@@ -2476,14 +2476,14 @@ void DrawChargeShop() {
                 AtoraNameMes.MakeMesWin(mes_no);
             }
 
-            AtoraNameMes.stay_frame = 1;
+            AtoraNameMes.stay_frame = true;
             AtoraNameMes.text_y = SCREEN_HEIGHT - 0x5E;
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
     }
 
-    ShopModelMsgFunc(0);
+    ShopModelMsgFunc(SHOP_KIND_CHARGE);
     ShopFadeoutDraw();
     setbilinear(1);
 }
@@ -2510,25 +2510,25 @@ static void ChargeShopMaxDraw(int max, int x, int y, int alpha) {
     int i;
 
     switch (ShopMenu.board.page) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             for (i = 0; i < 60; i++) {
-                if (ShopStockPt->dungeon_items[i] >= 0x84) {
+                if (ShopStockPt->dungeon_items[i] >= ITEM_DUNGEON_START) {
                     count++;
                 }
             }
 
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             for (i = 0; i < 30; i++) {
-                if (ShopStockPt->weapons[i].item_no >= 0x101) {
+                if (ShopStockPt->weapons[i].item_no >= ITEM_WEAPON_START) {
                     count++;
                 }
             }
 
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             for (i = 0; i < 30; i++) {
-                if (ShopStockPt->attachments[i].item_no >= 0x51) {
+                if (ShopStockPt->attachments[i].item_no >= ITEM_ATTACH_START) {
                     count++;
                 }
             }
@@ -2556,27 +2556,27 @@ void ChargeShopBoardDraw(int x, int y, int alpha) {
     int i;
 
     switch (board_mode) {
-        case 1:
+        case BOARD_PAGE_WEAPON:
             for (i = 0; i < 30; i++) {
                 items[i] = ShopStockPt->weapons[i].item_no;
                 values[i] = 0;
             }
 
             break;
-        case 0:
+        case BOARD_PAGE_ITEM:
             for (i = 0; i < 60; i++) {
                 items[i] = ShopStockPt->dungeon_items[i];
                 values[i] = 0;
             }
 
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             for (i = 0; i < 30; i++) {
                 items[i] = ShopStockPt->attachments[i].item_no;
 
-                if (items[i] >= 0x5B && items[i] < 0x5F) {
-                    values[i] = (&ShopStockPt->attachments[i].item_no)[items[i] - 0x57];
-                } else if (items[i] == 0x5A) {
+                if (items[i] >= ITEM_ATTACH_STAT_START && items[i] < ITEM_ATTACH_GEM_START) {
+                    values[i] = (&ShopStockPt->attachments[i].item_no)[items[i] - ITEM_ATTACH_STAT_START + 4];
+                } else if (items[i] == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                     values[i] = ShopStockPt->attachments[i].sphere_weapon_no;
                 } else {
                     values[i] = 0;
@@ -2596,13 +2596,13 @@ void ChargeShopBoardDraw(int x, int y, int alpha) {
     int tag = 0;
 
     switch (board_mode) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             tag += 0xC;
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             tag += 0xA;
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             tag = 1;
             break;
     }
@@ -2614,14 +2614,14 @@ void ChargeShopBoardDraw(int x, int y, int alpha) {
 }
 
 /**
- * Returns the shop price of one item, which is zero for the item numbers below 0x51.
+ * Returns the shop price of one item, which is zero for the item numbers below ITEM_ATTACH_START.
  *
  * @mangled CalItemMoney__Fii
  * @address 0x1EB2D0
  * @size 0x40
  */
 static int CalItemMoney(int item_no, int sell) {
-    if (item_no < 0x51) {
+    if (item_no < ITEM_ATTACH_START) {
         return 0;
     }
 
@@ -2648,7 +2648,7 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
     for (i = 0; i < 6; i++) {
         ATTACH_LIST *attach = &weapon->attach[i];
 
-        if (attach != NULL && attach->item_no >= 0x51) {
+        if (attach != NULL && attach->item_no >= ITEM_ATTACH_START) {
             total += CalItemMoney(attach->item_no, sell);
         }
     }
@@ -2670,14 +2670,14 @@ static int BuyMoneyCheck2() {
     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
 
     for (i = 0; i < 100; i++) {
-        if (ItemBoardInfo[i] == 1) {
+        if (ItemBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
             total += CalItemMoney(pack->item[i], 0);
         }
     }
 
     for (int chara = 0; chara < 6; chara++) {
         for (i = 0; i < 10; i++) {
-            if (WeaponBoardInfo[chara][i] == 1) {
+            if (WeaponBoardInfo[chara][i] == SHOP_SLOT_SHOP_GOOD) {
                 WEAPON_HAVE *weapon = &((WEAPON_HAVE *) ((CUserStatus *) ShopUserStatusPt)->chara_weapons[chara])[i];
                 total += CalItemMoney(weapon->item_no, 0);
                 total += WeaponCalMoney(weapon, 0);
@@ -2688,7 +2688,7 @@ static int BuyMoneyCheck2() {
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
 
     for (i = 0; i < 40; i++, attach++) {
-        if (AttachBoardInfo[i] == 1) {
+        if (AttachBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
             total += CalItemMoney(attach->id, 0);
         }
     }
@@ -2708,7 +2708,7 @@ static int SellMoneyCheck2() {
     int i;
 
     for (i = 0; i < 30; i++) {
-        if (ShopBoardInfo[i] == 2) {
+        if (ShopBoardInfo[i] == SHOP_SLOT_PLAYER_ITEM) {
             int item_no = ShopListPt[i].item_no;
 
             if (item_no >= ITEM_ATTACH_START) {
@@ -2742,28 +2742,28 @@ static void IncludeBuyItem2() {
     int          j;
 
     for (i = 0; i < 30; i++) {
-        if (ShopBoardInfo[i] == 2) {
-            ShopBoardInfo[i] = 0;
+        if (ShopBoardInfo[i] == SHOP_SLOT_PLAYER_ITEM) {
+            ShopBoardInfo[i] = SHOP_SLOT_EMPTY;
             memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
         }
     }
 
     for (j = 0; j < 100; j++) {
-        if (ItemBoardInfo[j] == 1) {
-            ItemBoardInfo[j] = 2;
+        if (ItemBoardInfo[j] == SHOP_SLOT_SHOP_GOOD) {
+            ItemBoardInfo[j] = SHOP_SLOT_PLAYER_ITEM;
         }
     }
 
     // All six characters' weapon rows, walked as one run of sixty slots.
     for (i = 0; i < 60; i++) {
-        if (WeaponBoardInfo[0][i] == 1) {
-            WeaponBoardInfo[0][i] = 2;
+        if (WeaponBoardInfo[0][i] == SHOP_SLOT_SHOP_GOOD) {
+            WeaponBoardInfo[0][i] = SHOP_SLOT_PLAYER_ITEM;
         }
     }
 
     for (i = 0; i < 40; i++) {
-        if (AttachBoardInfo[i] == 1) {
-            AttachBoardInfo[i] = 2;
+        if (AttachBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
+            AttachBoardInfo[i] = SHOP_SLOT_PLAYER_ITEM;
         }
     }
 
@@ -2792,7 +2792,7 @@ static int CheckBuyItemFunc2() {
     int shop_slot;
 
     for (shop_slot = 0; shop_slot < 30; shop_slot++) {
-        if (ShopBoardInfo[shop_slot] == 2) {
+        if (ShopBoardInfo[shop_slot] == SHOP_SLOT_PLAYER_ITEM) {
             flags |= 2;
             break;
         }
@@ -2803,13 +2803,13 @@ static int CheckBuyItemFunc2() {
     int        i;
 
     for (i = 0; i < 3; i++) {
-        if (pack->quick_item_slot[i] >= 0x84) {
+        if (pack->quick_item_slot[i] >= ITEM_DUNGEON_START) {
             carried += pack->quick_item_qty[i];
         }
     }
 
     for (i = 0; i < pack->num; i++) {
-        if (pack->item[i] >= 0x84) {
+        if (pack->item[i] >= ITEM_DUNGEON_START) {
             carried++;
         }
     }
@@ -2821,7 +2821,7 @@ static int CheckBuyItemFunc2() {
 
     for (board = 0; board < 3; board++) {
         for (slot = 0; slot < board_max[board]; slot++) {
-            if (board_info[board][slot] == 1) {
+            if (board_info[board][slot] == SHOP_SLOT_SHOP_GOOD) {
                 flags |= 4;
                 break;
             }
@@ -2890,9 +2890,9 @@ static void ShopSpecialFunc() {
 
         if (found) {
             for (i = 0; i < 30; i++) {
-                if (ShopListPt[i].item_no == 5 && ShopBoardInfo[i] == 1) {
+                if (ShopListPt[i].item_no == 5 && ShopBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
                     memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
-                    ShopBoardInfo[i] = 0;
+                    ShopBoardInfo[i] = SHOP_SLOT_EMPTY;
                     return;
                 }
             }
@@ -2902,7 +2902,7 @@ static void ShopSpecialFunc() {
 
 s32 sort_table[9] = {9, 0, 1, 2, 3, 4, 5, 6, 7};
 s32 asort_table[5] = {5, 1, 2, 3, 4};
-s32 sort_top_type = 1;
+s32 sort_top_type = ITEM_SORT_FOOD;
 s32 asort_top_type = 1;
 
 int CompItem1(int first_item_no, int second_item_no) {
@@ -2952,16 +2952,16 @@ int SeitonShopItemBoardSub(ITEM_PACK *pack) {
     int second_slot;
     int moved;
 
-    for (first_slot = 0; first_slot < 9; first_slot++) {
+    for (first_slot = 0; first_slot < ITEM_SORT_COUNT; first_slot++) {
         sort_table[sort_type] = first_slot;
         sort_type++;
 
-        if (sort_type >= 9) {
-            sort_type = 0;
+        if (sort_type >= ITEM_SORT_COUNT) {
+            sort_type = ITEM_SORT_NONE;
         }
     }
 
-    sort_table[0] = 9;
+    sort_table[ITEM_SORT_NONE] = 9;
     moved = false;
 
     for (first_slot = 0; first_slot < pack->num - 1; first_slot++) {
@@ -2991,15 +2991,15 @@ static void SeitonShopItemBoard(ITEM_PACK *pack) {
         return;
     }
 
-    for (i = 0; i < 9; i++) {
+    for (i = 0; i < ITEM_SORT_COUNT; i++) {
         if (SeitonShopItemBoardSub(pack)) {
             return;
         }
 
         sort_top_type++;
 
-        if (sort_top_type >= 9) {
-            sort_top_type = 1;
+        if (sort_top_type >= ITEM_SORT_COUNT) {
+            sort_top_type = ITEM_SORT_FOOD;
         }
     }
 }
@@ -3118,23 +3118,23 @@ int ItemShopLoop2() {
 int CheckSideKey2() {
     int se;
 
-    if (GamePad.Down(0x9000) != 0) {
-        ShopMenu.side = 0;
-        ShopMenu.board.cursor_area = 1;
+    if (GamePad.Down(PAD_UP | PAD_LEFT) != 0) {
+        ShopMenu.side = SHOP_SIDE_STOCK;
+        ShopMenu.board.cursor_area = PERSONAL_BOARD_AREA_CELLS;
         ShopMenu.board.cursor = (ShopMenu.stock_top_row + 3) * 5 + 3;
     }
 
-    if (GamePad.Down(0x40) != 0) {
+    if (GamePad.Down(PAD_CROSS) != 0) {
         ShopMenu.key_used = 1;
 
-        if (ShopHaveItemPt->item_no >= 0x51) {
+        if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
             se = 2;
         } else {
             int flags = CheckBuyItemFunc2();
 
             if (flags & 1) {
                 se = 2;
-                SetItemShopTalkMode(23, 1);
+                SetItemShopTalkMode(SHOP_TALK_NOTHING_MARKED, SHOP_MSG_TALKING);
             }
 
             if ((flags & 2) || (flags & 4)) {
@@ -3146,27 +3146,27 @@ int CheckSideKey2() {
                 balance = money + (sell - buy);
 
                 if (balance < 0) {
-                    SetItemShopTalkMode(21, 1);
+                    SetItemShopTalkMode(SHOP_TALK_NOT_ENOUGH_MONEY, SHOP_MSG_TALKING);
                     se = 2;
                 } else if (balance > 0xFFFF) {
-                    SetItemShopTalkMode(22, 1);
+                    SetItemShopTalkMode(SHOP_TALK_TOO_MUCH_MONEY, SHOP_MSG_TALKING);
                     se = 2;
                 } else {
-                    SetItemShopTalkMode(12, 1);
+                    SetItemShopTalkMode(SHOP_TALK_CONFIRM_DEAL, SHOP_MSG_TALKING);
                     se = 1;
                 }
             }
 
             if (flags & 8) {
-                SetItemShopTalkMode(10, 1);
+                SetItemShopTalkMode(SHOP_TALK_INVENTORY_OVERFLOW, SHOP_MSG_TALKING);
             }
         }
 
         ComMenuSePlay(se);
     }
 
-    if (GamePad.Down(0x2000) != 0) {
-        ShopMenu.side = 1;
+    if (GamePad.Down(PAD_RIGHT) != 0) {
+        ShopMenu.side = SHOP_SIDE_PERSONAL;
         ShopMenu.board.cursor = (ShopMenu.board.top_row + 3) * 5;
     }
 
@@ -3198,11 +3198,11 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
         int item = ShopListPt[i].item_no;
         int num = 0;
 
-        if (item >= 0x5B && item < 0x5F) {
-            num = ShopListPt[i].data.param[item - 0x57];
+        if (item >= ITEM_ATTACH_STAT_START && item < ITEM_ATTACH_GEM_START) {
+            num = ShopListPt[i].data.param[item - ITEM_ATTACH_STAT_START + 4];
         }
 
-        if (item == 0x5A) {
+        if (item == ITEM_ATTACH_SYNTHESIS_SPHERE) {
             num = ShopListPt[i].data.param[1];
         }
 
@@ -3277,11 +3277,11 @@ static void DrawCheckButton(int x, int y, int alpha) {
     int u = 0x130;
 
     switch (ShopMenu.talk_mode) {
-        case 0x1A:
+        case SHOP_TALK_BUTTON_FLASH:
             u = 0x190;
 
             if (ShopMenu.step_count > 8) {
-                ShopMenu.talk_mode = 0;
+                ShopMenu.talk_mode = SHOP_TALK_NONE;
             }
 
             break;
@@ -3355,7 +3355,7 @@ static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int al
     for (i = 0; i < 30; i++) {
         state = ShopBoardInfo[i];
 
-        if (state == 0) {
+        if (state == SHOP_SLOT_EMPTY) {
             draw_x += 0x28;
 
             if (i % 5 == 4) {
@@ -3363,19 +3363,19 @@ static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int al
                 draw_y += 0x28;
             }
         } else {
-            visible = 1;
+            visible = true;
 
             if (ShopListPt[i].item_no < ITEM_ATTACH_START) {
-                visible = 0;
+                visible = false;
             }
 
-            if (ShopMenu.side == 0 && i == ShopMenu.board.cursor) {
-                visible = 0;
+            if (ShopMenu.side == SHOP_SIDE_STOCK && i == ShopMenu.board.cursor) {
+                visible = false;
             }
 
             selected = 0;
 
-            if (state == 2) {
+            if (state == SHOP_SLOT_PLAYER_ITEM) {
                 selected = 1;
             }
 
@@ -3405,7 +3405,7 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
     int ticket_x;
     int ticket_y;
 
-    if (slot == ShopMenu.board.cursor && ShopMenu.side == 1) {
+    if (slot == ShopMenu.board.cursor && ShopMenu.side == SHOP_SIDE_PERSONAL) {
         money = CalItemMoney(item_no, 0);
 
         if (money < 0) {
@@ -3436,27 +3436,27 @@ void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha) {
     WEAPON_HAVE    *weapons;
 
     switch (page) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             for (i = 0; i < 100; i++) {
-                if (ItemBoardInfo[i] == 1) {
+                if (ItemBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
                     item_no = pack->item[i];
 
-                    if (item_no >= 0x84) {
+                    if (item_no >= ITEM_DUNGEON_START) {
                         DrawLocalTicket(x, y, clip_top, clip_bottom, i, item_no, alpha);
                     }
                 }
             }
 
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             for (i = 0; i < 6; i++) {
                 weapons = (WEAPON_HAVE *) ((char *) ShopUserStatusPt + i * sizeof(ShopUserStatusPt->chara_weapons[0]) + 0x450C);
 
                 for (j = 0; j < 10; j++) {
-                    if (WeaponBoardInfo[i][j] == 1) {
+                    if (WeaponBoardInfo[i][j] == SHOP_SLOT_SHOP_GOOD) {
                         item_no = weapons[j].item_no;
 
-                        if (item_no >= 0x101) {
+                        if (item_no >= ITEM_WEAPON_START) {
                             DrawLocalTicket(x, y, clip_top, clip_bottom, j + i * 10, item_no, 0x80);
                         }
                     }
@@ -3464,12 +3464,12 @@ void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha) {
             }
 
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             for (i = 0; i < 40; i++) {
-                if (AttachBoardInfo[i] == 1) {
+                if (AttachBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
                     item_no = attach[i].id;
 
-                    if (item_no >= 0x51) {
+                    if (item_no >= ITEM_ATTACH_START) {
                         DrawLocalTicket(x, y, clip_top, clip_bottom, i, item_no, 0x80);
                     }
                 }
@@ -3488,7 +3488,7 @@ void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha) {
  */
 static void ShopCancelGoodReturn2() {
     int          count = -1;
-    int          page = -1;
+    int          page = BOARD_PAGE_NONE;
     s32         *info;
     ATTACH_LIST *attach = (ATTACH_LIST *) ShopUserStatusPt->consumable_items;
     ITEM_PACK   *pack = ShopUserItemPack(ShopUserStatusPt);
@@ -3499,61 +3499,61 @@ static void ShopCancelGoodReturn2() {
 
     // Gather every marked item, weapon and attachment into the work buffer.
     for (int i = 0; i < 100; i++) {
-        if (ItemBoardInfo[i] == 1) {
+        if (ItemBoardInfo[i] == SHOP_SLOT_SHOP_GOOD) {
             count++;
             ShopWorkBuf[count].item_no = pack->item[i];
             ShopWorkBuf[count].data.volume = pack->item_vol[i];
             pack->item[i] = 0;
             pack->item_vol[i] = 0;
-            ItemBoardInfo[i] = 0;
+            ItemBoardInfo[i] = SHOP_SLOT_EMPTY;
         }
     }
 
     for (int i = 0; i < 60; i++) {
-        if (WeaponBoardInfo[0][i] == 1) {
+        if (WeaponBoardInfo[0][i] == SHOP_SLOT_SHOP_GOOD) {
             chara_no = i / 10;
             slot_no = i % 10;
             CUserStatus *status = ShopUserStatusPt;
             WEAPON_HAVE *row = status->chara_weapons[chara_no];
             weapon = &row[slot_no];
 
-            if (weapon->item_no >= 0x101) {
+            if (weapon->item_no >= ITEM_WEAPON_START) {
                 count++;
                 ShopWorkBuf[count].item_no = weapon->item_no;
                 memcpy(&ShopWorkBuf[count].data, weapon, sizeof(WEAPON_HAVE));
                 InitHaveWep(weapon);
-                WeaponBoardInfo[0][i] = 0;
+                WeaponBoardInfo[0][i] = SHOP_SLOT_EMPTY;
             }
         }
     }
 
     for (int i = 0; i < 40; i++) {
-        if (AttachBoardInfo[i] == 1 && attach != NULL) {
+        if (AttachBoardInfo[i] == SHOP_SLOT_SHOP_GOOD && attach != NULL) {
             count++;
             ATTACH_LIST *list = &attach[i];
             ShopWorkBuf[count].item_no = list->item_no;
             memcpy(&ShopWorkBuf[count].data, list, sizeof(ATTACH_LIST));
             InitHaveAttach(list);
-            AttachBoardInfo[i] = 0;
+            AttachBoardInfo[i] = SHOP_SLOT_EMPTY;
         }
     }
 
     // Put the goods on the shop board back on the board they came from.
     for (int i = 0; i < 30; i++) {
-        if (ShopBoardInfo[i] == 2) {
+        if (ShopBoardInfo[i] == SHOP_SLOT_PLAYER_ITEM) {
             int item_no = ShopListPt[i].item_no;
 
-            if (item_no >= 0x51) {
+            if (item_no >= ITEM_ATTACH_START) {
                 space = GetBoardSpace(item_no, &page);
 
                 if (space >= 0) {
                     switch (page) {
-                        case 0:
+                        case BOARD_PAGE_ITEM:
                             pack->item[space] = item_no;
                             pack->item_vol[space] = ShopListPt[i].data.param[0];
                             info = ItemBoardInfo;
                             break;
-                        case 1: {
+                        case BOARD_PAGE_WEAPON: {
                             chara_no = space / 10;
                             slot_no = space % 10;
                             WEAPON_HAVE *row = ((CUserStatus *) ShopUserStatusPt)->chara_weapons[chara_no];
@@ -3563,7 +3563,7 @@ static void ShopCancelGoodReturn2() {
                             info = WeaponBoardInfo[0];
                             break;
                         }
-                        case 2: {
+                        case BOARD_PAGE_ATTACH: {
                             ATTACH_LIST *list = &attach[space];
                             memcpy(list, &ShopListPt[i].data, sizeof(ATTACH_LIST));
                             list->item_no = item_no;
@@ -3572,9 +3572,9 @@ static void ShopCancelGoodReturn2() {
                         }
                     }
 
-                    info[space] = 2;
+                    info[space] = SHOP_SLOT_PLAYER_ITEM;
                     memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
-                    ShopBoardInfo[i] = 0;
+                    ShopBoardInfo[i] = SHOP_SLOT_EMPTY;
                 }
             }
         }
@@ -3584,12 +3584,12 @@ static void ShopCancelGoodReturn2() {
     int next = 0;
 
     for (int i = 0; i < 30; i++) {
-        if (ShopListPt[i].item_no < 0x51) {
+        if (ShopListPt[i].item_no < ITEM_ATTACH_START) {
             if (next > count) {
                 break;
             }
 
-            ShopBoardInfo[i] = 1;
+            ShopBoardInfo[i] = SHOP_SLOT_SHOP_GOOD;
             memcpy(&ShopListPt[i], &ShopWorkBuf[next], sizeof(SHOP_ITEMLIST));
             ShopListPt[i].item_no = ShopWorkBuf[next].item_no;
             next++;
@@ -3611,37 +3611,37 @@ static int GetNowMasterMsgNo2(int shop_kind, int shop_no) {
     mes_no = base + 2000 + shop_no * 100;
 
     switch (ShopMenu.talk_mode) {
-        case 3:
+        case SHOP_TALK_GREETING:
             break;
-        case 7:
+        case SHOP_TALK_CANNOT_CHARGE:
             mes_no += 0x32;
             break;
-        case 21:
+        case SHOP_TALK_NOT_ENOUGH_MONEY:
             mes_no += 0x34;
             break;
-        case 22:
+        case SHOP_TALK_TOO_MUCH_MONEY:
             mes_no += 0x38;
             break;
-        case 23:
+        case SHOP_TALK_NOTHING_MARKED:
             mes_no += 0x33;
             break;
-        case 4:
+        case SHOP_TALK_CANNOT_SELL:
             mes_no += 0x36;
             break;
-        case 5:
+        case SHOP_TALK_WEAPON_EQUIPPED:
             mes_no += 0x35;
             break;
-        case 8:
+        case SHOP_TALK_STOCK_FULL:
             mes_no += 0x3A;
             break;
-        case 11:
-        case 10:
+        case SHOP_TALK_NO_SPACE:
+        case SHOP_TALK_INVENTORY_OVERFLOW:
             mes_no += 0x37;
             break;
-        case 6:
+        case SHOP_TALK_DEAL_PENDING:
             mes_no += 0x41;
             break;
-        case 12: {
+        case SHOP_TALK_CONFIRM_DEAL: {
             int flags = CheckBuyItemFunc2();
 
             if (flags & 2) {
@@ -3658,30 +3658,30 @@ static int GetNowMasterMsgNo2(int shop_kind, int shop_no) {
 
             break;
         }
-        case 20:
+        case SHOP_TALK_DEAL_DONE:
             mes_no += 0x4B;
             break;
-        case 24:
+        case SHOP_TALK_LEAVE_PROMPT:
             mes_no += 0x5A;
             break;
-        case 25:
-        case 2:
+        case SHOP_TALK_GOODBYE:
+        case SHOP_TALK_FADE_OUT:
             mes_no += 0x5B;
             break;
-        case 0:
+        case SHOP_TALK_NONE:
             switch (ShopMenu.side) {
-                case 0:
+                case SHOP_SIDE_STOCK:
                     mes_no += 0x14;
                     break;
-                case 1:
-                    if (ShopMenu.board.cursor_area == 2) {
+                case SHOP_SIDE_PERSONAL:
+                    if (ShopMenu.board.cursor_area == PERSONAL_BOARD_AREA_TRASH) {
                         mes_no += 0x28;
                     } else {
                         mes_no += 0x1E;
                     }
 
                     break;
-                case 2:
+                case SHOP_SIDE_CHECK_BUTTON:
                     mes_no += 0x3C;
                     break;
             }
@@ -3704,7 +3704,7 @@ static void ShopModelMsgFunc(int shop_kind) {
         int motion = ShopMenu.motion;
 
         switch (ShopMenu.msg_mode) {
-            case 0:
+            case SHOP_MSG_IDLE:
                 motion = 0;
 
                 if (GamePad.AllOn()) {
@@ -3713,17 +3713,17 @@ static void ShopModelMsgFunc(int shop_kind) {
                     ShopMenu.idle_count++;
 
                     if (ShopMenu.idle_count >= 0x140) {
-                        ShopMenu.msg_mode = 1;
+                        ShopMenu.msg_mode = SHOP_MSG_TALKING;
                         motion = 3;
                     }
                 }
 
                 break;
-            case 1:
+            case SHOP_MSG_TALKING:
                 switch (ShopMenu.talk_mode) {
-                    case 0:
+                    case SHOP_TALK_NONE:
                         if (GamePad.AllOn()) {
-                            ShopMenu.msg_mode = 0;
+                            ShopMenu.msg_mode = SHOP_MSG_IDLE;
                             ShopMenu.idle_count = 0;
                             motion = 0;
                         }
@@ -3737,10 +3737,10 @@ static void ShopModelMsgFunc(int shop_kind) {
                 break;
         }
 
-        if (ShopMenu.msg_mode == 1) {
+        if (ShopMenu.msg_mode == SHOP_MSG_TALKING) {
             int msg_no = GetNowMasterMsgNo2(shop_kind, ShopMenu.shop_no);
 
-            if (ShopMenu.msg_no != msg_no || GamePad.Down(0x60)) {
+            if (ShopMenu.msg_no != msg_no || GamePad.Down(PAD_CIRCLE | PAD_CROSS)) {
                 ShopMenu.msg_no = msg_no;
                 CommonMenuMes3.mes_made = -1;
                 CommonMenuMes3.MakeMesWin(ShopMenu.msg_no);
@@ -3748,14 +3748,14 @@ static void ShopModelMsgFunc(int shop_kind) {
             }
 
             switch (ShopMenu.talk_mode) {
-                case 2:
-                case 1:
+                case SHOP_TALK_FADE_OUT:
+                case SHOP_TALK_FADE_IN:
                     break;
                 default:
                     if (ShopMenu.person_state) {
                         SetShopTalkMsgPos();
-                        CommonMenuMes3.tail_on = 1;
-                        CommonMenuMes3.auto_pos = 8;
+                        CommonMenuMes3.tail_on = true;
+                        CommonMenuMes3.auto_pos = MES_POS_BOTTOM;
                         CommonMenuMes3.Step();
 
                         if (ShopMenu.draw_delay >= 4) {
@@ -3770,12 +3770,12 @@ static void ShopModelMsgFunc(int shop_kind) {
         }
 
         switch (CommonMenuMes3.State()) {
-            case 0:
-            case 4:
+            case CLSMES_CLOSED:
+            case CLSMES_FADE_OUT:
                 motion = 0;
                 break;
-            case 1:
-            case 2:
+            case CLSMES_FADE_IN:
+            case CLSMES_REVEALING:
                 motion = 3;
                 break;
         }
@@ -3862,8 +3862,8 @@ void ItemPosInfoInit() {
     ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
 
     for (i = 0; i < 100; i++) {
-        if (pack->item[i] >= 0x84) {
-            ItemBoardInfo[i] = 2;
+        if (pack->item[i] >= ITEM_DUNGEON_START) {
+            ItemBoardInfo[i] = SHOP_SLOT_PLAYER_ITEM;
 
 #ifdef PAL
             if (DebugMode) {
@@ -3871,7 +3871,7 @@ void ItemPosInfoInit() {
             }
 #endif
         } else {
-            ItemBoardInfo[i] = 0;
+            ItemBoardInfo[i] = SHOP_SLOT_EMPTY;
         }
     }
 
@@ -3883,11 +3883,11 @@ void ItemPosInfoInit() {
 #ifdef PAL
             s16 item_no = weapons[j].item_no;
 
-            if (item_no >= 0x101) {
+            if (item_no >= ITEM_WEAPON_START) {
 #else
-            if (weapons[j].item_no >= 0x101) {
+            if (weapons[j].item_no >= ITEM_WEAPON_START) {
 #endif
-                WeaponBoardInfo[i][j] = 2;
+                WeaponBoardInfo[i][j] = SHOP_SLOT_PLAYER_ITEM;
 
 #ifdef PAL
                 if (DebugMode) {
@@ -3895,7 +3895,7 @@ void ItemPosInfoInit() {
                 }
 #endif
             } else {
-                WeaponBoardInfo[i][j] = 0;
+                WeaponBoardInfo[i][j] = SHOP_SLOT_EMPTY;
             }
         }
     }
@@ -3903,8 +3903,8 @@ void ItemPosInfoInit() {
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
 
     for (i = 0; i < 40; i++) {
-        if (attach[i].id >= 0x51) {
-            AttachBoardInfo[i] = 2;
+        if (attach[i].id >= ITEM_ATTACH_START) {
+            AttachBoardInfo[i] = SHOP_SLOT_PLAYER_ITEM;
 
 #ifdef PAL
             if (DebugMode) {
@@ -3912,7 +3912,7 @@ void ItemPosInfoInit() {
             }
 #endif
         } else {
-            AttachBoardInfo[i] = 0;
+            AttachBoardInfo[i] = SHOP_SLOT_EMPTY;
         }
     }
 }
@@ -3931,20 +3931,20 @@ static void ItemShopGoodInitialize(int shop_no) {
     for (int i = 0; i < 20; i++) {
         s16 item_no = list[i];
 
-        if (item_no >= 0x51) {
+        if (item_no >= ITEM_ATTACH_START) {
             switch (WhatIsKindofItem(item_no)) {
-                case 1:
+                case BOARD_PAGE_WEAPON:
                     WepDataListToHaveCopy(item_no, &ShopListPt[i].data.weapon);
                     break;
-                case 2:
+                case BOARD_PAGE_ATTACH:
                     AttachDataListToHaveCopy(item_no, &ShopListPt[i].data.attach);
 
-                    if (item_no >= 0x5B && item_no < 0x5F) {
-                        ShopListPt[i].data.param[item_no - 0x57] = 1;
+                    if (item_no >= ITEM_ATTACH_STAT_START && item_no < ITEM_ATTACH_GEM_START) {
+                        ShopListPt[i].data.param[item_no - ITEM_ATTACH_STAT_START + 4] = 1;
                     }
 
                     break;
-                case 0:
+                case BOARD_PAGE_ITEM:
                     ShopListPt[i].data.volume = ItemDataToHaveCopy(item_no);
                     break;
                 default:
@@ -3953,15 +3953,15 @@ static void ItemShopGoodInitialize(int shop_no) {
             }
 
             ShopListPt[i].item_no = item_no;
-            ShopBoardInfo[i] = 1;
+            ShopBoardInfo[i] = SHOP_SLOT_SHOP_GOOD;
         } else {
             memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
-            ShopBoardInfo[i] = 0;
+            ShopBoardInfo[i] = SHOP_SLOT_EMPTY;
         }
     }
 
     for (int i = 20; i < 30; i++) {
-        ShopBoardInfo[i] = 0;
+        ShopBoardInfo[i] = SHOP_SLOT_EMPTY;
         memset(&ShopListPt[i], 0, sizeof(SHOP_ITEMLIST));
     }
 
@@ -3975,9 +3975,9 @@ void InitItemShop2(int *tex_block, int shop_no, int mode) {
     ItemShopGoodInitialize(shop_no);
     ItemPosInfoInit();
     InitAllHaveData();
-    ShopHaveItemPt->slot_state = 0;
+    ShopHaveItemPt->slot_state = SHOP_SLOT_EMPTY;
     ShopMenu.board.cursor = 0;
-    ShopMenu.side = 0;
+    ShopMenu.side = SHOP_SIDE_STOCK;
     ShopMenu.stock_top_row = 0;
     ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / 6.0f;
     ShopMenu.stock_y = 0x7E - ShopMenu.stock_top_row * 0x28;
@@ -4000,7 +4000,7 @@ static void ItemShopSelectKey2() {
     MENU_ITEMDATA swap_data[2];
     int           swap_item[2];
 
-    if (GamePad.Down(0x1000) != 0) {
+    if (GamePad.Down(PAD_UP) != 0) {
         ShopMenu.board.cursor -= 5;
 
         if (ShopMenu.board.cursor < 0) {
@@ -4012,9 +4012,9 @@ static void ItemShopSelectKey2() {
         }
     }
 
-    if (GamePad.Down(0x4000) != 0) {
+    if (GamePad.Down(PAD_DOWN) != 0) {
         if (ShopMenu.board.cursor >= 25) {
-            ShopMenu.side = 2;
+            ShopMenu.side = SHOP_SIDE_CHECK_BUTTON;
         } else {
             ShopMenu.board.cursor += 5;
         }
@@ -4024,36 +4024,36 @@ static void ItemShopSelectKey2() {
         }
     }
 
-    if (GamePad.Down(0x8000) != 0 && ShopMenu.board.cursor % 5 != 0) {
+    if (GamePad.Down(PAD_LEFT) != 0 && ShopMenu.board.cursor % 5 != 0) {
         ShopMenu.board.cursor--;
     }
 
-    if (GamePad.Down(0x2000) != 0) {
+    if (GamePad.Down(PAD_RIGHT) != 0) {
         if (ShopMenu.board.cursor % 5 == 4) {
-            ShopMenu.side = 1;
+            ShopMenu.side = SHOP_SIDE_PERSONAL;
             ShopMenu.board.cursor = (ShopMenu.board.top_row + (ShopMenu.board.cursor / 5 - ShopMenu.stock_top_row)) * 5;
         } else {
             ShopMenu.board.cursor++;
         }
     }
 
-    if (ShopMenu.side == 0 && ShopMenu.board.cursor > 30) {
+    if (ShopMenu.side == SHOP_SIDE_STOCK && ShopMenu.board.cursor > 30) {
         while (ShopMenu.board.cursor > 30) {
             ShopMenu.board.cursor -= 5;
         }
 
         ShopMenu.stock_top_row = ShopMenu.board.cursor / 5 - 2;
-        ShopMenu.side = 2;
+        ShopMenu.side = SHOP_SIDE_CHECK_BUTTON;
         return;
     }
 
-    if (GamePad.Down(0x40) != 0) {
+    if (GamePad.Down(PAD_CROSS) != 0) {
         ShopMenu.key_used = 1;
         int cursor = ShopMenu.board.cursor;
         int shop_info = ShopBoardInfo[cursor];
 
-        if (ShopListPt[cursor].item_no < 0x51 && ShopHaveItemPt->item_no < 0x51) {
-            ComMenuSePlay(2);
+        if (ShopListPt[cursor].item_no < ITEM_ATTACH_START && ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
+            ComMenuSePlay(MENU_SOUND_REFUSE);
             return;
         }
 
@@ -4062,34 +4062,34 @@ static void ItemShopSelectKey2() {
         if (enable != 0) {
             int item_no = ShopHaveItemPt->item_no;
 
-            if (item_no >= 0x84) {
+            if (item_no >= ITEM_DUNGEON_START) {
                 ITEM_DATA *data = GetItemData(item_no);
 
                 if (data != NULL) {
                     if (data->kind_flags & ITEMKINDF_THROWABLE) {
-                        enable = 0;
+                        enable = false;
                     }
 
                     if (ShopHaveItemPt->item_no == ITEM_FISHING_ROD) {
-                        enable = 0;
+                        enable = false;
                     }
                 }
             }
 
             if (ShopHaveItemPt->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
-                enable = 0;
+                enable = false;
             }
         }
 
         if (ShopMenu.board.held_equipped_slot >= 0) {
-            ComMenuSePlay(2);
-            SetItemShopTalkMode(5, 1);
+            ComMenuSePlay(MENU_SOUND_REFUSE);
+            SetItemShopTalkMode(SHOP_TALK_WEAPON_EQUIPPED, SHOP_MSG_TALKING);
             return;
         }
 
         if (enable == 0) {
-            ComMenuSePlay(2);
-            SetItemShopTalkMode(4, 1);
+            ComMenuSePlay(MENU_SOUND_REFUSE);
+            SetItemShopTalkMode(SHOP_TALK_CANNOT_SELL, SHOP_MSG_TALKING);
             return;
         }
 
@@ -4102,13 +4102,13 @@ static void ItemShopSelectKey2() {
         swap_item[0] = good->item_no;
 
         switch (good_kind) {
-            case 0:
+            case BOARD_PAGE_ITEM:
                 swap_data[0].volume = good->data.volume;
                 break;
-            case 1:
+            case BOARD_PAGE_WEAPON:
                 memcpy(&swap_data[0], &good->data, sizeof(WEAPON_HAVE));
                 break;
-            case 2:
+            case BOARD_PAGE_ATTACH:
                 memcpy(&swap_data[0], &good->data, sizeof(ATTACH_LIST));
                 break;
             default:
@@ -4120,25 +4120,25 @@ static void ItemShopSelectKey2() {
         swap_item[1] = ShopHaveItemPt->item_no;
 
         switch (held_kind) {
-            case 0:
+            case BOARD_PAGE_ITEM:
                 swap_data[1].volume = ShopHaveItemPt->volume;
                 break;
-            case 1:
+            case BOARD_PAGE_WEAPON:
                 memcpy(&swap_data[1], ShopHaveWepPt, sizeof(WEAPON_HAVE));
                 break;
-            case 2:
+            case BOARD_PAGE_ATTACH:
                 memcpy(&swap_data[1], ShopHaveAttachPt, sizeof(ATTACH_LIST));
                 break;
         }
 
         switch (good_kind) {
-            case 0:
+            case BOARD_PAGE_ITEM:
                 ShopHaveItemPt->volume = swap_data[0].volume;
                 break;
-            case 1:
+            case BOARD_PAGE_WEAPON:
                 memcpy(ShopHaveWepPt, &swap_data[0], sizeof(WEAPON_HAVE));
                 break;
-            case 2:
+            case BOARD_PAGE_ATTACH:
                 memcpy(ShopHaveAttachPt, &swap_data[0], sizeof(ATTACH_LIST));
                 break;
         }
@@ -4146,13 +4146,13 @@ static void ItemShopSelectKey2() {
         ShopHaveItemPt->item_no = swap_item[0];
 
         switch (held_kind) {
-            case 0:
+            case BOARD_PAGE_ITEM:
                 good->data.volume = swap_data[1].volume;
                 break;
-            case 1:
+            case BOARD_PAGE_WEAPON:
                 memcpy(&good->data, &swap_data[1], sizeof(WEAPON_HAVE));
                 break;
-            case 2:
+            case BOARD_PAGE_ATTACH:
                 memcpy(&good->data, &swap_data[1], sizeof(ATTACH_LIST));
                 break;
         }
@@ -4161,7 +4161,7 @@ static void ItemShopSelectKey2() {
         ShopHaveItemPt->slot_state = shop_info;
         ShopBoardInfo[cursor] = have_info;
 
-        if (ShopHaveItemPt->item_no < 0x51) {
+        if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
             InitAllHaveData();
             ShopMenu.board.held_equipped_slot = -1;
         } else {
@@ -4170,35 +4170,35 @@ static void ItemShopSelectKey2() {
             PersonalBoardLimmitCheck();
         }
 
-        ComMenuSePlay(1);
-    } else if (GamePad.Down(0x10) != 0) {
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
+    } else if (GamePad.Down(PAD_TRIANGLE) != 0) {
         ShopMenu.key_used = 1;
 
-        if (ShopHaveItemPt->item_no >= 0x51) {
-            ComMenuSePlay(2);
+        if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
+            ComMenuSePlay(MENU_SOUND_REFUSE);
             return;
         }
 
-        if (ShopBoardInfo[ShopMenu.board.cursor] == 1) {
+        if (ShopBoardInfo[ShopMenu.board.cursor] == SHOP_SLOT_SHOP_GOOD) {
             int money = ShopUserStatusPt->money;
             int item_no = ShopListPt[ShopMenu.board.cursor].item_no;
             int price = CalItemMoney(item_no, 0);
-            int enable = 1;
+            int enable = true;
 
-            if (item_no < 0x51) {
-                enable = 0;
+            if (item_no < ITEM_ATTACH_START) {
+                enable = false;
             }
 
             if (money < price) {
-                enable = 0;
-                SetItemShopTalkMode(21, 1);
+                enable = false;
+                SetItemShopTalkMode(SHOP_TALK_NOT_ENOUGH_MONEY, SHOP_MSG_TALKING);
             }
 
             int page = WhatIsKindofItem(item_no);
 
             if (GetBoardSpace(item_no, &page) < 0) {
-                enable = 0;
-                SetItemShopTalkMode(11, 1);
+                enable = false;
+                SetItemShopTalkMode(SHOP_TALK_NO_SPACE, SHOP_MSG_TALKING);
             }
 
             int full = 0;
@@ -4207,46 +4207,46 @@ static void ItemShopSelectKey2() {
             int owner = WhoIsWeaponEquip(item_no);
 
             switch (page) {
-                case 0: {
+                case BOARD_PAGE_ITEM: {
                     int        j;
                     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                     max = pack->num;
 
                     for (j = 0; j < 3; j++) {
-                        if (pack->quick_item_slot[j] >= 0x84) {
+                        if (pack->quick_item_slot[j] >= ITEM_DUNGEON_START) {
                             used += pack->quick_item_qty[j];
                         }
                     }
 
                     for (int k = 0; k < max; k++) {
-                        if (pack->item[k] >= 0x84) {
+                        if (pack->item[k] >= ITEM_DUNGEON_START) {
                             used++;
                         }
                     }
 
                     break;
                 }
-                case 1: {
+                case BOARD_PAGE_WEAPON: {
                     int j;
                     max = 10;
                     CUserStatus *status = ShopUserStatusPt;
                     WEAPON_HAVE *weapons = status->chara_weapons[owner];
 
                     for (j = 0; j < 10; j++) {
-                        if (weapons[j].item_no >= 0x101) {
+                        if (weapons[j].item_no >= ITEM_WEAPON_START) {
                             used++;
                         }
                     }
 
                     break;
                 }
-                case 2: {
+                case BOARD_PAGE_ATTACH: {
                     int j;
                     max = 40;
                     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
 
                     for (j = 0; j < 40; j++) {
-                        if (attach[j].id >= 0x51) {
+                        if (attach[j].id >= ITEM_ATTACH_START) {
                             used++;
                         }
                     }
@@ -4260,8 +4260,8 @@ static void ItemShopSelectKey2() {
             }
 
             for (int k = 0; k < 30; k++) {
-                if (page >= 0 && page == WhatIsKindofItem(ShopListPt[k].item_no) && ShopBoardInfo[k] == 2) {
-                    if (page == 1) {
+                if (page >= 0 && page == WhatIsKindofItem(ShopListPt[k].item_no) && ShopBoardInfo[k] == SHOP_SLOT_PLAYER_ITEM) {
+                    if (page == BOARD_PAGE_WEAPON) {
                         if (owner == WhoIsWeaponEquip(ShopListPt[k].item_no)) {
                             used++;
                         }
@@ -4276,29 +4276,29 @@ static void ItemShopSelectKey2() {
             }
 
             if (full != 0) {
-                enable = 0;
-                SetItemShopTalkMode(11, 1);
+                enable = false;
+                SetItemShopTalkMode(SHOP_TALK_NO_SPACE, SHOP_MSG_TALKING);
             }
 
             if (enable != 0) {
-                ShopMenu.talk_mode = 13;
-                ComMenuSePlay(1);
+                ShopMenu.talk_mode = SHOP_TALK_BUY_PROMPT;
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
             } else {
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
         } else {
-            ComMenuSePlay(2);
+            ComMenuSePlay(MENU_SOUND_REFUSE);
         }
     }
 
     if (BoardModeChangeKey() != 0) {
         PersonalBoardLimmitCheck();
-        ComMenuSePlay(0);
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 
 #ifdef PAL
     // Debug shortcut: dumps the held item.
-    if (DebugMode && GamePad.Down2(0x1000)) {
+    if (DebugMode && GamePad.Down2(PAD_UP)) {
         printf("------nowHaveData---------\n");
         printf("flag   = %d\n", ShopHaveItemPt->slot_state);
         printf("mode = %d\n", ShopHaveItemPt->from_page);
@@ -4307,7 +4307,7 @@ static void ItemShopSelectKey2() {
         printf("pos = %d\n", ShopHaveItemPt->last_slot);
         printf("listno = %d\n", ShopHaveItemPt->item_no);
 
-        if (0 <= ShopHaveItemPt->item_no && ShopHaveItemPt->item_no < 0x51) {
+        if (0 <= ShopHaveItemPt->item_no && ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
             printf("wepIndex = %d\n", ShopHaveWepPt->item_no);
         }
     }
@@ -4322,13 +4322,13 @@ static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     int good_kind = WhatIsKindofItem(good->item_no);
 
     switch (good_kind) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             swap_data[0].volume = good->data.volume;
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             memcpy(&swap_data[0], &good->data, sizeof(WEAPON_HAVE));
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             memcpy(&swap_data[0], &good->data, sizeof(ATTACH_LIST));
             break;
     }
@@ -4336,37 +4336,37 @@ static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     held_kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
 
     switch (held_kind) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             swap_data[1].volume = ShopHaveItemPt->volume;
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             memcpy(&swap_data[1], ShopHaveWepPt, sizeof(WEAPON_HAVE));
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             memcpy(&swap_data[1], ShopHaveAttachPt, sizeof(ATTACH_LIST));
             break;
     }
 
     switch (good_kind) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             ShopHaveItemPt->volume = swap_data[0].volume;
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             memcpy(ShopHaveWepPt, &swap_data[0], sizeof(WEAPON_HAVE));
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             memcpy(ShopHaveAttachPt, &swap_data[0], sizeof(ATTACH_LIST));
             break;
     }
 
     switch (held_kind) {
-        case 0:
+        case BOARD_PAGE_ITEM:
             good->data.volume = swap_data[1].volume;
             break;
-        case 1:
+        case BOARD_PAGE_WEAPON:
             memcpy(&good->data, &swap_data[1], sizeof(WEAPON_HAVE));
             break;
-        case 2:
+        case BOARD_PAGE_ATTACH:
             memcpy(&good->data, &swap_data[1], sizeof(ATTACH_LIST));
             break;
     }
@@ -4388,11 +4388,11 @@ int ItemShopKey2() {
     if (ShopMenu.ready == 0) {
         if (ReadBGSync() == 0) {
             ShopTextureLoadFix();
-            ShopPersonReadStart(1, ShopMenu.shop_no);
+            ShopPersonReadStart(SHOP_KIND_ITEM, ShopMenu.shop_no);
         }
     } else {
         switch (ShopMenu.talk_mode) {
-            case 1:
+            case SHOP_TALK_FADE_IN:
                 ShopMenu.alpha += 8;
 
                 if (ShopMenu.alpha >= 0x80) {
@@ -4400,11 +4400,11 @@ int ItemShopKey2() {
                 }
 
                 if (ShopMenu.step_count > 20 && ShopMenu.ready != 0 && ShopMenu.alpha >= 0x80) {
-                    ShopMenu.talk_mode = 0;
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
                 }
 
                 break;
-            case 2:
+            case SHOP_TALK_FADE_OUT:
                 ShopMenu.alpha -= 8;
 
                 if (ShopMenu.alpha <= 0) {
@@ -4416,8 +4416,8 @@ int ItemShopKey2() {
                 }
 
                 break;
-            case 14:
-                if (GamePad.Down(0x50) != 0) {
+            case SHOP_TALK_SELL_PROMPT:
+                if (GamePad.Down(PAD_TRIANGLE | PAD_CROSS) != 0) {
                     s16          cursor = ShopMenu.board.cursor;
                     int          item_no;
                     int          money;
@@ -4425,7 +4425,7 @@ int ItemShopKey2() {
                     WEAPON_HAVE *weapon;
 
                     switch (ShopMenu.board.page) {
-                        case 0: {
+                        case BOARD_PAGE_ITEM: {
                             ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                             item_no = pack->item[cursor];
                             pack->item[cursor] = -1;
@@ -4433,14 +4433,14 @@ int ItemShopKey2() {
                             info = ItemBoardInfo;
                             break;
                         }
-                        case 2: {
+                        case BOARD_PAGE_ATTACH: {
                             ATTACH_LIST *list = &((ATTACH_LIST *) ShopUserStatusPt->consumable_items)[cursor];
                             item_no = list->item_no;
                             memset(list, 0, sizeof(ATTACH_LIST));
                             info = AttachBoardInfo;
                             break;
                         }
-                        case 1: {
+                        case BOARD_PAGE_WEAPON: {
                             CUserStatus *status = ShopUserStatusPt;
                             WEAPON_HAVE *row;
                             weapon = &(row = status->chara_weapons[cursor / 10])[cursor % 10];
@@ -4452,7 +4452,7 @@ int ItemShopKey2() {
 
                     money = CalItemMoney(item_no, 1);
 
-                    if (item_no >= 0x101) {
+                    if (item_no >= ITEM_WEAPON_START) {
                         money += WeaponCalMoney(weapon, 1);
                         memset(weapon, 0, sizeof(WEAPON_HAVE));
                     }
@@ -4466,21 +4466,21 @@ int ItemShopKey2() {
                         status->money = total;
                     }
 
-                    info[cursor] = 0;
-                    ShopMenu.talk_mode = 0;
-                    ComMenuSePlay(0x9A);
-                } else if (GamePad.Down(0x20) != 0) {
-                    ShopMenu.talk_mode = 0;
-                    ComMenuSePlay(2);
+                    info[cursor] = SHOP_SLOT_EMPTY;
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    ComMenuSePlay(SE_PURCHASE);
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
-            case 13:
+            case SHOP_TALK_BUY_PROMPT:
                 if (CommonMenuMes1.mes_made != 0x4B4) {
                     CommonMenuMes1.MakeMesWin(0x4B4);
                 }
 
-                if (GamePad.Down(0x50) != 0) {
+                if (GamePad.Down(PAD_TRIANGLE | PAD_CROSS) != 0) {
                     int item_no = ShopListPt[ShopMenu.board.cursor].item_no;
                     ShopDataMoveFinish();
                     int  price = CalItemMoney(item_no, 0);
@@ -4490,15 +4490,15 @@ int ItemShopKey2() {
                     int  icon = space - ShopMenu.board.top_row * 5;
 
                     switch (page) {
-                        case 0:
+                        case BOARD_PAGE_ITEM:
                             record.volume = ShopListPt[ShopMenu.board.cursor].data.volume;
                             info = ItemBoardInfo;
                             break;
-                        case 1:
+                        case BOARD_PAGE_WEAPON:
                             memcpy(&record, &ShopListPt[ShopMenu.board.cursor].data, sizeof(WEAPON_HAVE));
                             info = WeaponBoardInfo[0];
                             break;
-                        case 2:
+                        case BOARD_PAGE_ATTACH:
                             memcpy(&record, &ShopListPt[ShopMenu.board.cursor].data, sizeof(ATTACH_LIST));
                             info = AttachBoardInfo;
                             break;
@@ -4515,7 +4515,7 @@ int ItemShopKey2() {
                         ShopDataMoveClear();
                     }
 
-                    info[space] = 2;
+                    info[space] = SHOP_SLOT_PLAYER_ITEM;
                     PersonalBoardLimmitCheck();
                     ShopSpecialFunc();
                     CUserStatus *status = ShopUserStatusPt;
@@ -4527,51 +4527,51 @@ int ItemShopKey2() {
                         status->money += -price;
                     }
 
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(0x9A);
-                } else if (GamePad.Down(0x20) != 0) {
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(2);
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(SE_PURCHASE);
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
-            case 6:
-            case 10:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_DEAL_PENDING:
+            case SHOP_TALK_INVENTORY_OVERFLOW:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0x40) != 0) {
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(1);
-                    CommonMenuMes3.page_arrow = 0;
-                } else if (GamePad.Down(0x20) != 0) {
-                    ComMenuSePlay(2);
-                    CommonMenuMes3.page_arrow = 0;
-                    SetItemShopTalkMode(0, 0);
+                if (GamePad.Down(PAD_CROSS) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
+                    CommonMenuMes3.page_arrow = false;
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    CommonMenuMes3.page_arrow = false;
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
                     ShopCancelGoodReturn2();
                 }
 
                 break;
-            case 4:
-            case 5:
-                if (GamePad.Down(0x60) != 0) {
-                    ShopMenu.talk_mode = 0;
+            case SHOP_TALK_CANNOT_SELL:
+            case SHOP_TALK_WEAPON_EQUIPPED:
+                if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
                     int item_no = ShopHaveItemPt->item_no;
                     int page;
                     int space = GetBoardSpace(item_no, &page);
 
                     if (space < 0) {
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                     } else {
                         CUserStatus *status = ShopUserStatusPt;
                         ITEM_PACK   *pack = &status->item_pack;
                         ATTACH_LIST *attach = (ATTACH_LIST *) status->consumable_items;
 
                         switch (page) {
-                            case 0:
+                            case BOARD_PAGE_ITEM:
                                 pack->item[space] = item_no;
                                 pack->item_vol[space] = ShopHaveItemPt->volume;
                                 break;
-                            case 1: {
+                            case BOARD_PAGE_WEAPON: {
                                 int          chara = space / 10;
                                 int          slot = space % 10;
                                 WEAPON_HAVE *row = status->chara_weapons[chara];
@@ -4586,7 +4586,7 @@ int ItemShopKey2() {
 
                                 break;
                             }
-                            case 2: {
+                            case BOARD_PAGE_ATTACH: {
                                 ATTACH_LIST *list = &attach[space];
                                 memcpy(list, ShopHaveAttachPt, sizeof(ATTACH_LIST));
                                 list->item_no = item_no;
@@ -4595,100 +4595,100 @@ int ItemShopKey2() {
                         }
 
                         InitAllHaveData();
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                     }
                 }
 
                 break;
-            case 3:
-                if (GamePad.Down(0xF060) != 0) {
-                    ShopMenu.talk_mode = 0;
-                    CommonMenuMes3.page_arrow = 0;
+            case SHOP_TALK_GREETING:
+                if (GamePad.Down(PAD_CIRCLE | PAD_CROSS | PAD_DPAD) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_NONE;
+                    CommonMenuMes3.page_arrow = false;
                 }
 
                 break;
-            case 9:
-            case 11:
-            case 16:
-            case 20:
-            case 21:
-            case 22:
-            case 23:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_UNK_9:
+            case SHOP_TALK_NO_SPACE:
+            case SHOP_TALK_UNK_10:
+            case SHOP_TALK_DEAL_DONE:
+            case SHOP_TALK_NOT_ENOUGH_MONEY:
+            case SHOP_TALK_TOO_MUCH_MONEY:
+            case SHOP_TALK_NOTHING_MARKED:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0x60) != 0) {
-                    ComMenuSePlay(2);
-                    SetItemShopTalkMode(0, 0);
-                    CommonMenuMes3.page_arrow = 0;
+                if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    CommonMenuMes3.page_arrow = false;
                 }
 
                 break;
-            case 25:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_GOODBYE:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0x60) != 0) {
-                    ShopMenu.talk_mode = 2;
+                if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                    ShopMenu.talk_mode = SHOP_TALK_FADE_OUT;
                     ShopMenu.step_count = 0;
-                    CommonMenuMes3.page_arrow = 0;
-                    ComMenuSePlay(2);
+                    CommonMenuMes3.page_arrow = false;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
-            case 24:
-                CommonMenuMes3.page_arrow = 1;
+            case SHOP_TALK_LEAVE_PROMPT:
+                CommonMenuMes3.page_arrow = true;
 
-                if (GamePad.Down(0x40) != 0) {
-                    SetItemShopTalkMode(0, 0);
-                    CommonMenuMes3.page_arrow = 0;
-                    ComMenuSePlay(1);
-                } else if (GamePad.Down(0x20) != 0) {
-                    SetItemShopTalkMode(25, 1);
-                    CommonMenuMes3.page_arrow = 0;
-                    ComMenuSePlay(1);
+                if (GamePad.Down(PAD_CROSS) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    CommonMenuMes3.page_arrow = false;
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_GOODBYE, SHOP_MSG_TALKING);
+                    CommonMenuMes3.page_arrow = false;
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
 
                 break;
-            case 12:
-                if (GamePad.Down(0x40) != 0) {
-                    SetItemShopTalkMode(20, 1);
+            case SHOP_TALK_CONFIRM_DEAL:
+                if (GamePad.Down(PAD_CROSS) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_DEAL_DONE, SHOP_MSG_TALKING);
                     IncludeBuyItem2();
-                    ComMenuSePlay(0x9A);
-                } else if (GamePad.Down(0x20) != 0) {
-                    SetItemShopTalkMode(0, 0);
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(SE_PURCHASE);
+                } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                    SetItemShopTalkMode(SHOP_TALK_NONE, SHOP_MSG_IDLE);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
-            case 0: {
+            case SHOP_TALK_NONE: {
                 if (ShopMenu.person_state == 0) {
-                    ShopMenu.person_state = ShopPersonBuild(1, ShopMenu.shop_no);
+                    ShopMenu.person_state = ShopPersonBuild(SHOP_KIND_ITEM, ShopMenu.shop_no);
                 }
 
                 int cursor = ShopMenu.board.cursor;
                 int old_page = ShopMenu.board.page;
 
                 switch (ShopMenu.side) {
-                    case 2:
+                    case SHOP_SIDE_CHECK_BUTTON:
                         CheckSideKey2();
                         break;
-                    case 0:
+                    case SHOP_SIDE_STOCK:
                         ItemShopSelectKey2();
                         break;
-                    case 1: {
+                    case SHOP_SIDE_PERSONAL: {
                         int board_exit = PersonalBoardKey();
 
-                        if (board_exit == 0 && GamePad.Down(0x40) != 0) {
+                        if (board_exit == 0 && GamePad.Down(PAD_CROSS) != 0) {
                             int             pos;
                             int             slot_info;
                             PERSONAL_BOARD *board = &ShopMenu.board;
                             int             held_info = ShopHeldInfo();
 
                             switch (board->cursor_area) {
-                                case 2: {
-                                    ComMenuSePlay(2);
+                                case PERSONAL_BOARD_AREA_TRASH: {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                     s16 held = ShopHaveItemPt->item_no;
 
-                                    if (held >= 0x51 && held_info != 1 && IsEnableTrushThrow(held) != 0) {
+                                    if (held >= ITEM_ATTACH_START && held_info != SHOP_SLOT_SHOP_GOOD && IsEnableTrushThrow(held) != 0) {
                                         board->trash_anim = 1;
                                         board->trash_frame = 0;
                                         ShopHaveItemPt->item_no = 0;
@@ -4696,50 +4696,50 @@ int ItemShopKey2() {
 
                                     break;
                                 }
-                                case 1: {
+                                case PERSONAL_BOARD_AREA_CELLS: {
                                     s32 *info;
                                     pos = ShopMenu.board.cursor;
 
                                     switch (ShopMenu.board.page) {
-                                        case 0:
+                                        case BOARD_PAGE_ITEM:
                                             info = ItemBoardInfo;
                                             break;
-                                        case 1:
+                                        case BOARD_PAGE_WEAPON:
                                             info = WeaponBoardInfo[0];
                                             break;
-                                        case 2:
+                                        case BOARD_PAGE_ATTACH:
                                             info = AttachBoardInfo;
                                             break;
                                     }
 
                                     slot_info = info[pos];
 
-                                    if (ShopMenu.board.page == 1 && held_info == 1 && (ShopHaveItemPt->item_no == 0xB1 || ShopHaveItemPt->item_no == 0xB2)) {
-                                        ComMenuSePlay(2);
+                                    if (ShopMenu.board.page == BOARD_PAGE_WEAPON && held_info == SHOP_SLOT_SHOP_GOOD && (ShopHaveItemPt->item_no == ITEM_REPAIR_POWDER || ShopHaveItemPt->item_no == ITEM_POWERUP_POWDER)) {
+                                        ComMenuSePlay(MENU_SOUND_REFUSE);
                                     } else if (PersonalBoardItemGetorSwap(pos) != 1) {
-                                        ComMenuSePlay(2);
+                                        ComMenuSePlay(MENU_SOUND_REFUSE);
                                     } else {
                                         ShopHaveItemPt->slot_state = slot_info;
                                         info[pos] = held_info;
 
-                                        if (ShopHaveItemPt->item_no < 0x51) {
+                                        if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
                                             InitAllHaveData();
                                             ShopMenu.board.held_equipped_slot = -1;
                                         } else {
                                             ShopHaveItemPt->last_slot = pos;
                                         }
 
-                                        ComMenuSePlay(1);
+                                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                                     }
 
                                     break;
                                 }
                             }
-                        } else if (board_exit == 0 && GamePad.Down(0x10) != 0) {
+                        } else if (board_exit == 0 && GamePad.Down(PAD_TRIANGLE) != 0) {
                             ShopMenu.key_used = 1;
 
-                            if (ShopHaveItemPt->item_no >= 0x51) {
-                                ComMenuSePlay(2);
+                            if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                                 return 0;
                             }
 
@@ -4747,43 +4747,43 @@ int ItemShopKey2() {
                             s32 *slot;
 
                             switch (ShopMenu.board.page) {
-                                case 0:
+                                case BOARD_PAGE_ITEM:
                                     slot = &ItemBoardInfo[ShopMenu.board.cursor];
                                     break;
-                                case 2:
+                                case BOARD_PAGE_ATTACH:
                                     slot = &AttachBoardInfo[ShopMenu.board.cursor];
                                     break;
-                                case 1:
+                                case BOARD_PAGE_WEAPON:
                                     slot = &WeaponBoardInfo[0][ShopMenu.board.cursor];
                                     break;
                             }
 
-                            if (*slot == 1) {
-                                ComMenuSePlay(2);
+                            if (*slot == SHOP_SLOT_SHOP_GOOD) {
+                                ComMenuSePlay(MENU_SOUND_REFUSE);
                             } else {
                                 int enable = IsEnableCharge(target);
 
                                 if (enable != 0) {
-                                    if (target < 0x102 && target >= 0x84) {
+                                    if (target <= ITEM_WEAPON_START && target >= ITEM_DUNGEON_START) {
                                         ITEM_DATA *data = GetItemData(target);
 
-                                        if (data != NULL && ((data->kind_flags & 0x10) || ShopHaveItemPt->item_no == 0xB9)) {
-                                            enable = 0;
-                                            SetItemShopTalkMode(4, 1);
+                                        if (data != NULL && ((data->kind_flags & 0x10) || ShopHaveItemPt->item_no == ITEM_FISHING_ROD)) {
+                                            enable = false;
+                                            SetItemShopTalkMode(SHOP_TALK_CANNOT_SELL, SHOP_MSG_TALKING);
                                         }
                                     }
 
-                                    if (target >= 0x101) {
+                                    if (target >= ITEM_WEAPON_START) {
                                         int chara = ShopMenu.board.cursor / 10;
 
                                         if (chara == IsDefaultWeapon(target)) {
-                                            SetItemShopTalkMode(4, 1);
-                                            enable = 0;
+                                            SetItemShopTalkMode(SHOP_TALK_CANNOT_SELL, SHOP_MSG_TALKING);
+                                            enable = false;
                                         }
 
                                         if (target == 0x10C && GetMenuHebikiriFlag() == 0) {
-                                            SetItemShopTalkMode(4, 1);
-                                            enable = 0;
+                                            SetItemShopTalkMode(SHOP_TALK_CANNOT_SELL, SHOP_MSG_TALKING);
+                                            enable = false;
                                         }
 
                                         int          owner = ShopMenu.board.cursor / 10;
@@ -4791,19 +4791,19 @@ int ItemShopKey2() {
                                         s8           slot = status->equipped_weapon_slot[owner];
 
                                         if (ShopMenu.board.cursor % 10 == slot) {
-                                            enable = 0;
-                                            SetItemShopTalkMode(5, 1);
+                                            enable = false;
+                                            SetItemShopTalkMode(SHOP_TALK_WEAPON_EQUIPPED, SHOP_MSG_TALKING);
                                         }
                                     }
                                 } else {
-                                    SetItemShopTalkMode(4, 1);
+                                    SetItemShopTalkMode(SHOP_TALK_CANNOT_SELL, SHOP_MSG_TALKING);
                                 }
 
                                 int money;
                                 int wallet = ShopUserStatusPt->money;
                                 money = CalItemMoney(target, 1);
 
-                                if (target >= 0x101) {
+                                if (target >= ITEM_WEAPON_START) {
                                     money += WeaponCalMoney(&ShopWeaponRow(ShopUserStatusPt, ShopMenu.board.cursor / 10)[ShopMenu.board.cursor % 10], 1);
                                 }
 
@@ -4812,23 +4812,23 @@ int ItemShopKey2() {
                                 }
 
                                 if (wallet + money > 0xFFFF) {
-                                    SetItemShopTalkMode(22, 1);
-                                    enable = 0;
+                                    SetItemShopTalkMode(SHOP_TALK_TOO_MUCH_MONEY, SHOP_MSG_TALKING);
+                                    enable = false;
                                 }
 
-                                if (target < 0x51) {
-                                    ComMenuSePlay(2);
+                                if (target < ITEM_ATTACH_START) {
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else if (enable != 0) {
-                                    ShopMenu.talk_mode = 14;
-                                    ComMenuSePlay(1);
+                                    ShopMenu.talk_mode = SHOP_TALK_SELL_PROMPT;
+                                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                                 } else {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 }
                             }
                         }
 
                         if (board_exit != 0) {
-                            ShopMenu.side = 0;
+                            ShopMenu.side = SHOP_SIDE_STOCK;
                             ShopMenu.board.cursor = (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
                         }
 
@@ -4836,30 +4836,30 @@ int ItemShopKey2() {
                     }
                 }
 
-                if (ShopMenu.key_used == 0 && GamePad.Down(0x20) != 0) {
-                    ComMenuSePlay(2);
+                if (ShopMenu.key_used == 0 && GamePad.Down(PAD_CIRCLE) != 0) {
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                     s16 held = ShopHaveItemPt->item_no;
 
-                    if (held < 0x51) {
-                        if (ShopMenu.side == 2) {
+                    if (held < ITEM_ATTACH_START) {
+                        if (ShopMenu.side == SHOP_SIDE_CHECK_BUTTON) {
                             CommonMenuMes3.mes_made = -1;
-                            ShopMenu.msg_mode = 1;
+                            ShopMenu.msg_mode = SHOP_MSG_TALKING;
                             int flags = CheckBuyItemFunc2();
 
                             if (flags & 1) {
-                                ShopMenu.talk_mode = 24;
+                                ShopMenu.talk_mode = SHOP_TALK_LEAVE_PROMPT;
                             }
 
                             if (flags & 6) {
-                                ShopMenu.talk_mode = 6;
-                                ShopMenu.side = 2;
+                                ShopMenu.talk_mode = SHOP_TALK_DEAL_PENDING;
+                                ShopMenu.side = SHOP_SIDE_CHECK_BUTTON;
                             }
 
                             if (flags & 8) {
-                                ShopMenu.talk_mode = 10;
+                                ShopMenu.talk_mode = SHOP_TALK_INVENTORY_OVERFLOW;
                             }
                         } else {
-                            ShopMenu.side = 2;
+                            ShopMenu.side = SHOP_SIDE_CHECK_BUTTON;
                         }
                     } else {
 #ifdef PAL
@@ -4870,18 +4870,18 @@ int ItemShopKey2() {
                         s32 *info;
 
                         switch (held_info) {
-                            case 1: {
+                            case SHOP_SLOT_SHOP_GOOD: {
                                 int free = -1;
 
                                 for (int i = 0; i < 30; i++) {
-                                    if (ShopBoardInfo[i] == 0) {
+                                    if (ShopBoardInfo[i] == SHOP_SLOT_EMPTY) {
                                         free = i;
                                         break;
                                     }
                                 }
 
                                 if (free < 0) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else {
                                     SHOP_ITEMLIST *good = &ShopListPt[free];
                                     ShopSwapHeldGood(good);
@@ -4891,17 +4891,17 @@ int ItemShopKey2() {
 
                                 break;
                             }
-                            case 2: {
+                            case SHOP_SLOT_PLAYER_ITEM: {
                                 int page = WhatIsKindofItem(held);
 
                                 switch (page) {
-                                    case 0:
+                                    case BOARD_PAGE_ITEM:
                                         info = ItemBoardInfo;
                                         break;
-                                    case 1:
+                                    case BOARD_PAGE_WEAPON:
                                         info = WeaponBoardInfo[0];
                                         break;
-                                    case 2:
+                                    case BOARD_PAGE_ATTACH:
                                         info = AttachBoardInfo;
                                         break;
                                 }
@@ -4913,7 +4913,7 @@ int ItemShopKey2() {
                                 int max = PersonalRetMax(page);
 
                                 if (space < 0 || max <= space) {
-                                    ComMenuSePlay(2);
+                                    ComMenuSePlay(MENU_SOUND_REFUSE);
                                 } else {
                                     slot = &info[space];
                                     int slot_info = *slot;
@@ -4936,25 +4936,25 @@ int ItemShopKey2() {
                             }
                         }
                     }
-                } else if (GamePad.Down(0x80) != 0) {
+                } else if (GamePad.Down(PAD_SQUARE) != 0) {
                     switch (ShopMenu.board.page) {
-                        case 0: {
+                        case BOARD_PAGE_ITEM: {
                             ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                             SeitonShopItemBoard(pack);
                             SetMenuTrushMark(pack);
                             break;
                         }
-                        case 2:
+                        case BOARD_PAGE_ATTACH:
                             SeitonShopAttachBoard((ATTACH_LIST *) ShopUserStatusPt->consumable_items);
                             break;
                     }
 
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
 
 #ifdef PAL
                 // Debug shortcuts: add or take Gilda, and dump the shop board.
-                if (GamePad.On2(0x10)) {
+                if (GamePad.On2(PAD_TRIANGLE)) {
                     CUserStatus *status = ShopUserStatusPt;
                     int          total = status->money + 1000;
 
@@ -4965,7 +4965,7 @@ int ItemShopKey2() {
                     }
                 }
 
-                if (GamePad.On2(0x40)) {
+                if (GamePad.On2(PAD_CROSS)) {
                     CUserStatus *status = ShopUserStatusPt;
                     int          money = status->money;
 
@@ -4976,24 +4976,24 @@ int ItemShopKey2() {
                     }
                 }
 
-                if (GamePad.Down2(0x8)) {
+                if (GamePad.Down2(PAD_R1)) {
                     for (int i = 0; i < 30; i++) {
                         printf(" %d \tis \t\t%d\n", i, ShopBoardInfo[i]);
                     }
                 }
 
-                if (GamePad.Down2(0x2)) {
+                if (GamePad.Down2(PAD_R2)) {
                     int capacity[3] = {100, 60, 40};
                     int max;
 
                     switch (ShopMenu.board.page) {
-                        case 0:
+                        case BOARD_PAGE_ITEM:
                             max = capacity[0];
                             break;
-                        case 1:
+                        case BOARD_PAGE_WEAPON:
                             max = capacity[1];
                             break;
-                        case 2:
+                        case BOARD_PAGE_ATTACH:
                             max = capacity[2];
                             break;
                     }
@@ -5001,19 +5001,19 @@ int ItemShopKey2() {
 
 #endif
                 if (cursor != ShopMenu.board.cursor || old_page != ShopMenu.board.page) {
-                    ComMenuSePlay(0);
+                    ComMenuSePlay(MENU_SOUND_CURSOR);
                 }
 
                 int mes_no = 0;
                 int value = 0;
                 int name_mes = -1;
 
-                if (ShopHaveItemPt->item_no >= 0x51) {
+                if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
                     COM_ITEM_INFO *item_info = GetCommonItemInfo(ShopHaveItemPt->item_no);
                     mes_no = item_info != NULL ? item_info->msg + 500 : mes_no;
                     value = GetAttachVolumeForMsg(ShopHaveAttachPt);
 
-                    if (ShopHaveItemPt->item_no == 0x5A) {
+                    if (ShopHaveItemPt->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                         name_mes = GetWeaponMsgNo2(ShopHaveAttachPt->sphere_weapon_no);
                     }
                 }
@@ -5023,35 +5023,35 @@ int ItemShopKey2() {
                 ATTACH_LIST *list;
 
                 switch (ShopMenu.side) {
-                    case 2:
+                    case SHOP_SIDE_CHECK_BUTTON:
                         mes_no = 0x4B3;
                         break;
-                    case 0:
+                    case SHOP_SIDE_STOCK:
                         item_no = ShopListPt[pos].item_no;
 
-                        if (item_no >= 0x101) {
+                        if (item_no >= ITEM_WEAPON_START) {
                             value = ShopListPt[pos].data.weapon.level;
                         }
 
-                        if (item_no >= 0x5B && item_no < 0x5F) {
+                        if (item_no >= ITEM_ATTACH_STAT_START && item_no < ITEM_ATTACH_GEM_START) {
                             list = &ShopListPt[pos].data.attach;
                             value = GetAttachVolumeForMsg(list);
                         }
 
-                        if (item_no == 0x5A) {
+                        if (item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                             name_mes = GetWeaponMsgNo2(ShopListPt[pos].data.attach.sphere_weapon_no);
                             value = ShopListPt[pos].data.attach.sphere_level;
                         }
 
                         break;
-                    case 1:
+                    case SHOP_SIDE_PERSONAL:
                         switch (ShopMenu.board.page) {
-                            case 0: {
+                            case BOARD_PAGE_ITEM: {
                                 ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                                 item_no = pack->item[pos];
                                 break;
                             }
-                            case 1: {
+                            case BOARD_PAGE_WEAPON: {
                                 CUserStatus *status = ShopUserStatusPt;
                                 WEAPON_HAVE *row;
                                 WEAPON_HAVE *weapon = &(row = status->chara_weapons[pos / 10])[pos % 10];
@@ -5059,7 +5059,7 @@ int ItemShopKey2() {
                                 value = weapon->level;
                                 break;
                             }
-                            case 2: {
+                            case BOARD_PAGE_ATTACH: {
                                 list = &((ATTACH_LIST *) ShopUserStatusPt->consumable_items)[pos];
 
                                 if (list != NULL) {
@@ -5068,7 +5068,7 @@ int ItemShopKey2() {
                                     if (item_no > 0) {
                                         value = GetAttachVolumeForMsg(list);
 
-                                        if (list->item_no == 0x5A) {
+                                        if (list->item_no == ITEM_ATTACH_SYNTHESIS_SPHERE) {
                                             name_mes = GetWeaponMsgNo2(list->sphere_weapon_no);
                                         }
                                     }
@@ -5081,7 +5081,7 @@ int ItemShopKey2() {
                         break;
                 }
 
-                if (item_no >= 0x51) {
+                if (item_no >= ITEM_ATTACH_START) {
                     COM_ITEM_INFO *item_info = GetCommonItemInfo(item_no);
 
                     if (item_info != NULL) {
@@ -5090,8 +5090,8 @@ int ItemShopKey2() {
                 }
 
                 if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes + 100) || CommonMenuMes2.value != value) {
-                    CommonMenuMes2.value_signed = 1;
-                    CommonMenuMes2.value_show = 0;
+                    CommonMenuMes2.value_signed = true;
+                    CommonMenuMes2.value_show = false;
                     CommonMenuMes2.value = value;
 
                     if (name_mes > 0) {
@@ -5128,10 +5128,10 @@ void ItemShopDraw2() {
     int bright = 0x40;
 
     switch (ShopMenu.talk_mode) {
-        case 1:
+        case SHOP_TALK_FADE_IN:
             bright = 0x80 - ShopMenu.step_count * 3;
             break;
-        case 2:
+        case SHOP_TALK_FADE_OUT:
             bright = ShopMenu.step_count * 4 + 0x40;
             break;
     }
@@ -5155,7 +5155,7 @@ void ItemShopDraw2() {
         pos_y = (int) ShopMenu.board.y;
         int mark = 0;
 
-        if (ShopMenu.board.page == 1) {
+        if (ShopMenu.board.page == BOARD_PAGE_WEAPON) {
             mark = 2;
         }
 
@@ -5171,12 +5171,12 @@ void ItemShopDraw2() {
         ShopDataMove.IconAutoMove(ChargeOrShopFlag, 0);
 
         switch (ShopMenu.side) {
-            case 2:
-            case 0:
+            case SHOP_SIDE_CHECK_BUTTON:
+            case SHOP_SIDE_STOCK:
                 cur_x = 0x22;
                 top_row = ShopMenu.stock_top_row;
                 break;
-            case 1:
+            case SHOP_SIDE_PERSONAL:
                 cur_x = 0x144;
                 top_row = ShopMenu.board.top_row;
                 break;
@@ -5184,29 +5184,29 @@ void ItemShopDraw2() {
 
         state = 0;
 
-        if (ShopHaveItemPt->item_no >= 0x51) {
+        if (ShopHaveItemPt->item_no >= ITEM_ATTACH_START) {
             state = 2;
         } else {
             switch (ShopMenu.side) {
-                case 1:
+                case SHOP_SIDE_PERSONAL:
                     state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
 
-                    if (state < 0x51) {
+                    if (state < ITEM_ATTACH_START) {
                         state = 0;
                     } else {
                         state = 1;
                     }
 
                     break;
-                case 0:
-                    if (ShopListPt[ShopMenu.board.cursor].item_no > 0x51) {
+                case SHOP_SIDE_STOCK:
+                    if (ShopListPt[ShopMenu.board.cursor].item_no > ITEM_ATTACH_START) {
                         state = 1;
                     } else {
                         state = 0;
                     }
 
                     break;
-                case 2:
+                case SHOP_SIDE_CHECK_BUTTON:
                     break;
             }
         }
@@ -5214,7 +5214,7 @@ void ItemShopDraw2() {
         int on_button = 0;
 
         switch (ShopMenu.side) {
-            case 2:
+            case SHOP_SIDE_CHECK_BUTTON:
                 on_button = 1;
                 break;
         }
@@ -5223,20 +5223,20 @@ void ItemShopDraw2() {
         DrawShopIcon(0x4C, 0x2A, 0, 0x80);
 
         switch (ShopMenu.side) {
-            case 0: {
+            case SHOP_SIDE_STOCK: {
                 int cursor = ShopMenu.board.cursor;
                 int item_no = ShopListPt[cursor].item_no;
 
-                if (item_no >= 0x51) {
+                if (item_no >= ITEM_ATTACH_START) {
                     int selling = 0;
 
-                    if (ShopBoardInfo[cursor] == 2) {
+                    if (ShopBoardInfo[cursor] == SHOP_SLOT_PLAYER_ITEM) {
                         selling = 1;
                     }
 
                     int money = CalItemMoney(item_no, selling);
 
-                    if (item_no >= 0x101) {
+                    if (item_no >= ITEM_WEAPON_START) {
                         money += WeaponCalMoney((WEAPON_HAVE *) &ShopListPt[cursor].data, selling);
                     }
 
@@ -5251,24 +5251,24 @@ void ItemShopDraw2() {
 
                 break;
             }
-            case 1:
-                if (ShopMenu.talk_mode == 14) {
+            case SHOP_SIDE_PERSONAL:
+                if (ShopMenu.talk_mode == SHOP_TALK_SELL_PROMPT) {
                     int item_no;
 
                     switch (ShopMenu.board.page) {
-                        case 0: {
+                        case BOARD_PAGE_ITEM: {
                             CUserStatus *status = ShopUserStatusPt;
                             ITEM_PACK   *pack = &status->item_pack;
                             item_no = pack->item[ShopMenu.board.cursor];
                             break;
                         }
-                        case 2: {
+                        case BOARD_PAGE_ATTACH: {
                             CUserStatus    *status = ShopUserStatusPt;
                             DNG_CONSUMABLE *attach = status->consumable_items;
                             item_no = attach[ShopMenu.board.cursor].id;
                             break;
                         }
-                        case 1: {
+                        case BOARD_PAGE_WEAPON: {
                             int          chara_no = ShopMenu.board.cursor / 10;
                             CUserStatus *status = ShopUserStatusPt;
                             WEAPON_HAVE *row = status->chara_weapons[chara_no];
@@ -5280,7 +5280,7 @@ void ItemShopDraw2() {
                     int ticket_y = (int) (6.0f + ShopMenu.board.y);
                     int money = CalItemMoney(item_no, 1);
 
-                    if (item_no >= 0x101) {
+                    if (item_no >= ITEM_WEAPON_START) {
                         int          chara_no = ShopMenu.board.cursor / 10;
                         CUserStatus *status = ShopUserStatusPt;
                         WEAPON_HAVE *row = status->chara_weapons[chara_no];
@@ -5313,7 +5313,7 @@ void ItemShopDraw2() {
         CommonMenuMes2.Step();
         CommonMenuMes2.DrawMesWin();
 
-        if (ShopHaveItemPt->item_no < 0x51) {
+        if (ShopHaveItemPt->item_no < ITEM_ATTACH_START) {
 #ifdef PAL
             s8  plate[3] = {6, 7, 8};
             int mes_no = plate[ShopMenu.side] + 0x4B0;
@@ -5327,13 +5327,13 @@ void ItemShopDraw2() {
                 AtoraNameMes.MakeMesWin(mes_no);
             }
 
-            AtoraNameMes.stay_frame = 1;
+            AtoraNameMes.stay_frame = true;
             AtoraNameMes.text_x = 0xB4;
             AtoraNameMes.text_y = SCREEN_HEIGHT - 0x58;
 
 #ifdef PAL
             // The third plate draws further left in language 6.
-            if (GetMenuLangFlag() == 6 && mes_no == 0x4B8) {
+            if (GetMenuLangFlag() == LANG_SPANISH && mes_no == 0x4B8) {
                 AtoraNameMes.text_x -= 0x12;
             }
 
@@ -5343,10 +5343,10 @@ void ItemShopDraw2() {
         }
 
         switch (ShopMenu.talk_mode) {
-            case 13:
-            case 14: {
+            case SHOP_TALK_BUY_PROMPT:
+            case SHOP_TALK_SELL_PROMPT: {
                 s16 prompt[2] = {0x4B4, 0x4B5};
-                int mes_no = prompt[ShopMenu.talk_mode - 13];
+                int mes_no = prompt[ShopMenu.talk_mode - SHOP_TALK_BUY_PROMPT];
 
                 if (CommonMenuMes1.mes_made != mes_no) {
                     CommonMenuMes1.MakeMesWin(mes_no);
@@ -5364,22 +5364,22 @@ void ItemShopDraw2() {
                 CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
                 CommonMenuMes1.text_y = 0xBE;
 
-                if (ShopMenu.talk_mode == 14) {
+                if (ShopMenu.talk_mode == SHOP_TALK_SELL_PROMPT) {
                     CommonMenuMes1.text_x = offset[ShopMenu.lang][1] + 0x64;
                 }
 
-                CommonMenuMes1.stay_frame = 1;
+                CommonMenuMes1.stay_frame = true;
                 CommonMenuMes1.Step();
                 CommonMenuMes1.DrawMesWin();
                 break;
             }
             default:
-                CommonMenuMes1.stay_frame = 0;
+                CommonMenuMes1.stay_frame = false;
                 break;
         }
     }
 
-    ShopModelMsgFunc(1);
+    ShopModelMsgFunc(SHOP_KIND_ITEM);
     ShopFadeoutDraw();
     setbilinear(1);
 }
@@ -5392,41 +5392,41 @@ void ItemShopDraw2() {
  * @size 0x18
  */
 FISH_EXCHANGE_ITEM exitemlst[35] = {
-    {151, 5   },
-    {152, 5   },
-    {153, 5   },
-    {154, 15  },
-    {111, 50  },
-    {112, 50  },
-    {113, 50  },
-    {114, 50  },
-    {115, 50  },
-    {116, 50  },
-    {117, 50  },
-    {118, 50  },
-    {119, 50  },
-    {120, 50  },
-    {95,  100 },
-    {96,  100 },
-    {97,  100 },
-    {98,  100 },
-    {99,  100 },
-    {100, 100 },
-    {101, 100 },
-    {102, 100 },
-    {103, 100 },
-    {104, 100 },
-    {105, 100 },
-    {106, 100 },
-    {266, 1100},
-    {311, 1400},
-    {317, 1800},
-    {337, 1300},
-    {352, 1400},
-    {368, 1500},
-    {278, 2500},
-    {168, 2   },
-    {169, 2   },
+    {ITEM_ANTIDOTE_DRINK,        5   },
+    {ITEM_HOLY_WATER,            5   },
+    {ITEM_SOAP,                  5   },
+    {ITEM_MIGHTY_HEALING,        15  },
+    {ITEM_ATTACH_DINOSLAYER,     50  },
+    {ITEM_ATTACH_UNDEAD_BUSTER,  50  },
+    {ITEM_ATTACH_SEA_KILLER,     50  },
+    {ITEM_ATTACH_STONE_BREAKER,  50  },
+    {ITEM_ATTACH_PLANT_BUSTER,   50  },
+    {ITEM_ATTACH_BEAST_BUSTER,   50  },
+    {ITEM_ATTACH_SKY_HUNTER,     50  },
+    {ITEM_ATTACH_METALBREAKER,   50  },
+    {ITEM_ATTACH_MIMIC_BREAKER,  50  },
+    {ITEM_ATTACH_MAGE_SLAYER,    50  },
+    {ITEM_ATTACH_GARNET,         100 },
+    {ITEM_ATTACH_AMETHYST,       100 },
+    {ITEM_ATTACH_AQUAMARINE,     100 },
+    {ITEM_ATTACH_DIAMOND,        100 },
+    {ITEM_ATTACH_EMERALD,        100 },
+    {ITEM_ATTACH_PEARL,          100 },
+    {ITEM_ATTACH_RUBY,           100 },
+    {ITEM_ATTACH_PERIDOT,        100 },
+    {ITEM_ATTACH_SAPPHIRE,       100 },
+    {ITEM_ATTACH_OPAL,           100 },
+    {ITEM_ATTACH_TOPAZ,          100 },
+    {ITEM_ATTACH_TURQUOISE,      100 },
+    {ITEM_WEAPON_TSUKIKAGE,      1100},
+    {ITEM_WEAPON_MATADOR,        1400},
+    {ITEM_WEAPON_MAGICAL_HAMMER, 1800},
+    {ITEM_WEAPON_FAIRY_S_RING,   1300},
+    {ITEM_WEAPON_SCORPION,       1400},
+    {ITEM_WEAPON_BLESSING_GUN,   1500},
+    {ITEM_WEAPON_MARDAN_EINS,    2500},
+    {ITEM_BOMB_NUTS,             2   },
+    {ITEM_POISONOUS_APPLE,       2   },
 };
 
 static FISH_EXCHANGE_ITEM *GetExchangeItemList(int index) {
@@ -5503,7 +5503,7 @@ void InitFishingExchange(u_long128 *buffer, int *tex_block, int mode) {
     FishMenu.confirm = 1;
     FishMenu.cursor = 0;
     FishMenu.top = 0;
-    FishMenu.fade_mode = 0;
+    FishMenu.fade_mode = FISH_EXCHANGE_FADE_IN;
     FishMenu.fade_count = 0;
     FishMenu.point = SaveData->GetFishingPoint();
 
@@ -5517,7 +5517,7 @@ void InitFishingExchange(u_long128 *buffer, int *tex_block, int mode) {
     }
 
     StayTex = TexManager.GetTexture("stayframe", -1);
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
 
@@ -5550,25 +5550,25 @@ static int FishMenuTextureLoad() {
             FishMenuTex = TexManager.GetTexture("fishbrd", -1);
             WepIcon = TexManager.GetTexture("wepicon", -1);
             ItemIcon = TexManager.GetTexture("itemicon", -1);
-            InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
+            InitMenuMesSet(MENU_MES_SET_ALLMENU, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
             CommonMenuMes2.mes_made = -1;
-            AtoraNameMes.Preset(1);
+            AtoraNameMes.Preset(MES_PRESET_SYSTEM);
 
             for (int i = 0; i < 5; i++) {
                 AtoraNameMes.mes_no[i] = GetExchangeItemList(i)->item_no + 100;
             }
 
-            AtoraNameMes.narrow_gaiji = 1;
-            AtoraNameMes.style = 4;
-            AtoraNameMes.value_signed = 0;
-            AtoraNameMes.value_show = 1;
+            AtoraNameMes.narrow_gaiji = true;
+            AtoraNameMes.style = MES_EDGE_DOUBLE;
+            AtoraNameMes.value_signed = false;
+            AtoraNameMes.value_show = true;
             AtoraNameMes.mes_made = -1;
             AtoraNameMes.MakeMesWin(0xC8);
             AtoraNameMes.Step();
             FishMenu.ready = 1;
-            CommonMenuMes3.value_signed = 0;
-            CommonMenuMes3.value_show = 1;
-            CommonMenuMes3.stay_frame = 1;
+            CommonMenuMes3.value_signed = false;
+            CommonMenuMes3.value_show = true;
+            CommonMenuMes3.stay_frame = true;
             CommonMenuMes3.value = 0;
             int digits = GetNumberKeta(0);
             CommonMenuMes3.mes_made = -1;
@@ -5592,7 +5592,7 @@ int FishingExchangeKey() {
 
 #ifdef PAL
     // Debug shortcut: adds a Mardan Garayan catch.
-    if (DebugMode && GamePad.Down2(0x10)) {
+    if (DebugMode && GamePad.Down2(PAD_TRIANGLE)) {
         s32 &caught = SaveData->mardan_garayan_caught;
 
         caught++;
@@ -5618,16 +5618,16 @@ int FishingExchangeKey() {
     int count;
 
     switch (FishMenu.fade_mode) {
-        case 0:
+        case FISH_EXCHANGE_FADE_IN:
             FishMenuTextureLoad();
             FishMenu.fade_count++;
 
             if (FishMenu.ready != 0 && FishMenu.fade_count > 32) {
-                FishMenu.fade_mode = 3;
+                FishMenu.fade_mode = FISH_EXCHANGE_SELECT;
             }
 
             break;
-        case 1:
+        case FISH_EXCHANGE_FADE_OUT:
             FishMenu.fade_count++;
 
             if (FishMenu.fade_count > 32) {
@@ -5635,16 +5635,16 @@ int FishingExchangeKey() {
             }
 
             break;
-        case 3: {
+        case FISH_EXCHANGE_SELECT: {
             int cursor = FishMenu.cursor;
             int top = FishMenu.top;
 
-            if (GamePad.Down(0x200A) != 0) {
+            if (GamePad.Down(PAD_R2 | PAD_R1 | PAD_RIGHT) != 0) {
                 FishMenu.top += 5;
                 FishMenu.cursor += 5;
             }
 
-            if (GamePad.Down(0x8005) != 0) {
+            if (GamePad.Down(PAD_L2 | PAD_L1 | PAD_LEFT) != 0) {
                 FishMenu.top -= 5;
                 FishMenu.cursor -= 5;
 
@@ -5654,7 +5654,7 @@ int FishingExchangeKey() {
                 }
             }
 
-            if (GamePad.Down(0x1000) != 0) {
+            if (GamePad.Down(PAD_UP) != 0) {
                 FishMenu.cursor--;
 
                 if (FishMenu.cursor < 0) {
@@ -5671,7 +5671,7 @@ int FishingExchangeKey() {
                 }
             }
 
-            if (GamePad.Down(0x4000) != 0) {
+            if (GamePad.Down(PAD_DOWN) != 0) {
                 FishMenu.cursor++;
 
                 if (last_prize < FishMenu.cursor) {
@@ -5690,11 +5690,11 @@ int FishingExchangeKey() {
 #ifdef PAL
             // Debug shortcut: raises or lowers the points to spend.
             if (DebugMode) {
-                if (GamePad.On2(0x40) && FishMenu.point < 9999) {
+                if (GamePad.On2(PAD_CROSS) && FishMenu.point < 9999) {
                     FishMenu.point++;
                 }
 
-                if (GamePad.On2(0x20) && FishMenu.point > 0) {
+                if (GamePad.On2(PAD_CIRCLE) && FishMenu.point > 0) {
                     FishMenu.point--;
                 }
             }
@@ -5709,7 +5709,7 @@ int FishingExchangeKey() {
             }
 
             if (cursor != FishMenu.cursor) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
             FISH_EXCHANGE_ITEM *prize = GetExchangeItemList(FishMenu.cursor);
@@ -5730,14 +5730,14 @@ int FishingExchangeKey() {
                 }
             }
 
-            if (GamePad.Down(0x40) != 0) {
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
                 int          full = 0;
                 int          kind = WhatIsKindofItem(prize->item_no);
                 count = 0;
 
                 switch (kind) {
-                    case 0: {
+                    case BOARD_PAGE_ITEM: {
                         int        i;
                         int        k;
                         ITEM_PACK *pack = &status->item_pack;
@@ -5747,7 +5747,7 @@ int FishingExchangeKey() {
                         }
 
                         for (k = 0; k < pack->num; k++) {
-                            if (pack->item[k] >= 0x84) {
+                            if (pack->item[k] >= ITEM_DUNGEON_START) {
                                 count++;
                             }
                         }
@@ -5758,14 +5758,14 @@ int FishingExchangeKey() {
 
                         break;
                     }
-                    case 1: {
+                    case BOARD_PAGE_WEAPON: {
                         int          i;
                         int          owner = WhoIsWeaponEquip(prize->item_no);
                         int          held = 0;
                         WEAPON_HAVE *weapons = status->chara_weapons[owner];
 
                         for (i = 0; i < 10; i++) {
-                            if (weapons[i].item_no >= 0x101) {
+                            if (weapons[i].item_no >= ITEM_WEAPON_START) {
                                 held++;
                             }
                         }
@@ -5776,7 +5776,7 @@ int FishingExchangeKey() {
 
                         break;
                     }
-                    case 2: {
+                    case BOARD_PAGE_ATTACH: {
                         int             held;
                         DNG_CONSUMABLE *attach = status->consumable_items;
                         int             entry;
@@ -5786,7 +5786,7 @@ int FishingExchangeKey() {
                             entry = count * sizeof(DNG_CONSUMABLE);
                             entry = (int) attach + entry;
 
-                            if (((DNG_CONSUMABLE *) entry)->id >= 0x51) {
+                            if (((DNG_CONSUMABLE *) entry)->id >= ITEM_ATTACH_START) {
                                 held++;
                             }
                         }
@@ -5800,23 +5800,23 @@ int FishingExchangeKey() {
                 }
 
                 if (prize->price > FishMenu.point) {
-                    FishMenu.fade_mode = 5;
+                    FishMenu.fade_mode = FISH_EXCHANGE_REFUSE;
                     FishMenu.warning = 14;
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 } else if (full != 0) {
                     FishMenu.warning = kind;
-                    FishMenu.fade_mode = 5;
-                    ComMenuSePlay(2);
+                    FishMenu.fade_mode = FISH_EXCHANGE_REFUSE;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 } else {
                     FishMenu.confirm = 1;
                     FishMenu.cursor_y = FishMenu.confirm * 0x24 + 0x102;
-                    FishMenu.fade_mode = 4;
-                    ComMenuSePlay(1);
+                    FishMenu.fade_mode = FISH_EXCHANGE_CONFIRM;
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
-            } else if (GamePad.Down(0x20) != 0) {
-                FishMenu.fade_mode = 1;
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                FishMenu.fade_mode = FISH_EXCHANGE_FADE_OUT;
                 FishMenu.fade_count = 0;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             if (top != FishMenu.top) {
@@ -5845,20 +5845,20 @@ int FishingExchangeKey() {
 
             break;
         }
-        case 4: {
-            if (GamePad.Down(0x5000) != 0) {
+        case FISH_EXCHANGE_CONFIRM: {
+            if (GamePad.Down(PAD_UP | PAD_DOWN) != 0) {
                 if (FishMenu.confirm != 0) {
                     FishMenu.confirm = 0;
                 } else {
                     FishMenu.confirm = 1;
                 }
 
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
             FISH_EXCHANGE_ITEM *prize;
 
-            if (GamePad.Down(0x40) != 0) {
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 int enough = 1;
                 prize = GetExchangeItemList(FishMenu.cursor);
 
@@ -5867,7 +5867,7 @@ int FishingExchangeKey() {
                 }
 
                 if (prize == NULL) {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                     break;
                 }
 
@@ -5879,11 +5879,11 @@ int FishingExchangeKey() {
 
                 if (FishMenu.confirm == 0) {
                     if (enough != 0) {
-                        ComMenuSePlay(0x9A);
+                        ComMenuSePlay(SE_PURCHASE);
                         ((CDngStatusData *) SaveData->GetDngStatus())->GetItem(prize->item_no, 0);
                         FishMenu.point -= price;
 
-                        if (prize->item_no == 0x116) {
+                        if (prize->item_no == ITEM_WEAPON_MARDAN_EINS) {
                             SetAlreadyGetMardanWeapon(1);
                             ClearFishMardanGarayanNum();
                             FishMenu.top--;
@@ -5894,17 +5894,17 @@ int FishingExchangeKey() {
                             FishMenu.point = 0;
                         }
                     } else {
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                     }
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 FishMenu.cursor_y = (FishMenu.cursor - FishMenu.top) * 0x22 + 0x7E;
-                FishMenu.fade_mode = 3;
-            } else if (GamePad.Down(0x20) != 0) {
-                ComMenuSePlay(2);
-                FishMenu.fade_mode = 3;
+                FishMenu.fade_mode = FISH_EXCHANGE_SELECT;
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                ComMenuSePlay(MENU_SOUND_REFUSE);
+                FishMenu.fade_mode = FISH_EXCHANGE_SELECT;
             }
 
             prize = GetExchangeItemList(FishMenu.cursor);
@@ -5930,10 +5930,10 @@ int FishingExchangeKey() {
 
             break;
         }
-        case 5: {
-            if (GamePad.Down(0x60) != 0) {
-                FishMenu.fade_mode = 3;
-                ComMenuSePlay(2);
+        case FISH_EXCHANGE_REFUSE: {
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                FishMenu.fade_mode = FISH_EXCHANGE_SELECT;
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             if (CommonMenuMes1.mes_made != FishMenu.warning + 0xCB) {
@@ -6049,7 +6049,7 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
     int target_y = y + 0x14 + row * 0x22;
     int cursor_x = x - 0x1C;
 
-    if (FishMenu.fade_mode == 4) {
+    if (FishMenu.fade_mode == FISH_EXCHANGE_CONFIRM) {
         cursor_x = 0xF2;
         target_y = (FishMenu.confirm << 5) + 0x102;
     }
@@ -6092,10 +6092,10 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 
-    if (FishMenu.fade_mode == 4 || FishMenu.fade_mode == 5) {
+    if (FishMenu.fade_mode == FISH_EXCHANGE_CONFIRM || FishMenu.fade_mode == FISH_EXCHANGE_REFUSE) {
         AllFadeForMenu(0x40);
 
-        if (FishMenu.fade_mode == 4) {
+        if (FishMenu.fade_mode == FISH_EXCHANGE_CONFIRM) {
             CRect_i_ dest(0x110, 0x102, 0x60, 0x1F);
             CRect_i_ window(0x1A0, 0, 0x60, 0x20);
             MenuTextureReload(FishMenu.tex_block);
@@ -6103,20 +6103,20 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
             dest.y += 0x20;
             window.y = 0x20;
             DrawMenu2DSprite(FishMenuTex, dest, window, 0x80);
-            CommonMenuMes1.auto_pos = 5;
+            CommonMenuMes1.auto_pos = MES_POS_CENTRE;
         } else {
-            CommonMenuMes1.auto_pos = 5;
+            CommonMenuMes1.auto_pos = MES_POS_CENTRE;
         }
 
         MenuTextureReload(CommonMenuMes1.tex_block);
-        CommonMenuMes1.stay_frame = 1;
+        CommonMenuMes1.stay_frame = true;
         CommonMenuMes1.text_x = 0xDC;
         CommonMenuMes1.text_y = 0x8C;
         CommonMenuMes1.Step();
         CommonMenuMes1.DrawMesWin();
     }
 
-    if (FishMenu.fade_mode != 5) {
+    if (FishMenu.fade_mode != FISH_EXCHANGE_REFUSE) {
         DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
     }
 }
@@ -6130,11 +6130,11 @@ void FishingExchangeDraw() {
     alpha = 0x80;
 
     switch (FishMenu.fade_mode) {
-        case 0:
+        case FISH_EXCHANGE_FADE_IN:
             frame_alpha = alpha - FishMenu.fade_count * 2;
             alpha = FishMenu.fade_count * 4;
             break;
-        case 1:
+        case FISH_EXCHANGE_FADE_OUT:
             frame_alpha = FishMenu.fade_count * 2 + 0x40;
             alpha = alpha - FishMenu.fade_count * 4;
             break;
@@ -6166,7 +6166,7 @@ void FishingExchangeDraw() {
 }
 
 void ExitFishingExchange() {
-    CommonMenuMes1.auto_pos = -1;
+    CommonMenuMes1.auto_pos = MES_POS_NONE;
     SaveData->SetFishingPoint(FishMenu.point);
     TexManager.DeleteTextureBlock(FishMenu.tex_block);
     TexManager.CleanUpTextureList();
@@ -6219,9 +6219,9 @@ void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode) {
     FishRecordMenu.cursor = 0;
     FishRecordMenu.top = 0;
     FishRecordMenu.fade_count = 0;
-    FishRecordMenu.fade_mode = 0;
+    FishRecordMenu.fade_mode = FISH_RECORD_FADE_IN;
     StayTex = TexManager.GetTexture("stayframe", -1);
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
 
@@ -6257,7 +6257,7 @@ void FishRecordTextureEnter() {
     TexManager.CleanUpTextureList();
     TexManager.LoadTextureBlockEX(-1, texture);
     FishMenuTex = TexManager.GetTexture("fprecbrd", -1);
-    InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
+    InitMenuMesSet(MENU_MES_SET_ALLMENU, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
     CommonMenuMes2.mes_made = -1;
     AtoraNameMes.mes_made = -1;
 
@@ -6288,18 +6288,18 @@ static int FishRecordViewKey() {
     int ret = 0;
 
     switch (FishRecordMenu.fade_mode) {
-        case 0:
+        case FISH_RECORD_FADE_IN:
             FishRecordMenu.fade_count++;
 
             if (!FishRecordMenu.ready) {
                 FishRecordTextureEnter();
             } else if (FishRecordMenu.fade_count > 0x20) {
-                FishRecordMenu.fade_mode = 2;
+                FishRecordMenu.fade_mode = FISH_RECORD_VIEW;
                 FishRecordMenu.fade_count = 0;
             }
 
             break;
-        case 1:
+        case FISH_RECORD_FADE_OUT:
             FishRecordMenu.fade_count++;
 
             if (FishRecordMenu.fade_count > 0x20) {
@@ -6308,10 +6308,10 @@ static int FishRecordViewKey() {
             }
 
             break;
-        case 2: {
+        case FISH_RECORD_VIEW: {
             int old_cursor = FishRecordMenu.cursor;
 
-            if (GamePad.Down(0x200A)) {
+            if (GamePad.Down(PAD_R2 | PAD_R1 | PAD_RIGHT)) {
                 FishRecordMenu.top += 5;
                 FishRecordMenu.cursor += 5;
 
@@ -6324,7 +6324,7 @@ static int FishRecordViewKey() {
                 }
             }
 
-            if (GamePad.Down(0x8005)) {
+            if (GamePad.Down(PAD_L2 | PAD_L1 | PAD_LEFT)) {
                 FishRecordMenu.top -= 5;
                 FishRecordMenu.cursor -= 5;
 
@@ -6334,7 +6334,7 @@ static int FishRecordViewKey() {
                 }
             }
 
-            if (GamePad.Down(0x1000)) {
+            if (GamePad.Down(PAD_UP)) {
                 FishRecordMenu.cursor--;
 
                 if (FishRecordMenu.cursor < 0) {
@@ -6351,7 +6351,7 @@ static int FishRecordViewKey() {
                 }
             }
 
-            if (GamePad.Down(0x4000)) {
+            if (GamePad.Down(PAD_DOWN)) {
                 FishRecordMenu.cursor++;
 
                 if (FishRecordMenu.cursor >= 0x13) {
@@ -6367,21 +6367,21 @@ static int FishRecordViewKey() {
                 }
             }
 
-            if (GamePad.Down(0x20)) {
-                FishRecordMenu.fade_mode = 1;
+            if (GamePad.Down(PAD_CIRCLE)) {
+                FishRecordMenu.fade_mode = FISH_RECORD_FADE_OUT;
                 FishRecordMenu.fade_count = 0;
             }
 
 #ifdef PAL
             // Debug shortcut: records a random catch.
-            if (DebugMode && GamePad.Down2(0x40)) {
+            if (DebugMode && GamePad.Down2(PAD_CROSS)) {
                 int fish_id = rand() % 18;
                 SaveData->SetFishingRank(fish_id, rand() % 20);
             }
 
 #endif
             if (old_cursor != FishRecordMenu.cursor) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
 
                 for (int i = 0; i < 5; i++) {
                     SV_FISH_DATA *fish = GetFishingRankData(FishRecordMenu.top + i);
@@ -6528,11 +6528,11 @@ static void FishRecordViewDraw() {
     alpha = 0x80;
 
     switch (FishRecordMenu.fade_mode) {
-        case 0:
+        case FISH_RECORD_FADE_IN:
             frame_alpha = alpha - FishRecordMenu.fade_count * 2;
             alpha = FishRecordMenu.fade_count * 4;
             break;
-        case 1:
+        case FISH_RECORD_FADE_OUT:
             frame_alpha = FishRecordMenu.fade_count * 2 + 0x40;
             alpha = alpha - FishRecordMenu.fade_count * 4;
             break;

@@ -7,6 +7,21 @@
 #include "mapparts.hpp"
 #include "water.hpp"
 
+/**
+ * Towns with a Georama ground, as CEditGround::map_no holds them.
+ */
+// clang-format off
+enum Town {
+    TOWN_NORUNE       = 0, /**< Norune Village. */
+    TOWN_MATATAKI     = 1, /**< Matataki Village. */
+    TOWN_QUEENS       = 2, /**< Queens. */
+    TOWN_MUSKA_LACKA  = 3, /**< Muska Lacka. */
+    TOWN_YELLOW_DROPS = 4, /**< Yellow Drops. */
+    TOWN_COUNT        = 5, /**< Number of towns with a ground. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -79,7 +94,7 @@ public:
  */
 class CEditGround {
 public:
-    s32               map_no;          /**< Georama town the ground belongs to, from 0 for Norune to 4 for Yellow Drops. */
+    s32               map_no;          /**< Georama town the ground belongs to. @see Town. */
     CEditArea        *areas[4];        /**< Editable areas that make up the ground. */
     s32               area_visible[4]; /**< Whether each area is drawn this frame. */
     u8                unk_00024[0xC];

@@ -4,6 +4,17 @@
 
 #include <libvu0.h>
 
+/**
+ * Steps of the demon's beam, as CMajinBeem::state holds them.
+ */
+// clang-format off
+enum MajinBeemState {
+    MAJIN_BEEM_AIM    = 0, /**< Aiming at the target. */
+    MAJIN_BEEM_TRAVEL = 1, /**< Travelling. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -13,7 +24,7 @@ class CMajinBeem {
 public:
     sceVu0FVECTOR positions[60]; /**< Trail element positions, the head first. */
     sceVu0FVECTOR target;        /**< Point the beam is aimed at on its first step. */
-    int           state;         /**< Zero aims the beam at the target; one moves it. */
+    int           state;         /**< What the beam is doing. @see MajinBeemState. */
     int           counters[60];  /**< Ages of the recorded trail elements. */
     float         sizes[60];     /**< Draw sizes of the trail elements. */
     float         alphas[60];    /**< Alpha values of the trail elements. */

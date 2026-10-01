@@ -104,7 +104,7 @@ void CBombEffect::Step() {
         }
 
         switch (phases[i]) {
-            case 0:
+            case BOMB_PHASE_BURST:
                 counters[i]++;
                 sizes[i] += 8.0f;
                 alphas[i] += 4.0f;
@@ -116,7 +116,7 @@ void CBombEffect::Step() {
                 counters[i] = 0;
                 phases[i]++;
                 break;
-            case 1:
+            case BOMB_PHASE_BLOOM:
                 counters[i]++;
                 sizes[i] += 1.0f;
                 alphas[i] += 8.0f;
@@ -128,7 +128,7 @@ void CBombEffect::Step() {
                 counters[i] = 0;
                 phases[i]++;
                 break;
-            case 2:
+            case BOMB_PHASE_LINGER:
                 counters[i]++;
                 sizes[i] += 0.3f;
                 alphas[i] -= 3.0f;
@@ -140,7 +140,7 @@ void CBombEffect::Step() {
                 counters[i] = 0;
                 phases[i]++;
                 break;
-            case 3:
+            case BOMB_PHASE_DISSIPATE:
                 counters[i]++;
                 sizes[i] -= 0.1f;
                 alphas[i] -= 2.0f;
@@ -160,7 +160,7 @@ void CBombEffect::Step() {
         }
 
         switch (phases[i]) {
-            case 0:
+            case BOMB_PHASE_BURST:
                 counters[i]++;
                 sizes[i] += 16.0f;
 
@@ -171,7 +171,7 @@ void CBombEffect::Step() {
                 counters[i] = 0;
                 phases[i]++;
                 break;
-            case 1:
+            case BOMB_PHASE_BLOOM:
                 counters[i]++;
                 sizes[i] += 8.0f;
 
@@ -182,7 +182,7 @@ void CBombEffect::Step() {
                 counters[i] = 0;
                 phases[i]++;
                 break;
-            case 2:
+            case BOMB_PHASE_LINGER:
                 counters[i]++;
                 sizes[i] += 0.3f;
 
@@ -193,7 +193,7 @@ void CBombEffect::Step() {
                 counters[i] = 0;
                 phases[i]++;
                 break;
-            case 3:
+            case BOMB_PHASE_DISSIPATE:
                 counters[i]++;
                 sizes[i] -= 0.1f;
                 alphas[i] -= 2.0f;

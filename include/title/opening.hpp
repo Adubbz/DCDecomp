@@ -6,6 +6,26 @@
 
 #include "dataalloc_fwd.hpp"
 
+/**
+ * Scenes of the opening movie, as CScript::scene, load_no and init_no hold them.
+ */
+// clang-format off
+enum OpeningScene {
+    OP_SCENE_NONE           = -1, /**< No scene requested. */
+    OP_SCENE_DUNGEON_SQUARE = 0,  /**< The cursed dance in the dungeon square. */
+    OP_SCENE_NORUNE         = 1,  /**< Norune Village. */
+    OP_SCENE_TOAN_HOUSE     = 2,  /**< Toan's house. */
+    OP_SCENE_NORUNE_NIGHT   = 3,  /**< Norune at night. */
+    OP_SCENE_DANCE          = 4,  /**< The dance. */
+    OP_SCENE_MAJIN          = 5,  /**< The demon's arrival. */
+    OP_SCENE_NORUNE_RUINED  = 6,  /**< The village after the demon. */
+    OP_SCENE_NORUNE_BURNING = 7,  /**< Norune's destruction. */
+    OP_SCENE_SEIREI_KING    = 8,  /**< The spirit king's hall. */
+    OP_SCENE_MEADOW         = 9,  /**< The meadow and the explanation captions. */
+};
+
+// clang-format on
+
 class CCharacter;
 class CCamera;
 class CCameraFollow;

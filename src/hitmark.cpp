@@ -88,7 +88,7 @@ void CHitMark::Draw() {
         bottom_left[2] = bottom_right[2];
 
         switch (this->kind) {
-            case 0: {
+            case HIT_MARK_HIT: {
                 CRect_i_ rect;
                 rect.x = 0x00;
                 rect.y = 0x00;
@@ -97,7 +97,7 @@ void CHitMark::Draw() {
                 set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
-            case 1: {
+            case HIT_MARK_UNK_1: {
                 CRect_i_ rect;
                 rect.x = 0x30;
                 rect.y = 0x10;
@@ -106,7 +106,7 @@ void CHitMark::Draw() {
                 set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
-            case 2: {
+            case HIT_MARK_GUARD: {
                 CRect_i_ rect;
                 rect.x = 0x40;
                 rect.y = 0x00;
@@ -115,7 +115,7 @@ void CHitMark::Draw() {
                 set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
-            case 3: {
+            case HIT_MARK_UNK_3: {
                 CRect_i_ rect;
                 rect.x = 0x10;
                 rect.y = 0x00;
@@ -124,7 +124,7 @@ void CHitMark::Draw() {
                 set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x40);
                 break;
             }
-            case 4: {
+            case HIT_MARK_UNK_4: {
                 CRect_i_ rect;
                 rect.x = 0x68;
                 rect.y = 0x20;

@@ -4,12 +4,39 @@
 
 #include "editloop.hpp"
 
+/**
+ * What the town loop runs, as GameMode holds it.
+ */
+// clang-format off
+enum EdGameMode {
+    ED_MODE_NONE                = -1, /**< No mode recorded yet. */
+    ED_MODE_UNK_0               = 0,  /**< Does nothing; never set. */
+    ED_MODE_WALK                = 1,  /**< Walking. */
+    ED_MODE_TALK                = 2,  /**< Talking. */
+    ED_MODE_TIME_CHANGE         = 3,  /**< Counting down a time change. */
+    ED_MODE_GEORAMA             = 4,  /**< Georama editing. */
+    ED_MODE_GEORAMA_MENU_INIT   = 5,  /**< Starting the edit menu from Georama editing. */
+    ED_MODE_GEORAMA_MENU        = 6,  /**< Edit menu. */
+    ED_MODE_MENU_INIT           = 7,  /**< Starting a menu from walking. */
+    ED_MODE_MENU                = 8,  /**< Script or battle menu. */
+    ED_MODE_RETURN_MENU_WALK    = 9,  /**< Pause menu from walking. */
+    ED_MODE_RETURN_MENU_GEORAMA = 10, /**< Pause menu from Georama editing. */
+    ED_MODE_DOOR_OPEN           = 11, /**< Opening a door. */
+    ED_MODE_MAP_JUMP            = 12, /**< Jumping to another map. */
+    ED_MODE_UNK_D               = 13, /**< Does nothing; never set. */
+    ED_MODE_EVENT               = 14, /**< Event. */
+    ED_MODE_UNK_F               = 15, /**< Does nothing; never set. */
+    ED_MODE_FISHING             = 16, /**< Fishing. */
+};
+
+// clang-format on
+
 struct SPI_FUNC_PARAM;
 
 /** Functions the map script may call. */
 extern SPI_FUNC_PARAM func_table;
 
-/** Current game mode of the town editor. */
+/** Current game mode of the town editor. @see EdGameMode. */
 extern int GameMode;
 
 /** Number of images the map script has declared. */

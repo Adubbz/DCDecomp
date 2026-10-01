@@ -5,6 +5,19 @@
 #include "dataalloc_fwd.hpp"
 #include "texture.hpp"
 
+/**
+ * Periods of a town day, as EdGetTime reports them.
+ */
+// clang-format off
+enum EdTimePeriod {
+    ED_TIME_DAY     = 0, /**< Day. */
+    ED_TIME_EVENING = 1, /**< Evening. */
+    ED_TIME_NIGHT   = 2, /**< Night. */
+    ED_TIME_MORNING = 3, /**< Morning. */
+};
+
+// clang-format on
+
 class CCharacter;
 class CCamera;
 class C3DSprite;
@@ -372,7 +385,7 @@ void EdLimitShadowLight(float light[][4], float scale);
 int EdCheckTime(float time, float start, float end);
 
 /**
- * Classifies an editor time into one of four daily lighting periods.
+ * Classifies an editor time into one of four daily lighting periods. @see EdTimePeriod.
  *
  * @mangled EdGetTime__Ff
  * @address 0x187E60

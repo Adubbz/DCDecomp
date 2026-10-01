@@ -4,6 +4,83 @@
 
 #include <libvu0.h>
 
+/**
+ * Kinds of map part function marker, as EPARTS_FUNC_DATA::kind holds them.
+ */
+// clang-format off
+enum EPartsFuncKind {
+    EPARTS_FUNC_VILLAGER      = 1,  /**< Villager stand point. */
+    EPARTS_FUNC_DOOR          = 2,  /**< Door. */
+    EPARTS_FUNC_FIRE_LARGE    = 3,  /**< Three-layer fire. */
+    EPARTS_FUNC_SMOKE         = 4,  /**< Smoke. */
+    EPARTS_FUNC_FIRE_MEDIUM   = 5,  /**< Two-layer fire. */
+    EPARTS_FUNC_OBJ_ANIME     = 6,  /**< Object animation. */
+    EPARTS_FUNC_CAMERA        = 7,  /**< Interior camera zone. */
+    EPARTS_FUNC_OBJ_TIMER     = 9,  /**< Object timer. */
+    EPARTS_FUNC_DOOR_SIDE_A   = 10, /**< One side of an entrance. */
+    EPARTS_FUNC_DOOR_SIDE_B   = 11, /**< Other side of an entrance. */
+    EPARTS_FUNC_FIRE_SMALL    = 12, /**< One-layer fire. */
+    EPARTS_FUNC_UNK_D         = 13, /**< Two-layer fire, like EPARTS_FUNC_FIRE_MEDIUM. */
+    EPARTS_FUNC_UNK_E         = 14, /**< Effect that is not drawn. */
+    EPARTS_FUNC_CANDLE        = 15, /**< Candle. */
+    EPARTS_FUNC_DOOR_EXTENT   = 16, /**< Extent of an entrance. */
+    EPARTS_FUNC_ITEM_BOX      = 17, /**< Item box. */
+    EPARTS_FUNC_EVENT         = 18, /**< Event point. */
+    EPARTS_FUNC_LADDER_BOTTOM = 19, /**< Bottom of a ladder. */
+    EPARTS_FUNC_LADDER_TOP    = 20, /**< Top of a ladder. */
+    EPARTS_FUNC_SOUND         = 21, /**< Sound source. */
+};
+
+// clang-format on
+
+/**
+ * What an object animation sequence drives, as OBJ_ANIME_SEQ::property holds it.
+ */
+// clang-format off
+enum ObjAnimeProperty {
+    OBJ_ANIME_PROPERTY_NONE     = -1, /**< Unused. */
+    OBJ_ANIME_PROPERTY_ROTATION = 0,  /**< Rotation. */
+    OBJ_ANIME_PROPERTY_POSITION = 1,  /**< Position. */
+    OBJ_ANIME_PROPERTY_SCALE    = 2,  /**< Scale. */
+    OBJ_ANIME_PROPERTY_COLOR    = 3,  /**< Colour. */
+};
+
+// clang-format on
+
+/**
+ * How an object animation sequence moves its value, as OBJ_ANIME_SEQ::mode holds it.
+ */
+// clang-format off
+enum ObjAnimeMode {
+    OBJ_ANIME_MODE_LINEAR              = 0, /**< Adds the step forever. */
+    OBJ_ANIME_MODE_WRAP                = 1, /**< Restarts from the start value. */
+    OBJ_ANIME_MODE_PING_PONG           = 2, /**< Turns back at each end. */
+    OBJ_ANIME_MODE_ONCE                = 3, /**< Stops at the end value. */
+    OBJ_ANIME_MODE_RANDOM              = 4, /**< Random value on each axis. */
+    OBJ_ANIME_MODE_RANDOM_WALK         = 5, /**< Random step on each axis, held within the range. */
+    OBJ_ANIME_MODE_RANDOM_UNIFORM      = 6, /**< One random value on every axis. */
+    OBJ_ANIME_MODE_RANDOM_WALK_UNIFORM = 7, /**< One random step on every axis, held within the range. */
+};
+
+// clang-format on
+
+/**
+ * Kinds of town effect, as EDIT_EFFECT_INFO::kind holds them.
+ */
+// clang-format off
+enum EditEffectKind {
+    EDIT_EFFECT_NONE        = 0, /**< Free. */
+    EDIT_EFFECT_FIRE_LARGE  = 1, /**< Three-layer fire. */
+    EDIT_EFFECT_FIRE_SMALL  = 2, /**< One-layer fire. */
+    EDIT_EFFECT_FIRE_MEDIUM = 3, /**< Two-layer fire. */
+    EDIT_EFFECT_SMOKE       = 4, /**< Smoke. */
+    EDIT_EFFECT_UNK_5       = 5, /**< Not drawn. */
+    EDIT_EFFECT_CANDLE      = 6, /**< Candle. */
+    EDIT_EFFECT_SOUND       = 7, /**< Sound source. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -19,7 +96,7 @@ class CMapParts;
  */
 struct EPARTS_FUNC_DATA {
     u8            unk_00[0x10];
-    int           kind;            /**< Selects how the marker is interpreted by map setup. */
+    int           kind;            /**< Selects how the marker is interpreted by map setup. @see EPartsFuncKind. */
     CMapParts    *parts;           /**< Map part the marker was extracted from. */
     float         start_time;      /**< Beginning of the marker's active time interval. */
     float         end_time;        /**< End of the marker's active time interval. */
@@ -43,8 +120,8 @@ STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
  */
 struct OBJ_ANIME_SEQ {
     char          frame_name[0x10]; /**< Frame the animation drives; empty for the frame it is given. */
-    int           property;         /**< What the animation drives: 0 rotation in degrees, 1 position, 2 scale, 3 colour; -1 while unused. */
-    int           mode;             /**< How the value moves: 0 onward, 1 wrapping, 2 back and forth, 3 once, 4 to 7 at random. */
+    int           property;         /**< What the animation drives. @see ObjAnimeProperty. */
+    int           mode;             /**< How the value moves. @see ObjAnimeMode. */
     u8            unk_18[0x8];
     sceVu0FVECTOR from;            /**< Value the animation starts at, and the lower bound of a random one. */
     sceVu0FVECTOR to;              /**< Value the animation ends at, and the upper bound of a random one. */
@@ -84,7 +161,7 @@ extern "C" OBJ_ANIME_SEQ FrameObjAnim[48];
  */
 struct EDIT_EFFECT_INFO {
     char          frame_name[16]; /**< Names the child frame that carries the effect. */
-    s32           kind;           /**< Number that names the effect; zero or below where the slot is free. */
+    s32           kind;           /**< Effect in the slot; zero or below where the slot is free. @see EditEffectKind. */
     s32           map_flag;       /**< Map flag that stops the effect while it is set; zero or below where none does. */
     float         start;          /**< Time of day that the effect starts at. */
     float         end;            /**< Time of day that the effect stops at. */

@@ -87,9 +87,9 @@ static inline void ResetEastKingMessage() {
     EastKingMsgCls.text_width = 0;
     EastKingMsgCls.text_height = 0;
     EastKingMsgCls.fade = 0.0f;
-    EastKingMsgCls.fade_in = 1;
+    EastKingMsgCls.fade_in = true;
     EastKingMsgCls.text_rate = EastKingMsgCls.text_rate_set;
-    EastKingMsgCls.waiting = 0;
+    EastKingMsgCls.waiting = false;
     EastKingMsgCls.text_at = 0.0f;
     EastKingMsgCls.text_no = 0;
     EastKingMsgCls.text_from = 0;
@@ -111,14 +111,14 @@ static inline void ResetEastKingMessage() {
     }
 
     EastKingMsgCls.value = 0;
-    EastKingMsgCls.value_signed = 0;
-    EastKingMsgCls.value_show = 1;
-    EastKingMsgCls.value_narrow = 0;
+    EastKingMsgCls.value_signed = false;
+    EastKingMsgCls.value_show = true;
+    EastKingMsgCls.value_narrow = false;
     EastKingMsgCls.space_width = -1;
     EastKingMsgCls.space_area = -1;
     EastKingMsgCls.cursor_row = -1;
     EastKingMsgCls.cursor_y = 0;
-    EastKingMsgCls.cursor_lit = 0;
+    EastKingMsgCls.cursor_lit = false;
 
     for (int line = 0; line < 10; line++) {
         EastKingMsgCls.line_pos[line].x = -1;
@@ -144,7 +144,7 @@ void EastKingTextureEnter() {
         u_long128 *buffer_end = EastKing.load_buffer + (archive->size >> 4) + 1;
         s16       *messages = (s16 *) GetPackFile((u_int *) archive->buffer, "eastking.bin", NULL);
         ResetEastKingMessage();
-        EastKingMsgCls.SetMesFukidashi(4);
+        EastKingMsgCls.SetMesFukidashi(MES_FUKIDASHI_LARGE_TABLE_EDGE);
 #ifdef PAL
         s8 font_width[8] = {16, 14, 14, 15, 15, 15, 15};
 #else
@@ -159,16 +159,16 @@ void EastKingTextureEnter() {
         EastKingMsgCls.columns = 0x1E;
         EastKingMsgCls.text_rate = 0.0f;
         EastKingMsgCls.text_rate_set = 0.0f;
-        EastKingMsgCls.centre_rows = 1;
+        EastKingMsgCls.centre_rows = true;
         EastKingMsgCls.tex_block = 0x1A;
         EastKingMsgCls.tex_buff = buffer_end;
         EastKingMsgCls.SetBuff(messages);
         EastKingMsgCls.mes_made = -1;
         EastKingMsgCls.unk_02C = 0x10;
         EastKingMsgCls.init_030 = 0x10;
-        EastKingMsgCls.page_arrow = 1;
-        EastKing.resources_ready = 1;
-        EastKingMsg.draw_message = 1;
+        EastKingMsgCls.page_arrow = true;
+        EastKing.resources_ready = true;
+        EastKingMsg.draw_message = true;
         SndBgmPlay(0);
     }
 }
@@ -249,7 +249,7 @@ void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer)
     EastKingSndReadBuf = (u_int *) MenuCalcBufAlignment((u_long128 *) EastKingSndReadBuf);
     PrevEastKingSndNo = SndGetBgmNo();
     SndBgmLoadBG(0x16, EastKingSndReadBuf, &size);
-    EastKing.resources_ready = 0;
+    EastKing.resources_ready = false;
     EastKing.texture_block = *texture_block;
     EastKing.event_no = event_no;
     EastKing.mode = EAST_KING_LOADING;
@@ -257,7 +257,7 @@ void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer)
     EastKingMsg.message_no = EastKing.event_no * 100 + 100;
     EastKingMsg.unk_02 = 0;
     EastKingMsg.alpha = 0;
-    EastKingMsg.draw_message = 0;
+    EastKingMsg.draw_message = false;
 
     if (SaveData->GetGameFlag(EastKing.event_no + 0xE6) == 0) {
         SaveData->SetGameFlag(EastKing.event_no + 0xE6, 1);
@@ -282,7 +282,7 @@ int EastKingEventKey() {
             if (EastKing.transition_frame > 0x40 && EastKingMsg.alpha >= 0x80 && EastKing.resources_ready != 0) {
                 EastKing.mode = EAST_KING_DIALOGUE;
                 EastKing.transition_frame = 0;
-                EastKingMsg.draw_message = 1;
+                EastKingMsg.draw_message = true;
             }
 
             break;
@@ -306,7 +306,7 @@ int EastKingEventKey() {
 
             break;
         case EAST_KING_DIALOGUE:
-            if (GamePad.Down(0x40) != 0 && EastKingMsgCls.State() == 3) {
+            if (GamePad.Down(PAD_CROSS) != 0 && EastKingMsgCls.State() == CLSMES_SHOWN) {
                 if (EastKingMsg.message_no + 1 > EastKing.event_no * 100 + 100 + EastKingMsgMax[EastKing.event_no]) {
                     EastKing.mode = EAST_KING_CLOSING;
                     EastKing.transition_frame = 0;
@@ -314,9 +314,9 @@ int EastKingEventKey() {
                 } else {
                     EastKing.mode = EAST_KING_MESSAGE_FADE_OUT;
                     EastKing.transition_frame = 0;
-                    EastKingMsg.draw_message = 0;
+                    EastKingMsg.draw_message = false;
                 }
-            } else if (GamePad.Down(0x20) != 0) {
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
                 EastKing.transition_frame = 0;
                 EastKing.mode = EAST_KING_CLOSING;
             }
@@ -330,7 +330,7 @@ int EastKingEventKey() {
                 EastKingMsg.alpha = 0;
                 EastKingMsg.message_no++;
                 EastKing.transition_frame = 0;
-                EastKingMsg.draw_message = 1;
+                EastKingMsg.draw_message = true;
             }
 
             break;

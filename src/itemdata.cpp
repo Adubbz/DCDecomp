@@ -491,7 +491,7 @@ int TEIGIAnalyz(char *path) {
         BtRubyDoorKey = 0;
     }
 
-    if (selectMapNo == 2 && UserStatus->cur_floor == 8) {
+    if (selectMapNo == DUNGEON_SHIPWRECK && UserStatus->cur_floor == 8) {
         BtRubyDoorKey = 0;
     }
 
@@ -703,12 +703,12 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
     int        size;
 
     attr.clip_depth = 20.0f;
-    attr.clip_enable = 1;
+    attr.clip_enable = true;
     attr.program_option = 0;
     FrameObjAnimCnt = 0;
 
     for (int i = 0; i < 48; i++) {
-        FrameObjAnim[i].property = -1;
+        FrameObjAnim[i].property = OBJ_ANIME_PROPERTY_NONE;
     }
 
     nowPartsCnt = 0;
@@ -782,7 +782,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             main_fogColor[0] = (u8) argValBuff[line][3];
             main_fogColor[1] = (u8) argValBuff[line][4];
             main_fogColor[2] = (u8) argValBuff[line][5];
-            attr.fog_enable = 1;
+            attr.fog_enable = true;
         }
 
         if (TEIGI_BG_COL[0] == (int) argValBuff[line][0]) {
@@ -806,7 +806,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             sub_fogColor[0] = (u8) argValBuff[line][3];
             sub_fogColor[1] = (u8) argValBuff[line][4];
             sub_fogColor[2] = (u8) argValBuff[line][5];
-            attr.fog_enable = 1;
+            attr.fog_enable = true;
         }
 
         if (TEIGI_SET_PATH[0] == (int) argValBuff[line][0]) {
@@ -1152,8 +1152,8 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 printf("over frame anim!\n");
             } else {
                 strcpy(FrameObjAnim[FrameObjAnimCnt].frame_name, argStrBuff[line]);
-                FrameObjAnim[FrameObjAnimCnt].property = 3;
-                FrameObjAnim[FrameObjAnimCnt].mode = 6;
+                FrameObjAnim[FrameObjAnimCnt].property = OBJ_ANIME_PROPERTY_COLOR;
+                FrameObjAnim[FrameObjAnimCnt].mode = OBJ_ANIME_MODE_RANDOM_UNIFORM;
                 sceVu0CopyVector(FrameObjAnim[FrameObjAnimCnt].from, range);
                 sceVu0CopyVector(FrameObjAnim[FrameObjAnimCnt].to, speed);
                 InitObjAnime(current_model, &FrameObjAnim[FrameObjAnimCnt]);
@@ -1264,7 +1264,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                     event->key_id = -1;
                     event->switch_on = extra_param;
                     event->ext_mem = ext_memory;
-                    event->enabled = 1;
+                    event->enabled = true;
                 }
             }
         }
@@ -1308,7 +1308,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                     event->key_id = key;
                     event->switch_on = extra_param;
                     event->ext_mem = ext_memory;
-                    event->enabled = 1;
+                    event->enabled = true;
                 }
             }
         }
@@ -1318,8 +1318,8 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 printf("over frame anim!\n");
             } else {
                 FrameObjAnim[FrameObjAnimCnt].Initialize();
-                FrameObjAnim[FrameObjAnimCnt].property = 0;
-                FrameObjAnim[FrameObjAnimCnt].mode = 0;
+                FrameObjAnim[FrameObjAnimCnt].property = OBJ_ANIME_PROPERTY_ROTATION;
+                FrameObjAnim[FrameObjAnimCnt].mode = OBJ_ANIME_MODE_LINEAR;
                 FrameObjAnim[FrameObjAnimCnt].from[0] = argValBuff[line][2];
                 FrameObjAnim[FrameObjAnimCnt].from[1] = argValBuff[line][3];
                 FrameObjAnim[FrameObjAnimCnt].from[2] = argValBuff[line][4];
@@ -1337,8 +1337,8 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 printf("over frame anim!\n");
             } else {
                 FrameObjAnim[FrameObjAnimCnt].Initialize();
-                FrameObjAnim[FrameObjAnimCnt].property = 2;
-                FrameObjAnim[FrameObjAnimCnt].mode = 2;
+                FrameObjAnim[FrameObjAnimCnt].property = OBJ_ANIME_PROPERTY_SCALE;
+                FrameObjAnim[FrameObjAnimCnt].mode = OBJ_ANIME_MODE_PING_PONG;
                 FrameObjAnim[FrameObjAnimCnt].from[0] = argValBuff[line][2];
                 FrameObjAnim[FrameObjAnimCnt].from[1] = argValBuff[line][3];
                 FrameObjAnim[FrameObjAnimCnt].from[2] = argValBuff[line][4];
@@ -1373,14 +1373,14 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             rotation[2] = argValBuff[line][8];
 
             for (int i = 0; i < 3; i++) {
-                rotation[i] = (3.141592f / 180.0f) * rotation[i];
+                rotation[i] = (PI_SHORT / 180.0f) * rotation[i];
 
-                if (rotation[i] > 3.1415920f) {
-                    rotation[i] -= 6.2831840f;
+                if (rotation[i] > PI_SHORT) {
+                    rotation[i] -= TWO_PI_SHORT;
                 }
 
-                if (rotation[i] < -3.1415920f) {
-                    rotation[i] += 6.2831840f;
+                if (rotation[i] < -PI_SHORT) {
+                    rotation[i] += TWO_PI_SHORT;
                 }
             }
 
@@ -1652,181 +1652,181 @@ ATTACH_DATA AttachList[50] = {
 };
 
 ITEM_DATA ITEM_LIST[175] = {
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 0}, /* attach slot */
-    {6, 0, 0x00000000, 0x0001, 3,   5,  0, 1}, /* Anti Freeze Amulet */
-    {6, 0, 0x00000000, 0x0001, 3,   5,  0, 1}, /* AntiCurseAmulet */
-    {6, 0, 0x00000000, 0x0001, 3,   5,  0, 1}, /* Antigoo Amulet */
-    {6, 0, 0x00000000, 0x0001, 3,   5,  0, 1}, /* Antidote Amulet */
-    {1, 0, 0x00000020, 0x0030, 5,   3,  0, 2}, /* Fluffy Doughnut */
-    {1, 0, 0x00000020, 0x0030, 5,   3,  0, 2}, /* Fish Candy */
-    {1, 0, 0x00000020, 0x0030, 5,   3,  0, 2}, /* Grass Cake */
-    {1, 0, 0x00000020, 0x0030, 5,   3,  0, 2}, /* Witch Parfait */
-    {1, 0, 0x00000020, 0x0030, 5,   3,  0, 2}, /* Scorpion Jerky */
-    {1, 0, 0x00000020, 0x0030, 5,   3,  0, 2}, /* Carrot Cookie */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Dummy */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {1, 0, 0x00000080, 0x0004, 30,  0,  0, 0}, /* Regular Water */
-    {1, 0, 0x00000080, 0x0004, 50,  0,  0, 0}, /* Tasty Water */
-    {1, 0, 0x00000080, 0x0004, 100, 0,  0, 0}, /* Premium Water */
-    {1, 0, 0x00000040, 0x0004, 50,  0,  0, 0}, /* Bread */
-    {1, 0, 0x00000040, 0x0004, 200, 0,  0, 0}, /* Premium Chicken */
-    {1, 0, 0x00001000, 0x0001, 0,   0,  0, 0}, /* Stamina Drink */
-    {1, 0, 0x00008000, 0x0001, 0,   0,  0, 0}, /* Antidote Drink */
-    {1, 0, 0x00010010, 0x0003, 0,   0,  0, 0}, /* Holy Water */
-    {1, 0, 0x00020000, 0x0001, 0,   0,  0, 0}, /* Soap */
-    {1, 0, 0x0003C000, 0x0001, 0,   0,  0, 0}, /* Mighty Healing */
-    {1, 0, 0x00000040, 0x0004, 80,  0,  0, 0}, /* Cheese */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {2, 0, 0x00000000, 0x0003, 0,   0,  0, 0}, /* Bomb */
-    {2, 0, 0x00000000, 0x0003, 0,   0,  0, 0}, /* Stone */
-    {2, 0, 0x00000001, 0x0003, 0,   0,  0, 0}, /* Fire Gem */
-    {2, 0, 0x00000002, 0x0003, 0,   0,  0, 0}, /* Ice Gem */
-    {2, 0, 0x00000004, 0x0003, 0,   0,  0, 0}, /* Thunder Gem */
-    {2, 0, 0x00000008, 0x0003, 0,   0,  0, 0}, /* Wind Gem */
-    {2, 0, 0x00000010, 0x0003, 0,   0,  0, 0}, /* Holy Gem */
-    {2, 0, 0x00000100, 0x0003, 0,   0,  0, 0}, /* Throbbing Cherry */
-    {2, 0, 0x00000800, 0x0003, 0,   0,  0, 0}, /* Gooey Peach */
-    {2, 0, 0x00000000, 0x0003, 0,   0,  0, 0}, /* Bomb Nuts */
-    {2, 0, 0x00000200, 0x0003, 0,   0,  0, 0}, /* Poisonous Apple */
-    {2, 0, 0x00000040, 0x0005, 200, 30, 0, 0}, /* Mellow Banana */
-    {3, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Medusa Powder */
-    {3, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Hardening Powder */
-    {3, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Warp Powder */
-    {3, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Stand-in Powder */
-    {3, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Escape Powder */
-    {3, 0, 0x00000000, 0x0001, 0,   0,  0, 1}, /* Revival Powder */
-    {3, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Repair Powder */
-    {3, 0, 0x00000020, 0x0001, 0,   0,  0, 2}, /* Powerup Powder */
-    {1, 0, 0x00000020, 0x0011, 10,  0,  0, 2}, /* Pocket */
-    {1, 0, 0x00000060, 0x0011, 10,  0,  0, 2}, /* Fruit of Eden */
-    {4, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Treasure Key */
-    {1, 0, 0x000000A0, 0x0011, 10,  0,  0, 2}, /* Gourd */
-    {3, 0, 0x00000000, 0x0000, 0,   0,  0, 1}, /* Auto Repair Powder */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {6, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Fishing Rod */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Carrot */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Potato cake */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Minon */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Battan */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Petite Fish */
-    {6, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Saving Book */
-    {6, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* Gold Bullion */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Evy */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Dran's Crest */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Shiny Stone */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Mimi */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Red Berry */
-    {6, 0, 0x00000000, 0x0001, 0,   0,  0, 2}, /* Prickly */
-    {6, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Candy */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Hook */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* King's Slate */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Gun Powder */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Clock Hands */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Pointy Chestnut */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Black Knight Crest */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Horned Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Moon Grass Seed */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Music Box Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Sun Signet */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Moon Signet */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Admission Ticket */
-    {0, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Sun Sword */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Bone Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Moustache Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Shipcabin Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Stone Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Handle */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Pitchdark Key */
-    {4, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Silver Key */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {4, 0, 0x00000000, 0x0008, 0,   0,  0, 2}, /* Tram Oil */
-    {4, 0, 0x00000000, 0x0008, 0,   0,  0, 2}, /* Sun Dew */
-    {7, 0, 0x00000000, 0x0009, 600, 0,  0, 2}, /* Flapping Fish */
-    {8, 0, 0x00000000, 0x0009, 0,   0,  0, 2}, /* Rotten Fish */
-    {4, 0, 0x00000000, 0x0008, 0,   0,  0, 2}, /* Secret Path Key */
-    {4, 0, 0x00000000, 0x0008, 0,   0,  0, 2}, /* Bravery Launch */
-    {4, 0, 0x00000000, 0x0008, 0,   0,  0, 2}, /* Flapping Duster */
-    {4, 0, 0x00000000, 0x0008, 0,   0,  0, 2}, /* Crystal Eyeball */
-    {0, 0, 0x00000000, 0x0000, 0,   0,  0, 2}, /* no name */
-    {0, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Map */
-    {6, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Magical Crystal */
-    {6, 0, 0x00000000, 0x0008, 0,   0,  0, 1}, /* Dran's Feather */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Cave Key */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Changing Potion */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Worldmap */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Bone Pendant */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Odd Tone Flute */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Magical Lamp */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Moon Orb */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Shell Ring */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Search Warrant */
-    {7, 0, 0x00000000, 0x0001, 200, 0,  0, 2}, /* Ice Block */
-    {7, 0, 0x00000000, 0x0001, 200, 0,  0, 2}, /* Small Ice */
-    {7, 0, 0x00000000, 0x0001, 200, 0,  0, 2}, /* Tiny Ice */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Flame Key */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Hunter's Earring */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Ointment Leaf */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Foundation */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Clay Doll */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Manual */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Sun Sphere */
-    {5, 0, 0x00000000, 0x0018, 0,   0,  0, 2}, /* Almighty Pass */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_MULTI }, /* attach slot */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 3,   5,  0, ITEM_STACK_SINGLE}, /* Anti Freeze Amulet */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 3,   5,  0, ITEM_STACK_SINGLE}, /* AntiCurseAmulet */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 3,   5,  0, ITEM_STACK_SINGLE}, /* Antigoo Amulet */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 3,   5,  0, ITEM_STACK_SINGLE}, /* Antidote Amulet */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0030, 5,   3,  0, ITEM_STACK_NEVER }, /* Fluffy Doughnut */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0030, 5,   3,  0, ITEM_STACK_NEVER }, /* Fish Candy */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0030, 5,   3,  0, ITEM_STACK_NEVER }, /* Grass Cake */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0030, 5,   3,  0, ITEM_STACK_NEVER }, /* Witch Parfait */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0030, 5,   3,  0, ITEM_STACK_NEVER }, /* Scorpion Jerky */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0030, 5,   3,  0, ITEM_STACK_NEVER }, /* Carrot Cookie */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Dummy */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_FOOD,     0, 0x00000080, 0x0004, 30,  0,  0, ITEM_STACK_MULTI }, /* Regular Water */
+    {ITEM_SORT_FOOD,     0, 0x00000080, 0x0004, 50,  0,  0, ITEM_STACK_MULTI }, /* Tasty Water */
+    {ITEM_SORT_FOOD,     0, 0x00000080, 0x0004, 100, 0,  0, ITEM_STACK_MULTI }, /* Premium Water */
+    {ITEM_SORT_FOOD,     0, 0x00000040, 0x0004, 50,  0,  0, ITEM_STACK_MULTI }, /* Bread */
+    {ITEM_SORT_FOOD,     0, 0x00000040, 0x0004, 200, 0,  0, ITEM_STACK_MULTI }, /* Premium Chicken */
+    {ITEM_SORT_FOOD,     0, 0x00001000, 0x0001, 0,   0,  0, ITEM_STACK_MULTI }, /* Stamina Drink */
+    {ITEM_SORT_FOOD,     0, 0x00008000, 0x0001, 0,   0,  0, ITEM_STACK_MULTI }, /* Antidote Drink */
+    {ITEM_SORT_FOOD,     0, 0x00010010, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Holy Water */
+    {ITEM_SORT_FOOD,     0, 0x00020000, 0x0001, 0,   0,  0, ITEM_STACK_MULTI }, /* Soap */
+    {ITEM_SORT_FOOD,     0, 0x0003C000, 0x0001, 0,   0,  0, ITEM_STACK_MULTI }, /* Mighty Healing */
+    {ITEM_SORT_FOOD,     0, 0x00000040, 0x0004, 80,  0,  0, ITEM_STACK_MULTI }, /* Cheese */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_THROW,    0, 0x00000000, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Bomb */
+    {ITEM_SORT_THROW,    0, 0x00000000, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Stone */
+    {ITEM_SORT_THROW,    0, 0x00000001, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Fire Gem */
+    {ITEM_SORT_THROW,    0, 0x00000002, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Ice Gem */
+    {ITEM_SORT_THROW,    0, 0x00000004, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Thunder Gem */
+    {ITEM_SORT_THROW,    0, 0x00000008, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Wind Gem */
+    {ITEM_SORT_THROW,    0, 0x00000010, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Holy Gem */
+    {ITEM_SORT_THROW,    0, 0x00000100, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Throbbing Cherry */
+    {ITEM_SORT_THROW,    0, 0x00000800, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Gooey Peach */
+    {ITEM_SORT_THROW,    0, 0x00000000, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Bomb Nuts */
+    {ITEM_SORT_THROW,    0, 0x00000200, 0x0003, 0,   0,  0, ITEM_STACK_MULTI }, /* Poisonous Apple */
+    {ITEM_SORT_THROW,    0, 0x00000040, 0x0005, 200, 30, 0, ITEM_STACK_MULTI }, /* Mellow Banana */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Medusa Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Hardening Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Warp Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Stand-in Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Escape Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_SINGLE}, /* Revival Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Repair Powder */
+    {ITEM_SORT_POWDER,   0, 0x00000020, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Powerup Powder */
+    {ITEM_SORT_FOOD,     0, 0x00000020, 0x0011, 10,  0,  0, ITEM_STACK_NEVER }, /* Pocket */
+    {ITEM_SORT_FOOD,     0, 0x00000060, 0x0011, 10,  0,  0, ITEM_STACK_NEVER }, /* Fruit of Eden */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Treasure Key */
+    {ITEM_SORT_FOOD,     0, 0x000000A0, 0x0011, 10,  0,  0, ITEM_STACK_NEVER }, /* Gourd */
+    {ITEM_SORT_POWDER,   0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_SINGLE}, /* Auto Repair Powder */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Fishing Rod */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Carrot */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Potato cake */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Minon */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Battan */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Petite Fish */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Saving Book */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* Gold Bullion */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Evy */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Dran's Crest */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Shiny Stone */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Mimi */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Red Berry */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0001, 0,   0,  0, ITEM_STACK_NEVER }, /* Prickly */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Candy */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Hook */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* King's Slate */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Gun Powder */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Clock Hands */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Pointy Chestnut */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Black Knight Crest */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Horned Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Moon Grass Seed */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Music Box Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Sun Signet */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Moon Signet */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Admission Ticket */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Sun Sword */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Bone Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Moustache Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Shipcabin Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Stone Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Handle */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Pitchdark Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Silver Key */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_NEVER }, /* Tram Oil */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_NEVER }, /* Sun Dew */
+    {ITEM_SORT_FISH,     0, 0x00000000, 0x0009, 600, 0,  0, ITEM_STACK_NEVER }, /* Flapping Fish */
+    {ITEM_SORT_ROTTEN,   0, 0x00000000, 0x0009, 0,   0,  0, ITEM_STACK_NEVER }, /* Rotten Fish */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_NEVER }, /* Secret Path Key */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_NEVER }, /* Bravery Launch */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_NEVER }, /* Flapping Duster */
+    {ITEM_SORT_QUEST,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_NEVER }, /* Crystal Eyeball */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0000, 0,   0,  0, ITEM_STACK_NEVER }, /* no name */
+    {ITEM_SORT_NONE,     0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Map */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Magical Crystal */
+    {ITEM_SORT_GOODS,    0, 0x00000000, 0x0008, 0,   0,  0, ITEM_STACK_SINGLE}, /* Dran's Feather */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Cave Key */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Changing Potion */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Worldmap */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Bone Pendant */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Odd Tone Flute */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Magical Lamp */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Moon Orb */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Shell Ring */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Search Warrant */
+    {ITEM_SORT_FISH,     0, 0x00000000, 0x0001, 200, 0,  0, ITEM_STACK_NEVER }, /* Ice Block */
+    {ITEM_SORT_FISH,     0, 0x00000000, 0x0001, 200, 0,  0, ITEM_STACK_NEVER }, /* Small Ice */
+    {ITEM_SORT_FISH,     0, 0x00000000, 0x0001, 200, 0,  0, ITEM_STACK_NEVER }, /* Tiny Ice */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Flame Key */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Hunter's Earring */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Ointment Leaf */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Foundation */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Clay Doll */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Manual */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Sun Sphere */
+    {ITEM_SORT_KEY_ITEM, 0, 0x00000000, 0x0018, 0,   0,  0, ITEM_STACK_NEVER }, /* Almighty Pass */
 };
 
 COM_ITEM_INFO ComItemInfo[296] = {
@@ -2143,7 +2143,7 @@ COM_ITEM_INFO *GetCommonItemInfo(int item_no) {
 
     // Items before slot 81 function as an alias for weapons in the info table.
     if (0 < item_no && item_no < ITEM_ATTACH_START) {
-        item_no += 175;
+        item_no += ITEM_WEAPON_START - 1 - ITEM_ATTACH_START;
     } else {
         item_no -= ITEM_ATTACH_START;
     }

@@ -101,7 +101,7 @@ void init_now_loading(int title_number) {
 
     char image_directory[64] = "img";
 
-    if (LanguageCode > 0) {
+    if (LanguageCode > LANG_JAPANESE) {
         sprintf(image_directory, "img_%d", LanguageCode);
     }
 
@@ -191,7 +191,7 @@ int VSyncCallBack_Load(int field) {
             if (logo_count == 0) {
 #ifdef PAL
                 // Languages past the first two show a full-screen logo image instead.
-                if (LanguageCode >= 2) {
+                if (LanguageCode >= LANG_ENGLISH_UK) {
                     set2DSprite(&nlPacket, &nl_tex, CRect_i_(0, 0x10, 0x280, 0x1C0), CRect_i_(0, 0, 0x280, 0x1C0), (u_char) (int) col_cnt);
                 } else {
                     set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40), CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);

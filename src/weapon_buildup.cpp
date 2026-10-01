@@ -162,12 +162,12 @@ int EnableBuildUpModelSpecial(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon)
     }
 
     build_info[0].weapon_no = -1;
-    build_info[0].enabled = 0;
+    build_info[0].enabled = false;
 
     switch (weapon->item_no) {
         case ITEM_WEAPON_MARDAN_EINS:
         case ITEM_WEAPON_MARDAN_TWEI:
-            build_info[0].enabled = 0;
+            build_info[0].enabled = false;
             build_info[0].weapon_no = weapon->item_no + 1;
 
             int fish_count = GetFishMardanGarayanNum();
@@ -178,12 +178,12 @@ int EnableBuildUpModelSpecial(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon)
             }
 
             result = 1;
-            build_info[0].enabled = 1;
+            build_info[0].enabled = true;
             break;
     }
 
     build_info[1].weapon_no = -1;
-    build_info[1].enabled = 0;
+    build_info[1].enabled = false;
     return result;
 }
 
@@ -216,9 +216,9 @@ int EnableBuildUpModel(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
             WepDataListToHaveCopy(build_info[count].weapon_no, &destination_have);
 
             if (CompareBuildUpModelData2(&destination_have, weapon)) {
-                build_info[count].enabled = 1;
+                build_info[count].enabled = true;
             } else {
-                build_info[count].enabled = 0;
+                build_info[count].enabled = false;
             }
 
             count++;

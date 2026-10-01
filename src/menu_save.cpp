@@ -79,33 +79,33 @@ static int SaveMenuKeySaveCheck() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 1;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
         return 1;
     }
 
     if ((card->result < 0) || (card->format_change != 0)) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 6;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_ERROR;
         return 1;
     }
 
     if (card->formatted == 0) {
-        SaveMenu.key_no = 0x11;
-        McAccess.SetFuncNo(0);
+        SaveMenu.key_no = SAVE_KEY_FORMAT;
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
         return 1;
     }
 
     if (card->dir_exists == 0) {
-        SaveMenu.key_no = 0x10;
+        SaveMenu.key_no = SAVE_KEY_NEW_DIR_SELECT;
         return 1;
     }
 
     if (McAccess.CheckFileNo(SaveMenu.file_no) != 0) {
-        SaveMenu.key_no = 9;
+        SaveMenu.key_no = SAVE_KEY_SAVE_DECIDE;
     } else {
-        McAccess.SetFuncNo(0);
-        SaveMenu.key_no = 0xA;
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
+        SaveMenu.key_no = SAVE_KEY_SAVE;
     }
 
     return 1;
@@ -119,19 +119,19 @@ static int SaveMenuKeySaveCheck() {
  * @size 0xE0
  */
 static int SaveMenuKeySaveDecide() {
-    if (GamePad.Down(0x40) != 0) {
-        McAccess.SetFuncNo(0);
+    if (GamePad.Down(PAD_CROSS) != 0) {
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
         int file_no = SaveMenu.file_no;
         McAccess.file_no = file_no;
         ((s32 *) SaveData->GetConfigData())[17] = file_no;
-        SaveMenu.key_no = 0xA;
-        ComMenuSePlay(1);
+        SaveMenu.key_no = SAVE_KEY_SAVE;
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         return 1;
     }
 
-    if (GamePad.Down(0x20) != 0) {
-        SaveMenu.key_no = 7;
-        ComMenuSePlay(2);
+    if (GamePad.Down(PAD_CIRCLE) != 0) {
+        SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         SaveMenu.step_time = 0;
         return 1;
     }
@@ -150,26 +150,26 @@ static int SaveMenuKeySave() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 1;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
         return 1;
     }
 
     if (card->result < 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 6;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_ERROR;
         return 1;
     }
 
     if ((card->free_size < 0x50) && (McAccess.CheckFileNo(SaveMenu.file_no) == 0)) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 0xB;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_SPACE_FILE;
         return 1;
     }
 
-    McAccess.SetFuncNo(5);
+    McAccess.SetFuncNo(MC_OPERATION_SAVE);
     McAccess.file_no = SaveMenu.file_no;
-    SaveMenu.key_no = 0xB;
+    SaveMenu.key_no = SAVE_KEY_END_SAVE;
     return 1;
 }
 
@@ -181,9 +181,9 @@ static int SaveMenuKeySave() {
  * @size 0x74
  */
 static int SaveMenuKeyEndSave() {
-    if ((GamePad.Down(0x40) != 0) || (GamePad.Down(0x20) != 0)) {
-        McAccess.SetFuncNo(1);
-        SaveMenu.key_no = 7;
+    if ((GamePad.Down(PAD_CROSS) != 0) || (GamePad.Down(PAD_CIRCLE) != 0)) {
+        McAccess.SetFuncNo(MC_OPERATION_IDLE);
+        SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
     }
 
     return 1;
@@ -197,26 +197,26 @@ static int SaveMenuKeyEndSave() {
  * @size 0x100
  */
 static int SaveMenuKeyLoadDecide() {
-    if (GamePad.Down(0x40) != 0) {
+    if (GamePad.Down(PAD_CROSS) != 0) {
         int file_no = SaveMenu.file_no;
 
         SAVEDATA_INFO *file_info = &McAccess.file_info[file_no];
 
         if (file_info->state != 0) {
-            McAccess.SetFuncNo(0);
+            McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
             McAccess.file_no = SaveMenu.file_no;
-            SaveMenu.key_no = 0xD;
-            ComMenuSePlay(1);
+            SaveMenu.key_no = SAVE_KEY_LOAD;
+            ComMenuSePlay(MENU_SOUND_CONFIRM);
         } else {
-            ComMenuSePlay(2);
+            ComMenuSePlay(MENU_SOUND_REFUSE);
         }
 
         return 1;
     }
 
-    if (GamePad.Down(0x20) != 0) {
-        SaveMenu.key_no = 7;
-        ComMenuSePlay(2);
+    if (GamePad.Down(PAD_CIRCLE) != 0) {
+        SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         return 1;
     }
 
@@ -234,20 +234,20 @@ static int SaveMenuKeyLoad() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 1;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
         return 1;
     }
 
     if (card->result < 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 6;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_ERROR;
         return 1;
     }
 
-    McAccess.SetFuncNo(6);
+    McAccess.SetFuncNo(MC_OPERATION_LOAD);
     McAccess.file_no = SaveMenu.file_no;
-    SaveMenu.key_no = 7;
+    SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
     return 1;
 }
 
@@ -260,29 +260,29 @@ static int SaveMenuKeyLoad() {
  */
 static int SaveMenuKeyArart() {
     switch (SaveMenu.alert_no) {
-        case 0:
+        case SAVE_ALERT_NONE:
             break;
-        case 1:
-            if (GamePad.Down(0x60) != 0) {
-                SaveMenu.key_no = 3;
+        case SAVE_ALERT_NO_CARD:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                SaveMenu.key_no = SAVE_KEY_MC_SELECT;
                 SaveMenu.file_no = McAccess.port;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
-        case 2:
-            if (GamePad.Down(0x60) != 0) {
-                SaveMenu.key_no = 3;
+        case SAVE_ALERT_CARD_FULL:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                SaveMenu.key_no = SAVE_KEY_MC_SELECT;
                 SaveMenu.file_no = McAccess.port;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
         default:
-            if (GamePad.Down(0x60) != 0) {
-                SaveMenu.key_no = 3;
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                SaveMenu.key_no = SAVE_KEY_MC_SELECT;
                 SaveMenu.file_no = McAccess.port;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             break;
@@ -299,18 +299,18 @@ static int SaveMenuKeyArart() {
  * @size 0xC8
  */
 static int SaveMenuKeyNewDirSelect() {
-    if (GamePad.Down(0x40) != 0) {
-        McAccess.SetFuncNo(0);
-        SaveMenu.key_no = 0xF;
-        ComMenuSePlay(1);
+    if (GamePad.Down(PAD_CROSS) != 0) {
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
+        SaveMenu.key_no = SAVE_KEY_NEW_DIR;
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         return 1;
     }
 
-    if (GamePad.Down(0x20) != 0) {
-        SaveMenu.key_no = 3;
+    if (GamePad.Down(PAD_CIRCLE) != 0) {
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = McAccess.port;
         SaveMenu.step_time = 0;
-        ComMenuSePlay(2);
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         return 1;
     }
 
@@ -328,25 +328,25 @@ static int SaveMenuKeyNewDir() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 1;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
         return 1;
     }
 
     if ((card->result < 0) || (card->formatted == 0)) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 6;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_ERROR;
         return 1;
     }
 
     if (card->free_size < 0x190) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 0xA;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_SPACE_DIR;
         return 1;
     }
 
-    McAccess.SetFuncNo(3);
-    SaveMenu.key_no = 0xA;
+    McAccess.SetFuncNo(MC_OPERATION_MAKE_DIR);
+    SaveMenu.key_no = SAVE_KEY_SAVE;
 }
 
 /**
@@ -360,28 +360,28 @@ static int SaveMenuKeyFormat() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 1;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
         return 1;
     }
 
     if (card->result < 0) {
-        SaveMenu.key_no = 0xE;
-        SaveMenu.alert_no = 6;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_ERROR;
         return 1;
     }
 
-    if (GamePad.Down(0x40) != 0) {
-        McAccess.SetFuncNo(9);
-        SaveMenu.key_no = 0xF;
-        ComMenuSePlay(1);
+    if (GamePad.Down(PAD_CROSS) != 0) {
+        McAccess.SetFuncNo(MC_OPERATION_FORMAT);
+        SaveMenu.key_no = SAVE_KEY_NEW_DIR;
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         return 1;
     }
 
-    if (GamePad.Down(0x20) != 0) {
-        SaveMenu.key_no = 3;
+    if (GamePad.Down(PAD_CIRCLE) != 0) {
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = McAccess.port;
-        ComMenuSePlay(2);
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         return 1;
     }
 
@@ -399,9 +399,9 @@ static int SaveMenuKeyUnFormat() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (card->formatted != 0) {
-        McAccess.SetFuncNo(0xA);
+        McAccess.SetFuncNo(MC_OPERATION_UNFORMAT);
     } else {
-        SaveMenu.key_no = 3;
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = McAccess.port;
     }
 
@@ -416,8 +416,8 @@ static int SaveMenuKeyUnFormat() {
  * @size 0x5C
  */
 static int SaveMenuKeyDifVersion() {
-    if (GamePad.Down(0xF0) != 0) {
-        McAccess.SetFuncNo(7);
+    if (GamePad.Down(PAD_TRIANGLE | PAD_CIRCLE | PAD_CROSS | PAD_SQUARE) != 0) {
+        McAccess.SetFuncNo(MC_OPERATION_DELETE);
         int file_no = McAccess.file_no;
         McAccess.file_no = file_no;
     }
@@ -455,10 +455,10 @@ static s32 SaveMenuKeyCopy() {
  * @size 0x7C
  */
 static int SaveMenuKeyAfterEnding() {
-    if (GamePad.Down(0x40) != 0) {
-        SaveMenu.key_no = 3;
-    } else if (GamePad.Down(0x20) != 0) {
-        SaveMenu.key_no = 1;
+    if (GamePad.Down(PAD_CROSS) != 0) {
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
+    } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+        SaveMenu.key_no = SAVE_KEY_FADE_OUT;
         ExitSaveSelect();
     }
 
@@ -473,10 +473,10 @@ static int SaveMenuKeyAfterEnding() {
  * @size 0x7C
  */
 static int SaveMenuKeySaveDecideEnding() {
-    if (GamePad.Down(0x40) != 0) {
-        SaveMenu.key_no = 0x17;
-    } else if (GamePad.Down(0x20) != 0) {
-        SaveMenu.key_no = 1;
+    if (GamePad.Down(PAD_CROSS) != 0) {
+        SaveMenu.key_no = SAVE_KEY_SAVE_ENDING;
+    } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+        SaveMenu.key_no = SAVE_KEY_FADE_OUT;
         ExitSaveSelect();
     }
 
@@ -491,8 +491,8 @@ static int SaveMenuKeySaveDecideEnding() {
  * @size 0x3C
  */
 static int SaveMenuKeySaveEnding() {
-    SaveMenu.key_no = 0x19;
-    McAccess.SetFuncNo(0xE);
+    SaveMenu.key_no = SAVE_KEY_END_SAVE_ENDING;
+    McAccess.SetFuncNo(MC_OPERATION_SAVE_CONFIG);
     return 1;
 }
 
@@ -504,9 +504,9 @@ static int SaveMenuKeySaveEnding() {
  * @size 0x58
  */
 static int SaveMenuKeyEndSaveEnding() {
-    if (GamePad.Down(0x40) != 0) {
-        SaveMenu.key_no = 3;
-        McAccess.SetFuncNo(1);
+    if (GamePad.Down(PAD_CROSS) != 0) {
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
+        McAccess.SetFuncNo(MC_OPERATION_IDLE);
     }
 
     return 1;
@@ -516,107 +516,107 @@ int GetSaveMenuMsgNo() {
     int msg_no = 0;
 
     switch (McAccess.GetFuncNo()) {
-        case 0:
+        case MC_OPERATION_SEARCH_TYPE:
             switch (SaveMenu.key_no) {
-                case 4:
-                case 8:
-                case 7:
-                case 0xA:
-                case 0xD:
-                case 0xF:
+                case SAVE_KEY_CHECK_MC_TYPE:
+                case SAVE_KEY_SAVE_CHECK:
+                case SAVE_KEY_FILE_SELECT:
+                case SAVE_KEY_SAVE:
+                case SAVE_KEY_LOAD:
+                case SAVE_KEY_NEW_DIR:
                     msg_no = 0xFF;
                     break;
             }
-        case 1:
+        case MC_OPERATION_IDLE:
             switch (SaveMenu.key_no) {
-                case 5:
+                case SAVE_KEY_CHECK_MC:
                     msg_no = 0xFF;
                     break;
-                case 2:
+                case SAVE_KEY_MODE_SELECT:
                     msg_no = 0xFA;
                     break;
-                case 3:
+                case SAVE_KEY_MC_SELECT:
                     msg_no = 0xFB;
                     break;
-                case 9:
+                case SAVE_KEY_SAVE_DECIDE:
                     msg_no = 0x108;
                     break;
-                case 12:
+                case SAVE_KEY_LOAD_DECIDE:
                     msg_no = 0x10E;
                     break;
-                case 14:
+                case SAVE_KEY_ALERT:
                     switch (SaveMenu.alert_no) {
-                        case 1:
+                        case SAVE_ALERT_NO_CARD:
                             msg_no = 0xFD;
                             break;
-                        case 2:
+                        case SAVE_ALERT_CARD_FULL:
                             msg_no = 0x11B;
                             break;
-                        case 6:
+                        case SAVE_ALERT_CARD_ERROR:
                             msg_no = 0x101;
                             break;
-                        case 7:
+                        case SAVE_ALERT_FORMAT_FAILED:
                             msg_no = 0x11A;
                             break;
-                        case 8:
+                        case SAVE_ALERT_SAVE_FAILED:
                             msg_no = 0x10A;
                             break;
-                        case 10:
+                        case SAVE_ALERT_NO_SPACE_DIR:
                             msg_no = 0x117;
                             break;
-                        case 11:
+                        case SAVE_ALERT_NO_SPACE_FILE:
                             msg_no = 0x100;
                             break;
-                        case 12:
+                        case SAVE_ALERT_NO_SAVE_DATA:
                             msg_no = 0x111;
                             break;
-                        case 9:
+                        case SAVE_ALERT_LOAD_FAILED:
                             msg_no = 0x112;
                             break;
-                        case 0:
-                        case 3:
-                        case 4:
-                        case 5:
+                        case SAVE_ALERT_NONE:
+                        case SAVE_ALERT_UNK_3:
+                        case SAVE_ALERT_UNK_4:
+                        case SAVE_ALERT_UNK_5:
                             break;
                     }
 
                     break;
-                case 17:
+                case SAVE_KEY_FORMAT:
                     msg_no = 0x10B;
                     break;
-                case 16:
+                case SAVE_KEY_NEW_DIR_SELECT:
                     msg_no = 0x118;
                     break;
-                case 20:
+                case SAVE_KEY_DELETE:
                     msg_no = 0x122;
                     break;
-                case 21:
+                case SAVE_KEY_COPY:
                     msg_no = 0x124;
                     break;
-                case 19:
+                case SAVE_KEY_DIF_VERSION:
                     msg_no = 0x12B;
                     break;
-                case 23:
-                case 24:
+                case SAVE_KEY_SAVE_ENDING:
+                case SAVE_KEY_SAVE_DECIDE_ENDING:
                     msg_no = 0;
                     break;
-                case 22:
+                case SAVE_KEY_AFTER_ENDING:
                     msg_no = 0x12A;
                     break;
-                case 11:
-                case 25:
+                case SAVE_KEY_END_SAVE:
+                case SAVE_KEY_END_SAVE_ENDING:
                     msg_no = 0x106;
                     break;
-                case 0:
-                case 1:
-                case 4:
-                case 6:
-                case 7:
-                case 8:
-                case 10:
-                case 13:
-                case 15:
-                case 18:
+                case SAVE_KEY_FADE_IN:
+                case SAVE_KEY_FADE_OUT:
+                case SAVE_KEY_CHECK_MC_TYPE:
+                case SAVE_KEY_LOAD_CONFIG:
+                case SAVE_KEY_FILE_SELECT:
+                case SAVE_KEY_SAVE_CHECK:
+                case SAVE_KEY_SAVE:
+                case SAVE_KEY_LOAD:
+                case SAVE_KEY_NEW_DIR:
+                case SAVE_KEY_UNFORMAT:
                     break;
             }
 
@@ -659,16 +659,16 @@ int SaveMenuTextureEnter() {
         }
 
         switch (SaveMenu.mode) {
-            case 2:
-            case 0:
-                InitMenuMesSet(0, (short *) GetPackFile((u_int *) bg->buffer, allmenu_mes, NULL));
+            case SAVE_MENU_MODE_ENDING:
+            case SAVE_MENU_MODE_LOAD:
+                InitMenuMesSet(MENU_MES_SET_ALLMENU, (short *) GetPackFile((u_int *) bg->buffer, allmenu_mes, NULL));
                 break;
         }
 
-        CommonMenuMes2.stay_frame = 1;
-        CommonMenuMes2.value_show = 1;
-        CommonMenuMes2.value_signed = 0;
-        CommonMenuMes2.cursor_lit = 1;
+        CommonMenuMes2.stay_frame = true;
+        CommonMenuMes2.value_show = true;
+        CommonMenuMes2.value_signed = false;
+        CommonMenuMes2.cursor_lit = true;
 
         char        *save_buffer = (char *) pack + bg->size;
         MC_ICON_DATA icon = {
@@ -691,7 +691,7 @@ int SaveMenuTextureEnter() {
 }
 
 int SaveMenuEffectFadeOut() {
-    if (SaveMenu.key_no == 1) {
+    if (SaveMenu.key_no == SAVE_KEY_FADE_OUT) {
         return 1;
     }
 
@@ -973,7 +973,7 @@ int InitExistData() {
 
     for (port = 0; port < 2; port++) {
         McAccess.port = port;
-        McAccess.SetFuncNo(0);
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
 
         do {
             result = McAccess.Step();
@@ -989,12 +989,12 @@ int InitExistData() {
             continue;
         }
 
-        McAccess.SetFuncNo(2);
+        McAccess.SetFuncNo(MC_OPERATION_GET_DIR);
 
         while (McAccess.Step() == 0) {
         }
 
-        McAccess.SetFuncNo(0xD);
+        McAccess.SetFuncNo(MC_OPERATION_LOAD_CONFIG);
 
         do {
             result = McAccess.Step();
@@ -1015,7 +1015,7 @@ int SaveEnableCheck() {
     int result;
 
     if (McAccess.InitForMC() != 0) {
-        return 0;
+        return SAVE_ENABLE_NO_CARD;
     }
 
     found = 0;
@@ -1023,7 +1023,7 @@ int SaveEnableCheck() {
 
     for (port = 0; port < 2; port++) {
         McAccess.port = port;
-        McAccess.SetFuncNo(0);
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
 
         do {
             result = McAccess.Step();
@@ -1045,7 +1045,7 @@ int SaveEnableCheck() {
             return found;
         }
 
-        McAccess.SetFuncNo(2);
+        McAccess.SetFuncNo(MC_OPERATION_GET_DIR);
 
         do {
             result = McAccess.Step();
@@ -1056,7 +1056,7 @@ int SaveEnableCheck() {
         }
 
         if (card->dir_exists != 0) {
-            return 1;
+            return SAVE_ENABLE_OK;
         }
 
         if (free_size < card->free_size) {
@@ -1065,14 +1065,14 @@ int SaveEnableCheck() {
     }
 
     if (found == 0) {
-        return 0;
+        return SAVE_ENABLE_NO_CARD;
     }
 
     if (free_size < 0x190) {
-        return -1;
+        return SAVE_ENABLE_NO_SPACE;
     }
 
-    return 1;
+    return SAVE_ENABLE_OK;
 }
 
 /**
@@ -1120,7 +1120,7 @@ float MiniCur[2];
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
     int i;
 
-    GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    GamePad.SetAutoRepeat(PAD_DPAD, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
     StayTex = TexManager.GetTexture(AtoraVibeTextureName, -1);
     MiniMenu.fish_mode = fish_mode;
@@ -1185,7 +1185,7 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     EventBarY = 60.0f + EventBoardPos[1] + (int) (68.0f * MiniMenu.scroll_row) / rows;
     MiniCur[0] = 6.0f + EventBoardPos[0] + ((MiniMenu.cursor + 5) % 5) * 0x2A;
     MiniCur[1] = 60.0f + EventBoardPos[1] + ((MiniMenu.cursor - MiniMenu.scroll_row * 5) / 5) * 0x28;
-    MiniMenu.state = 2;
+    MiniMenu.state = MINI_MENU_FADE_IN;
     MiniEventTexReadFlag = 0;
 }
 
@@ -1211,10 +1211,10 @@ int EventItemSelectLoop(int *result) {
     alpha = 0x40;
 
     switch (MiniMenu.state) {
-        case 0:
+        case MINI_MENU_CHOOSING:
             alpha = 0x40;
             break;
-        case 2:
+        case MINI_MENU_FADE_IN:
             alpha = 0x80 - MiniMenu.state_time * 4;
 
             if (alpha < 0x40) {
@@ -1222,7 +1222,7 @@ int EventItemSelectLoop(int *result) {
             }
 
             break;
-        case 3:
+        case MINI_MENU_FADE_OUT:
             alpha = MiniMenu.state_time * 4 + 0x40;
 
             if (alpha > 0x80) {
@@ -1274,7 +1274,7 @@ static int EventItemSelectKey(int *result) {
             MiniEventBoard = TexManager.GetTexture("eventmnu", -1);
             FishFoodBoard = TexManager.GetTexture("fishmnu", -1);
             ItemIcon = TexManager.GetTexture("itemicon", -1);
-            InitMenuMesSet(1, (short *) GetPackFile((u_int *) file->buffer, "eventuse.bin", NULL));
+            InitMenuMesSet(MENU_MES_SET_EVENT_ITEM, (short *) GetPackFile((u_int *) file->buffer, "eventuse.bin", NULL));
             CommonMenuMes2.MakeMesWin(0);
             CommonMenuMes2.Step();
             MiniEventTexReadFlag = 1;
@@ -1288,26 +1288,26 @@ static int EventItemSelectKey(int *result) {
     slot_num = EventItemPackPt->num;
 
     switch (MiniMenu.state) {
-        case 1:
-            if (GamePad.Down(0x60) != 0) {
-                MiniMenu.state = 0;
+        case MINI_MENU_REFUSED:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                MiniMenu.state = MINI_MENU_CHOOSING;
             }
 
             break;
-        case 0:
-            if (GamePad.Down(0x1000) != 0 && MiniMenu.cursor > 4) {
+        case MINI_MENU_CHOOSING:
+            if (GamePad.Down(PAD_UP) != 0 && MiniMenu.cursor > 4) {
                 MiniMenu.cursor -= 5;
             }
 
-            if (GamePad.Down(0x4000) != 0 && MiniMenu.cursor < slot_num - 5) {
+            if (GamePad.Down(PAD_DOWN) != 0 && MiniMenu.cursor < slot_num - 5) {
                 MiniMenu.cursor += 5;
             }
 
-            if (GamePad.Down(0x8000) != 0 && 0 < MiniMenu.cursor) {
+            if (GamePad.Down(PAD_LEFT) != 0 && 0 < MiniMenu.cursor) {
                 MiniMenu.cursor--;
             }
 
-            if (GamePad.Down(0x2000) != 0 && MiniMenu.cursor < slot_num - 1) {
+            if (GamePad.Down(PAD_RIGHT) != 0 && MiniMenu.cursor < slot_num - 1) {
                 MiniMenu.cursor++;
             }
 
@@ -1320,16 +1320,16 @@ static int EventItemSelectKey(int *result) {
             }
 
             if (old_cursor != MiniMenu.cursor) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (GamePad.Down(0x80) != 0) {
+            if (GamePad.Down(PAD_SQUARE) != 0) {
                 SeitonItemBoard(EventItemPackPt);
-                ComMenuSePlay(1);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
                 break;
             }
 
-            if (GamePad.Down(0x40) != 0) {
+            if (GamePad.Down(PAD_CROSS) != 0) {
                 pack_index = -1;
 
                 if (MiniMenu.cursor < MiniMenu.event_item_num) {
@@ -1369,22 +1369,22 @@ static int EventItemSelectKey(int *result) {
                 }
 
                 if (slot == NULL) {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 } else if (accepted != 0) {
                     done = 1;
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 } else {
                     printf("Miss\tselected itemNo = %d\n", *result);
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                     done = 1;
 
                     if (MiniMenu.fish_mode != 0) {
                         done = 0;
-                        MiniMenu.state = 1;
+                        MiniMenu.state = MINI_MENU_REFUSED;
                     }
                 }
-            } else if (GamePad.Down(0x20) != 0) {
-                ComMenuSePlay(2);
+            } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                ComMenuSePlay(MENU_SOUND_REFUSE);
                 *result = -1;
                 done = 1;
             }
@@ -1530,16 +1530,16 @@ static void EventItemSelectDraw() {
     alpha = 0x80;
 
     switch (MiniMenu.state) {
-        case 2:
+        case MINI_MENU_FADE_IN:
             alpha = MiniMenu.state_time * 8;
 
             if (alpha > 0x80) {
                 alpha = 0x80;
-                MiniMenu.state = 0;
+                MiniMenu.state = MINI_MENU_CHOOSING;
             }
 
             break;
-        case 3:
+        case MINI_MENU_FADE_OUT:
             alpha = 0x80 - MiniMenu.state_time * 8;
 
             if (alpha < 0) {
@@ -1646,17 +1646,17 @@ static void EventItemSelectDraw() {
 #endif
     DrawMenuClsMes(&CommonMenuMes2, 20.0f + left + message_pos[MiniMenu.lang][0], 146.0f + top + message_pos[MiniMenu.lang][1]);
 
-    if (MiniMenu.state == 1) {
+    if (MiniMenu.state == MINI_MENU_REFUSED) {
         if (CommonMenuMes1.mes_made != 1) {
             CommonMenuMes1.MakeMesWin(1);
         }
 
         AllFadeForMenu(0);
-        CommonMenuMes1.stay_frame = 1;
+        CommonMenuMes1.stay_frame = true;
         DrawMenuClsMes(&CommonMenuMes1, 0xDC, 0xA0);
     }
 
-    if (MiniMenu.state != 0) {
+    if (MiniMenu.state != MINI_MENU_CHOOSING) {
         MiniMenu.state_time++;
     } else {
         MiniMenu.state_time = 0;
@@ -1707,7 +1707,7 @@ s32 GetAddAttachItem(s32 item_no) {
 
     result = 0;
 
-    if ((item_no >= 0x5B) && (item_no < 0x5F)) {
+    if ((item_no >= ITEM_ATTACH_STAT_START) && (item_no < ITEM_ATTACH_GEM_START)) {
         result = 1;
     }
 
@@ -1721,17 +1721,17 @@ int TransWepNo(int weapon_no) {
 
     if (item_no > 0) {
         if ((item_no > 0) && (item_no < 0x15)) {
-            item_no += 0x100;
+            item_no += ITEM_WEAPON_DAGGER_BROKEN - 1;
         } else if ((item_no >= 0x15) && (item_no < 0x21)) {
-            item_no += 0x116;
+            item_no += ITEM_WEAPON_WOODENSLINGSHOT_BROKEN - 0x15;
         } else if ((item_no >= 0x21) && (item_no < 0x2E)) {
-            item_no += 0x119;
+            item_no += ITEM_WEAPON_MALLET_BROKEN - 0x21;
         } else if ((item_no >= 0x2E) && (item_no < 0x3A)) {
-            item_no += 0x11D;
+            item_no += ITEM_WEAPON_GOLD_RING_BROKEN - 0x2E;
         } else if ((item_no >= 0x3A) && (item_no < 0x46)) {
-            item_no += 0x121;
-        } else if ((item_no >= 0x46) && (item_no < 0x51)) {
-            item_no += 0x125;
+            item_no += ITEM_WEAPON_FIGHTING_STICK_BROKEN - 0x3A;
+        } else if ((item_no >= 0x46) && (item_no < ITEM_ATTACH_START)) {
+            item_no += ITEM_WEAPON_MACHINE_GUN_BROKEN - 0x46;
         }
     }
 
@@ -1744,19 +1744,19 @@ int TransWepNoNewToOld(int weapon_no) {
     item_no = weapon_no;
     printf("newitemno is %d\n", item_no);
 
-    if (item_no >= 0x101) {
-        if ((item_no >= 0x101) && (item_no < 0x116)) {
-            item_no -= 0x100;
-        } else if ((item_no >= 0x12B) && (item_no < 0x137)) {
-            item_no -= 0x116;
-        } else if ((item_no >= 0x13A) && (item_no < 0x147)) {
-            item_no -= 0x119;
-        } else if ((item_no >= 0x14B) && (item_no < 0x157)) {
-            item_no -= 0x11D;
-        } else if ((item_no >= 0x15B) && (item_no < 0x167)) {
-            item_no -= 0x121;
-        } else if ((item_no >= 0x16B) && (item_no < 0x176)) {
-            item_no -= 0x125;
+    if (item_no >= ITEM_WEAPON_START) {
+        if ((item_no >= ITEM_WEAPON_START) && (item_no < ITEM_WEAPON_MARDAN_EINS)) {
+            item_no -= ITEM_WEAPON_DAGGER_BROKEN - 1;
+        } else if ((item_no >= ITEM_WEAPON_WOODENSLINGSHOT_BROKEN) && (item_no < ITEM_WEAPON_MATADOR)) {
+            item_no -= ITEM_WEAPON_WOODENSLINGSHOT_BROKEN - 0x15;
+        } else if ((item_no >= ITEM_WEAPON_MALLET_BROKEN) && (item_no < ITEM_WEAPON_PLATE_HAMMER)) {
+            item_no -= ITEM_WEAPON_MALLET_BROKEN - 0x21;
+        } else if ((item_no >= ITEM_WEAPON_GOLD_RING_BROKEN) && (item_no < ITEM_WEAPON_POCKLEKUL)) {
+            item_no -= ITEM_WEAPON_GOLD_RING_BROKEN - 0x2E;
+        } else if ((item_no >= ITEM_WEAPON_FIGHTING_STICK_BROKEN) && (item_no < ITEM_WEAPON_5_FOOT_NAIL)) {
+            item_no -= ITEM_WEAPON_FIGHTING_STICK_BROKEN - 0x3A;
+        } else if ((item_no >= ITEM_WEAPON_MACHINE_GUN_BROKEN) && (item_no < ITEM_WEAPON_SNAIL)) {
+            item_no -= ITEM_WEAPON_MACHINE_GUN_BROKEN - 0x46;
         }
     }
 

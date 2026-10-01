@@ -45,7 +45,7 @@ int CMenuIconAutoGet::GetMoveIconGole(int slot, int item) {
 
 int CMenuIconAutoGet::GetSpace() {
     for (int i = 0; i < 3; i++) {
-        if (icon[i].item < 0x51) {
+        if (icon[i].item < ITEM_ATTACH_START) {
             return i;
         }
     }
@@ -95,7 +95,7 @@ void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, 
 
 void CMenuIconAutoGet::IconAutoMoveDraw() {
     for (int i = 0; i < 3; i++) {
-        if (icon[i].item >= 0x84) {
+        if (icon[i].item >= ITEM_DUNGEON_START) {
             DrawIconParts(icon[i].item, (int) icon[i].x, (int) icon[i].y, 0, 640, 128, 0);
         }
     }

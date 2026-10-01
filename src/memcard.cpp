@@ -14,6 +14,7 @@
 #include "dataread.hpp"
 #include "eastking.hpp"
 #include "editatra.hpp"
+#include "editground.hpp"
 #include "editloop.hpp"
 #include "editmenu.hpp"
 #include "editpartsinfo.hpp"
@@ -37,17 +38,17 @@
  */
 struct OPTION_MENU_STATE {
 #ifdef PAL
-    s16 mode;    /**< How the screen was opened; 0 from the main menu. */
-    s16 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
+    s16 mode;    /**< How the screen was opened. @see OptionOpenMode. */
+    s16 buttons; /**< Part of the screen the cursor is on. @see OptionCursorArea. */
     s16 cursor;  /**< Cell that the cursor is on, as ten times the row plus the column. */
     s16 unk_06;
 #else
-    s32 mode;    /**< How the screen was opened; 0 from the main menu. */
-    s32 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
+    s32 mode;    /**< How the screen was opened. @see OptionOpenMode. */
+    s32 buttons; /**< Part of the screen the cursor is on. @see OptionCursorArea. */
     u8  unk_08[4];
     s32 cursor; /**< Cell that the cursor is on, as ten times the row plus the column. */
 #endif
-    s32   step;       /**< Stage that the screen is at, 2 once it has begun to close. */
+    s32   step;       /**< Stage that the screen is at. @see OptionStep. */
     s32   step_count; /**< Frames the screen has spent at its stage. */
     float cursor_x;   /**< Screen X of the cursor. */
     float cursor_y;   /**< Screen Y of the cursor. */
@@ -259,7 +260,7 @@ static int SaveMenuKeyLoadConfig();
 static int SaveMenuKeyFileSelect();
 
 int McCheckMCPs2(MC_CARD_INFO *card) {
-    if (!card->present || card->type != 2) {
+    if (!card->present || card->type != sceMcTypePS2) {
         return 0;
     }
 
@@ -779,7 +780,7 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
     int code;
 
     if (info == NULL) {
-        return 0;
+        return ATORA_LINK_NONE;
     }
 
     if (info->elements[slot].id < 0) {
@@ -789,13 +790,13 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
     link = info->elements[slot].required_element;
 
     if (link < 0 || info->elements[slot].enabled != 0) {
-        return 0;
+        return ATORA_LINK_NONE;
     }
 
     if (link < 3 && slot >= 3) {
-        code = 2;
+        code = ATORA_LINK_ABOVE;
     } else {
-        code = 1;
+        code = ATORA_LINK_BESIDE;
     }
 
     if (info->elements[link].enabled == 0) {
@@ -852,12 +853,12 @@ static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, i
         // Only link codes ending in 1 or 2 give the arrow an offset.
         if (link > 0) {
             switch (link % 10) {
-                case 1:
+                case ATORA_LINK_BESIDE:
                     dx = -10;
                     dy = 8;
                     u += 12;
                     break;
-                case 2:
+                case ATORA_LINK_ABOVE:
                     dx = 12;
                     dy = -12;
                     break;
@@ -976,7 +977,7 @@ int GetAtraMsgNo(int map_no, int element) {
         mes_no = atra->msg_no + (map_no * 200 + 1000);
 
         switch (map_no) {
-            case 2:
+            case TOWN_QUEENS:
                 if (element == 1) {
                     int count = SaveData->GetGameIntFlag(1);
 
@@ -1041,7 +1042,7 @@ static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
             msg_no = parts->msg_no + map_no * 200;
 
             switch (map_no) {
-                case 2:
+                case TOWN_QUEENS:
                     if (info->parts_no == 1) {
                         flag = SaveData->GetGameIntFlag(1);
 
@@ -1288,14 +1289,14 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
                 int status = AtoraTipStatusSearch(info, i);
 
                 if (AtraTipCanDisplay(chip) == 0) {
-                    status = 50;
+                    status = ATORA_LINK_HIDDEN;
                 }
 
                 int tip_x = x + slot_x;
                 int tip_y = y + slot_y;
                 AtoraTipRelationDraw(tip_x, tip_y, info, i, status, alpha);
 
-                if ((chip->required_element < 0 || status < 3) && status != 50) {
+                if ((chip->required_element < 0 || status < 3) && status != ATORA_LINK_HIDDEN) {
                     AtoraTipGetTexPos(chip->id, u, v);
                     CTexture *hole = AtoraTipHoleTexInfoGet(all_tips, colour);
                     DrawMenu2DSprite(hole, CRect_i_(tip_x, tip_y, 0x24, 0x24), CRect_i_(u, v, 0x24, 0x25), colour[0], colour[1], colour[2], alpha);
@@ -1332,15 +1333,15 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
             }
         }
 
-        float wave = cosf(3.1415927f * CompMsgCt / (160.0f + (count >> 1)));
+        float wave = cosf(PI * CompMsgCt / (160.0f + (count >> 1)));
         base_x = (int) ((float) (base_x - 6) + 6.0f * wave);
         base_y = (int) ((float) base_y + 2.0f * wave);
         float width = 128.0f + 6.0f * wave;
         (int) width;
         float height = 88.0f + 3.0f * wave;
         (int) height;
-        base_x = (int) ((float) base_x + 8.0f * cosf(3.1415927f * CompMsgCt / (180.0f + count)));
-        base_y = (int) ((float) base_y + 4.0f * sinf(3.1415927f * CompMsgCt / (140.0f + count)));
+        base_x = (int) ((float) base_x + 8.0f * cosf(PI * CompMsgCt / (180.0f + count)));
+        base_y = (int) ((float) base_y + 4.0f * sinf(PI * CompMsgCt / (140.0f + count)));
         DrawMenu2DSprite(CompleteTex, CRect_i_(base_x, base_y, (int) width, (int) height), CRect_i_(0, 0x28, 0x80, 0x58), alpha);
     }
 
@@ -1395,7 +1396,7 @@ static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
 
     mes->MakeMesWin(200);
     MenuTextureReload(mes->tex_block);
-    mes->stay_frame = 1;
+    mes->stay_frame = true;
     mes->text_x = x;
     mes->text_y = y;
     mes->Step();
@@ -1410,7 +1411,7 @@ static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
  * @size 0x2C
  */
 static void AtoraTipInfoInit() {
-    NowTipHavePt->mode = 0;
+    NowTipHavePt->mode = ATORA_SIDE_BOARD;
     NowTipHavePt->parts_no = -1;
     NowTipHavePt->slot = -1;
     NowTipHavePt->tip_no = -1;
@@ -1449,7 +1450,7 @@ static void MenuAtoraAfterFadeIn() {
 
 void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 *buffer) {
     MenuAtoraSel.open_mode = open_mode;
-    InitPersonalBoardMode((CUserStatus *) SaveData->GetDngStatus(), &MenuAtoraSel.board, 2, edit_map + 3);
+    InitPersonalBoardMode((CUserStatus *) SaveData->GetDngStatus(), &MenuAtoraSel.board, PERSONAL_BOARD_ATLA, edit_map + BOARD_PAGE_ATLA_VILLAGE);
     MenuAtoraSel.prev_mes_buff = CommonMenuMes2.buff;
     AtoraTextureBaseBlock = texture_blocks[0];
     AtoraTextureReadBlock = texture_blocks[1];
@@ -1457,12 +1458,12 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     AtoraOffsetBuf = MenuCalcBufAlignment(buffer);
     AtoraTextureEnterFlag = 0;
     MenuAtoraSel.edit_map = edit_map;
-    CommonMenuMes3.Preset(4);
-    CommonMenuMes3.style = 0;
-    CommonMenuMes3.end_mark = 0;
-    CommonMenuMes3.auto_pos = -1;
+    CommonMenuMes3.Preset(MES_PRESET_NAME);
+    CommonMenuMes3.style = MES_EDGE_NONE;
+    CommonMenuMes3.end_mark = false;
+    CommonMenuMes3.auto_pos = MES_POS_NONE;
     CommonMenuMes3.mes_made = -1;
-    AtoraNameMes.Preset(4);
+    AtoraNameMes.Preset(MES_PRESET_NAME);
     AtoraNameMes.tex_buff = MesWinTexBuff_12;
     memset(AtoraNameMes.tex_buff, 0, 0x100);
     AtoraNameMes.rows = 4;
@@ -1476,11 +1477,11 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     }
 
     AtoraNameMes.mes_made = -1;
-    AtoraNameMes.narrow_gaiji = 1;
+    AtoraNameMes.narrow_gaiji = true;
     NowTipHavePt = (ATORA_TIP_HAVE *) &MenuAtoraSel.board.held_item;
     MenuAtoraSel.last_board_pos = 0;
     MenuAtoraSel.board.cursor = 0;
-    MenuAtoraSel.step = 1;
+    MenuAtoraSel.step = ATORA_STEP_FADE_IN;
     MenuAtoraSel.step_count = 0;
     SetMenuAtraEventFlag(0);
     CMenuCursor *cursor = SaveData->GetMenuCursor();
@@ -1489,16 +1490,16 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
         MenuAtoraSel.mode = cursor->mode[3];
 
         if (MenuAtoraSel.mode < 0 || MenuAtoraSel.mode > 1) {
-            MenuAtoraSel.mode = 0;
+            MenuAtoraSel.mode = ATORA_SIDE_BOARD;
         }
 
         int pos = cursor->pos[3];
 
         switch (MenuAtoraSel.mode) {
-            case 0:
+            case ATORA_SIDE_BOARD:
                 MenuAtoraSel.board_pos = pos;
                 break;
-            case 1:
+            case ATORA_SIDE_CHIP_LIST:
                 MenuAtoraSel.board.cursor = pos;
                 MenuAtoraSel.board.top_row = MenuAtoraSel.board.cursor / 5 - 2;
 
@@ -1509,7 +1510,7 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
                 break;
         }
     } else {
-        MenuAtoraSel.mode = 0;
+        MenuAtoraSel.mode = ATORA_SIDE_BOARD;
         MenuAtoraSel.board_pos = 0;
         MenuAtoraSel.board.cursor = 0;
     }
@@ -1546,7 +1547,7 @@ void InitMenuAtoraSelect(int map_no) {
         LoadFileBG(path, AtoraOffsetBuf, NULL);
         MenuAtoraSel.load_state = 0;
 
-        if ((MenuAtoraSel.open_mode == 2 || MenuAtoraSel.open_mode == 1) && MenuAtoraSel.map_no == MapNo) {
+        if ((MenuAtoraSel.open_mode == ATORA_OPEN_PLACE || MenuAtoraSel.open_mode == ATORA_OPEN_WARN) && MenuAtoraSel.map_no == MapNo) {
             CommonMenuAtoraInfo = &EditPartsInfo;
         } else {
             CommonMenuAtoraInfo = &BtEditPartsInfo;
@@ -1565,7 +1566,7 @@ void InitMenuAtoraSelect(int map_no) {
 
     info = SearchAtoraInfo(MenuAtoraSel.board_pos);
 
-    if (MenuAtoraSel.mode == 0) {
+    if (MenuAtoraSel.mode == ATORA_SIDE_BOARD) {
         if (info != NULL) {
             if (MenuAtoraSel.board.cursor > 0 && info->elements[MenuAtoraSel.board.cursor - 1].id < 0) {
                 MenuAtoraSel.board.cursor = 0;
@@ -1641,10 +1642,10 @@ static void ExitAtoraSelect() {
         SetCursorMode(cursor, 3, MenuAtoraSel.mode);
 
         switch (MenuAtoraSel.mode) {
-            case 0:
+            case ATORA_SIDE_BOARD:
                 pos = MenuAtoraSel.board_pos;
                 break;
-            case 1:
+            case ATORA_SIDE_CHIP_LIST:
                 pos = MenuAtoraSel.board.cursor;
                 break;
         }
@@ -1653,9 +1654,9 @@ static void ExitAtoraSelect() {
     }
 
     CommonMenuMes2.SetBuff(MenuAtoraSel.prev_mes_buff);
-    CommonMenuMes3.auto_pos = -1;
-    CommonMenuMes3.Preset(1);
-    AtoraNameMes.narrow_gaiji = 0;
+    CommonMenuMes3.auto_pos = MES_POS_NONE;
+    CommonMenuMes3.Preset(MES_PRESET_SYSTEM);
+    AtoraNameMes.narrow_gaiji = false;
 }
 
 /**
@@ -1684,10 +1685,10 @@ void DrawMenuAtoraSelect() {
     alpha = 0x80;
 
     switch (MenuAtoraSel.step) {
-        case 1:
+        case ATORA_STEP_FADE_IN:
             alpha = MenuAtoraSel.step_count * 8;
             break;
-        case 2:
+        case ATORA_STEP_FADE_OUT:
             alpha = 0x80 - MenuAtoraSel.step_count * 8;
             break;
     }
@@ -1700,14 +1701,14 @@ void DrawMenuAtoraSelect() {
         alpha = 0x80;
     }
 
-    if (MenuAtoraSel.step != 8) {
+    if (MenuAtoraSel.step != ATORA_STEP_EVENT_PLAY) {
         DrawAtoraSelect(alpha);
 
-        if (MenuAtoraSel.step == 0) {
+        if (MenuAtoraSel.step == ATORA_STEP_RUN) {
             DrawMenuObjectVibe(MenuAtoraSel.cursor_x, MenuAtoraSel.cursor_y, 1, MenuAtoraSel.cursor_icon_u);
         }
 
-        if (MenuAtoraSel.step != 0 && AtoraTextureEnterFlag != 0) {
+        if (MenuAtoraSel.step != ATORA_STEP_RUN && AtoraTextureEnterFlag != 0) {
             MenuAtoraSel.step_count++;
         } else {
             MenuAtoraSel.step_count = 0;
@@ -1723,16 +1724,16 @@ void DrawMenuAtoraSelect() {
         fade = 0;
 
         switch (MenuAtoraSel.step) {
-            case 1:
+            case ATORA_STEP_FADE_IN:
                 tint = 0x80 - MenuAtoraSel.step_count * 7;
                 break;
-            case 7:
+            case ATORA_STEP_EVENT_FADE_OUT:
                 fade = MenuAtoraSel.step_count * 2;
                 break;
-            case 9:
+            case ATORA_STEP_EVENT_FADE_IN:
                 fade = 0x80 - MenuAtoraSel.step_count * 2;
                 break;
-            case 2:
+            case ATORA_STEP_FADE_OUT:
                 tint = MenuAtoraSel.step_count * 5 + 0x40;
                 break;
         }
@@ -1757,12 +1758,12 @@ void DrawMenuAtoraSelect() {
         DrawMenu2DSprite(&frame, rect, rect, 0x40, 0x40, 0x40, tint);
         MGSetGsTEXA(NULL);
 
-        if (MenuAtoraSel.step == 7 || MenuAtoraSel.step == 9) {
+        if (MenuAtoraSel.step == ATORA_STEP_EVENT_FADE_OUT || MenuAtoraSel.step == ATORA_STEP_EVENT_FADE_IN) {
             AllFadeForMenu(fade);
         }
 
-        if (MenuAtoraSel.step == 10) {
-            CommonMenuMes3.auto_pos = 5;
+        if (MenuAtoraSel.step == ATORA_STEP_WARNING) {
+            CommonMenuMes3.auto_pos = MES_POS_CENTRE;
             CommonMenuMes3.edge_alpha = 0x80;
             DrawMsgAtraWarning(&CommonMenuMes3, 184, 150);
         } else {
@@ -1770,7 +1771,7 @@ void DrawMenuAtoraSelect() {
         }
     }
 
-    if (MenuAtoraSel.step == 8) {
+    if (MenuAtoraSel.step == ATORA_STEP_EVENT_PLAY) {
         EastKingEventDraw();
     }
 }
@@ -1809,11 +1810,11 @@ static void DrawAtoraSelect(int fade) {
     alpha = 0x80;
 
     switch (MenuAtoraSel.step) {
-        case 1:
-        case 2:
+        case ATORA_STEP_FADE_IN:
+        case ATORA_STEP_FADE_OUT:
             alpha = fade;
             break;
-        case 6:
+        case ATORA_STEP_CHANGE_MAP:
             alpha = MenuAtoraSel.step_count * 5;
             break;
     }
@@ -1848,7 +1849,7 @@ static void DrawAtoraSelect(int fade) {
         all_tips = 0;
     }
 
-    if (MenuAtoraSel.mode != 0 || open_mode != 2) {
+    if (MenuAtoraSel.mode != ATORA_SIDE_BOARD || open_mode != ATORA_OPEN_PLACE) {
         settled = 0;
     }
 
@@ -1891,7 +1892,7 @@ static void DrawAtoraSelect(int fade) {
         if (settled != 0 || (MenuAtoraSel.map_no == 5 && all_tips != 0)) {
             float phase = CursorVibeCnt % 89;
             phase -= 45.0f;
-            float    sign_y = 208.0f + 8.0f * sinf(3.1415927f * phase / 45.0f);
+            float    sign_y = 208.0f + 8.0f * sinf(PI * phase / 45.0f);
             CRect_i_ source(0, 0, 0x50, 0x20);
 
             if (MenuAtoraSel.map_no == 5 && all_tips != 0) {
@@ -1902,7 +1903,7 @@ static void DrawAtoraSelect(int fade) {
             DrawMenu2DSprite(CompleteTex, CRect_i_(0x80, (int) sign_y, source.width, source.height), source, alpha);
         }
 
-        if (MenuAtoraSel.step == 4) {
+        if (MenuAtoraSel.step == ATORA_STEP_COMPLETE_FLASH) {
             sceGsAlpha blend = mgAlpha;
             blend.bits.a = 0;
             blend.bits.b = 2;
@@ -1913,7 +1914,7 @@ static void DrawAtoraSelect(int fade) {
 
             if (flash < 5) {
                 flash = 0;
-                MenuAtoraSel.step = 0;
+                MenuAtoraSel.step = ATORA_STEP_RUN;
             }
 
             DrawMenu2DSprite(Sozai, CRect_i_(0x34, 0x8B, 0x10C, 0x82), CRect_i_(0x8C, 0x1C0, 0x74, 0x40), flash);
@@ -1947,7 +1948,7 @@ static void DrawAtoraSelect(int fade) {
     AtoraNameDraw(0);
 
     if (0 < GetAtoraMaxVillage() - 3) {
-        int arrow_y = (int) (66.0f + 4.0f * sinf(3.1415927f * (float) (CursorVibeCnt % 79 - 40) / 40.0f));
+        int arrow_y = (int) (66.0f + 4.0f * sinf(PI * (float) (CursorVibeCnt % 79 - 40) / 40.0f));
         DrawMenu2DSprite(PerBoardTex, CRect_i_(0x146, arrow_y, 0x1A, 0x18), CRect_i_(0x62, 0x14, 0x1A, 0x18), 0x80);
         DrawMenu2DSprite(PerBoardTex, CRect_i_(0x20C, arrow_y, 0x1A, 0x18), CRect_i_(0x7C, 0x14, 0x1A, 0x18), 0x80);
     }
@@ -1957,7 +1958,7 @@ static void DrawAtoraSelect(int fade) {
     }
 
     switch (MenuAtoraSel.mode) {
-        case 0:
+        case ATORA_SIDE_BOARD:
             if (info == NULL) {
                 cursor_x = 76.0f;
                 cursor_y = 176.0f;
@@ -1982,7 +1983,7 @@ static void DrawAtoraSelect(int fade) {
             }
 
             break;
-        case 1: {
+        case ATORA_SIDE_CHIP_LIST: {
             cursor_x = MenuAtoraSel.board.cursor % 5 * 0x28 + 0x14E;
             int row = MenuAtoraSel.board.cursor / 5 - MenuAtoraSel.board.top_row;
 
@@ -2010,7 +2011,7 @@ static void DrawAtoraSelect(int fade) {
         cursor_y += 12.0f;
     } else {
         switch (MenuAtoraSel.mode) {
-            case 0:
+            case ATORA_SIDE_BOARD:
                 if (info != NULL) {
                     if (0 < MenuAtoraSel.board.cursor && info->elements[MenuAtoraSel.board.cursor - 1].enabled != 0) {
                         cursor_x += 27.0f;
@@ -2022,7 +2023,7 @@ static void DrawAtoraSelect(int fade) {
                 }
 
                 break;
-            case 1:
+            case ATORA_SIDE_CHIP_LIST:
                 if (MenuAtoraSel.board.cursor > -1 && MenuAtoraSel.board.atla_elements[MenuAtoraSel.board.cursor] > -1) {
                     cursor_x += 25.0f;
                     cursor_y += 12.0f;
@@ -2036,7 +2037,7 @@ static void DrawAtoraSelect(int fade) {
     MenuAtoraSel.cursor_x += (cursor_x - MenuAtoraSel.cursor_x) / 4.0f;
     MenuAtoraSel.cursor_y += (cursor_y - MenuAtoraSel.cursor_y) / 4.0f;
 
-    if (MenuAtoraSel.step == 0) {
+    if (MenuAtoraSel.step == ATORA_STEP_RUN) {
         MenuTextureReload(AtoraTextureReadBlock);
         int tip_no = NowTipHavePt->tip_no;
 
@@ -2062,19 +2063,19 @@ static void DrawAtoraSelect(int fade) {
         int draw_waku = 1;
 
         switch (MenuAtoraSel.mode) {
-            case 0:
+            case ATORA_SIDE_BOARD:
                 if (info == NULL) {
                     draw_waku = 0;
                 }
 
-                if (open_mode == 2 && 0 < MenuAtoraSel.board.cursor && event != 0) {
+                if (open_mode == ATORA_OPEN_PLACE && 0 < MenuAtoraSel.board.cursor && event != 0) {
                     draw_waku = 0;
                 }
 
                 break;
         }
 
-        if (MenuAtoraSel.step == 3 || (MenuAtoraSel.mode == 0 && MenuAtoraSel.board.cursor == 0 && MenuAtoraSel.map_no == 5)) {
+        if (MenuAtoraSel.step == ATORA_STEP_EVENT_START || (MenuAtoraSel.mode == ATORA_SIDE_BOARD && MenuAtoraSel.board.cursor == 0 && MenuAtoraSel.map_no == 5)) {
             draw_waku = 0;
         }
 
@@ -2265,49 +2266,49 @@ int MenuAtoraSelectKey() {
     int             held;
     EDITPARTS_INFO *info;
 
-    result = 0;
+    result = ATORA_SELECT_NONE;
 
     if (ReadBGSync() == 0 && AtoraTextureEnterFlag == 0) {
         AtoraTextureEnterFlag = AtoraTextureEnter();
     }
 
     switch (MenuAtoraSel.step) {
-        case 1:
+        case ATORA_STEP_FADE_IN:
             if (MenuAtoraSel.step_count > 15 && AtoraTextureEnterFlag) {
-                MenuAtoraSel.step = 0;
+                MenuAtoraSel.step = ATORA_STEP_RUN;
                 MenuAtoraAfterFadeIn();
             }
 
             break;
-        case 2:
+        case ATORA_STEP_FADE_OUT:
             if (MenuAtoraSel.step_count > 18) {
                 ExitAtoraSelect();
-                MenuAtoraSel.step = 0;
+                MenuAtoraSel.step = ATORA_STEP_RUN;
             }
 
             break;
-        case 3:
+        case ATORA_STEP_EVENT_START:
             if (MenuAtoraSel.map_no != 5) {
                 switch (MenuAtoraSel.open_mode) {
-                    case 2:
+                    case ATORA_OPEN_PLACE:
                         CommonMenuAtoraInfo->GetPartsInfo(MenuAtoraSel.board_pos);
-                        MenuAtoraSel.step = 0;
-                        EditMenuStatus.mode = 5;
+                        MenuAtoraSel.step = ATORA_STEP_RUN;
+                        EditMenuStatus.mode = EDIT_MENU_MODE_EVENT;
                         MenuAtoraSel.last_board_pos = EditMenuStatus.event_no = MenuAtoraSel.board_pos;
                         ExitAtoraSelect();
                         GamePad.AutoRepeatOff();
                         GamePad.MenuModeOff();
-                        return 110;
+                        return ATORA_SELECT_PLACE_EXIT;
                 }
             } else {
                 SetMenuAtraEventFlag(1);
-                MenuAtoraSel.step = 7;
+                MenuAtoraSel.step = ATORA_STEP_EVENT_FADE_OUT;
                 GetPrevEastKingSndVol();
                 SndBgmFadeOut(45, 0);
             }
 
             break;
-        case 7:
+        case ATORA_STEP_EVENT_FADE_OUT:
             if (MenuAtoraSel.step_count < 50) {
                 SndStep();
             }
@@ -2318,7 +2319,7 @@ int MenuAtoraSelectKey() {
 
             if (MenuAtoraSel.step_count > 70) {
                 CommonMenuAtoraInfo->Save(MenuAtoraSel.map_no, SaveData);
-                MenuAtoraSel.step = 8;
+                MenuAtoraSel.step = ATORA_STEP_EVENT_PLAY;
                 int block[1] = {0};
                 block[0] = AtoraTextureReadBlock;
                 event_no = SearchAtoraInfo(MenuAtoraSel.board_pos)->parts_no;
@@ -2328,9 +2329,9 @@ int MenuAtoraSelectKey() {
             }
 
             break;
-        case 8:
+        case ATORA_STEP_EVENT_PLAY:
             if (EastKingEventKey() == 1) {
-                MenuAtoraSel.step = 9;
+                MenuAtoraSel.step = ATORA_STEP_EVENT_FADE_IN;
                 AtoraTextureEnterFlag = 0;
                 InitMenuAtoraSelect(MenuAtoraSel.map_no);
                 SetMenuAtraEventFlag(0);
@@ -2338,36 +2339,36 @@ int MenuAtoraSelectKey() {
             }
 
             break;
-        case 9:
+        case ATORA_STEP_EVENT_FADE_IN:
             SndStep();
 
             if (MenuAtoraSel.step_count > 64) {
-                MenuAtoraSel.step = 0;
+                MenuAtoraSel.step = ATORA_STEP_RUN;
             }
 
             break;
-        case 4:
+        case ATORA_STEP_COMPLETE_FLASH:
             if (MenuAtoraSel.step_count > 40) {
-                MenuAtoraSel.step = 0;
+                MenuAtoraSel.step = ATORA_STEP_RUN;
             }
 
             break;
-        case 10:
-            if (GamePad.Down(0x60)) {
-                MenuAtoraSel.step = 0;
+        case ATORA_STEP_WARNING:
+            if (GamePad.Down(PAD_CIRCLE | PAD_CROSS)) {
+                MenuAtoraSel.step = ATORA_STEP_RUN;
             }
 
             break;
-        case 6:
+        case ATORA_STEP_CHANGE_MAP:
             if (MenuAtoraSel.step_count > 24 && AtoraTextureEnterFlag) {
-                MenuAtoraSel.step = 0;
+                MenuAtoraSel.step = ATORA_STEP_RUN;
             }
-        case 0:
+        case ATORA_STEP_RUN:
             switch (MenuAtoraSel.mode) {
-                case 0:
+                case ATORA_SIDE_BOARD:
                     result = AtoraBoardKey();
                     break;
-                case 1:
+                case ATORA_SIDE_CHIP_LIST:
                     result = AtoraTipKey();
                     break;
             }
@@ -2375,51 +2376,51 @@ int MenuAtoraSelectKey() {
             max_village = GetAtoraMaxVillage();
             prev_village = MenuAtoraSel.board.page;
 
-            if (GamePad.Down(10)) {
+            if (GamePad.Down(PAD_R2 | PAD_R1)) {
                 if (NowTipHavePt->tip_no < 0) {
                     MenuAtoraSel.board.page++;
 
                     if (MenuAtoraSel.board.page > max_village) {
-                        MenuAtoraSel.board.page = 3;
+                        MenuAtoraSel.board.page = BOARD_PAGE_ATLA_VILLAGE;
                     }
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
             }
 
-            if (GamePad.Down(5)) {
+            if (GamePad.Down(PAD_L2 | PAD_L1)) {
                 if (NowTipHavePt->tip_no < 0) {
                     MenuAtoraSel.board.page--;
 
-                    if (MenuAtoraSel.board.page < 3) {
+                    if (MenuAtoraSel.board.page < BOARD_PAGE_ATLA_VILLAGE) {
                         MenuAtoraSel.board.page = max_village;
                     }
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
             }
 
             if (prev_village != MenuAtoraSel.board.page) {
-                result = 20;
+                result = ATORA_SELECT_CHANGE_PAGE;
             }
 
             switch (result) {
-                case 10:
+                case ATORA_SELECT_PLACE:
                     info = SearchAtoraInfo(MenuAtoraSel.board_pos);
-                    EditMenuStatus.mode = 0;
+                    EditMenuStatus.mode = EDIT_MENU_MODE_PLACE;
                     EditMenuStatus.parts = info->parts_no;
                     MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                     ExitAtoraSelect();
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                     break;
-                case 20:
+                case ATORA_SELECT_CHANGE_PAGE:
                     if (NowTipHavePt->tip_no >= 0) {
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                         break;
                     }
 
                     CommonMenuAtoraInfo->Save(MenuAtoraSel.map_no, SaveData);
-                    MenuAtoraSel.map_no = MenuAtoraSel.board.page - 3;
+                    MenuAtoraSel.map_no = MenuAtoraSel.board.page - BOARD_PAGE_ATLA_VILLAGE;
                     AtoraTextureEnterFlag = 0;
                     max_pos = AtraBoardMaxNum(MenuAtoraSel.map_no);
 
@@ -2429,13 +2430,13 @@ int MenuAtoraSelectKey() {
 
                     MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                     InitMenuAtoraSelect(MenuAtoraSel.map_no);
-                    MenuAtoraSel.step = 6;
+                    MenuAtoraSel.step = ATORA_STEP_CHANGE_MAP;
                     MenuAtoraSel.step_count = 0;
                     MenuAtoraSel.name_alpha = 0;
-                    ComMenuSePlay(1);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                     break;
-                case 100:
-                    MenuAtoraSel.step = 2;
+                case ATORA_SELECT_CLOSE:
+                    MenuAtoraSel.step = ATORA_STEP_FADE_OUT;
                     MenuAtoraSel.step_count = 0;
                     CommonMenuAtoraInfo->Save(MenuAtoraSel.map_no, SaveData);
                     ExitAtoraSelect();
@@ -2448,7 +2449,7 @@ int MenuAtoraSelectKey() {
     msg_no = 0;
 
     switch (MenuAtoraSel.mode) {
-        case 0:
+        case ATORA_SIDE_BOARD:
             tip_no = AtoraMsgNoGet(MenuAtoraSel.map_no, MenuAtoraSel.board_pos, MenuAtoraSel.board.cursor);
             msg_no = tip_no + 1000;
 
@@ -2461,7 +2462,7 @@ int MenuAtoraSelectKey() {
             }
 
             break;
-        case 1:
+        case ATORA_SIDE_CHIP_LIST:
             held = MenuAtoraSel.board.atla_elements[MenuAtoraSel.board.cursor];
             msg_base = MenuAtoraSel.map_no * 200 + 1000;
 
@@ -2478,7 +2479,7 @@ int MenuAtoraSelectKey() {
             break;
     }
 
-    if (AtoraTextureEnterFlag == 0 || MenuAtoraSel.step == 1) {
+    if (AtoraTextureEnterFlag == 0 || MenuAtoraSel.step == ATORA_STEP_FADE_IN) {
         msg_no = 0;
     }
 
@@ -2496,11 +2497,11 @@ static int AtoraBoardKey() {
     int old_cursor = MenuAtoraSel.board.cursor;
     int old_pos = MenuAtoraSel.board_pos;
     int moved = 0;
-    int result = 0;
+    int result = ATORA_SELECT_NONE;
     int se = -1;
     int to;
 
-    if (GamePad.Down(0x1000) != 0) {
+    if (GamePad.Down(PAD_UP) != 0) {
         moved = 1;
 
         if (MenuAtoraSel.board.cursor == 0) {
@@ -2532,7 +2533,7 @@ static int AtoraBoardKey() {
                 }
             }
         }
-    } else if (GamePad.Down(0x4000) != 0) {
+    } else if (GamePad.Down(PAD_DOWN) != 0) {
         moved = 1;
 
         if (MenuAtoraSel.board.cursor == 0) {
@@ -2575,14 +2576,14 @@ static int AtoraBoardKey() {
                 }
             }
         }
-    } else if (GamePad.Down(0x8000) != 0) {
+    } else if (GamePad.Down(PAD_LEFT) != 0) {
         moved = 1;
         MenuAtoraSel.board.cursor--;
 
         if (MenuAtoraSel.board.cursor <= 0 || MenuAtoraSel.board.cursor == 3) {
             MenuAtoraSel.board.cursor = 0;
         }
-    } else if (GamePad.Down(0x2000) != 0) {
+    } else if (GamePad.Down(PAD_RIGHT) != 0) {
         moved = 1;
         EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
         AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
@@ -2607,16 +2608,16 @@ static int AtoraBoardKey() {
         }
 
         if (to_list != 0) {
-            MenuAtoraSel.mode = 1;
+            MenuAtoraSel.mode = ATORA_SIDE_CHIP_LIST;
             MenuAtoraSel.board.cursor = MenuAtoraSel.board.top_row * 5 + 5;
         }
 
-        if (MenuAtoraSel.mode == 1) {
-            MenuAtoraSel.board.cursor_area = 1;
+        if (MenuAtoraSel.mode == ATORA_SIDE_CHIP_LIST) {
+            MenuAtoraSel.board.cursor_area = PERSONAL_BOARD_AREA_CELLS;
         }
     }
 
-    if (MenuAtoraSel.mode == 0) {
+    if (MenuAtoraSel.mode == ATORA_SIDE_BOARD) {
         EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
         int             event = 0;
 
@@ -2630,7 +2631,7 @@ static int AtoraBoardKey() {
     }
 
     if (moved == 0) {
-        if (GamePad.Down(0x40) != 0) {
+        if (GamePad.Down(PAD_CROSS) != 0) {
             EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
 
             if (info != NULL) {
@@ -2643,28 +2644,28 @@ static int AtoraBoardKey() {
                 AtoraCompOrEvent(info);
                 int all_tips = AtoraAllTipGet(info->parts_no);
 
-                if (MenuAtoraSel.open_mode == 1) {
-                    MenuAtoraSel.step = 10;
+                if (MenuAtoraSel.open_mode == ATORA_OPEN_WARN) {
+                    MenuAtoraSel.step = ATORA_STEP_WARNING;
                     se = 2;
                 } else if (MenuAtoraSel.board.cursor == 0) {
                     int held = NowTipHavePt->tip_no;
 
                     if (0 <= held) {
                         se = 2;
-                    } else if (full == 0 && held < 0 && open_mode == 2 && NowEditMap == MenuAtoraSel.map_no) {
+                    } else if (full == 0 && held < 0 && open_mode == ATORA_OPEN_PLACE && NowEditMap == MenuAtoraSel.map_no) {
                         MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
-                        ComMenuSePlay(1);
-                        return 10;
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
+                        return ATORA_SELECT_PLACE;
                     } else if (all_tips != 0 && MenuAtoraSel.map_no == 5) {
-                        MenuAtoraSel.step = 3;
+                        MenuAtoraSel.step = ATORA_STEP_EVENT_START;
                         MenuAtoraSel.step_count = 0;
                         MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                     } else {
                         se = 2;
                     }
                 } else if (all_tips != 0) {
-                    ComMenuSePlay(2);
-                    return 0;
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
+                    return ATORA_SELECT_NONE;
                 } else {
                     AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
                     int slot = MenuAtoraSel.board.cursor - 1;
@@ -2683,9 +2684,9 @@ static int AtoraBoardKey() {
 
                             if (free != 0) {
                                 NowTipHavePt->tip_no = info->elements[slot].id;
-                                info->elements[slot].enabled = 0;
+                                info->elements[slot].enabled = false;
                                 NowTipHavePt->slot = slot;
-                                NowTipHavePt->mode = 0;
+                                NowTipHavePt->mode = ATORA_SIDE_BOARD;
                                 NowTipHavePt->parts_no = MenuAtoraSel.board_pos;
                                 se = 6;
                             } else {
@@ -2716,15 +2717,15 @@ static int AtoraBoardKey() {
                         }
 
                         if (fits != 0) {
-                            element->enabled = 1;
+                            element->enabled = true;
 
                             if (info == NULL) {
-                                return 0;
+                                return ATORA_SELECT_NONE;
                             }
 
                             if (AtoraAllTipGet(info->parts_no) != 0) {
-                                ComMenuSePlay(15);
-                                MenuAtoraSel.step = 4;
+                                ComMenuSePlay(SE_SPARKLE);
+                                MenuAtoraSel.step = ATORA_STEP_COMPLETE_FLASH;
                                 MenuAtoraSel.board.cursor = 0;
                                 MenuAtoraSel.step_count = 0;
                             } else {
@@ -2738,12 +2739,12 @@ static int AtoraBoardKey() {
                     }
                 }
             }
-        } else if (GamePad.Down(0x20) != 0) {
+        } else if (GamePad.Down(PAD_CIRCLE) != 0) {
             se = 2;
 
             if (NowTipHavePt->tip_no < 0) {
                 MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
-                result = 100;
+                result = ATORA_SELECT_CLOSE;
             } else {
                 AtoraMenuTipCancel();
             }
@@ -2755,11 +2756,11 @@ static int AtoraBoardKey() {
     if (DebugMode) {
         EDITPARTS_INFO *parts = CommonMenuAtoraInfo->GetPartsInfo(MenuAtoraSel.board_pos);
 
-        if (GamePad.Down2(0x40)) {
+        if (GamePad.Down2(PAD_CROSS)) {
             if (parts != NULL) {
                 for (int i = 0; i < 6; i++) {
                     if (parts->elements[i].id >= 0) {
-                        parts->elements[i].enabled = 1;
+                        parts->elements[i].enabled = true;
                     }
                 }
 
@@ -2769,11 +2770,11 @@ static int AtoraBoardKey() {
             MenuAtoraSel.board.cursor = 0;
         }
 
-        if (GamePad.Down2(0x20)) {
+        if (GamePad.Down2(PAD_CIRCLE)) {
             if (parts != NULL) {
                 for (int i = 0; i < 6; i++) {
                     if (parts->elements[i].id >= 0) {
-                        parts->elements[i].enabled = 0;
+                        parts->elements[i].enabled = false;
 
                         for (int j = 0; j < 100; j++) {
                             if (MenuAtoraSel.board.atla_elements[j] < 0) {
@@ -2788,7 +2789,7 @@ static int AtoraBoardKey() {
             parts->completion_flags = 0;
         }
 
-        if (GamePad.Down2(8) && parts != NULL) {
+        if (GamePad.Down2(PAD_R1) && parts != NULL) {
             printf("info----------,,,\tID \t\t%d\n", parts->parts_no);
             printf("\t\tcomplete_event\t\t%d\n", parts->kind);
 
@@ -2801,7 +2802,7 @@ static int AtoraBoardKey() {
                     for (int j = 0; j < 120; j++) {
                         if (MenuAtoraSel.board.atla_elements[j] < 0) {
                             MenuAtoraSel.board.atla_elements[j] = parts->elements[i].id;
-                            parts->elements[i].enabled = 0;
+                            parts->elements[i].enabled = false;
                             break;
                         }
                     }
@@ -2811,11 +2812,11 @@ static int AtoraBoardKey() {
             parts->completion_flags = 0;
         }
 
-        if (GamePad.Down2(4)) {
+        if (GamePad.Down2(PAD_L1)) {
             if (parts != NULL) {
                 for (int i = 0; i < 6; i++) {
                     if (parts->elements[i].id >= 0) {
-                        parts->elements[i].enabled = 1;
+                        parts->elements[i].enabled = true;
                         int npc_no = parts->elements[i].npc_no;
 
                         if (npc_no >= 0) {
@@ -2834,7 +2835,7 @@ static int AtoraBoardKey() {
             MenuAtoraSel.board.cursor = 0;
         }
 
-        if (GamePad.Down2(0x10)) {
+        if (GamePad.Down2(PAD_TRIANGLE)) {
             EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
 
             if (info != NULL) {
@@ -2843,7 +2844,7 @@ static int AtoraBoardKey() {
 
                     if (info->elements[i].id >= 0) {
                         if (info->elements[i].id >= 0) {
-                            element->enabled = 1;
+                            element->enabled = true;
                         }
 
                         int npc_no = element->npc_no;
@@ -2858,15 +2859,15 @@ static int AtoraBoardKey() {
                     }
                 }
 
-                if (AtoraCompOrEvent(info) != 0 && open_mode == 2 && NowEditMap == MenuAtoraSel.map_no) {
-                    MenuAtoraSel.step = 3;
+                if (AtoraCompOrEvent(info) != 0 && open_mode == ATORA_OPEN_PLACE && NowEditMap == MenuAtoraSel.map_no) {
+                    MenuAtoraSel.step = ATORA_STEP_EVENT_START;
                 }
 
-                ComMenuSePlay(1);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
             }
         }
 
-        if (GamePad.Down2(0x40) && GamePad.Down2(0x20)) {
+        if (GamePad.Down2(PAD_CROSS) && GamePad.Down2(PAD_CIRCLE)) {
             for (int k = 0; k < max; k++) {
                 EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(k);
 
@@ -2878,7 +2879,7 @@ static int AtoraBoardKey() {
 
                         if (info->elements[i].id >= 0) {
                             if (info->elements[i].id >= 0) {
-                                element->enabled = 1;
+                                element->enabled = true;
                             }
 
                             int npc_no = element->npc_no;
@@ -2895,10 +2896,10 @@ static int AtoraBoardKey() {
                 }
             }
 
-            ComMenuSePlay(1);
+            ComMenuSePlay(MENU_SOUND_CONFIRM);
         }
 
-        if (GamePad.Down2(0x40) && GamePad.Down2(0x4000)) {
+        if (GamePad.Down2(PAD_CROSS) && GamePad.Down2(PAD_DOWN)) {
             for (int k = 0; k < max; k++) {
                 EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(k);
 
@@ -2933,7 +2934,7 @@ static int AtoraBoardKey() {
 }
 
 static int AtoraTipKey() {
-    int result = 0;
+    int result = ATORA_SELECT_NONE;
     int pos = MenuAtoraSel.board.cursor;
     int mode = MenuAtoraSel.mode;
     int page = MenuAtoraSel.board.page;
@@ -2949,7 +2950,7 @@ static int AtoraTipKey() {
 
             int enable[6];
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, enable);
-            MenuAtoraSel.mode = 0;
+            MenuAtoraSel.mode = ATORA_SIDE_BOARD;
 
             if (info == NULL || event != 0) {
                 MenuAtoraSel.board.cursor = 0;
@@ -2963,42 +2964,42 @@ static int AtoraTipKey() {
                 }
             }
 
-            ComMenuSePlay(0);
+            ComMenuSePlay(MENU_SOUND_CURSOR);
             break;
         }
     }
 
-    if (MenuAtoraSel.mode == 1) {
+    if (MenuAtoraSel.mode == ATORA_SIDE_CHIP_LIST) {
         if (pos != MenuAtoraSel.board.cursor || mode != MenuAtoraSel.mode || page != MenuAtoraSel.board.page) {
-            ComMenuSePlay(0);
+            ComMenuSePlay(MENU_SOUND_CURSOR);
         }
 
-        if (GamePad.Down(0x40)) {
+        if (GamePad.Down(PAD_CROSS)) {
             s16 *tip = &MenuAtoraSel.board.atla_elements[MenuAtoraSel.board.cursor];
 
             if (NowTipHavePt->tip_no == *tip) {
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             } else {
-                ComMenuSePlay(1);
+                ComMenuSePlay(MENU_SOUND_CONFIRM);
                 s16 tip_no = *tip;
                 *tip = NowTipHavePt->tip_no;
                 NowTipHavePt->tip_no = tip_no;
                 NowTipHavePt->slot = MenuAtoraSel.board.cursor;
-                NowTipHavePt->mode = 1;
+                NowTipHavePt->mode = ATORA_SIDE_CHIP_LIST;
                 NowTipHavePt->parts_no = -1;
             }
 
-            return 0;
-        } else if (GamePad.Down(0x20)) {
-            ComMenuSePlay(2);
+            return ATORA_SELECT_NONE;
+        } else if (GamePad.Down(PAD_CIRCLE)) {
+            ComMenuSePlay(MENU_SOUND_REFUSE);
 
             if (NowTipHavePt->tip_no < 0) {
-                result = 100;
+                result = ATORA_SELECT_CLOSE;
             } else {
                 AtoraMenuTipCancel();
             }
-        } else if (GamePad.Down(0x80)) {
-            ComMenuSePlay(1);
+        } else if (GamePad.Down(PAD_SQUARE)) {
+            ComMenuSePlay(MENU_SOUND_CONFIRM);
             SeitonAtoraTipBoard();
         }
     }
@@ -3012,17 +3013,17 @@ static void AtoraMenuTipCancel() {
     s16                tip_no;
 
     switch (NowTipHavePt->mode) {
-        case 1:
+        case ATORA_SIDE_CHIP_LIST:
             tip_no = MenuAtoraSel.board.atla_elements[NowTipHavePt->slot];
             MenuAtoraSel.board.atla_elements[NowTipHavePt->slot] = NowTipHavePt->tip_no;
             NowTipHavePt->tip_no = tip_no;
             break;
-        case 0:
+        case ATORA_SIDE_BOARD:
             info = SearchAtoraInfo(NowTipHavePt->parts_no);
             element = &info->elements[NowTipHavePt->slot];
 
             if (element->id == NowTipHavePt->tip_no && element->enabled == 0) {
-                element->enabled = 1;
+                element->enabled = true;
             }
 
             MenuAtoraSel.board_pos = NowTipHavePt->parts_no;
@@ -3103,13 +3104,13 @@ void AtoraNameDraw(int unused) {
         AtoraNameMes.mes_no[i] = mes_no;
         x = GetMsgLengthMenu(&AtoraNameMes, mes_no);
 
-        if (GetMenuLangFlag() == 0 && mes_no == 1000) {
+        if (GetMenuLangFlag() == LANG_JAPANESE && mes_no == 1000) {
             x = GetMsgLengthCharaName(0) + 3;
         }
 
         x = 186.0f - 58.0f * (x / 10.0f);
 
-        if (GetMenuLangFlag() > 0) {
+        if (GetMenuLangFlag() > LANG_JAPANESE) {
             if (mes_no == 2001) {
                 x += 6;
             }
@@ -3139,7 +3140,7 @@ void AtoraNameDraw(int unused) {
     alpha = MenuAtoraSel.name_alpha;
 
     switch (MenuAtoraSel.step) {
-        case 7:
+        case ATORA_STEP_EVENT_FADE_OUT:
             alpha = 0x80 - MenuAtoraSel.step_count * 2;
 
             if (alpha < 0) {
@@ -3147,7 +3148,7 @@ void AtoraNameDraw(int unused) {
             }
 
             break;
-        case 9:
+        case ATORA_STEP_EVENT_FADE_IN:
             alpha = MenuAtoraSel.step_count * 2;
 
             if (alpha > 0x80) {
@@ -3155,7 +3156,7 @@ void AtoraNameDraw(int unused) {
             }
 
             break;
-        case 8:
+        case ATORA_STEP_EVENT_PLAY:
             alpha = 0;
             break;
     }
@@ -3443,13 +3444,13 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     OptionMenu.block_no = block_no;
 
     switch (OptionMenu.mode) {
-        case 0:
-            GamePad.SetAutoRepeat(0xF000, 30, 5);
+        case OPTION_OPEN_TITLE:
+            GamePad.SetAutoRepeat(PAD_DPAD, 30, 5);
             GamePad.MenuModeOn(120);
     }
 
-    OptionMenu.texture_ready = 0;
-    OptionMenu.step = 1;
+    OptionMenu.texture_ready = false;
+    OptionMenu.step = OPTION_STEP_FADE_IN;
     OptionMenu.step_count = 0;
     OptionMenu.cursor = 10;
     OptionMenu.cursor_x = (OptionMenu.cursor % 10) * 70 + 316;
@@ -3514,10 +3515,10 @@ static void ExitMenuOption() {
     CUserStatus *status;
     CMenuCursor *cursor;
 
-    if (OptionMenu.mode == 0) {
+    if (OptionMenu.mode == OPTION_OPEN_TITLE) {
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
-        GamePad.SetAutoRepeat(0x5000, 30, 9);
+        GamePad.SetAutoRepeat(PAD_UP | PAD_DOWN, 30, 9);
         GamePad.MenuModeOn(120);
     }
 
@@ -3604,7 +3605,7 @@ int MenuOptionKey() {
     int result = 0;
 
     switch (OptionMenu.step) {
-        case 1:
+        case OPTION_STEP_FADE_IN:
             if (OptionMenu.texture_ready == 0) {
                 ReadBG();
 
@@ -3623,22 +3624,22 @@ int MenuOptionKey() {
                     TexManager.LoadTextureBlockEX(-1, textures);
                     MenuOption = TexManager.GetTexture("option2", -1);
 
-                    if (OptionMenu.mode == 0) {
-                        InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+                    if (OptionMenu.mode == OPTION_OPEN_TITLE) {
+                        InitMenuMesSet(MENU_MES_SET_ALLMENU, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
                         CommonMenuMes2.MakeMesWin(0x15E);
                     }
 
-                    OptionMenu.texture_ready = 1;
+                    OptionMenu.texture_ready = true;
                 }
             }
 
             if (OptionMenu.texture_ready != 0 && OptionMenu.step_count > 12) {
-                OptionMenu.step = 0;
+                OptionMenu.step = OPTION_STEP_RUN;
                 OptionMenu.step_count = 0;
             }
 
             break;
-        case 2:
+        case OPTION_STEP_FADE_OUT:
             if (OptionMenu.step_count > 24) {
                 ExitMenuOption();
                 CommonMenuMes2.mes_made = -1;
@@ -3650,7 +3651,7 @@ int MenuOptionKey() {
             int old_cursor = OptionMenu.cursor;
             int old_buttons = OptionMenu.buttons;
 
-            if (OptionMenu.buttons != 2 && GamePad.Down(0xF) != 0) {
+            if (OptionMenu.buttons != OPTION_AREA_SCREEN_POS && GamePad.Down(PAD_L2 | PAD_R2 | PAD_L1 | PAD_R1) != 0) {
                 if (OptionMenu.cursor / 10 - 1 < 7) {
                     OptionMenu.cursor += 70;
                 } else {
@@ -3663,21 +3664,21 @@ int MenuOptionKey() {
             }
 
             switch (OptionMenu.buttons) {
-                case 2:
+                case OPTION_AREA_SCREEN_POS:
                     // Moves the picture, clamped to 32 in each direction.
-                    if (GamePad.Down(0x1000) != 0) {
+                    if (GamePad.Down(PAD_UP) != 0) {
                         OpConfigPt[13] -= 2;
                     }
 
-                    if (GamePad.Down(0x4000) != 0) {
+                    if (GamePad.Down(PAD_DOWN) != 0) {
                         OpConfigPt[13] += 2;
                     }
 
-                    if (GamePad.Down(0x8000) != 0) {
+                    if (GamePad.Down(PAD_LEFT) != 0) {
                         OpConfigPt[12] -= 4;
                     }
 
-                    if (GamePad.Down(0x2000) != 0) {
+                    if (GamePad.Down(PAD_RIGHT) != 0) {
                         OpConfigPt[12] += 4;
                     }
 
@@ -3697,18 +3698,18 @@ int MenuOptionKey() {
                         OpConfigPt[12] = 32;
                     }
 
-                    if (GamePad.Down(0x80) != 0) {
+                    if (GamePad.Down(PAD_SQUARE) != 0) {
                         OpConfigPt[13] = 0;
                         OpConfigPt[12] = 0;
                     }
 
-                    if (GamePad.Down(0x60) != 0) {
-                        OptionMenu.buttons = 0;
+                    if (GamePad.Down(PAD_CIRCLE | PAD_CROSS) != 0) {
+                        OptionMenu.buttons = OPTION_AREA_ROWS;
                     }
 
                     break;
-                case 0:
-                    if (GamePad.Down(0x4000) != 0) {
+                case OPTION_AREA_ROWS:
+                    if (GamePad.Down(PAD_DOWN) != 0) {
                         if (OptionMenu.cursor / 10 - 1 == 7 && OptionMenu.cursor % 10 > 1) {
                             OptionMenu.cursor -= 2;
                         }
@@ -3716,7 +3717,7 @@ int MenuOptionKey() {
                         switch (OptionMenu.cursor / 10 - 1) {
                             case 6:
                             case 12:
-                                OptionMenu.buttons = 1;
+                                OptionMenu.buttons = OPTION_AREA_EXIT_BUTTON;
                                 break;
                             default:
                                 OptionMenu.cursor += 10;
@@ -3724,11 +3725,11 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x1000) != 0) {
+                    if (GamePad.Down(PAD_UP) != 0) {
                         switch (OptionMenu.cursor / 10 - 1) {
                             case 0:
                             case 7:
-                                OptionMenu.buttons = 1;
+                                OptionMenu.buttons = OPTION_AREA_EXIT_BUTTON;
                                 break;
                             default:
                                 OptionMenu.cursor -= 10;
@@ -3736,7 +3737,7 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x2000) != 0) {
+                    if (GamePad.Down(PAD_RIGHT) != 0) {
                         if (OptionMenu.cursor / 10 - 1 == 6) {
                             OptionMenu.cursor = 130;
                         } else {
@@ -3768,7 +3769,7 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x8000) != 0) {
+                    if (GamePad.Down(PAD_LEFT) != 0) {
                         if (OptionMenu.cursor % 10 != 0) {
                             OptionMenu.cursor--;
                         } else {
@@ -3805,24 +3806,24 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x40) != 0) {
-                        ComMenuSePlay(1);
+                    if (GamePad.Down(PAD_CROSS) != 0) {
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
 
                         if (OptionMenu.cursor / 10 - 1 == 6) {
-                            OptionMenu.buttons = 2;
+                            OptionMenu.buttons = OPTION_AREA_SCREEN_POS;
                         } else {
                             OptionMenu.flag[OptionMenu.cursor / 10 - 1] = OptionMenu.cursor % 10;
                         }
-                    } else if (GamePad.Down(0x20) != 0) {
-                        OptionMenu.step = 2;
+                    } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                        OptionMenu.step = OPTION_STEP_FADE_OUT;
                         OptionMenu.step_count = 0;
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                     }
 
                     break;
-                case 1:
-                    if (GamePad.Down(0x4000) != 0) {
-                        OptionMenu.buttons = 0;
+                case OPTION_AREA_EXIT_BUTTON:
+                    if (GamePad.Down(PAD_DOWN) != 0) {
+                        OptionMenu.buttons = OPTION_AREA_ROWS;
 
                         if (OptionMenu.cursor / 10 - 1 < 7) {
                             OptionMenu.cursor = 10;
@@ -3831,8 +3832,8 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x1000) != 0) {
-                        OptionMenu.buttons = 0;
+                    if (GamePad.Down(PAD_UP) != 0) {
+                        OptionMenu.buttons = OPTION_AREA_ROWS;
 
                         if (OptionMenu.cursor / 10 - 1 < 7) {
                             OptionMenu.cursor = 70;
@@ -3841,32 +3842,32 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x40) != 0) {
-                        OptionMenu.step = 2;
+                    if (GamePad.Down(PAD_CROSS) != 0) {
+                        OptionMenu.step = OPTION_STEP_FADE_OUT;
                         OptionMenu.step_count = 0;
-                        ComMenuSePlay(2);
-                    } else if (GamePad.Down(0x80) != 0) {
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
+                    } else if (GamePad.Down(PAD_SQUARE) != 0) {
                         InitOptionFlag();
-                    } else if (GamePad.Down(0x10) != 0) {
+                    } else if (GamePad.Down(PAD_TRIANGLE) != 0) {
                         PrevOptionSetFunc();
-                    } else if (GamePad.Down(0x20) != 0) {
-                        OptionMenu.step = 2;
+                    } else if (GamePad.Down(PAD_CIRCLE) != 0) {
+                        OptionMenu.step = OPTION_STEP_FADE_OUT;
                         OptionMenu.step_count = 0;
-                        ComMenuSePlay(2);
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
                     }
 
                     break;
             }
 
             if (old_cursor != OptionMenu.cursor || old_buttons != OptionMenu.buttons) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
             // Help message by cursor area: a row's own, the buttons', the picture position's.
             int mes_nos[3] = {OptionMenu.cursor / 10 + 0x15D, 0x171, 0x16C};
             int mes_no = mes_nos[OptionMenu.buttons];
 
-            if (OptionMenu.buttons == 0) {
+            if (OptionMenu.buttons == OPTION_AREA_ROWS) {
                 int row = OptionMenu.cursor / 10 - 1;
 
                 if (row >= 6) {
@@ -3893,7 +3894,7 @@ int MenuOptionKey() {
     int result = 0;
 
     switch (OptionMenu.step) {
-        case 1:
+        case OPTION_STEP_FADE_IN:
             if (OptionMenu.texture_ready == 0) {
                 ReadBG();
 
@@ -3912,22 +3913,22 @@ int MenuOptionKey() {
                     TexManager.LoadTextureBlockEX(-1, textures);
                     MenuOption = TexManager.GetTexture("option2", -1);
 
-                    if (OptionMenu.mode == 0) {
-                        InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+                    if (OptionMenu.mode == OPTION_OPEN_TITLE) {
+                        InitMenuMesSet(MENU_MES_SET_ALLMENU, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
                         CommonMenuMes2.MakeMesWin(0x15E);
                     }
 
-                    OptionMenu.texture_ready = 1;
+                    OptionMenu.texture_ready = true;
                 }
             }
 
             if (OptionMenu.texture_ready != 0 && OptionMenu.step_count > 12) {
-                OptionMenu.step = 0;
+                OptionMenu.step = OPTION_STEP_RUN;
                 OptionMenu.step_count = 0;
             }
 
             break;
-        case 2:
+        case OPTION_STEP_FADE_OUT:
             if (OptionMenu.step_count > 24) {
                 ExitMenuOption();
                 CommonMenuMes2.mes_made = -1;
@@ -3939,7 +3940,7 @@ int MenuOptionKey() {
             int old_cursor = OptionMenu.cursor;
             int old_buttons = OptionMenu.buttons;
 
-            if (GamePad.Down(0xF) != 0) {
+            if (GamePad.Down(PAD_L2 | PAD_R2 | PAD_L1 | PAD_R1) != 0) {
                 if (OptionMenu.cursor / 10 - 1 < 6) {
                     OptionMenu.cursor += 60;
                 } else {
@@ -3948,12 +3949,12 @@ int MenuOptionKey() {
             }
 
             switch (OptionMenu.buttons) {
-                case 0:
-                    if (GamePad.Down(0x4000) != 0) {
+                case OPTION_AREA_ROWS:
+                    if (GamePad.Down(PAD_DOWN) != 0) {
                         switch (OptionMenu.cursor / 10 - 1) {
                             case 5:
                             case 11:
-                                OptionMenu.buttons = 1;
+                                OptionMenu.buttons = OPTION_AREA_EXIT_BUTTON;
                                 break;
                             default:
                                 OptionMenu.cursor += 10;
@@ -3961,11 +3962,11 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x1000) != 0) {
+                    if (GamePad.Down(PAD_UP) != 0) {
                         switch (OptionMenu.cursor / 10 - 1) {
                             case 0:
                             case 6:
-                                OptionMenu.buttons = 1;
+                                OptionMenu.buttons = OPTION_AREA_EXIT_BUTTON;
                                 break;
                             default:
                                 OptionMenu.cursor -= 10;
@@ -3973,7 +3974,7 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x2000) != 0) {
+                    if (GamePad.Down(PAD_RIGHT) != 0) {
                         OptionMenu.cursor++;
 
                         switch (OptionMenu.cursor / 10 - 1) {
@@ -3997,7 +3998,7 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x8000) != 0) {
+                    if (GamePad.Down(PAD_LEFT) != 0) {
                         if (OptionMenu.cursor % 10 != 0) {
                             OptionMenu.cursor--;
                         } else {
@@ -4024,15 +4025,15 @@ int MenuOptionKey() {
                         OptionMenu.cursor--;
                     }
 
-                    if (GamePad.Down(0x40) != 0) {
-                        ComMenuSePlay(1);
+                    if (GamePad.Down(PAD_CROSS) != 0) {
+                        ComMenuSePlay(MENU_SOUND_CONFIRM);
                         OptionMenu.flag[OptionMenu.cursor / 10 - 1] = OptionMenu.cursor % 10;
                     }
 
                     break;
-                case 1:
-                    if (GamePad.Down(0x4000) != 0) {
-                        OptionMenu.buttons = 0;
+                case OPTION_AREA_EXIT_BUTTON:
+                    if (GamePad.Down(PAD_DOWN) != 0) {
+                        OptionMenu.buttons = OPTION_AREA_ROWS;
 
                         if (OptionMenu.cursor / 10 - 1 < 6) {
                             OptionMenu.cursor = 10;
@@ -4041,8 +4042,8 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x1000) != 0) {
-                        OptionMenu.buttons = 0;
+                    if (GamePad.Down(PAD_UP) != 0) {
+                        OptionMenu.buttons = OPTION_AREA_ROWS;
 
                         if (OptionMenu.cursor / 10 - 1 < 6) {
                             OptionMenu.cursor = 60;
@@ -4051,13 +4052,13 @@ int MenuOptionKey() {
                         }
                     }
 
-                    if (GamePad.Down(0x40) != 0) {
-                        OptionMenu.step = 2;
+                    if (GamePad.Down(PAD_CROSS) != 0) {
+                        OptionMenu.step = OPTION_STEP_FADE_OUT;
                         OptionMenu.step_count = 0;
-                        ComMenuSePlay(2);
-                    } else if (GamePad.Down(0x80) != 0) {
+                        ComMenuSePlay(MENU_SOUND_REFUSE);
+                    } else if (GamePad.Down(PAD_SQUARE) != 0) {
                         InitOptionFlag();
-                    } else if (GamePad.Down(0x10) != 0) {
+                    } else if (GamePad.Down(PAD_TRIANGLE) != 0) {
                         PrevOptionSetFunc();
                     }
 
@@ -4065,18 +4066,18 @@ int MenuOptionKey() {
             }
 
             if (old_cursor != OptionMenu.cursor || old_buttons != OptionMenu.buttons) {
-                ComMenuSePlay(0);
+                ComMenuSePlay(MENU_SOUND_CURSOR);
             }
 
-            if (GamePad.Down(0x20) != 0) {
-                OptionMenu.step = 2;
+            if (GamePad.Down(PAD_CIRCLE) != 0) {
+                OptionMenu.step = OPTION_STEP_FADE_OUT;
                 OptionMenu.step_count = 0;
-                ComMenuSePlay(2);
+                ComMenuSePlay(MENU_SOUND_REFUSE);
             }
 
             int mes_no = OptionMenu.cursor / 10 + 0x15D;
 
-            if (OptionMenu.buttons == 1) {
+            if (OptionMenu.buttons == OPTION_AREA_EXIT_BUTTON) {
                 mes_no = 0x171;
             }
 
@@ -4104,13 +4105,13 @@ void DrawMenuOption() {
     int alpha = 0x80;
 
     switch (OptionMenu.step) {
-        case 1:
+        case OPTION_STEP_FADE_IN:
             alpha = OptionMenu.step_count * 7;
             break;
-        case 2:
+        case OPTION_STEP_FADE_OUT:
             alpha = 0x80 - OptionMenu.step_count * 7;
             break;
-        case 0:
+        case OPTION_STEP_RUN:
             alpha = 0x80;
             break;
     }
@@ -4136,7 +4137,7 @@ void DrawMenuOption() {
     OptionMenu.page_x += ((float) page_x - OptionMenu.page_x) / 4.0f;
     int x = (int) OptionMenu.page_x;
 
-    if (OptionMenu.buttons != 2) {
+    if (OptionMenu.buttons != OPTION_AREA_SCREEN_POS) {
         OptionMenuDraw(x, 0x56, 0x1AE, 0x128, alpha);
         int right = 1;
 
@@ -4151,7 +4152,7 @@ void DrawMenuOption() {
     int target_y;
 
     switch (OptionMenu.buttons) {
-        case 1:
+        case OPTION_AREA_EXIT_BUTTON:
             target_x = 0x192;
             target_y = 0x12C;
             break;
@@ -4180,7 +4181,7 @@ void DrawMenuOption() {
     int width;
 
     switch (OptionMenu.buttons) {
-        case 1:
+        case OPTION_AREA_EXIT_BUTTON:
             width = 0x40;
             break;
         default:
@@ -4194,8 +4195,8 @@ void DrawMenuOption() {
     }
 
     switch (OptionMenu.step) {
-        case 1:
-        case 2:
+        case OPTION_STEP_FADE_IN:
+        case OPTION_STEP_FADE_OUT:
             break;
         default: {
             static int OpMenuWakuCnt = 0;
@@ -4206,7 +4207,7 @@ void DrawMenuOption() {
             int        bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
             RECT       corner = {0xB2, 0xF8, 0x10, 0x10};
 
-            if (OptionMenu.buttons != 2) {
+            if (OptionMenu.buttons != OPTION_AREA_SCREEN_POS) {
                 DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height), CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
                 DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
                 DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height), CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
@@ -4234,19 +4235,19 @@ void DrawMenuOption() {
         }
     }
 
-    if (OptionMenu.buttons == 2) {
+    if (OptionMenu.buttons == OPTION_AREA_SCREEN_POS) {
         AllFadeForMenu(0x20);
         DrawOptionScreenWaku();
     }
 
-    if (OptionMenu.step != 0) {
+    if (OptionMenu.step != OPTION_STEP_RUN) {
         OptionMenu.step_count++;
     } else {
         OptionMenu.step_count = 0;
     }
 
     switch (OptionMenu.mode) {
-        case 0: {
+        case OPTION_OPEN_TITLE: {
             float win_x;
             float win_y;
             float win_w;
@@ -4278,13 +4279,13 @@ void DrawMenuOption() {
     int alpha = 0x80;
 
     switch (OptionMenu.step) {
-        case 1:
+        case OPTION_STEP_FADE_IN:
             alpha = OptionMenu.step_count * 7;
             break;
-        case 2:
+        case OPTION_STEP_FADE_OUT:
             alpha = 0x80 - OptionMenu.step_count * 7;
             break;
-        case 0:
+        case OPTION_STEP_RUN:
             alpha = 0x80;
             break;
     }
@@ -4321,7 +4322,7 @@ void DrawMenuOption() {
     int target_y;
 
     switch (OptionMenu.buttons) {
-        case 1:
+        case OPTION_AREA_EXIT_BUTTON:
             target_x = 0x192;
             target_y = 0x126;
             break;
@@ -4350,7 +4351,7 @@ void DrawMenuOption() {
     int width;
 
     switch (OptionMenu.buttons) {
-        case 1:
+        case OPTION_AREA_EXIT_BUTTON:
             width = 0x40;
             break;
         default:
@@ -4364,8 +4365,8 @@ void DrawMenuOption() {
     }
 
     switch (OptionMenu.step) {
-        case 1:
-        case 2:
+        case OPTION_STEP_FADE_IN:
+        case OPTION_STEP_FADE_OUT:
             break;
         default: {
             static int OpMenuWakuCnt = 0;
@@ -4400,14 +4401,14 @@ void DrawMenuOption() {
         }
     }
 
-    if (OptionMenu.step != 0) {
+    if (OptionMenu.step != OPTION_STEP_RUN) {
         OptionMenu.step_count++;
     } else {
         OptionMenu.step_count = 0;
     }
 
     switch (OptionMenu.mode) {
-        case 0: {
+        case OPTION_OPEN_TITLE: {
             float win_x;
             float win_y;
             float win_w;
@@ -4432,7 +4433,7 @@ void DrawMenuOption() {
 int OptionMenuFadeOutStart() {
     int result = 0;
 
-    if (OptionMenu.step == 2) {
+    if (OptionMenu.step == OPTION_STEP_FADE_OUT) {
         result = 1;
     }
 
@@ -4452,11 +4453,11 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
     data = MenuCalcBufAlignment(data);
     SaveMenu.mode = mode;
     SaveMenu.block_no = block_no;
-    SaveMenu.result = 0;
+    SaveMenu.result = MENU_SAVE_RUNNING;
     SaveMenu.step_time = 0;
-    SaveMenu.texture_ready = 0;
+    SaveMenu.texture_ready = false;
     SaveMenu.file_no = 0;
-    SaveMenu.loaded = 0;
+    SaveMenu.loaded = false;
     StartReadBG();
     LoadFileBGMenuData("savetex.pak", data);
 
@@ -4465,37 +4466,37 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
     }
 
     switch (SaveMenu.mode) {
-        case 0:
-            GamePad.SetAutoRepeat(0xA000, 30, 5);
+        case SAVE_MENU_MODE_LOAD:
+            GamePad.SetAutoRepeat(PAD_RIGHT | PAD_LEFT, 30, 5);
             GamePad.MenuModeOn(120);
-            SaveMenu.key_no = 3;
-            SaveMenu.access_kind = 1;
+            SaveMenu.key_no = SAVE_KEY_MC_SELECT;
+            SaveMenu.access_kind = SAVE_ACCESS_LOAD;
             break;
-        case 1:
-            SaveMenu.key_no = 3;
-            SaveMenu.access_kind = 2;
+        case SAVE_MENU_MODE_SAVE:
+            SaveMenu.key_no = SAVE_KEY_MC_SELECT;
+            SaveMenu.access_kind = SAVE_ACCESS_SAVE;
             EditSave();
             break;
-        case 2:
-        case 3:
-            clear = SaveMenu.mode == 2;
+        case SAVE_MENU_MODE_ENDING:
+        case SAVE_MENU_MODE_ENDING_NO_CLEAR:
+            clear = SaveMenu.mode == SAVE_MENU_MODE_ENDING;
             *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] = clear;
             printf("SaveData clear flag = %d\n", *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2]);
-            GameClearFlag = SaveMenu.mode == 2;
-            SaveMenu.mode = 2;
-            GamePad.SetAutoRepeat(0xA000, 30, 5);
+            GameClearFlag = SaveMenu.mode == SAVE_MENU_MODE_ENDING;
+            SaveMenu.mode = SAVE_MENU_MODE_ENDING;
+            GamePad.SetAutoRepeat(PAD_RIGHT | PAD_LEFT, 30, 5);
             GamePad.MenuModeOn(120);
-            SaveMenu.key_no = 22;
-            SaveMenu.access_kind = 2;
+            SaveMenu.key_no = SAVE_KEY_AFTER_ENDING;
+            SaveMenu.access_kind = SAVE_ACCESS_SAVE;
             break;
     }
 
     SaveMenu.return_key_no = -1;
-    CommonMenuMes2.stay_frame = 1;
-    CommonMenuMes2.value_show = 1;
-    CommonMenuMes2.auto_pos = 5;
-    McAccess.SetFuncNo(1);
-    CommonMenuMes2.cursor_lit = 1;
+    CommonMenuMes2.stay_frame = true;
+    CommonMenuMes2.value_show = true;
+    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
+    McAccess.SetFuncNo(MC_OPERATION_IDLE);
+    CommonMenuMes2.cursor_lit = true;
     return 1;
 }
 
@@ -4510,16 +4511,16 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
 static void ExitSaveSelect() {
     s32 *config;
 
-    CommonMenuMes2.stay_frame = 0;
-    CommonMenuMes2.value_show = 0;
-    CommonMenuMes2.value_signed = 1;
-    CommonMenuMes2.auto_pos = -1;
+    CommonMenuMes2.stay_frame = false;
+    CommonMenuMes2.value_show = false;
+    CommonMenuMes2.value_signed = true;
+    CommonMenuMes2.auto_pos = MES_POS_NONE;
 
     switch (SaveMenu.mode) {
-        case 0:
+        case SAVE_MENU_MODE_LOAD:
             GamePad.AutoRepeatOff();
             GamePad.MenuModeOff();
-            GamePad.SetAutoRepeat(0x5000, 30, 9);
+            GamePad.SetAutoRepeat(PAD_UP | PAD_DOWN, 30, 9);
             GamePad.MenuModeOn(120);
 
             if (SaveMenu.loaded) {
@@ -4535,15 +4536,15 @@ static void ExitSaveSelect() {
             }
 
             break;
-        case 1:
+        case SAVE_MENU_MODE_SAVE:
             break;
-        case 2:
+        case SAVE_MENU_MODE_ENDING:
             GamePad.AutoRepeatOff();
             GamePad.MenuModeOff();
             break;
     }
 
-    CommonMenuMes2.cursor_lit = 0;
+    CommonMenuMes2.cursor_lit = false;
 }
 
 // The save menu's steps that menu_save.cpp defines.
@@ -4617,55 +4618,55 @@ int MenuSaveKey() {
         last_error = &McAccess.error;
 
         switch (now_func_no) {
-            case 9:
+            case MC_OPERATION_FORMAT:
                 if (result < 0) {
-                    SaveMenu.key_no = 14;
-                    SaveMenu.alert_no = 7;
-                    McAccess.SetFuncNo(1);
+                    SaveMenu.key_no = SAVE_KEY_ALERT;
+                    SaveMenu.alert_no = SAVE_ALERT_FORMAT_FAILED;
+                    McAccess.SetFuncNo(MC_OPERATION_IDLE);
                 }
 
                 break;
-            case 3:
-            case 5:
+            case MC_OPERATION_MAKE_DIR:
+            case MC_OPERATION_SAVE:
                 if (result < 0) {
-                    SaveMenu.key_no = 14;
-                    SaveMenu.alert_no = 8;
-                    McAccess.SetFuncNo(1);
+                    SaveMenu.key_no = SAVE_KEY_ALERT;
+                    SaveMenu.alert_no = SAVE_ALERT_SAVE_FAILED;
+                    McAccess.SetFuncNo(MC_OPERATION_IDLE);
                 }
 
                 break;
-            case 6:
+            case MC_OPERATION_LOAD:
                 if (result < 0) {
-                    SaveMenu.key_no = 14;
-                    SaveMenu.alert_no = 9;
-                    McAccess.SetFuncNo(1);
+                    SaveMenu.key_no = SAVE_KEY_ALERT;
+                    SaveMenu.alert_no = SAVE_ALERT_LOAD_FAILED;
+                    McAccess.SetFuncNo(MC_OPERATION_IDLE);
                 }
 
                 break;
-            case 2:
-                last_error->code = 0;
-            case 4:
+            case MC_OPERATION_GET_DIR:
+                last_error->code = MC_ERROR_NONE;
+            case MC_OPERATION_GET_ALL_SAVE_FILE_INFO:
                 if (result < 0) {
-                    SaveMenu.key_no = 14;
-                    SaveMenu.alert_no = 6;
-                    McAccess.SetFuncNo(1);
+                    SaveMenu.key_no = SAVE_KEY_ALERT;
+                    SaveMenu.alert_no = SAVE_ALERT_CARD_ERROR;
+                    McAccess.SetFuncNo(MC_OPERATION_IDLE);
                     break;
                 }
 
                 switch (last_error->code) {
-                    case 0:
+                    case MC_ERROR_NONE:
                         break;
-                    case 1:
+                    case MC_ERROR_VERSION:
                         SaveMenu.return_key_no = SaveMenu.key_no;
-                        SaveMenu.key_no = 19;
-                        McAccess.SetFuncNo(1);
+                        SaveMenu.key_no = SAVE_KEY_DIF_VERSION;
+                        McAccess.SetFuncNo(MC_OPERATION_IDLE);
                         break;
-                    case 2:
-                    case 3:
+                    case MC_ERROR_UNK_2:
+                    case MC_ERROR_SHORT_READ:
                         break;
-                    case 4:
-                        SaveMenu.key_no = 14;
-                        SaveMenu.alert_no = 2;
+                    case MC_ERROR_FULL:
+                        SaveMenu.key_no = SAVE_KEY_ALERT;
+                        SaveMenu.alert_no = SAVE_ALERT_CARD_FULL;
                         break;
                 }
 
@@ -4673,29 +4674,29 @@ int MenuSaveKey() {
         }
     } else {
         switch (prev_func_no) {
-            case 4:
+            case MC_OPERATION_GET_ALL_SAVE_FILE_INFO:
                 break;
-            case 6:
+            case MC_OPERATION_LOAD:
                 switch (SaveMenu.mode) {
-                    case 0:
-                        SaveMenu.key_no = 1;
-                        SaveMenu.loaded = 1;
+                    case SAVE_MENU_MODE_LOAD:
+                        SaveMenu.key_no = SAVE_KEY_FADE_OUT;
+                        SaveMenu.loaded = true;
                         McAccess.DmySync();
                         break;
-                    case 1:
+                    case SAVE_MENU_MODE_SAVE:
                         EditLoad();
                         break;
-                    case 2:
+                    case SAVE_MENU_MODE_ENDING:
                         break;
                 }
 
                 break;
-            case 7:
+            case MC_OPERATION_DELETE:
                 error = &McAccess.error;
 
                 switch (error->code) {
-                    case 1:
-                        McAccess.SetFuncNo(4);
+                    case MC_ERROR_VERSION:
+                        McAccess.SetFuncNo(MC_OPERATION_GET_ALL_SAVE_FILE_INFO);
                         McAccess.step = error->step;
 
                         if (SaveMenu.return_key_no >= 0) {
@@ -4706,48 +4707,48 @@ int MenuSaveKey() {
                             McAccess.step = 0;
                         }
 
-                        error->code = 0;
+                        error->code = MC_ERROR_NONE;
                         error->retry_count = 0;
                         break;
-                    case 0:
-                        McAccess.SetFuncNo(4);
+                    case MC_ERROR_NONE:
+                        McAccess.SetFuncNo(MC_OPERATION_GET_ALL_SAVE_FILE_INFO);
                         break;
                 }
 
                 break;
-            case 5:
-                ComMenuSePlay(12);
-                McAccess.SetFuncNo(4);
+            case MC_OPERATION_SAVE:
+                ComMenuSePlay(SE_SAVE_START);
+                McAccess.SetFuncNo(MC_OPERATION_GET_ALL_SAVE_FILE_INFO);
                 break;
         }
     }
 
     switch (McAccess.GetFuncNo()) {
-        case 1:
+        case MC_OPERATION_IDLE:
             SaveMenuFunc[SaveMenu.key_no]();
 
 #ifdef PAL
             // Debug shortcuts that jump the card access to one of its steps.
             if (DebugMode) {
-                if (GamePad.Down2(8)) {
-                    McAccess.SetFuncNo(10);
-                    ComMenuSePlay(1);
+                if (GamePad.Down2(PAD_R1)) {
+                    McAccess.SetFuncNo(MC_OPERATION_UNFORMAT);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
 
-                if (GamePad.Down2(16)) {
-                    McAccess.SetFuncNo(9);
-                    ComMenuSePlay(1);
+                if (GamePad.Down2(PAD_TRIANGLE)) {
+                    McAccess.SetFuncNo(MC_OPERATION_FORMAT);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                 }
 
-                if (GamePad.Down2(64)) {
-                    McAccess.SetFuncNo(12);
-                    ComMenuSePlay(1);
+                if (GamePad.Down2(PAD_CROSS)) {
+                    McAccess.SetFuncNo(MC_OPERATION_WRITE_TEST);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                     McAccess.Step();
                 }
 
-                if (GamePad.Down2(512)) {
-                    McAccess.SetFuncNo(15);
-                    ComMenuSePlay(1);
+                if (GamePad.Down2(PAD_L3)) {
+                    McAccess.SetFuncNo(MC_OPERATION_CONVERT);
+                    ComMenuSePlay(MENU_SOUND_CONFIRM);
                     McAccess.Step();
                 }
             }
@@ -4793,10 +4794,10 @@ void DrawMenuSave(char *frame_name) {
     setbilinear(0);
 
     switch (SaveMenu.mode) {
-        case 0:
-        case 1:
+        case SAVE_MENU_MODE_LOAD:
+        case SAVE_MENU_MODE_SAVE:
             break;
-        case 2:
+        case SAVE_MENU_MODE_ENDING:
             AllFillBoxForMenu(0, 0, 0, 0x80);
             break;
     }
@@ -4804,7 +4805,7 @@ void DrawMenuSave(char *frame_name) {
     int alpha = 0x80;
 
     switch (SaveMenu.key_no) {
-        case 0:
+        case SAVE_KEY_FADE_IN:
             alpha = SaveMenu.step_time * 6;
 
             if (alpha > 0x80) {
@@ -4812,7 +4813,7 @@ void DrawMenuSave(char *frame_name) {
             }
 
             break;
-        case 1:
+        case SAVE_KEY_FADE_OUT:
             alpha = 0x80 - SaveMenu.step_time * 4;
 
             if (alpha < 0) {
@@ -4830,12 +4831,12 @@ void DrawMenuSave(char *frame_name) {
     int   bright = 0x80;
 
     switch (SaveMenu.key_no) {
-        case 9:
-        case 12:
-        case 13:
-        case 14:
-        case 17:
-        case 19:
+        case SAVE_KEY_SAVE_DECIDE:
+        case SAVE_KEY_LOAD_DECIDE:
+        case SAVE_KEY_LOAD:
+        case SAVE_KEY_ALERT:
+        case SAVE_KEY_FORMAT:
+        case SAVE_KEY_DIF_VERSION:
             bright = 0x40;
             break;
     }
@@ -4843,20 +4844,20 @@ void DrawMenuSave(char *frame_name) {
     int show = 0;
 
     switch (SaveMenu.key_no) {
-        case 7:
-        case 8:
-        case 9:
-        case 12:
-        case 13:
+        case SAVE_KEY_FILE_SELECT:
+        case SAVE_KEY_SAVE_CHECK:
+        case SAVE_KEY_SAVE_DECIDE:
+        case SAVE_KEY_LOAD_DECIDE:
+        case SAVE_KEY_LOAD:
             show = 1;
             break;
     }
 
-    if (SaveMenu.key_no == 1 && SaveMenu.mode == 0 && SaveMenu.loaded != 0) {
+    if (SaveMenu.key_no == SAVE_KEY_FADE_OUT && SaveMenu.mode == SAVE_MENU_MODE_LOAD && SaveMenu.loaded != 0) {
         show = 1;
     }
 
-    if (show != 0 && (unsigned int) (McAccess.GetFuncNo() - 4) > 1U) {
+    if (show != 0 && (unsigned int) (McAccess.GetFuncNo() - MC_OPERATION_GET_ALL_SAVE_FILE_INFO) > 1U) {
         MC_CARD_INFO *cards = McAccess.card;
 
         if (cards != NULL) {
@@ -4879,61 +4880,61 @@ void DrawMenuSave(char *frame_name) {
     }
 
     float text_pos[2] = {-20.0f, -20.0f};
-    CommonMenuMes2.auto_pos = -1;
+    CommonMenuMes2.auto_pos = MES_POS_NONE;
 
     switch (McAccess.GetFuncNo()) {
-        case 1:
+        case MC_OPERATION_IDLE:
             switch (SaveMenu.key_no) {
-                case 2:
+                case SAVE_KEY_MODE_SELECT:
                     text_pos[0] = 240.0f;
                     text_pos[1] = 154.0f;
-                    CommonMenuMes2.auto_pos = 5;
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
                     break;
-                case 15:
-                case 16:
-                case 3:
-                case 17:
+                case SAVE_KEY_NEW_DIR:
+                case SAVE_KEY_NEW_DIR_SELECT:
+                case SAVE_KEY_MC_SELECT:
+                case SAVE_KEY_FORMAT:
                     text_pos[0] = 184.0f;
                     text_pos[1] = 152.0f;
-                    CommonMenuMes2.auto_pos = 5;
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
                     break;
-                case 9:
-                case 12:
+                case SAVE_KEY_SAVE_DECIDE:
+                case SAVE_KEY_LOAD_DECIDE:
                     text_pos[0] = 246.0f;
                     text_pos[1] = 156.0f;
-                    CommonMenuMes2.auto_pos = 5;
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
                     break;
-                case 19:
+                case SAVE_KEY_DIF_VERSION:
                     text_pos[0] = 196.0f;
                     text_pos[1] = 140.0f;
-                    CommonMenuMes2.auto_pos = 5;
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
                     break;
-                case 14:
+                case SAVE_KEY_ALERT:
                     text_pos[0] = 230.0f;
                     text_pos[1] = 140.0f;
-                    CommonMenuMes2.auto_pos = 5;
-                case 22:
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
+                case SAVE_KEY_AFTER_ENDING:
                     text_pos[0] = 196.0f;
                     text_pos[1] = 140.0f;
-                    CommonMenuMes2.auto_pos = 5;
-                case 25:
-                case 11:
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
+                case SAVE_KEY_END_SAVE_ENDING:
+                case SAVE_KEY_END_SAVE:
                     text_pos[0] = 196.0f;
                     text_pos[1] = 140.0f;
-                    CommonMenuMes2.auto_pos = 5;
+                    CommonMenuMes2.auto_pos = MES_POS_CENTRE;
                     break;
             }
 
             break;
-        case 7:
+        case MC_OPERATION_DELETE:
             text_pos[0] = 216.0f;
             text_pos[1] = 180.0f;
-            CommonMenuMes2.auto_pos = 5;
+            CommonMenuMes2.auto_pos = MES_POS_CENTRE;
             break;
         default:
             text_pos[0] = 184.0f;
             text_pos[1] = 152.0f;
-            CommonMenuMes2.auto_pos = 5;
+            CommonMenuMes2.auto_pos = MES_POS_CENTRE;
             break;
     }
 
@@ -4954,12 +4955,12 @@ void DrawMenuSave(char *frame_name) {
     CommonMenuMes2.cursor_row = -1;
 
     switch (SaveMenu.key_no) {
-        case 2:
-        case 3:
+        case SAVE_KEY_MODE_SELECT:
+        case SAVE_KEY_MC_SELECT:
             CommonMenuMes2.cursor_row = SaveMenu.file_no + 2;
             break;
-        case 7:
-            if (McAccess.GetFuncNo() != 4 && McAccess.GetFuncNo() != 5) {
+        case SAVE_KEY_FILE_SELECT:
+            if (McAccess.GetFuncNo() != MC_OPERATION_GET_ALL_SAVE_FILE_INFO && McAccess.GetFuncNo() != MC_OPERATION_SAVE) {
                 hand_x = 0x78;
                 hand_y = 0xBC;
             }
@@ -4983,9 +4984,9 @@ void DrawMenuSave(char *frame_name) {
     }
 
     switch (SaveMenu.key_no) {
-        case 1:
-        case 3:
-        case 0:
+        case SAVE_KEY_FADE_OUT:
+        case SAVE_KEY_MC_SELECT:
+        case SAVE_KEY_FADE_IN:
             SaveMenu.step_time++;
             break;
         default:
@@ -4994,7 +4995,7 @@ void DrawMenuSave(char *frame_name) {
     }
 
     switch (SaveMenu.mode) {
-        case 0:
+        case SAVE_MENU_MODE_LOAD:
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x46, 0x32, 0x3A, 0x27), CRect_i_(0x110, 0xD8, 0x3A, 0x28), alpha);
 #ifdef PAL
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x50, 0x1E), CRect_i_(0x110, 0x100, 0x50, 0x1E), alpha);
@@ -5002,7 +5003,7 @@ void DrawMenuSave(char *frame_name) {
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x4A, 0x1E), CRect_i_(0x110, 0x100, 0x4A, 0x1E), alpha);
 #endif
             return;
-        case 2:
+        case SAVE_MENU_MODE_ENDING:
             DrawMainMenuIcon(0x46, 0x32, 5, 1, 0x80, alpha);
             break;
     }
@@ -5010,7 +5011,7 @@ void DrawMenuSave(char *frame_name) {
 
 static int SaveMenuKeyFadeIn() {
     if (SaveMenu.step_time > 14) {
-        SaveMenu.key_no = 7;
+        SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
         SaveMenu.step_time = 0;
     }
 
@@ -5022,9 +5023,9 @@ static int SaveMenuKeyFadeOut() {
         ExitSaveSelect();
 
         if (SaveMenu.loaded) {
-            SaveMenu.result = 1;
+            SaveMenu.result = MENU_SAVE_LOADED;
         } else {
-            SaveMenu.result = 2;
+            SaveMenu.result = MENU_SAVE_CLOSED;
         }
     }
 
@@ -5032,7 +5033,7 @@ static int SaveMenuKeyFadeOut() {
 }
 
 static int SaveMenuKeyModeSelect() {
-    if (GamePad.Down(0x5000)) {
+    if (GamePad.Down(PAD_UP | PAD_DOWN)) {
         if (SaveMenu.file_no) {
             SaveMenu.file_no = 0;
         } else {
@@ -5040,24 +5041,24 @@ static int SaveMenuKeyModeSelect() {
         }
     }
 
-    if (GamePad.Down(0x40)) {
+    if (GamePad.Down(PAD_CROSS)) {
         if (SaveMenu.file_no) {
-            SaveMenu.access_kind = 1;
+            SaveMenu.access_kind = SAVE_ACCESS_LOAD;
         } else {
-            SaveMenu.access_kind = 2;
+            SaveMenu.access_kind = SAVE_ACCESS_SAVE;
         }
 
-        SaveMenu.key_no = 3;
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = 0;
-        ComMenuSePlay(1);
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         return 1;
     }
 
-    if (GamePad.Down(0x20)) {
-        SaveMenu.key_no = 1;
+    if (GamePad.Down(PAD_CIRCLE)) {
+        SaveMenu.key_no = SAVE_KEY_FADE_OUT;
         ExitSaveSelect();
         SaveMenu.step_time = 0;
-        ComMenuSePlay(2);
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         return 1;
     }
 
@@ -5069,7 +5070,7 @@ static int SaveMenuKeyMcSelect() {
 
     prev_slot = SaveMenu.file_no;
 
-    if (GamePad.Down(0x5000)) {
+    if (GamePad.Down(PAD_UP | PAD_DOWN)) {
         if (SaveMenu.file_no) {
             SaveMenu.file_no = 0;
         } else {
@@ -5078,43 +5079,43 @@ static int SaveMenuKeyMcSelect() {
     }
 
     if (prev_slot != SaveMenu.file_no) {
-        ComMenuSePlay(0);
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 
-    if (GamePad.Down(0x20)) {
+    if (GamePad.Down(PAD_CIRCLE)) {
         switch (SaveMenu.mode) {
-            case 0:
-                SaveMenu.key_no = 1;
+            case SAVE_MENU_MODE_LOAD:
+                SaveMenu.key_no = SAVE_KEY_FADE_OUT;
                 ExitSaveSelect();
                 break;
-            case 1:
-                SaveMenu.key_no = 1;
-                CommonMenuMes2.stay_frame = 0;
+            case SAVE_MENU_MODE_SAVE:
+                SaveMenu.key_no = SAVE_KEY_FADE_OUT;
+                CommonMenuMes2.stay_frame = false;
                 break;
-            case 2:
-                SaveMenu.key_no = 1;
+            case SAVE_MENU_MODE_ENDING:
+                SaveMenu.key_no = SAVE_KEY_FADE_OUT;
                 ExitSaveSelect();
                 break;
         }
 
         SaveMenu.step_time = 0;
-        ComMenuSePlay(2);
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         return 1;
     }
 
-    if (GamePad.Down(0x40) && SaveMenu.texture_ready) {
-        SaveMenu.key_no = 4;
+    if (GamePad.Down(PAD_CROSS) && SaveMenu.texture_ready) {
+        SaveMenu.key_no = SAVE_KEY_CHECK_MC_TYPE;
         McAccess.port = SaveMenu.file_no;
-        McAccess.SetFuncNo(0);
-        ComMenuSePlay(1);
+        McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         return 1;
     }
 
-    if (GamePad.Down2(0x40) && GamePad.Down2(0x20)) {
-        SaveMenu.key_no = 18;
-        McAccess.SetFuncNo(10);
+    if (GamePad.Down2(PAD_CROSS) && GamePad.Down2(PAD_CIRCLE)) {
+        SaveMenu.key_no = SAVE_KEY_UNFORMAT;
+        McAccess.SetFuncNo(MC_OPERATION_UNFORMAT);
         McAccess.port = SaveMenu.file_no;
-        ComMenuSePlay(1);
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
     }
 
     return 1;
@@ -5127,18 +5128,18 @@ static int SaveMenuKeyCheckMcType() {
 
     if (card->present) {
         switch (card->type) {
-            case 2:
-                McAccess.SetFuncNo(2);
-                SaveMenu.key_no = 5;
+            case sceMcTypePS2:
+                McAccess.SetFuncNo(MC_OPERATION_GET_DIR);
+                SaveMenu.key_no = SAVE_KEY_CHECK_MC;
                 break;
             default:
-                SaveMenu.key_no = 14;
-                SaveMenu.alert_no = 1;
+                SaveMenu.key_no = SAVE_KEY_ALERT;
+                SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
                 break;
         }
     } else {
-        SaveMenu.key_no = 14;
-        SaveMenu.alert_no = 1;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
+        SaveMenu.alert_no = SAVE_ALERT_NO_CARD;
     }
 
     return 1;
@@ -5149,44 +5150,44 @@ static int SaveMenuKeyCheckMc() {
 
     printf("check end !!\n");
     card = &McAccess.card[McAccess.port];
-    SaveMenu.alert_no = 0;
+    SaveMenu.alert_no = SAVE_ALERT_NONE;
 
     if (card->present == 0) {
         printf("not \n");
-        SaveMenu.alert_no = 14;
-        SaveMenu.key_no = 3;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_MISSING;
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = McAccess.port;
         return 0;
     }
 
-    if (card->type != 2) {
+    if (card->type != sceMcTypePS2) {
         printf("type is not PS2\n");
-        SaveMenu.alert_no = 14;
-        SaveMenu.key_no = 3;
+        SaveMenu.alert_no = SAVE_ALERT_CARD_MISSING;
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = McAccess.port;
         return 0;
     }
 
-    if ((SaveMenu.access_kind == 1 || SaveMenu.mode == 2) && (card->dir_exists == 0 || card->formatted == 0)) {
-        SaveMenu.alert_no = 12;
-        SaveMenu.key_no = 14;
+    if ((SaveMenu.access_kind == SAVE_ACCESS_LOAD || SaveMenu.mode == SAVE_MENU_MODE_ENDING) && (card->dir_exists == 0 || card->formatted == 0)) {
+        SaveMenu.alert_no = SAVE_ALERT_NO_SAVE_DATA;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
         return 1;
     }
 
-    if (SaveMenu.access_kind == 2 && card->dir_exists == 0 && card->free_size < 400 && card->formatted != 0) {
-        SaveMenu.alert_no = 10;
-        SaveMenu.key_no = 14;
+    if (SaveMenu.access_kind == SAVE_ACCESS_SAVE && card->dir_exists == 0 && card->free_size < 400 && card->formatted != 0) {
+        SaveMenu.alert_no = SAVE_ALERT_NO_SPACE_DIR;
+        SaveMenu.key_no = SAVE_KEY_ALERT;
         return 1;
     }
 
-    if (SaveMenu.mode == 2) {
-        SaveMenu.key_no = 23;
-    } else if (SaveMenu.access_kind == 1) {
-        SaveMenu.key_no = 6;
-        McAccess.SetFuncNo(13);
+    if (SaveMenu.mode == SAVE_MENU_MODE_ENDING) {
+        SaveMenu.key_no = SAVE_KEY_SAVE_ENDING;
+    } else if (SaveMenu.access_kind == SAVE_ACCESS_LOAD) {
+        SaveMenu.key_no = SAVE_KEY_LOAD_CONFIG;
+        McAccess.SetFuncNo(MC_OPERATION_LOAD_CONFIG);
     } else {
-        McAccess.SetFuncNo(4);
-        SaveMenu.key_no = 7;
+        McAccess.SetFuncNo(MC_OPERATION_GET_ALL_SAVE_FILE_INFO);
+        SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
         SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
     }
 
@@ -5194,8 +5195,8 @@ static int SaveMenuKeyCheckMc() {
 }
 
 static int SaveMenuKeyLoadConfig() {
-    McAccess.SetFuncNo(4);
-    SaveMenu.key_no = 7;
+    McAccess.SetFuncNo(MC_OPERATION_GET_ALL_SAVE_FILE_INFO);
+    SaveMenu.key_no = SAVE_KEY_FILE_SELECT;
 
     if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] != 0) {
         GameClearFlag = 1;
@@ -5211,7 +5212,7 @@ static int SaveMenuKeyFileSelect() {
 
     prev_file = SaveMenu.file_no;
 
-    if (GamePad.Down(0x4000)) {
+    if (GamePad.Down(PAD_DOWN)) {
         SaveMenu.file_no++;
 
         if (SaveMenu.file_no >= 12) {
@@ -5219,41 +5220,41 @@ static int SaveMenuKeyFileSelect() {
         }
     }
 
-    if (GamePad.Down(0x1000) && 0 < SaveMenu.file_no) {
+    if (GamePad.Down(PAD_UP) && 0 < SaveMenu.file_no) {
         SaveMenu.file_no--;
     }
 
     if (prev_file != SaveMenu.file_no) {
-        ComMenuSePlay(0);
+        ComMenuSePlay(MENU_SOUND_CURSOR);
     }
 
-    if (GamePad.Down(0x20)) {
-        SaveMenu.key_no = 3;
+    if (GamePad.Down(PAD_CIRCLE)) {
+        SaveMenu.key_no = SAVE_KEY_MC_SELECT;
         SaveMenu.file_no = McAccess.port;
         SaveMenu.step_time = 0;
-        ComMenuSePlay(2);
+        ComMenuSePlay(MENU_SOUND_REFUSE);
         return 1;
     }
 
-    if (GamePad.Down(0x40)) {
+    if (GamePad.Down(PAD_CROSS)) {
         switch (SaveMenu.access_kind) {
-            case 2:
-                SaveMenu.key_no = 8;
-                McAccess.SetFuncNo(0);
+            case SAVE_ACCESS_SAVE:
+                SaveMenu.key_no = SAVE_KEY_SAVE_CHECK;
+                McAccess.SetFuncNo(MC_OPERATION_SEARCH_TYPE);
                 break;
-            case 1:
+            case SAVE_ACCESS_LOAD:
                 info = &McAccess.file_info[SaveMenu.file_no];
 
                 if (info->state) {
-                    SaveMenu.key_no = 12;
+                    SaveMenu.key_no = SAVE_KEY_LOAD_DECIDE;
                 } else {
-                    ComMenuSePlay(2);
+                    ComMenuSePlay(MENU_SOUND_REFUSE);
                 }
 
                 break;
         }
 
-        ComMenuSePlay(1);
+        ComMenuSePlay(MENU_SOUND_CONFIRM);
         return 1;
     }
 

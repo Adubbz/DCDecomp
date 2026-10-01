@@ -4,6 +4,26 @@
 
 #include "dataalloc_fwd.hpp"
 
+/**
+ * Scenes of the attract movie, as CScript::scene, load_no and init_no hold them.
+ */
+// clang-format off
+enum RushScene {
+    RUSH_SCENE_NONE  = -1, /**< None. */
+    RUSH_SCENE_A     = 0,  /**< Dark Heaven Castle. */
+    RUSH_SCENE_B     = 1,  /**< Divine beast floor. */
+    RUSH_SCENE_C     = 2,  /**< Brownboo. */
+    RUSH_SCENE_D     = 3,  /**< White-beard boss map. */
+    RUSH_SCENE_E     = 4,  /**< Toan's house. */
+    RUSH_SCENE_F     = 5,  /**< Master Utan. */
+    RUSH_SCENE_G     = 6,  /**< Outside Goro's house. */
+    RUSH_SCENE_H     = 7,  /**< Divine beast boss floor. */
+    RUSH_SCENE_I     = 8,  /**< Moon ship dock. */
+    RUSH_SCENE_TITLE = 9,  /**< Title. */
+};
+
+// clang-format on
+
 class CFireOmni;
 class CRunEffect;
 class CCharacter;

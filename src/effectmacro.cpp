@@ -41,12 +41,12 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     if (rand() % 2 != 0) {
         effect.position_oscillation_flags = 1;
         effect.position_oscillation_scale[0] = 0.3f * (float) rand() / 2.1474836e9f;
-        effect.position_oscillation_rate[0] = 3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
+        effect.position_oscillation_rate[0] = PI / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
         effect.position_oscillation_scale[2] = 0.3f * (float) rand() / 2.1474836e9f;
-        effect.position_oscillation_rate[2] = 3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
+        effect.position_oscillation_rate[2] = PI / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
     }
 
-    effect.opacity_mode = 2;
+    effect.opacity_mode = EFFECT_OPACITY_FADE_OUT;
     effect.render_flags = 1;
     effect.opacity = 0.1f;
     sceVu0ScaleVector(effect.velocity, effect.velocity, 0.4f);
@@ -89,7 +89,7 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int p
     effect.texel.x = effect.texel.y = effect.texel.width = effect.texel.height = 0;
     effect.Initialize();
     sceVu0CopyVector(effect.position, position);
-    effect.opacity_mode = 2;
+    effect.opacity_mode = EFFECT_OPACITY_FADE_OUT;
     effect.render_flags = 1;
     effect.opacity = 0.5f;
 
@@ -121,7 +121,7 @@ void EffectHamon(CEffectGroup *group, float *position, float size) {
     effect.texel.x = effect.texel.y = effect.texel.width = effect.texel.height = 0;
     effect.Initialize();
     sceVu0CopyVector(effect.position, position);
-    effect.opacity_mode = 2;
+    effect.opacity_mode = EFFECT_OPACITY_FADE_OUT;
     effect.render_flags = 1;
     effect.opacity = 1.0f;
     effect.draw_mode = 1;

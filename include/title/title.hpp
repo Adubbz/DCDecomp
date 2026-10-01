@@ -2,6 +2,30 @@
 
 #include "common.h"
 
+/**
+ * Steps of the title screen, as CProcess::no holds them.
+ */
+// clang-format off
+enum TitleStep {
+    TITLE_STEP_FADE_IN           = 0,  /**< Fading in. */
+    TITLE_STEP_RETURN_FADE_IN    = 1,  /**< Fading in after the save or option screen. */
+    TITLE_STEP_WAIT              = 2,  /**< Waiting. */
+    TITLE_STEP_LOGO              = 3,  /**< Logo animation. */
+    TITLE_STEP_MENU              = 4,  /**< Choosing from the menu. */
+    TITLE_STEP_MENU_BLINK        = 5,  /**< Blinking the chosen row. */
+    TITLE_STEP_MENU_FADE_OUT     = 6,  /**< Fading out after a choice. */
+    TITLE_STEP_ATTRACT_FADE_OUT  = 7,  /**< Fading out to the attract movie. */
+    TITLE_STEP_OPENING_BOOK_INIT = 8,  /**< Starting the opening book. */
+    TITLE_STEP_OPENING_BOOK      = 9,  /**< Opening book. */
+    TITLE_STEP_SAVE_INIT         = 10, /**< Starting the load screen. */
+    TITLE_STEP_SAVE              = 11, /**< Load screen. */
+    TITLE_STEP_OPTION_INIT       = 12, /**< Starting the option screen. */
+    TITLE_STEP_OPTION            = 13, /**< Option screen. */
+    TITLE_STEP_EXIT              = 14, /**< Leaving the title screen. */
+};
+
+// clang-format on
+
 class CCamera;
 class CCameraFollow;
 class CCharacter;
@@ -161,7 +185,7 @@ extern CScFader CFade;
  */
 class CProcess {
 public:
-    int no; /**< Step the title screen is on. */
+    int no; /**< Step the title screen is on. @see TitleStep. */
     int unk_04;
 
     CProcess() { no = 0; }

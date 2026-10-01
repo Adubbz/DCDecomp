@@ -15,6 +15,17 @@
  * Declares the character that a motion drives.
  */
 
+/**
+ * Kinds of character motion event, as CHARA_EVENT::kind holds them.
+ */
+// clang-format off
+enum CharaEventKind {
+    CHARA_EVENT_FOOT_SOUND   = 0, /**< Footstep sound. */
+    CHARA_EVENT_SOUND_EFFECT = 1, /**< Sound effect. */
+};
+
+// clang-format on
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
@@ -49,7 +60,7 @@ STATIC_ASSERT(sizeof(CHARA_FOOT_SOUND) == 0x14);
  */
 struct CHARA_EVENT {
     s32 frame;     /**< Frame of the motion that fires the event; below zero where the slot is free. */
-    s32 kind;      /**< 0 to play a foot sound, 1 to play a sound effect. */
+    s32 kind;      /**< What the event plays. @see CharaEventKind. */
     s32 no;        /**< Sound that the event plays. */
     s32 motion_no; /**< Motion that fires the event. */
     s32 unk_10;

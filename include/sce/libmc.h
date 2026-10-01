@@ -3,6 +3,25 @@
 #define MC_WAIT 0
 #define MC_NOWAIT 1
 
+#define sceMcIniSucceed 0
+#define sceMcIniErrKernel (-101)
+#define sceMcIniOldMcserv (-120)
+#define sceMcIniOldMcman (-121)
+
+#define sceMcResSucceed 0
+#define sceMcResChangedCard (-1)
+#define sceMcResNoFormat (-2)
+#define sceMcResFullDevice (-3)
+#define sceMcResNoEntry (-4)
+#define sceMcResDeniedPermit (-5)
+#define sceMcResFailReplace (-8)
+#define sceMcResFailDetect (-12)
+
+#define sceMcTypeNoCard 0
+#define sceMcTypePS1 1
+#define sceMcTypePS2 2
+#define sceMcTypePDA 3
+
 #include "common.h"
 
 /**

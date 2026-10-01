@@ -2,13 +2,69 @@
 
 #include "common.h"
 
+/**
+ * What the town edit menu is doing, as EditSwitch holds it.
+ */
+// clang-format off
+enum EditMenuState {
+    EDIT_MENU_START         = 1,  /**< Starting. */
+    EDIT_MENU_SELECT        = 2,  /**< Choosing a page. */
+    EDIT_MENU_ATORA         = 3,  /**< Atla page. */
+    EDIT_MENU_ATORA_MOVE    = 4,  /**< Moving placed parts. */
+    EDIT_MENU_ANALYZE       = 5,  /**< Analysis page. */
+    EDIT_MENU_SAVE          = 6,  /**< Save page. */
+    EDIT_MENU_OPTION        = 7,  /**< Option page. */
+    EDIT_MENU_MANUAL        = 8,  /**< Manual page. */
+    EDIT_MENU_ATORA_IN      = 9,  /**< Entering the Atla page. */
+    EDIT_MENU_ATORA_MOVE_IN = 10, /**< Entering part moving. */
+    EDIT_MENU_ANALYZE_IN    = 11, /**< Entering the analysis page. */
+    EDIT_MENU_SAVE_IN       = 12, /**< Entering the save page. */
+    EDIT_MENU_OPTION_IN     = 13, /**< Entering the option page. */
+    EDIT_MENU_MANUAL_IN     = 14, /**< Entering the manual page. */
+    EDIT_MENU_EXIT          = 15, /**< Leaving the menu. */
+    EDIT_MENU_ATORA_OUT     = 16, /**< Leaving the Atla page. */
+    EDIT_MENU_ANALYZE_OUT   = 18, /**< Leaving the analysis page. */
+    EDIT_MENU_SAVE_OUT      = 19, /**< Leaving the save page; never set. */
+    EDIT_MENU_OPTION_OUT    = 20, /**< Leaving the option page; never set. */
+    EDIT_MENU_MANUAL_OUT    = 21, /**< Leaving the manual page; never set. */
+    EDIT_MENU_OUT_END       = 22, /**< End of the leaving states. */
+};
+
+// clang-format on
+
+/**
+ * How the edit menu's icons are moving, as EdMenuEffectFlag holds it.
+ */
+// clang-format off
+enum EdMenuIconMove {
+    ED_MENU_ICON_STILL     = 0, /**< Still. */
+    ED_MENU_ICON_MOVE_FROM = 1, /**< Moving away from the menu. */
+    ED_MENU_ICON_MOVE_TO   = 2, /**< Moving back to the menu. */
+};
+
+// clang-format on
+
+/**
+ * What the edit menu hands back to the town, as EDIT_MENU_STATUS::mode holds it.
+ */
+// clang-format off
+enum EditMenuMode {
+    EDIT_MENU_MODE_CLOSED  = -1, /**< Closed. */
+    EDIT_MENU_MODE_PLACE   = 0,  /**< Place a part picked from the board. */
+    EDIT_MENU_MODE_REPLACE = 1,  /**< Place a part picked up off the ground. */
+    EDIT_MENU_MODE_MOVE    = 3,  /**< Move or remove placed parts. */
+    EDIT_MENU_MODE_EVENT   = 5,  /**< Run a board event. */
+};
+
+// clang-format on
+
 class CTexture;
 
 /**
  * State that the edit menu keeps between frames.
  */
 struct EDIT_MENU_STATUS {
-    s32 mode;  /**< What the menu is doing; -1 while it is closed. */
+    s32 mode;  /**< What the menu hands back to the town. @see EditMenuMode. */
     s32 parts; /**< Plot of the part the player picked, or -1. */
     u8  unk_08[8];
     s32 event_no; /**< Event the menu asks the loop to run. */
@@ -130,7 +186,7 @@ extern int EdMenuExTextureBlock1;
 extern int EdMenuExTextureBlock2;
 
 /**
- * The state the edit menu is in.
+ * The state the edit menu is in. @see EditMenuState.
  */
 extern int EditSwitch;
 
@@ -175,7 +231,7 @@ extern s16 ButtonAdd;
 extern s16 AnalyzeBackBlockCnt;
 
 /**
- * The edit menu icon's movement: 1 while CalMoveFromMenuIcon runs, 2 while CalMoveToMenuIcon runs, 0 for none.
+ * The edit menu icon's movement. @see EdMenuIconMove.
  */
 extern s16 EdMenuEffectFlag;
 

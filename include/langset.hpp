@@ -7,6 +7,18 @@
  * Declares the language-selection screen the game shows before the title.
  */
 
+/**
+ * Steps of the language screen, as Proc holds them.
+ */
+// clang-format off
+enum LangsetStep {
+    LANGSET_FADE_IN  = 0, /**< Fading in. */
+    LANGSET_SELECT   = 1, /**< Choosing a language. */
+    LANGSET_FADE_OUT = 2, /**< Fading out. */
+};
+
+// clang-format on
+
 class Fader;
 
 /**
@@ -20,7 +32,7 @@ extern Fader Fade;
 extern int Cursor;
 
 /**
- * What the screen is doing: fading in, taking the choice, or fading out.
+ * What the screen is doing. @see LangsetStep.
  */
 extern int Proc;
 
