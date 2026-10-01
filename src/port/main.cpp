@@ -1,17 +1,28 @@
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <string_view>
+#include <system_error>
 #include <vector>
 
+#include "audio/mixer.hpp"
 #include "battle_globals.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
+#include "exitcodes.hpp"
+#include "gameloop.hpp"
 #include "gamemode.hpp"
 #include "gfx/gfx.hpp"
 #include "langset.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
+#include "platform/audio.hpp"
+#include "platform/clock.hpp"
+#include "platform/config.hpp"
+#include "platform/input.hpp"
+#include "platform/paths.hpp"
 #include "platform/window.hpp"
 #include "snd.hpp"
 #include "title/opening.hpp"
@@ -22,25 +33,37 @@ int  EditInit(void *param);
 int  EditLoop();
 void SndInit();
 
+namespace fs = std::filesystem;
+
 namespace {
+
+struct Options {
+    bool         headless = false;
+    std::int64_t frames = -1;
+    const char  *screenshot = nullptr;
+    int          width = 0;
+    int          height = 0;
+};
 
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
-                 "usage: %s [--headless] [--frames N] [--screenshot PATH] [--width W] [--height H]\n"
-                 "  --headless         render offscreen (SDL offscreen driver, VK_EXT_headless_surface)\n"
-                 "  --frames N         exit after N frames\n"
+                 "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
+                 "          [--width W] [--height H]\n"
+                 "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
+                 "                     beside the executable)\n"
+                 "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
+                 "                     ./save, then save/ beside the executable)\n"
+                 "  --headless         render offscreen (SDL offscreen driver, VK_EXT_headless_surface),\n"
+                 "                     no audio device, the game clock unbounded\n"
+                 "  --frames N         stop after N frames of the game's main loop\n"
                  "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
-                 "  --width, --height  window size in pixels\n",
+                 "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n",
                  program);
-    std::exit(2);
+    std::exit(kExitUsage);
 }
 
-} // namespace
-
-int main(int argc, const char **argv, const char **envp) {
-    WindowConfig window;
-    long         frames = -1;
-    const char  *screenshot = nullptr;
+Options ParseOptions(int argc, const char **argv) {
+    Options options;
     for (int i = 1; i < argc; i++) {
         std::string_view arg = argv[i];
         auto             value = [&]() {
@@ -58,37 +81,132 @@ int main(int argc, const char **argv, const char **envp) {
             return result;
         };
         if (arg == "--headless") {
-            window.headless = true;
+            options.headless = true;
         } else if (arg == "--frames") {
-            frames = number();
+            options.frames = number();
         } else if (arg == "--screenshot") {
-            screenshot = value();
+            options.screenshot = value();
         } else if (arg == "--width") {
-            window.width = static_cast<int>(number());
+            options.width = static_cast<int>(number());
         } else if (arg == "--height") {
-            window.height = static_cast<int>(number());
+            options.height = static_cast<int>(number());
         } else {
             Usage(argv[0]);
         }
     }
+    return options;
+}
 
-    WindowInit(window);
-    gfx::RendererInit(WindowHandle(), gfx::RendererConfig{});
-    for (long frame = 0; (frames < 0 || frame < frames) && WindowPollEvents(); frame++) {
-        MGBeginFrame();
-        MGEndFrame();
-    }
-
-    int status = 0;
-    if (screenshot != nullptr) {
-        std::vector<uint8_t> pixels;
-        uint32_t             width = 0;
-        uint32_t             height = 0;
-        if (!gfx::ReadbackFrame(pixels, width, height) || !gfx::WritePng(screenshot, pixels.data(), width, height)) {
-            std::fprintf(stderr, "cannot write the screenshot to %s\n", screenshot);
-            status = 1;
+// InitCDFile stops on the same conditions, but checking first gives the one-line message and its
+// own exit status before a window or a Vulkan device exists.
+void RequireData() {
+    const fs::path &root = PathsDataRoot();
+    std::error_code error;
+    const char     *why = nullptr;
+    if (!fs::is_directory(root, error)) {
+        why = "is not a directory";
+    } else {
+        why = "is empty";
+        auto options = fs::directory_options::follow_directory_symlink |
+                       fs::directory_options::skip_permission_denied;
+        for (fs::recursive_directory_iterator it(root, options, error), end; !error && it != end;
+             it.increment(error)) {
+            std::error_code entry_error;
+            if (it->is_regular_file(entry_error)) {
+                why = nullptr;
+                break;
+            }
         }
     }
+    if (why != nullptr) {
+        std::fprintf(stderr,
+                     "no game data: %s %s; extract the disc with `dcdata extract <disc image> %s` "
+                     "or pass --data <dir>\n",
+                     root.c_str(), why, root.c_str());
+        std::exit(kExitNoData);
+    }
+}
+
+void PumpHost() {
+    if (!WindowPollEvents()) {
+        GameRequestStop();
+    }
+    InputPoll();
+}
+
+void RenderAudio(void *, float *out, int frames) {
+    audio::DefaultMixer().Render(out, frames);
+}
+
+void ReportShaderProgress(uint32_t done, uint32_t total) {
+    static uint32_t reported = 0;
+    constexpr uint32_t kSteps = 4;
+    if (total == 0) {
+        return;
+    }
+    uint32_t step = done * kSteps / total;
+    if (done == 0 || step > reported) {
+        reported = step;
+        std::fprintf(stderr, "compiling shaders %u/%u\n", done, total);
+    }
+}
+
+gfx::PresentMode PresentMode(ConfigPresentMode mode) {
+    // The renderer has no IMMEDIATE path; MAILBOX is the other mode that does not wait for vblank.
+    return mode == ConfigPresentMode::Fifo ? gfx::PresentMode::Fifo : gfx::PresentMode::Mailbox;
+}
+
+int Screenshot(const char *path) {
+    std::vector<uint8_t> pixels;
+    uint32_t             width = 0;
+    uint32_t             height = 0;
+    if (!gfx::ReadbackFrame(pixels, width, height) || !gfx::WritePng(path, pixels.data(), width, height)) {
+        std::fprintf(stderr, "cannot write the screenshot to %s\n", path);
+        return kExitFailure;
+    }
+    return kExitOk;
+}
+
+} // namespace
+
+int main(int argc, const char **argv, const char **envp) {
+    argc = PathsConsumeArgs(argc, argv);
+    Options options = ParseOptions(argc, argv);
+    RequireData();
+
+    ConfigLoad();
+    const Config &config = ConfigGet();
+
+    WindowConfig window;
+    window.width = options.width > 0 ? options.width : config.window_width;
+    window.height = options.height > 0 ? options.height : config.window_height;
+    window.fullscreen = config.fullscreen;
+    window.headless = options.headless;
+    WindowInit(window);
+    InputInit();
+
+    gfx::RendererConfig renderer;
+    renderer.present_mode = PresentMode(config.present_mode);
+    renderer.pipeline_cache = PathsSaveRoot() / "pipeline_cache.bin";
+    renderer.progress = ReportShaderProgress;
+    gfx::RendererInit(WindowHandle(), renderer);
+
+    audio::DefaultMixer().SetMasterGain(config.master_volume);
+    AudioOutputStart(audio::DefaultMixer().Rate(), RenderAudio, nullptr);
+
+    ClockSetTickRate(config.tick_rate);
+    ClockSetUnbounded(options.headless);
+    ClockAddPumpHook(PumpHost);
+    GameSetFrameBudget(options.frames);
+
+    int status = RunGame(argc, const_cast<char **>(argv));
+    if (status == kExitOk && options.screenshot != nullptr) {
+        status = Screenshot(options.screenshot);
+    }
+
+    ClockRemovePumpHook(PumpHost);
+    AudioOutputStop();
+    InputShutdown();
     gfx::RendererShutdown();
     WindowShutdown();
     return status;

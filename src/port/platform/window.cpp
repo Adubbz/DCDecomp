@@ -24,11 +24,15 @@ void WindowInit(const WindowConfig &config) {
     SDL_SetAppMetadata("Dark Cloud", nullptr, "dcdecomp.darkcloud");
     if (config.headless) {
         SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "offscreen");
+        SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy");
     }
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         Fatal("SDL_Init");
     }
     SDL_WindowFlags flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+    if (config.fullscreen && !config.headless) {
+        flags |= SDL_WINDOW_FULLSCREEN;
+    }
     g_window = SDL_CreateWindow("Dark Cloud", config.width, config.height, flags);
     if (g_window == nullptr) {
         Fatal("SDL_CreateWindow");

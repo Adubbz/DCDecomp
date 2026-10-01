@@ -1,9 +1,11 @@
 #include "clock.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <thread>
+#include <vector>
 
 namespace {
 
@@ -24,6 +26,8 @@ struct ClockState {
     ClockIdleHook           idle = nullptr;
     bool                    pumping = false;
 };
+
+std::vector<ClockIdleHook> g_pump_hooks;
 
 ClockState g_clock;
 
@@ -112,6 +116,20 @@ void ClockSetIdleHook(ClockIdleHook hook) {
     g_clock.idle = hook;
 }
 
+ClockIdleHook ClockGetIdleHook() {
+    return g_clock.idle;
+}
+
+void ClockAddPumpHook(ClockIdleHook hook) {
+    if (hook != nullptr && std::ranges::find(g_pump_hooks, hook) == g_pump_hooks.end()) {
+        g_pump_hooks.push_back(hook);
+    }
+}
+
+void ClockRemovePumpHook(ClockIdleHook hook) {
+    std::erase(g_pump_hooks, hook);
+}
+
 std::int64_t ClockPump() {
     if (g_clock.pumping) {
         return g_clock.count;
@@ -130,6 +148,10 @@ std::int64_t ClockPump() {
         if (g_clock.callback != nullptr) {
             g_clock.callback(0);
         }
+    }
+    // Indexed: a hook may remove itself.
+    for (std::size_t i = 0; i < g_pump_hooks.size(); ++i) {
+        g_pump_hooks[i]();
     }
     if (g_clock.idle != nullptr) {
         g_clock.idle();
