@@ -6,6 +6,8 @@ add_executable(darkcloud_tests ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${TEST_SOURC
 set_target_properties(darkcloud_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 target_include_directories(darkcloud_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 dc_link_game(darkcloud_tests)
+# The integration_smoke_* cases run the darkcloud beside it.
+add_dependencies(darkcloud_tests darkcloud)
 
 foreach(source IN LISTS TEST_SOURCES)
     file(STRINGS ${source} cases REGEX "^DC_TEST\\(")

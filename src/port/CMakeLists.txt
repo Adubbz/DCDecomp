@@ -149,9 +149,11 @@ target_compile_options(dc_port PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-la
 # and data sit below 4 GiB, where the game's 32-bit pointer casts still
 # round-trip. ItemPutListTbl12_bytes is a second name for the table, as the
 # PS2 build gives it through object_fixups.json; draw_rect and WorkBuffer__2
-# are second names the same way, and EditGaijiTbl is the linker script's name
-# for an address inside EditPartsData. src/port/linknames.cpp defines the
-# names that are not aliases.
+# are second names the same way. EditGaijiTbl is the linker script's name for
+# an address clsmes.cpp indexes with codes -0x300 and up, which lands on the
+# last word of each GaijiDataTbl entry; the offset is taken from GaijiDataTbl,
+# whose layout the host keeps, not from EditPartsData, whose pointers grow.
+# src/port/linknames.cpp defines the names that are not aliases.
 function(dc_link_game target)
     target_sources(${target} PRIVATE $<TARGET_OBJECTS:dc_port> $<TARGET_OBJECTS:dc_host> ${PS2_OBJECT})
     target_link_libraries(${target} PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
@@ -160,7 +162,7 @@ function(dc_link_game target)
         -Wno-overloaded-virtual -Wno-unused-function)
     target_link_options(${target} PRIVATE -fuse-ld=lld -no-pie -Wl,--gc-sections -Wl,--error-limit=0
         -Wl,--defsym=ItemPutListTbl12_bytes=ItemPutListTbl12 -Wl,--defsym=draw_rect=draw_rect_store
-        -Wl,--defsym=WorkBuffer__2=WorkBuffer -Wl,--defsym=EditGaijiTbl=EditPartsData+0x466C)
+        -Wl,--defsym=WorkBuffer__2=WorkBuffer -Wl,--defsym=EditGaijiTbl=GaijiDataTbl+0x601C)
 endfunction()
 
 add_executable(darkcloud ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
