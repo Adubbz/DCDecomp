@@ -51,13 +51,11 @@ DC_TEST(platform_config_parses_ini) {
 DC_TEST(platform_config_loads_from_save_root) {
     std::filesystem::path root = std::filesystem::temp_directory_path() / ("dc_config_test_" + std::to_string(getpid()));
     std::filesystem::create_directories(root);
-    setenv("DC_SAVE", root.c_str(), 1);
-    DC_CHECK(SaveRootPath() == root);
+    PathsSetSaveRoot(root);
+    DC_CHECK(PathsSaveRoot() == root);
     DC_CHECK(!ConfigLoad());
     std::ofstream(root / "config.ini") << "[game]\ntick_rate = 60\n";
     DC_CHECK(ConfigLoad());
     DC_CHECK(ConfigGet().tick_rate == 60.0);
     std::filesystem::remove_all(root);
-    unsetenv("DC_SAVE");
-    DC_CHECK(SaveRootPath() == "save");
 }

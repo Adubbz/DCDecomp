@@ -12,7 +12,7 @@
 #include <system_error>
 #include <vector>
 
-#include "../platform/config.hpp"
+#include "../platform/paths.hpp"
 
 // Each card is a directory, <save root>/mc0 and mc1, and every command
 // finishes inside the call that issues it. The game still sees libmc's
@@ -117,7 +117,7 @@ bool ValidPort(int port) {
 }
 
 fs::path CardRoot(int port) {
-    return SaveRootPath() / ("mc" + std::to_string(port));
+    return PathsSaveRoot() / ("mc" + std::to_string(port));
 }
 
 // The first card is always inserted; the second only once its directory exists.

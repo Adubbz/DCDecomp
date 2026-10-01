@@ -1,4 +1,5 @@
 #include "config.hpp"
+#include "paths.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -131,14 +132,6 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
 
 } // namespace
 
-std::filesystem::path SaveRootPath() {
-    const char *root = std::getenv("DC_SAVE");
-    if (root != nullptr && root[0] != '\0') {
-        return root;
-    }
-    return "save";
-}
-
 const Config &ConfigGet() {
     return g_config;
 }
@@ -175,7 +168,7 @@ Config ConfigParse(std::string_view text) {
 }
 
 bool ConfigLoad() {
-    std::ifstream file(SaveRootPath() / "config.ini", std::ios::binary);
+    std::ifstream file(PathsSaveRoot() / "config.ini", std::ios::binary);
     if (!file) {
         g_config = Config{};
         return false;

@@ -26,10 +26,6 @@ struct Config {
     std::vector<ConfigKeyBinding> key_bindings;
 };
 
-// The directory saves, the memory cards and config.ini live in: DC_SAVE if
-// set, otherwise save/ under the working directory.
-std::filesystem::path SaveRootPath();
-
 const Config &ConfigGet();
 
 // Parses an ini text over the defaults. Unknown keys and bad values are
