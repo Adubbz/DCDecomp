@@ -68,7 +68,7 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
                       int *out_x, int *out_y);
 void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, int v, CTexture *texture);
 
-// The source rect is the screen and the destination the texels, the far x edge a sixteenth short.
+// Named the other way round from set2DSprite: src is where the sprite lands, dst the texels.
 void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src, const CRect_i_ &dst, u8 r,
                    u8 g, u8 b, u8 a) {
     if (texture == nullptr) {
