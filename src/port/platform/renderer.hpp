@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL3/SDL.h>
+struct SDL_Window;
 
 void RendererInit(SDL_Window *window);
 
