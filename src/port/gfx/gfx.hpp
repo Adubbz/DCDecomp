@@ -6,6 +6,7 @@
 #include <functional>
 #include <optional>
 #include <span>
+#include <string_view>
 #include <vector>
 
 struct SDL_Window;
@@ -100,6 +101,11 @@ TextureHandle CreatePalette();
 // A texture the renderer can draw into, logical_width x logical_height scaled by the render
 // scale, with its own depth buffer. Starts black, alpha 0x80, depth far.
 TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha);
+// The render target registered under name (the game's "#name#w#h#bpp" placeholders), created on
+// first use and recreated if asked for at another size or alpha. Destroying it drops the name.
+TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
+                                bool has_alpha);
+TextureHandle FindNamedRenderTarget(std::string_view name);
 void          DestroyTexture(TextureHandle texture);
 // Pixels are tightly packed rows of row_length texels (0: w), RGBA8 as bytes r,g,b,a, or one
 // index byte. Alpha is in the renderer's units: 0xFF is GS 0x80; ConvertPs2Alpha converts.

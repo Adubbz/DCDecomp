@@ -5,6 +5,8 @@
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <map>
+#include <string>
 #include <vector>
 
 #include "gfx.hpp"
@@ -255,10 +257,11 @@ struct Context {
     std::array<BlendMapping, 81> blend_map = {};
     double                       pipeline_seconds = 0.0;
 
-    std::vector<Texture>  textures;
-    std::vector<uint32_t> free_texture_slots;
-    std::vector<Mesh>     meshes;
-    std::vector<uint32_t> free_mesh_slots;
+    std::vector<Texture>                              textures;
+    std::map<std::string, TextureHandle, std::less<>> named_targets;
+    std::vector<uint32_t>                             free_texture_slots;
+    std::vector<Mesh>                                 meshes;
+    std::vector<uint32_t>                             free_mesh_slots;
 
     TextureHandle target = kMainTarget;
     bool          rendering = false;

@@ -60,15 +60,14 @@ ImageState DepthAttachment() {
             VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT};
 }
 
-bool EnsureRendering(Target &target) {
+void EnsureRendering(Target &target) {
     target = ResolveTarget(g.target);
     if (target.color == nullptr) {
-        // The render target was destroyed under us; fall back to the frame.
         g.target = kMainTarget;
         target = ResolveTarget(g.target);
     }
     if (g.rendering) {
-        return true;
+        return;
     }
     VkCommandBuffer cmd = DrawCommands();
     Transition(cmd, *target.color, ColorAttachment());
@@ -105,7 +104,6 @@ bool EnsureRendering(Target &target) {
         {-1, -1},
         {0,  0 }
     };
-    return true;
 }
 
 VkRect2D PixelRect(const LogicalMapping &mapping, const LogicalRect &rect) {

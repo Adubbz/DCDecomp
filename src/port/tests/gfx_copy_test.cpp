@@ -131,8 +131,12 @@ DC_TEST(gfx_snapshot_and_previous_frame) {
 
 DC_TEST(gfx_render_target_shadow_composite) {
     // Render scale 2: a 160x120 logical target is 320x240 pixels.
-    GfxFixture                      fixture(640, 480, 2.0f);
-    gfx::TextureHandle              shadow = gfx::CreateRenderTarget(160, 120, false);
+    GfxFixture         fixture(640, 480, 2.0f);
+    gfx::TextureHandle shadow = gfx::NamedRenderTarget("shadow_buf", 160, 120, false);
+    DC_CHECK(gfx::NamedRenderTarget("shadow_buf", 160, 120, false) == shadow);
+    DC_CHECK(gfx::FindNamedRenderTarget("shadow_buf") == shadow);
+    DC_CHECK(gfx::FindNamedRenderTarget("water") == gfx::kNullTexture);
+
     std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(shadow);
     DC_CHECK(info && info->pixel_width == 320 && info->pixel_height == 240 && info->width == 160);
 
@@ -175,6 +179,10 @@ DC_TEST(gfx_render_target_shadow_composite) {
     DC_CHECK(gfx::ReadbackTexture(shadow, pixels, width, height));
     DC_CHECK(TexelAt(pixels, width, 80, 60) == Rgba(255, 255, 255, 0xFF));
     DC_CHECK(TexelAt(pixels, width, 5, 5) == Rgba(0, 0, 0, 0xFF));
-    gfx::DestroyTexture(shadow);
-    DC_CHECK(!gfx::GetTextureInfo(shadow).has_value());
+    // Asked for at another size, the name moves to a new target.
+    gfx::TextureHandle larger = gfx::NamedRenderTarget("shadow_buf", 320, 240, false);
+    DC_CHECK(larger != shadow && !gfx::GetTextureInfo(shadow).has_value());
+    DC_CHECK(gfx::FindNamedRenderTarget("shadow_buf") == larger);
+    gfx::DestroyTexture(larger);
+    DC_CHECK(gfx::FindNamedRenderTarget("shadow_buf") == gfx::kNullTexture);
 }

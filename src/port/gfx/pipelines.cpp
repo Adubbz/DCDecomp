@@ -3,6 +3,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <iterator>
@@ -563,6 +564,7 @@ void CreatePipelines() {
     vkDestroyShaderModule(g.device, frag_module, nullptr);
     SaveCache(g.config.pipeline_cache);
     g.pipeline_seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
+    std::fprintf(stderr, "gfx: %u pipelines ready in %.2f s\n", total, g.pipeline_seconds);
 }
 
 void DestroyPipelines() {

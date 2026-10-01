@@ -418,11 +418,35 @@ TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height
     return MakeHandle(texture.generation, slot);
 }
 
+TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
+                                bool has_alpha) {
+    TextureHandle existing = FindNamedRenderTarget(name);
+    if (existing != kNullTexture) {
+        const Texture &texture = *LookupTexture(existing);
+        if (texture.logical_width == logical_width && texture.logical_height == logical_height &&
+            texture.desc.has_alpha == has_alpha) {
+            return existing;
+        }
+        DestroyTexture(existing);
+    }
+    TextureHandle created = CreateRenderTarget(logical_width, logical_height, has_alpha);
+    if (created != kNullTexture) {
+        g.named_targets.emplace(std::string(name), created);
+    }
+    return created;
+}
+
+TextureHandle FindNamedRenderTarget(std::string_view name) {
+    auto it = g.named_targets.find(name);
+    return it == g.named_targets.end() ? kNullTexture : it->second;
+}
+
 void DestroyTexture(TextureHandle handle) {
     Texture *texture = LookupTexture(handle);
     if (texture == nullptr) {
         return;
     }
+    std::erase_if(g.named_targets, [handle](const auto &entry) { return entry.second == handle; });
     if (g.target == handle) {
         SetRenderTarget(kMainTarget);
     }
