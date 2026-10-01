@@ -9,7 +9,8 @@ EXTRACT_PRIV_VIRTUAL   = YES
 EXTRACT_STATIC         = YES
 INPUT                  = src/ps2 \
                          include \
-                         README.md
+                         README.md \
+                         docs/PC.md
 FILE_PATTERNS          = *.c \
                          *.cpp \
                          *.h \
