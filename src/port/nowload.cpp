@@ -1,5 +1,4 @@
 #include "language.h"
-#include "nowload.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -10,6 +9,7 @@
 #include "mainselect.hpp"
 #include "mglib.hpp"
 #include "mglib_port.hpp"
+#include "nowload.hpp"
 #include "platform/clock.hpp"
 #include "rect.hpp"
 #include "texture_port.hpp"

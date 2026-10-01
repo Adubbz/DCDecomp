@@ -132,7 +132,11 @@ void Enter(CTextureManager &manager, EnterMode mode, int block, char *name, u_ch
             auto stage = [&](const u_char *source, int bytes, int blocks) -> u_int * {
                 u_int *destination = (u_int *) (manager.buffer + manager.buffer_used);
                 if (staged) {
-                    std::memcpy(destination, source, bytes);
+                    // A picture with fewer levels than the block asks for leaves the last one null,
+                    // which retail copies from all the same.
+                    if (source != nullptr) {
+                        std::memcpy(destination, source, bytes);
+                    }
                     manager.buffer_used += blocks * 16;
                 }
                 vram_end += blocks;
