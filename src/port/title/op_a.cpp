@@ -31,7 +31,7 @@
 
 // Retail's dungeon-square scene: OpA_DrawProcess reaches the static setTexScroll and
 // setCloudTexScroll, whose TEXFLUSH packets are gone (the copies are ordered on the renderer) and whose
-// transfers are MoveImageTest's, and it shares its scenery state with the scene's set-up and sound.
+// transfers are MoveImageTest's, and it shares its scenery state with the scene's set-up, sound and motion.
 
 typedef MOTION_INFO tagMOTION_KEY;
 
@@ -1436,5 +1436,181 @@ static void setCloudTexScroll() {
 
     if (setTexScrollCnt != 0) {
         MoveImageTest(Vif1Packet, sbp, sbw, 0, CRect<int>(0, 0, 128, setTexScrollCnt), dbp, dbw, 0, 0, 128 - setTexScrollCnt, 0);
+    }
+}
+
+void OpA_MotionProcess() {
+    switch (CScript__2.camera_start) {
+        case 2:
+        case 3:
+        case 15:
+            MGSetRenderInfo(mgRenderInfo.scale[0], 10.0f, 0xffff);
+            break;
+        case 37: {
+            /* The scoped middle arms and folded constants preserve their shared materialisation order. */
+            MGSetRenderInfo(mgRenderInfo.scale[0], (float) ((1 << 3) + 2), (0x10000 - 1));
+            break;
+        }
+        case 0:
+        case 39: {
+            MGSetRenderInfo(mgRenderInfo.scale[0], 16.0f, 0xffff);
+            break;
+        }
+        case 40:
+        case 41:
+        case 42:
+        case 48: {
+            MGSetRenderInfo(mgRenderInfo.scale[0], 18.0f, 0xffff);
+            break;
+        }
+        default:
+            MGSetRenderInfo(mgRenderInfo.scale[0], 6.0f, 0xffff);
+            break;
+    }
+
+    bool       shake = false;
+    static int d;
+
+    switch (CScript__2.camera_start) {
+        case 15:
+            shake = true;
+            d = 3;
+            break;
+        case 14:
+        case 16:
+        case 17:
+            shake = true;
+            d = 10;
+            break;
+        case 18:
+            if (Cam__2[SceneNp__2].motion_type.state.time < 56.0f) {
+                shake = true;
+                d = 15;
+            }
+
+            break;
+        case 44:
+            if (CloudFlag == 1) {
+                shake = true;
+                d = 5;
+            }
+
+            break;
+    }
+
+    if (shake) {
+        sceVu0FVECTOR reference;
+
+        OP_MainCamera.GetRef(reference);
+        reference[0] += (float) (rand() % d) / 10.0f;
+        reference[1] += (float) (rand() % d) / 10.0f;
+        reference[2] += (float) (rand() % d) / 10.0f;
+        OP_MainCamera.SetRef(reference);
+    }
+
+    for (int i = 0; i < OP_AnimeSeqRot; i++) {
+        ObjAnimePlay(&OP_AnimeSeq[i]);
+    }
+
+    for (int i = 0; i < 6; i++) {
+        if (CScript__2.obj[i].disp) {
+            if (CScript__2.obj[i].motion_end != -1) {
+                if (Chara__3[i].motion_type.state.time > (float) (Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].end - 1)) {
+                    CScript__2.obj[i].motion = CScript__2.obj[i].motion_end;
+                    CScript__2.obj[i].motion_end = -1;
+                }
+            }
+
+            Chara__3[i].motion_type.state.blend_step = CScript__2.obj[i].step;
+
+            if (CScript__2.obj[i].step == 1.0f) {
+                if (CScript__2.obj[i].motion != Chara__3[i].motion_no) {
+                    Chara__3[i].motion_type.state.time = (float) Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].start;
+                    Chara__3[i].motion_no = CScript__2.obj[i].motion;
+                    Chara__3[i].motion_flags = 4;
+                    Chara__3[i].motion_speed = -1.0f;
+                } else {
+                    Chara__3[i].motion_no = CScript__2.obj[i].motion;
+                    Chara__3[i].motion_flags = 0;
+                    Chara__3[i].motion_speed = -1.0f;
+                }
+            } else {
+                Chara__3[i].motion_no = CScript__2.obj[i].motion;
+                Chara__3[i].motion_flags = 0;
+                Chara__3[i].motion_speed = -1.0f;
+            }
+        }
+    }
+
+    if (CScript__2.obj[6].disp) {
+        LoadMotionData();
+    }
+
+    char         *frame_names[23] = {"c07a", "c08a", "c11a", "c09a", "c08a", "c08c", "p19a", "p17a", 0, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    sceVu0FMATRIX matrix;
+
+    for (int i = 0; i < 8; i++) {
+        if (CScript__2.obj[i].disp && CScript__2.obj[i].move_req) {
+            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
+
+            if (frame) {
+                frame->GetLWMatrix(matrix);
+
+                if (i == 6) {
+                    Chara__3[i].SetRotation(0.0f, (float) (atan2f(matrix[2][0], matrix[2][2]) + PI_D), 0.0f);
+                } else if (i == 5) {
+                    float tilt = atan2f(-matrix[2][1], matrix[2][2]);
+
+                    if (tilt > 3.14f) {
+                        tilt -= 6.28f;
+                    }
+
+                    if (tilt < -3.14f) {
+                        tilt += 6.28f;
+                    }
+
+                    Chara__3[i].SetRotation(tilt, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
+                } else {
+                    Chara__3[i].SetRotation(0.0f, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
+                }
+
+                if (i == 2 && CScript__2.camera_start == 36) {
+                    static float f;
+
+                    if (Chara__3[i].motion_type.state.time > 345 && Chara__3[i].motion_type.state.time < 350.0f) {
+                        f = 1.5f;
+                    } else if (Chara__3[i].motion_type.state.time >= 350.0f) {
+                        if (f > 0.0f) {
+                            f -= 0.1f;
+                        }
+                    } else {
+                        f = 0.0f;
+                    }
+
+                    float x = matrix[3][0];
+                    float y = matrix[3][1] - f;
+                    float z = matrix[3][2];
+
+                    Chara__3[i].SetPosition(x, y, z);
+                } else {
+                    float x = matrix[3][0];
+                    float y = matrix[3][1];
+                    float z = matrix[3][2];
+
+                    Chara__3[i].SetPosition(x, y, z);
+                }
+            }
+        }
+    }
+
+    if (CScript__2.obj[6].disp) {
+        MoveDancers();
+    }
+
+    for (int i = 0; i < 23; i++) {
+        if (CScript__2.obj[i].load != -1) {
+            LoadCharaData(CScript__2.obj[i].load, i);
+        }
     }
 }
