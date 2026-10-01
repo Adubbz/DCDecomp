@@ -8,7 +8,6 @@ float g_pick_matrix[4][4];
 
 } // namespace
 
-// Identical to MulMatrix: m0 = m1 * m2 with m2's rows taken as column vectors.
 void MulFrameMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2) {
     float r[4][4];
     for (int i = 0; i < 4; i++) {
@@ -19,7 +18,6 @@ void MulFrameMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2) {
     }
 }
 
-// Rows 0-2 are scaled on all four lanes by scale x, y and z; row 3 passes through (times vf0.w).
 void ScaleMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FVECTOR scale) {
     float s[3] = {scale[0], scale[1], scale[2]};
     float r[4][4];
@@ -42,8 +40,6 @@ void ZeroMatrix(sceVu0FMATRIX m0) {
     std::memset(m0, 0, sizeof(float) * 16);
 }
 
-// x and y of each of the eight corners are divided by |z|; z and w take part in the extremes
-// undivided.
 void ScreenBound(sceVu0FVECTOR *screen, sceVu0FVECTOR max, sceVu0FVECTOR min) {
     float corner[8][4];
     for (int i = 0; i < 8; i++) {

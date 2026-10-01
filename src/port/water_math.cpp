@@ -14,7 +14,6 @@ void pretest(float matrix[4][4], float *translation) {
     vu0::Copy(g_cell_step, translation);
 }
 
-// The cell goes out through the matrix on all four lanes; the source advances on x and z only.
 void Trans_AddCell(float *output, float *position) {
     float source[4];
     float result[4];

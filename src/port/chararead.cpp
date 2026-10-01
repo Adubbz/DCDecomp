@@ -3,8 +3,6 @@
 #include "stubs/cloth.hpp"
 #include "vu0_ops.hpp"
 
-// One spring between a and b: with d = a - b and q = spring.x / |d|, a moves by -(d - d*q) *
-// spring.y and b by +(d - d*q) * spring.z, on xyz. Both w lanes are kept.
 void StretchBind2(float *point_a, float *point_b, float *spring) {
     float d[3] = {point_a[0] - point_b[0], point_a[1] - point_b[1], point_a[2] - point_b[2]};
     float length_squared = d[0] * d[0];

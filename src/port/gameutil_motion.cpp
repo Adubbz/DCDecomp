@@ -15,10 +15,8 @@ namespace {
 // Retail's def_vrtx is file-static in gameutil.cpp, which only MotionProc2 touches.
 sceVu0FVECTOR g_deformed[3000];
 
-// One weighted vertex: the source taken into the bone's bind space by base (rotation in rows 0-2,
-// the uninverted translation in row 3), out through bone, and the difference from the source added
-// to the running deformed vertex by the weight on xyz. The deformed vertex keeps its w and goes back
-// into the skinned frame's space through inverse on all four lanes.
+// base carries the inverted bind rotation with the uninverted bind translation in row 3, which is
+// why the translation is subtracted before the transform and again after it.
 void SkinVertex(float *out, float *deformed, const float *source, const float base[4][4], const float bone[4][4],
                 const float inverse[4][4], float weight) {
     float local[4];

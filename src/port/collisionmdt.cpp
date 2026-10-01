@@ -35,8 +35,7 @@ void vu_hold_box(float *max, float *min) {
     vu0::Copy(g_held_min, min);
 }
 
-// The sticky zero and sign bits of held_max - min and max - held_min on xyz: any lane at or below
-// zero, touching included, is a miss. Returns those bits (0x40 zero, 0x80 sign) as retail does.
+// Retail answers with the sticky zero and sign flags, so boxes that only touch count as a miss.
 int vu_box_missed(float *max, float *min) {
     int status = 0;
     for (int i = 0; i < 3; i++) {

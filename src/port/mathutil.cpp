@@ -84,8 +84,7 @@ float DistVector(float *a, float *b) {
     return vu0::Sqrt(vu0::LengthSquared(d));
 }
 
-// Each row of right goes through left as a column vector: product = left * right in the
-// column-vector convention, product[i][j] = sum over k of right[i][k] * left[k][j].
+// product[i][j] = sum over k of right[i][k] * left[k][j]: right is applied first.
 void MulMatrix(sceVu0FMATRIX product, sceVu0FMATRIX left_matrix, sceVu0FMATRIX right_matrix) {
     float r[4][4];
     for (int i = 0; i < 4; i++) {

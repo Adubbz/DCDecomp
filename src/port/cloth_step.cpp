@@ -11,10 +11,6 @@
 
 namespace {
 
-// One vertex pulled after its frame. world_home is the rest position carried out by the frame's
-// matrix on all four lanes; the spring force is delta + (world_home - vertex) * stiffness per lane;
-// the vertex moves by (vertex + velocity) + force on xyz, the velocity becomes -force on xyz, and
-// both w lanes become 1.
 void Follow(float *vertex, float *velocity, float *world_home, const float *home, const float *delta,
             const float matrix[4][4], const float *stiffness) {
     float carried[4];

@@ -16,11 +16,9 @@ void StoreCorner(int *out, const float corner[4], std::int32_t w) {
 
 } // namespace
 
-// The point goes through view_screen and is divided by its w (x, y and z; w stays the clip w). The
-// two corners are that point -/+ the half size, scaled by the render scale and the same 1/w, in GS
-// 12.4 x and y and an integer z. The sprite is visible when both corners have x and y strictly
-// inside 0..4096 and w > 0, read off the sticky zero and sign flags. Without fog the corners' w is
-// the clip w's float bits; with fog it is max(min(fog_a + fog_b / w, fog_near), fog_far) truncated.
+// Visibility is retail's sticky zero and sign flags, so a corner exactly on 0 or 4096 hides the
+// sprite. Without fog, retail stores the clip w lane untouched by vftoi, so the corners' w is its
+// float bits. The fog clamp takes fog_near before fog_far, the reverse of MGRotTransPers2D.
 int MGRotTransPers3DSprite(int *top_left, int *bottom_right, float *position, float width, float height, int fog) {
     float half[2] = {0.5f * width * mgRenderInfo.scale[0], 0.5f * height * mgRenderInfo.scale[1]};
     float point[4];
@@ -64,9 +62,8 @@ int MGRotTransPers3DSprite(int *top_left, int *bottom_right, float *position, fl
     return (status & (vu0::kStickyZero | vu0::kStickySign)) == 0;
 }
 
-// The normal's dot with each light direction (light_direction holds them in its columns) is
-// clamped at zero on all four lanes, the four light colours are accumulated onto the ambient by
-// those intensities, and the sum is clamped at 255 on all four lanes, w included.
+// light_direction holds one light per column (sceVu0NormalLightMatrix's layout). The clamps run on
+// all four lanes, so the colour's w is clamped to 255 like the rest.
 void MGCalcColor(float *color, float *normal) {
     color[0] = 255.0f;
     float ceiling = color[0];
