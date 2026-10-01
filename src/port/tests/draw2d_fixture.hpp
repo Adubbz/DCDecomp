@@ -90,7 +90,7 @@ struct FakeGs {
 
 inline constexpr draw2d::Services kFakeServices = {
     [] { return FakeGs::Current()->state; },
-    [](u_long tex0, u_long) {
+    [](u_long tex0, u_long tex1) {
         PortTextureRef ref;
         auto           found = FakeGs::Current()->textures.find(static_cast<unsigned>(tex0 & 0x3FFF));
         if (found != FakeGs::Current()->textures.end()) {
@@ -99,8 +99,9 @@ inline constexpr draw2d::Services kFakeServices = {
             ref.width = found->second.width;
             ref.height = found->second.height;
             ref.valid = true;
+            return ref;
         }
-        return ref;
+        return PortTextureFromTex0(tex0, tex1);
     },
     [](const char *name) -> CTexture * {
         auto found = FakeGs::Current()->named.find(name);

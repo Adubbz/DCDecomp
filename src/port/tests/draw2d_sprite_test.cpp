@@ -8,6 +8,7 @@
 #include "rect.hpp"
 #include "snd.hpp"
 #include "spritetable.hpp"
+#include "texture_port.hpp"
 
 using namespace dc::test;
 
@@ -276,12 +277,16 @@ DC_TEST(draw2d_sprite_batch) {
 DC_TEST(draw2d_set_clut_reorders_csm1) {
     GfxFixture         fixture;
     FakeGs             gs;
-    gfx::TextureHandle texture = gfx::CreateTexture({2, 1, gfx::TextureFormat::Index8, 1, true});
-    gfx::TextureHandle palette = gfx::CreatePalette();
-    const uint8_t      indices[2] = {8, 16};
-    DC_CHECK(gfx::UpdateTexture(texture, 0, 0, 0, 2, 1, indices));
-    gs.textures[0x300] = {texture, palette, 2, 1};
-    CTexture *font = gs.Name("font", 0x300);
+    PortDecodedTexture decoded;
+    decoded.width = 2;
+    decoded.height = 1;
+    decoded.format = gfx::TextureFormat::Index8;
+    decoded.levels.push_back({8, 16});
+    unsigned palette_key = 0;
+    unsigned image_key = PortCreateTexture(decoded, PortTextureOwner::Other, &palette_key);
+    DC_CHECK(image_key != 0 && palette_key != 0);
+    CTexture font;
+    font.tex0 = SCE_GS_SET_TEX0(image_key, 1, SCE_GS_PSMT8, 1, 0, 1, 0, palette_key, 0, 0, 0, 0);
 
     u_int clut[256] = {};
     clut[16] = 0x800000FF;
@@ -289,12 +294,42 @@ DC_TEST(draw2d_set_clut_reorders_csm1) {
 
     fixture.Frame(kBlack, [&] {
         setbilinear(0);
-        SetClut(nullptr, font, reinterpret_cast<i *>(clut));
-        set2DSprite(nullptr, font, CRect_i_(0, 0, 100, 50), CRect_i_(0, 0, 2, 1));
+        SetClut(nullptr, &font, reinterpret_cast<i *>(clut));
+        set2DSprite(nullptr, &font, CRect_i_(0, 0, 100, 50), CRect_i_(0, 0, 2, 1));
         setbilinear(1);
     });
 
     // The GS reads index 8 from the 16th stored entry and index 16 from the 8th.
     DC_CHECK(fixture.PixelNear(25, 25, 255, 0, 0));
     DC_CHECK(fixture.PixelNear(75, 25, 0, 255, 0));
+    PortReleaseKey(image_key);
+    PortReleaseKey(palette_key);
+}
+
+DC_TEST(draw2d_sprite_from_registered_texture) {
+    GfxFixture         fixture;
+    FakeGs             gs;
+    PortDecodedTexture decoded;
+    decoded.width = 2;
+    decoded.height = 2;
+    decoded.levels.push_back({255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255});
+    unsigned key = PortCreateTexture(decoded, PortTextureOwner::Other, nullptr);
+    DC_CHECK(key != 0);
+    CTexture texture;
+    texture.tex0 = SCE_GS_SET_TEX0(key, 1, SCE_GS_PSMCT32, 1, 1, 1, 0, 0, 0, 0, 0, 0);
+
+    fixture.Frame(kBlack, [&] {
+        setbilinear(0);
+        set2DSprite(nullptr, &texture, CRect_i_(200, 100, 100, 80), 0, 0);
+        setbilinear(1);
+    });
+
+    // set2DSprite(screen, u, v) maps texels one to one from (u, v): only the 2x2 corner is texture,
+    // the rest clamps to its edges.
+    DC_CHECK(fixture.PixelNear(200, 100, 255, 0, 0));
+    DC_CHECK(fixture.PixelNear(201, 100, 0, 255, 0));
+    DC_CHECK(fixture.PixelNear(200, 101, 0, 0, 255));
+    DC_CHECK(fixture.PixelNear(250, 150, 255, 255, 255));
+    DC_CHECK(fixture.PixelNear(300, 150, 0, 0, 0));
+    PortReleaseKey(key);
 }

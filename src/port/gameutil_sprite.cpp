@@ -5,6 +5,7 @@
 #include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
+#include "texture_port.hpp"
 
 namespace {
 
@@ -59,24 +60,11 @@ void set2DSprite_End(sceVif1Packet *packet, CTexture *texture) {
     g_batch.clear();
 }
 
-// The CLUT goes up as a 16x16 PSMCT32 block that the GS reads in CSM1 order, which swaps bits 3
-// and 4 of the index; the palette is indexed by the texel value itself.
 void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
     if (texture == nullptr || clut == nullptr) {
         return;
     }
 
-    PortTextureRef ref = draw2d::Get().texture(texture->tex0, 0);
-    if (!ref.valid || ref.binding.palette == gfx::kNullTexture) {
-        return;
-    }
-
-    const u_int *uploaded = reinterpret_cast<const u_int *>(clut);
-    uint32_t     entries[256];
-    for (uint32_t index = 0; index < 256; index++) {
-        const uint32_t stored = ((index >> 3) ^ (index >> 4)) & 1 ? index ^ 0x18 : index;
-        entries[index] = uploaded[stored];
-    }
-    gfx::ConvertPs2Alpha(entries, 256);
-    gfx::UpdatePalette(ref.binding.palette, entries);
+    const sceGsTex0 tex0 = *reinterpret_cast<const sceGsTex0 *>(&texture->tex0);
+    PortLoadClut(static_cast<unsigned>(tex0.CBP), reinterpret_cast<const u_int *>(clut));
 }
