@@ -1,6 +1,7 @@
 #include <libvu0.h>
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -183,8 +184,11 @@ void sceVu0OuterProduct(sceVu0FVECTOR v0, sceVu0FVECTOR v1, sceVu0FVECTOR v2) {
     Load(v0, r);
 }
 
+// The unit's divide by zero gives its largest value rather than an infinity, so a zero vector
+// normalises to zero instead of NaN; CCloth::Step normalises every resting vertex's speed.
 void sceVu0Normalize(sceVu0FVECTOR v0, sceVu0FVECTOR v1) {
-    float scale = 1.0f / std::sqrt(sceVu0InnerProduct(v1, v1));
+    float length = std::sqrt(sceVu0InnerProduct(v1, v1));
+    float scale = length == 0.0f ? FLT_MAX : 1.0f / length;
     float r[4] = {v1[0] * scale, v1[1] * scale, v1[2] * scale, 0.0f};
     Load(v0, r);
 }
