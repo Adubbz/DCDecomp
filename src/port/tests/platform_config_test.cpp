@@ -6,6 +6,7 @@
 #include <string>
 
 #include "../platform/config.hpp"
+#include "../platform/paths.hpp"
 #include "test.hpp"
 
 DC_TEST(platform_config_defaults) {
