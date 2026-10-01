@@ -34,6 +34,7 @@ alignas(64) CSaveData g_save;
 CMemoryCardAccess g_mc;
 CMemoryCardAccess g_boot;
 char              g_icons[3][100];
+char              g_icon_names[3][16] = {"dkicon.ico", "dkicon_c.ico", "dkicon_d.ico"};
 
 fs::path UseTempSaveRoot() {
     fs::path root = fs::temp_directory_path() / ("dc_mc_test_" + std::to_string(getpid()));
@@ -80,9 +81,9 @@ void PrepareSave() {
 void PrepareAccess(CMemoryCardAccess &mc) {
     DC_CHECK(mc.InitForMC() == 0);
     MC_ICON_DATA icon = {
-        {"dkicon.ico",   g_icons[0], sizeof(g_icons[0])},
-        {"dkicon_c.ico", g_icons[1], sizeof(g_icons[1])},
-        {"dkicon_d.ico", g_icons[2], sizeof(g_icons[2])},
+        {g_icon_names[0], g_icons[0], sizeof(g_icons[0])},
+        {g_icon_names[1], g_icons[1], sizeof(g_icons[1])},
+        {g_icon_names[2], g_icons[2], sizeof(g_icons[2])},
     };
     for (int i = 0; i < 3; ++i) {
         std::memset(g_icons[i], 'a' + i, sizeof(g_icons[i]));
