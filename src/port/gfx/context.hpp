@@ -72,7 +72,8 @@ struct Image {
 // Between operations every colour image rests readable by fragment shaders and every depth image
 // rests as an attachment, so the upload and draw command buffers of a frame agree on layouts.
 ImageState RestState(const Image &image);
-Image      CreateImage(uint32_t width, uint32_t height, uint32_t mips, VkFormat format, VkImageUsageFlags usage);
+Image      CreateImage(uint32_t width, uint32_t height, uint32_t mips, VkFormat format,
+                       VkImageUsageFlags usage);
 void       DestroyImage(Image &image);
 void       Transition(VkCommandBuffer cmd, Image &image, const ImageState &to);
 void       ToRest(VkCommandBuffer cmd, Image &image);
@@ -138,6 +139,8 @@ struct Frame {
     std::vector<TransientChunk>        chunks;
     uint32_t                           chunk = 0;
     std::vector<std::function<void()>> deletions;
+    // The only buffer the GPU writes for the host; kept apart from the transients, which it reads.
+    Buffer depth_readback;
 };
 
 struct Swapchain {

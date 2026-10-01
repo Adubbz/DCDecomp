@@ -45,9 +45,10 @@ constexpr Equation kPassThrough = {VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK
 // dual-source output whenever it can compute it (source alpha, FIX), so those share one set of
 // pipelines; destination alpha is the attachment's. README.md tabulates the result.
 Equation Solve(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
-    bool                    dest = c == 1;
-    VkBlendFactor           f = dest ? VK_BLEND_FACTOR_DST_ALPHA : VK_BLEND_FACTOR_SRC1_ALPHA;
-    VkBlendFactor           f1 = dest ? VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA : VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA;
+    bool          dest = c == 1;
+    VkBlendFactor f = dest ? VK_BLEND_FACTOR_DST_ALPHA : VK_BLEND_FACTOR_SRC1_ALPHA;
+    VkBlendFactor f1 = dest ? VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA : VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA;
+
     constexpr VkBlendFactor kOne = VK_BLEND_FACTOR_ONE;
     constexpr VkBlendFactor kNone = VK_BLEND_FACTOR_ZERO;
     constexpr VkBlendOp     kAdd = VK_BLEND_OP_ADD;
@@ -146,7 +147,8 @@ void BuildBlendTable() {
                                             Equation{equation.src, equation.dst, equation.op, kSourceColor});
                     uint16_t slot = 0;
                     if (it == g_equations.end()) {
-                        g_equations.push_back(Equation{equation.src, equation.dst, equation.op, kSourceColor});
+                        g_equations.push_back(
+                            Equation{equation.src, equation.dst, equation.op, kSourceColor});
                         slot = static_cast<uint16_t>(g_equations.size() - 1);
                     } else {
                         slot = static_cast<uint16_t>(it - g_equations.begin());
@@ -207,7 +209,8 @@ void SaveCache(const std::filesystem::path &path) {
     temporary += ".tmp" + std::to_string(std::random_device{}());
     {
         std::ofstream file(temporary, std::ios::binary | std::ios::trunc);
-        if (!file || !file.write(reinterpret_cast<const char *>(data.data()), static_cast<std::streamsize>(size))) {
+        if (!file ||
+            !file.write(reinterpret_cast<const char *>(data.data()), static_cast<std::streamsize>(size))) {
             Error("cannot write the pipeline cache to %s", temporary.c_str());
             return;
         }
@@ -254,10 +257,11 @@ void CreatePipelineLayout() {
     texture_bindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     texture_bindings[1].pImmutableSamplers = g.samplers;
 
-    VkDescriptorBindingFlags                    binding_flags[2] = {VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT |
-                                                                        VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT |
-                                                                        VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT,
-                                                                    0};
+    VkDescriptorBindingFlags bindless = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT |
+                                        VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT |
+                                        VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT;
+    VkDescriptorBindingFlags binding_flags[2] = {bindless, 0};
+
     VkDescriptorSetLayoutBindingFlagsCreateInfo flags_info = {};
     flags_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
     flags_info.bindingCount = 2;
@@ -294,7 +298,8 @@ void CreatePipelineLayout() {
     texture_pool.maxSets = 1;
     texture_pool.poolSizeCount = 2;
     texture_pool.pPoolSizes = texture_sizes;
-    Check(vkCreateDescriptorPool(g.device, &texture_pool, nullptr, &g.texture_pool), "vkCreateDescriptorPool");
+    Check(vkCreateDescriptorPool(g.device, &texture_pool, nullptr, &g.texture_pool),
+          "vkCreateDescriptorPool");
 
     VkDescriptorSetAllocateInfo allocate = {};
     allocate.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -311,10 +316,12 @@ void CreatePipelineLayout() {
     constants_pool.maxSets = kConstantSets;
     constants_pool.poolSizeCount = 1;
     constants_pool.pPoolSizes = &constants_size;
-    Check(vkCreateDescriptorPool(g.device, &constants_pool, nullptr, &g.constants_pool), "vkCreateDescriptorPool");
+    Check(vkCreateDescriptorPool(g.device, &constants_pool, nullptr, &g.constants_pool),
+          "vkCreateDescriptorPool");
 
     VkDescriptorSetLayout      layouts[2] = {g.texture_set_layout, g.constants_set_layout};
-    VkPushConstantRange        push = {VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants)};
+    VkPushConstantRange        push = {VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+                                       sizeof(PushConstants)};
     VkPipelineLayoutCreateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     info.setLayoutCount = 2;
@@ -440,8 +447,8 @@ void CreatePipelines() {
         attachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         attachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
         attachment.alphaBlendOp = VK_BLEND_OP_ADD;
-        attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
-                                    VK_COLOR_COMPONENT_A_BIT;
+        attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+                                    VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
         blends[i] = {};
         blends[i].sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
         blends[i].attachmentCount = 1;
@@ -466,15 +473,17 @@ void CreatePipelines() {
         }
     }
 
-    uint32_t                                     total = kFamilyCount * g.blend_slot_count * kTextureModeCount * 2;
+    uint32_t total = kFamilyCount * g.blend_slot_count * kTextureModeCount * 2;
+
     std::vector<VkPipelineShaderStageCreateInfo> stages(total * 2);
     std::vector<VkGraphicsPipelineCreateInfo>    infos(total);
     for (uint32_t family = 0; family < kFamilyCount; family++) {
         for (uint32_t blend = 0; blend < g.blend_slot_count; blend++) {
             for (uint32_t mode = 0; mode < kTextureModeCount; mode++) {
                 for (uint32_t test = 0; test < 2; test++) {
-                    uint32_t                         index = PipelineIndex(static_cast<PipelineFamily>(family), blend,
-                                                                           static_cast<TextureMode>(mode), test != 0);
+                    uint32_t index = PipelineIndex(static_cast<PipelineFamily>(family), blend,
+                                                   static_cast<TextureMode>(mode), test != 0);
+
                     VkPipelineShaderStageCreateInfo *stage = &stages[index * 2];
                     stage[0] = {};
                     stage[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -520,8 +529,8 @@ void CreatePipelines() {
         for (uint32_t i = 0; i < workers; i++) {
             threads.emplace_back([&]() {
                 for (uint32_t index = next++; index < total; index = next++) {
-                    VkResult result = vkCreateGraphicsPipelines(g.device, g.pipeline_cache, 1, &infos[index], nullptr,
-                                                                &g.pipelines[index]);
+                    VkResult result = vkCreateGraphicsPipelines(g.device, g.pipeline_cache, 1, &infos[index],
+                                                                nullptr, &g.pipelines[index]);
                     if (result != VK_SUCCESS) {
                         failure = result;
                     }
@@ -569,12 +578,8 @@ void DestroyPipelines() {
 
 } // namespace detail
 
-uint32_t PipelineCount() {
-    return static_cast<uint32_t>(detail::g.pipelines.size());
-}
+uint32_t PipelineCount() { return static_cast<uint32_t>(detail::g.pipelines.size()); }
 
-double PipelineCompileSeconds() {
-    return detail::g.pipeline_seconds;
-}
+double PipelineCompileSeconds() { return detail::g.pipeline_seconds; }
 
 } // namespace gfx

@@ -14,7 +14,8 @@ namespace {
 
 // A query reads at most this many pixels on a side; at high resolutions a small logical rect
 // still covers hundreds of pixels and the farthest of them is as good as the farthest of all.
-constexpr uint32_t kMaxQuerySide = 64;
+constexpr uint32_t     kMaxQuerySide = 64;
+constexpr VkDeviceSize kQueryBytes = kMaxQuerySide * kMaxQuerySide * sizeof(float);
 
 void HostBarrier(VkCommandBuffer cmd) {
     VkMemoryBarrier2 barrier = {};
@@ -38,7 +39,8 @@ bool ReadImage(Image &image, uint32_t texel_size, std::vector<uint8_t> &pixels) 
         VkBufferImageCopy region = {};
         region.imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
         region.imageExtent = {image.width, image.height, 1};
-        vkCmdCopyImageToBuffer(cmd, image.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer.buffer, 1, &region);
+        vkCmdCopyImageToBuffer(cmd, image.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer.buffer, 1,
+                               &region);
         HostBarrier(cmd);
         ToRest(cmd, image);
     });
@@ -112,18 +114,23 @@ void RecordDepthQueries(VkCommandBuffer cmd) {
         x = std::clamp(x, 0, static_cast<int32_t>(depth.width - width));
         y = std::clamp(y, 0, static_cast<int32_t>(depth.height - height));
 
-        TransientSpan span = AllocateTransient(static_cast<VkDeviceSize>(width) * height * sizeof(float), 16);
+        Buffer &buffer = CurrentFrame().depth_readback;
+        if (buffer.buffer == VK_NULL_HANDLE) {
+            buffer = CreateBuffer(kDepthQueryCount * kQueryBytes, VK_BUFFER_USAGE_TRANSFER_DST_BIT, true);
+        }
+        VkDeviceSize offset = static_cast<VkDeviceSize>(&query - g.depth_queries.data()) * kQueryBytes;
         if (!transition) {
             Transition(cmd, depth, TransferSrc());
             transition = true;
         }
         VkBufferImageCopy region = {};
-        region.bufferOffset = span.offset;
+        region.bufferOffset = offset;
         region.imageSubresource = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 0, 1};
         region.imageOffset = {x, y, 0};
         region.imageExtent = {width, height, 1};
-        vkCmdCopyImageToBuffer(cmd, depth.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, span.buffer, 1, &region);
-        query.data = span.data;
+        vkCmdCopyImageToBuffer(cmd, depth.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer.buffer, 1,
+                               &region);
+        query.data = buffer.memory.mapped + offset;
         query.texels = width * height;
         query.recorded = true;
     }
@@ -249,7 +256,8 @@ bool WritePng(const std::filesystem::path &path, const uint8_t *rgba, uint32_t w
         std::filesystem::create_directories(path.parent_path(), error);
     }
     std::ofstream file(path, std::ios::binary | std::ios::trunc);
-    return file && file.write(reinterpret_cast<const char *>(png.data()), static_cast<std::streamsize>(png.size()));
+    return file &&
+           file.write(reinterpret_cast<const char *>(png.data()), static_cast<std::streamsize>(png.size()));
 }
 
 } // namespace gfx

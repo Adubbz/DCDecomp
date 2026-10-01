@@ -52,7 +52,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBits
                                              const VkDebugUtilsMessengerCallbackDataEXT *data, void *) {
     std::fprintf(stderr, "Vulkan validation: %s\n", data->pMessage);
     // General messages are the loader's (layer/driver version notes), not misuse of the API.
-    if (types & (VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT)) {
+    if (types &
+        (VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT)) {
         g.validation_messages++;
     }
     return VK_FALSE;
@@ -103,8 +104,10 @@ void CreateInstance() {
 
     VkDebugUtilsMessengerCreateInfoEXT messenger = {};
     messenger.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    messenger.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    messenger.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+    messenger.messageSeverity =
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    messenger.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
                             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     messenger.pfnUserCallback = DebugCallback;
 
@@ -146,8 +149,9 @@ bool HasExtension(VkPhysicalDevice device, const char *name) {
     vkEnumerateDeviceExtensionProperties(device, nullptr, &count, nullptr);
     std::vector<VkExtensionProperties> extensions(count);
     vkEnumerateDeviceExtensionProperties(device, nullptr, &count, extensions.data());
-    return std::any_of(extensions.begin(), extensions.end(),
-                       [name](const VkExtensionProperties &extension) { return std::strcmp(extension.extensionName, name) == 0; });
+    return std::any_of(extensions.begin(), extensions.end(), [name](const VkExtensionProperties &extension) {
+        return std::strcmp(extension.extensionName, name) == 0;
+    });
 }
 
 const char *MissingFeature(VkPhysicalDevice device) {
@@ -180,7 +184,8 @@ const char *MissingFeature(VkPhysicalDevice device) {
         properties12.maxDescriptorSetUpdateAfterBindSampledImages < kMaxTextures) {
         return "room for the bindless texture array";
     }
-    if (!features12.descriptorBindingPartiallyBound || !features12.descriptorBindingSampledImageUpdateAfterBind ||
+    if (!features12.descriptorBindingPartiallyBound ||
+        !features12.descriptorBindingSampledImageUpdateAfterBind ||
         !features12.descriptorBindingUpdateUnusedWhilePending) {
         return "descriptor indexing";
     }
@@ -201,8 +206,8 @@ void PickPhysicalDevice() {
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(device, &properties);
         uint32_t family;
-        if (properties.apiVersion < VK_API_VERSION_1_4 || !HasExtension(device, VK_KHR_SWAPCHAIN_EXTENSION_NAME) ||
-            !FindQueueFamily(device, &family)) {
+        if (properties.apiVersion < VK_API_VERSION_1_4 ||
+            !HasExtension(device, VK_KHR_SWAPCHAIN_EXTENSION_NAME) || !FindQueueFamily(device, &family)) {
             continue;
         }
         if (const char *missing = MissingFeature(device)) {
@@ -222,7 +227,8 @@ void PickPhysicalDevice() {
         }
     }
     if (best < 0) {
-        Fatal("no GPU supports Vulkan 1.4 with the features the renderer needs and can present to the window");
+        Fatal(
+            "no GPU supports Vulkan 1.4 with the features the renderer needs and can present to the window");
     }
 
     vkGetPhysicalDeviceProperties(g.physical_device, &g.properties);
@@ -320,10 +326,10 @@ bool CreateSwapchain() {
         int width = 0;
         int height = 0;
         SDL_GetWindowSizeInPixels(g.window, &width, &height);
-        extent.width = std::clamp(static_cast<uint32_t>(std::max(width, 0)), capabilities.minImageExtent.width,
-                                  capabilities.maxImageExtent.width);
-        extent.height = std::clamp(static_cast<uint32_t>(std::max(height, 0)), capabilities.minImageExtent.height,
-                                   capabilities.maxImageExtent.height);
+        extent.width = std::clamp(static_cast<uint32_t>(std::max(width, 0)),
+                                  capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        extent.height = std::clamp(static_cast<uint32_t>(std::max(height, 0)),
+                                   capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
     }
     if (extent.width == 0 || extent.height == 0) {
         return false;
@@ -367,7 +373,8 @@ bool CreateSwapchain() {
     for (uint32_t i = 0; i < count; i++) {
         VkSemaphoreCreateInfo semaphore = {};
         semaphore.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-        Check(vkCreateSemaphore(g.device, &semaphore, nullptr, &g.swapchain.render_finished[i]), "vkCreateSemaphore");
+        Check(vkCreateSemaphore(g.device, &semaphore, nullptr, &g.swapchain.render_finished[i]),
+              "vkCreateSemaphore");
     }
     return true;
 }
@@ -489,8 +496,8 @@ void BeginCommands(VkCommandBuffer cmd) {
 }
 
 void SwapchainBarrier(VkCommandBuffer cmd, VkImage image, VkImageLayout from, VkImageLayout to,
-                      VkPipelineStageFlags2 src_stage, VkAccessFlags2 src_access, VkPipelineStageFlags2 dst_stage,
-                      VkAccessFlags2 dst_access) {
+                      VkPipelineStageFlags2 src_stage, VkAccessFlags2 src_access,
+                      VkPipelineStageFlags2 dst_stage, VkAccessFlags2 dst_access) {
     VkImageMemoryBarrier2 barrier = {};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
     barrier.srcStageMask = src_stage;
@@ -514,9 +521,7 @@ void SwapchainBarrier(VkCommandBuffer cmd, VkImage image, VkImageLayout from, Vk
 
 } // namespace
 
-Frame &CurrentFrame() {
-    return g.frames[g.frame_slot];
-}
+Frame &CurrentFrame() { return g.frames[g.frame_slot]; }
 
 VkCommandBuffer UploadCommands() {
     Frame &frame = CurrentFrame();
@@ -527,13 +532,9 @@ VkCommandBuffer UploadCommands() {
     return frame.upload_cmd;
 }
 
-VkCommandBuffer DrawCommands() {
-    return CurrentFrame().draw_cmd;
-}
+VkCommandBuffer DrawCommands() { return CurrentFrame().draw_cmd; }
 
-void DeferDestroy(std::function<void()> destroy) {
-    CurrentFrame().deletions.push_back(std::move(destroy));
-}
+void DeferDestroy(std::function<void()> destroy) { CurrentFrame().deletions.push_back(std::move(destroy)); }
 
 void SubmitUploadsAndWait() {
     if (g.in_frame || !CurrentFrame().upload_open) {
@@ -573,13 +574,9 @@ void RunOneShot(const std::function<void(VkCommandBuffer)> &record) {
     vkFreeCommandBuffers(g.device, g_oneshot_pool, 1, &cmd);
 }
 
-Image &CurrentMainColor() {
-    return g.main_color[g.main_current];
-}
+Image &CurrentMainColor() { return g.main_color[g.main_current]; }
 
-Image &PreviousMainColor() {
-    return g.main_color[g.main_current ^ 1];
-}
+Image &PreviousMainColor() { return g.main_color[g.main_current ^ 1]; }
 
 void CreateMainTargets() {
     uint32_t width = g.swapchain.extent.width;
@@ -606,7 +603,8 @@ void CreateMainTargets() {
         VkImageSubresourceRange  depth_range = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
         VkClearDepthStencilValue far = {0.0f, 0};
         Transition(cmd, g.main_depth, TransferDst());
-        vkCmdClearDepthStencilImage(cmd, g.main_depth.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &far, 1, &depth_range);
+        vkCmdClearDepthStencilImage(cmd, g.main_depth.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &far, 1,
+                                    &depth_range);
         ToRest(cmd, g.main_depth);
     });
 
@@ -654,13 +652,15 @@ void RendererInit(SDL_Window *window, const RendererConfig &config) {
         int width = 0;
         int height = 0;
         SDL_GetWindowSizeInPixels(window, &width, &height);
-        g.swapchain.extent = {static_cast<uint32_t>(std::max(width, 1)), static_cast<uint32_t>(std::max(height, 1))};
+        g.swapchain.extent = {static_cast<uint32_t>(std::max(width, 1)),
+                              static_cast<uint32_t>(std::max(height, 1))};
         g.resize_pending = true;
     }
     CreateMainTargets();
-    g.render_scale = config.render_scale > 0.0f
-                         ? config.render_scale
-                         : std::max(1.0f, std::round(static_cast<float>(g.swapchain.extent.height) / kLogicalHeight));
+    g.render_scale =
+        config.render_scale > 0.0f
+            ? config.render_scale
+            : std::max(1.0f, std::round(static_cast<float>(g.swapchain.extent.height) / kLogicalHeight));
     CreatePipelines();
 }
 
@@ -669,11 +669,14 @@ void RendererShutdown() {
         return;
     }
     vkDeviceWaitIdle(g.device);
+    for (Frame &frame : g.frames) {
+        RunDeletions(frame);
+    }
     DestroyPipelines();
     ShutdownResources();
     for (Frame &frame : g.frames) {
-        RunDeletions(frame);
         DestroyTransients(frame);
+        DestroyBuffer(frame.depth_readback);
         vkDestroyFence(g.device, frame.fence, nullptr);
         vkDestroySemaphore(g.device, frame.image_available, nullptr);
         vkDestroyCommandPool(g.device, frame.pool, nullptr);
@@ -707,9 +710,7 @@ void RendererShutdown() {
     g.validation_messages = messages;
 }
 
-void RendererResize() {
-    g.resize_pending = true;
-}
+void RendererResize() { g.resize_pending = true; }
 
 bool BeginFrame() {
     if (g.in_frame) {
@@ -721,16 +722,16 @@ bool BeginFrame() {
         return false;
     }
 
-    Frame   &frame = CurrentFrame();
-    VkResult result = vkAcquireNextImageKHR(g.device, g.swapchain.handle, UINT64_MAX, frame.image_available,
-                                            VK_NULL_HANDLE, &g.image_index);
+    VkResult result = vkAcquireNextImageKHR(g.device, g.swapchain.handle, UINT64_MAX,
+                                            CurrentFrame().image_available, VK_NULL_HANDLE, &g.image_index);
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        // Recreating may submit pending uploads and move to the next slot.
         if (!RecreateSwapchain()) {
             SubmitUploadsAndWait();
             return false;
         }
-        result = vkAcquireNextImageKHR(g.device, g.swapchain.handle, UINT64_MAX, frame.image_available, VK_NULL_HANDLE,
-                                       &g.image_index);
+        result = vkAcquireNextImageKHR(g.device, g.swapchain.handle, UINT64_MAX,
+                                       CurrentFrame().image_available, VK_NULL_HANDLE, &g.image_index);
     }
     if (result == VK_SUBOPTIMAL_KHR) {
         g.resize_pending = true;
@@ -740,7 +741,7 @@ bool BeginFrame() {
         return false;
     }
 
-    BeginCommands(frame.draw_cmd);
+    BeginCommands(CurrentFrame().draw_cmd);
     g.in_frame = true;
     g.frame_serial++;
     g.target = kMainTarget;
@@ -764,18 +765,19 @@ void EndFrame() {
     Transition(cmd, main, TransferSrc());
     // Chained to the acquire semaphore, which the submit waits on at the transfer stage.
     SwapchainBarrier(cmd, swapchain, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                     VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_NONE, VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
-                     VK_ACCESS_2_TRANSFER_WRITE_BIT);
+                     VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_NONE,
+                     VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT);
     VkImageBlit region = {};
     region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
     region.srcOffsets[1] = {static_cast<int32_t>(main.width), static_cast<int32_t>(main.height), 1};
     region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-    region.dstOffsets[1] = {static_cast<int32_t>(g.swapchain.extent.width), static_cast<int32_t>(g.swapchain.extent.height), 1};
-    vkCmdBlitImage(cmd, main.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchain, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                   1, &region, VK_FILTER_NEAREST);
+    region.dstOffsets[1] = {static_cast<int32_t>(g.swapchain.extent.width),
+                            static_cast<int32_t>(g.swapchain.extent.height), 1};
+    vkCmdBlitImage(cmd, main.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchain,
+                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
     SwapchainBarrier(cmd, swapchain, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                     VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_2_NONE,
-                     VK_ACCESS_2_NONE);
+                     VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
+                     VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT, VK_ACCESS_2_NONE);
     ToRest(cmd, main);
     Check(vkEndCommandBuffer(cmd), "vkEndCommandBuffer");
 
@@ -805,17 +807,11 @@ void EndFrame() {
     AdvanceSlot();
 }
 
-bool InFrame() {
-    return g.in_frame;
-}
+bool InFrame() { return g.in_frame; }
 
-uint32_t ValidationMessageCount() {
-    return g.validation_messages;
-}
+uint32_t ValidationMessageCount() { return g.validation_messages; }
 
-float RenderScale() {
-    return g.render_scale;
-}
+float RenderScale() { return g.render_scale; }
 
 void SetRenderScale(float scale) {
     if (scale <= 0.0f || scale == g.render_scale || g.in_frame) {

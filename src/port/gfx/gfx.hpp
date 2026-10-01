@@ -103,9 +103,10 @@ TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height
 void          DestroyTexture(TextureHandle texture);
 // Pixels are tightly packed rows of row_length texels (0: w), RGBA8 as bytes r,g,b,a, or one
 // index byte. Alpha is in the renderer's units: 0xFF is GS 0x80; ConvertPs2Alpha converts.
-bool                       UpdateTexture(TextureHandle texture, uint32_t mip, uint32_t x, uint32_t y, uint32_t w, uint32_t h,
-                                         const void *pixels, uint32_t row_length = 0);
-bool                       UpdatePalette(TextureHandle palette, const uint32_t *rgba, uint32_t first = 0, uint32_t count = 256);
+bool UpdateTexture(TextureHandle texture, uint32_t mip, uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+                   const void *pixels, uint32_t row_length = 0);
+bool UpdatePalette(TextureHandle palette, const uint32_t *rgba, uint32_t first = 0, uint32_t count = 256);
+
 std::optional<TextureInfo> GetTextureInfo(TextureHandle texture);
 // GS alpha (0x80 opaque, up to 0xFF) to the renderer's (0xFF opaque), saturating.
 void ConvertPs2Alpha(uint32_t *rgba, size_t count);
@@ -295,7 +296,8 @@ void           SetRenderTarget(TextureHandle target);
 TextureHandle  CurrentRenderTarget();
 LogicalMapping GetLogicalMapping(TextureHandle target);
 // Clears the current target within rect (logical; null: all of it). color is GS bytes.
-void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float depth, const LogicalRect *rect = nullptr);
+void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float depth,
+           const LogicalRect *rect = nullptr);
 bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t dst_x, int32_t dst_y);
 bool BlitTexture(TextureHandle src, Rect src_rect, TextureHandle dst, Rect dst_rect, Filter filter);
 // The main target's logical 640x480, as drawn so far this frame, stretched over all of dst.

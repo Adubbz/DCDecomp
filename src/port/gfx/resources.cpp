@@ -11,9 +11,10 @@ namespace detail {
 
 namespace {
 
-constexpr VkAccessFlags2 kWriteAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT | VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT |
-                                        VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_2_SHADER_WRITE_BIT |
-                                        VK_ACCESS_2_HOST_WRITE_BIT | VK_ACCESS_2_MEMORY_WRITE_BIT;
+constexpr VkAccessFlags2 kWriteAccess =
+    VK_ACCESS_2_TRANSFER_WRITE_BIT | VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT |
+    VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_2_SHADER_WRITE_BIT |
+    VK_ACCESS_2_HOST_WRITE_BIT | VK_ACCESS_2_MEMORY_WRITE_BIT;
 
 constexpr uint32_t kSlotBits = 16;
 constexpr uint32_t kSlotMask = (1u << kSlotBits) - 1;
@@ -22,13 +23,9 @@ uint32_t MakeHandle(uint16_t generation, uint32_t slot) {
     return (static_cast<uint32_t>(generation) << kSlotBits) | slot;
 }
 
-uint16_t NextGeneration(uint16_t generation) {
-    return generation == 0xFFFF ? 1 : generation + 1;
-}
+uint16_t NextGeneration(uint16_t generation) { return generation == 0xFFFF ? 1 : generation + 1; }
 
-uint32_t TexelSize(TextureFormat format) {
-    return format == TextureFormat::Index8 ? 1 : 4;
-}
+uint32_t TexelSize(TextureFormat format) { return format == TextureFormat::Index8 ? 1 : 4; }
 
 VkFormat VulkanFormat(TextureFormat format) {
     return format == TextureFormat::Index8 ? VK_FORMAT_R8_UNORM : kColorFormat;
@@ -107,16 +104,18 @@ void UploadToBuffer(Mesh &mesh, VkDeviceSize offset, const void *data, VkDeviceS
     TransientSpan staging = AllocateTransient(size, 16);
     std::memcpy(staging.data, data, size);
     VkCommandBuffer cmd = CommandsForWrite(mesh.last_draw_use);
-    MemoryBarrier(cmd, kVertexInput, kVertexRead, VK_PIPELINE_STAGE_2_COPY_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT);
+    MemoryBarrier(cmd, kVertexInput, kVertexRead, VK_PIPELINE_STAGE_2_COPY_BIT,
+                  VK_ACCESS_2_TRANSFER_WRITE_BIT);
     VkBufferCopy region = {staging.offset, offset, size};
     vkCmdCopyBuffer(cmd, staging.buffer, mesh.buffer.buffer, 1, &region);
-    MemoryBarrier(cmd, VK_PIPELINE_STAGE_2_COPY_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, kVertexInput, kVertexRead);
+    MemoryBarrier(cmd, VK_PIPELINE_STAGE_2_COPY_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT, kVertexInput,
+                  kVertexRead);
 }
 
 Image CreateTargetImage(uint32_t width, uint32_t height) {
     return CreateImage(width, height, 1, kColorFormat,
-                       VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
-                           VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+                       VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+                           VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
 }
 
 Image CreateTargetDepth(uint32_t width, uint32_t height) {
@@ -135,18 +134,21 @@ ImageState RestState(const Image &image) {
     if (image.aspect & VK_IMAGE_ASPECT_DEPTH_BIT) {
         return {VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
                 VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT,
-                VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT};
+                VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+                    VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT};
     }
     return {VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
             VK_ACCESS_2_SHADER_SAMPLED_READ_BIT};
 }
 
 ImageState TransferSrc() {
-    return {VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_READ_BIT};
+    return {VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
+            VK_ACCESS_2_TRANSFER_READ_BIT};
 }
 
 ImageState TransferDst() {
-    return {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT};
+    return {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
+            VK_ACCESS_2_TRANSFER_WRITE_BIT};
 }
 
 Image CreateImage(uint32_t width, uint32_t height, uint32_t mips, VkFormat format, VkImageUsageFlags usage) {
@@ -174,7 +176,8 @@ Image CreateImage(uint32_t width, uint32_t height, uint32_t mips, VkFormat forma
     VkMemoryRequirements requirements;
     vkGetImageMemoryRequirements(g.device, image.image, &requirements);
     image.memory = AllocateMemory(requirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, false);
-    Check(vkBindImageMemory(g.device, image.image, image.memory.memory, image.memory.offset), "vkBindImageMemory");
+    Check(vkBindImageMemory(g.device, image.image, image.memory.memory, image.memory.offset),
+          "vkBindImageMemory");
 
     VkImageViewCreateInfo view = {};
     view.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -224,9 +227,7 @@ void Transition(VkCommandBuffer cmd, Image &image, const ImageState &to) {
     image.state = to;
 }
 
-void ToRest(VkCommandBuffer cmd, Image &image) {
-    Transition(cmd, image, RestState(image));
-}
+void ToRest(VkCommandBuffer cmd, Image &image) { Transition(cmd, image, RestState(image)); }
 
 VkCommandBuffer CommandsForWrite(uint64_t &last_draw_use) {
     if (g.in_frame && last_draw_use == g.frame_serial) {
@@ -246,11 +247,13 @@ void InitResources() {
 
     // Slot 0 backs every draw without a texture so no descriptor the shaders can reach is unset.
     Texture &null = g.textures[0];
-    null.image = CreateImage(1, 1, 1, kColorFormat, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    null.image =
+        CreateImage(1, 1, 1, kColorFormat, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     null.desc.width = 1;
     null.desc.height = 1;
-    ClearImage(UploadCommands(), null.image, VkClearColorValue{
-                                                 {1.0f, 1.0f, 1.0f, 1.0f}
+    ClearImage(UploadCommands(), null.image,
+               VkClearColorValue{
+                   {1.0f, 1.0f, 1.0f, 1.0f}
     });
     WriteTextureDescriptor(0, null.image.view);
 }
@@ -303,7 +306,8 @@ Image *ColorImageOf(TextureHandle handle) {
 }
 
 uint32_t SamplerIndex(Filter filter, Wrap wrap_u, Wrap wrap_v) {
-    return static_cast<uint32_t>(filter) * 4 + static_cast<uint32_t>(wrap_u) * 2 + static_cast<uint32_t>(wrap_v);
+    return static_cast<uint32_t>(filter) * 4 + static_cast<uint32_t>(wrap_u) * 2 +
+           static_cast<uint32_t>(wrap_v);
 }
 
 void RecreateRenderTargets() {
@@ -326,7 +330,8 @@ void RecreateRenderTargets() {
             Transition(cmd, image, TransferDst());
             VkImageBlit region = {};
             region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-            region.srcOffsets[1] = {static_cast<int32_t>(texture.image.width), static_cast<int32_t>(texture.image.height), 1};
+            region.srcOffsets[1] = {static_cast<int32_t>(texture.image.width),
+                                    static_cast<int32_t>(texture.image.height), 1};
             region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
             region.dstOffsets[1] = {static_cast<int32_t>(width), static_cast<int32_t>(height), 1};
             vkCmdBlitImage(cmd, texture.image.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image.image,
@@ -380,9 +385,7 @@ TextureHandle CreateTexture(const TextureDesc &desc) {
     return MakeHandle(texture.generation, slot);
 }
 
-TextureHandle CreatePalette() {
-    return CreateTexture(TextureDesc{256, 1, TextureFormat::Rgba8, 1, true});
-}
+TextureHandle CreatePalette() { return CreateTexture(TextureDesc{256, 1, TextureFormat::Rgba8, 1, true}); }
 
 TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha) {
     uint32_t width = ScaledSize(logical_width, g.render_scale);
@@ -406,8 +409,9 @@ TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height
     texture.image = CreateTargetImage(width, height);
     texture.depth = CreateTargetDepth(width, height);
     VkCommandBuffer cmd = UploadCommands();
-    ClearImage(cmd, texture.image, VkClearColorValue{
-                                       {0.0f, 0.0f, 0.0f, 1.0f}
+    ClearImage(cmd, texture.image,
+               VkClearColorValue{
+                   {0.0f, 0.0f, 0.0f, 1.0f}
     });
     ClearDepth(cmd, texture.depth);
     WriteTextureDescriptor(slot, texture.image.view);
@@ -447,7 +451,8 @@ bool UpdateTexture(TextureHandle handle, uint32_t mip, uint32_t x, uint32_t y, u
     uint32_t mip_width = std::max(1u, image.width >> mip);
     uint32_t mip_height = std::max(1u, image.height >> mip);
     if (mip >= image.mips || w == 0 || h == 0 || x + w > mip_width || y + h > mip_height) {
-        Error("UpdateTexture: %ux%u at %u,%u is outside mip %u of %ux%u", w, h, x, y, mip, mip_width, mip_height);
+        Error("UpdateTexture: %ux%u at %u,%u is outside mip %u of %ux%u", w, h, x, y, mip, mip_width,
+              mip_height);
         return false;
     }
     uint32_t texel = TexelSize(texture->desc.format);
@@ -456,7 +461,8 @@ bool UpdateTexture(TextureHandle handle, uint32_t mip, uint32_t x, uint32_t y, u
 
     TransientSpan staging = AllocateTransient(static_cast<VkDeviceSize>(row) * h, 16);
     for (uint32_t i = 0; i < h; i++) {
-        std::memcpy(staging.data + static_cast<size_t>(i) * row, static_cast<const uint8_t *>(pixels) + static_cast<size_t>(i) * stride, row);
+        std::memcpy(staging.data + static_cast<size_t>(i) * row,
+                    static_cast<const uint8_t *>(pixels) + static_cast<size_t>(i) * stride, row);
     }
 
     VkCommandBuffer cmd = CommandsForWrite(texture->last_draw_use);
@@ -466,7 +472,8 @@ bool UpdateTexture(TextureHandle handle, uint32_t mip, uint32_t x, uint32_t y, u
     region.imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, mip, 0, 1};
     region.imageOffset = {static_cast<int32_t>(x), static_cast<int32_t>(y), 0};
     region.imageExtent = {w, h, 1};
-    vkCmdCopyBufferToImage(cmd, staging.buffer, image.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+    vkCmdCopyBufferToImage(cmd, staging.buffer, image.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
+                           &region);
     ToRest(cmd, image);
     return true;
 }
@@ -482,15 +489,22 @@ bool UpdatePalette(TextureHandle palette, const uint32_t *rgba, uint32_t first, 
 std::optional<TextureInfo> GetTextureInfo(TextureHandle handle) {
     if (handle == kMainTarget || handle == kPreviousFrame) {
         const Image &image = *ColorImageOf(handle);
-        return TextureInfo{static_cast<uint32_t>(kLogicalWidth), static_cast<uint32_t>(kLogicalHeight), image.width,
-                           image.height, TextureFormat::Rgba8, 1, true, true};
+        return TextureInfo{static_cast<uint32_t>(kLogicalWidth),
+                           static_cast<uint32_t>(kLogicalHeight),
+                           image.width,
+                           image.height,
+                           TextureFormat::Rgba8,
+                           1,
+                           true,
+                           true};
     }
     Texture *texture = LookupTexture(handle);
     if (texture == nullptr) {
         return std::nullopt;
     }
-    return TextureInfo{texture->logical_width, texture->logical_height, texture->image.width, texture->image.height,
-                       texture->desc.format, texture->desc.mip_levels, texture->desc.has_alpha, texture->render_target};
+    return TextureInfo{texture->logical_width, texture->logical_height, texture->image.width,
+                       texture->image.height, texture->desc.format, texture->desc.mip_levels,
+                       texture->desc.has_alpha, texture->render_target};
 }
 
 void ConvertPs2Alpha(uint32_t *rgba, size_t count) {

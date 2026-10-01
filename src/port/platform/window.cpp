@@ -42,9 +42,7 @@ void WindowShutdown() {
     SDL_Quit();
 }
 
-SDL_Window *WindowHandle() {
-    return g_window;
-}
+SDL_Window *WindowHandle() { return g_window; }
 
 bool WindowPollEvents() {
     bool      running = true;
@@ -68,6 +66,4 @@ bool WindowPollEvents() {
     return running;
 }
 
-void WindowAddEventHook(void (*hook)(const SDL_Event &event)) {
-    g_hooks.push_back(hook);
-}
+void WindowAddEventHook(void (*hook)(const SDL_Event &event)) { g_hooks.push_back(hook); }

@@ -187,13 +187,14 @@ Buffer CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, bool host_visib
     VkMemoryRequirements requirements;
     vkGetBufferMemoryRequirements(g.device, buffer.buffer, &requirements);
     if (host_visible) {
-        buffer.memory = AllocateMemory(requirements,
-                                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                                       VK_MEMORY_PROPERTY_HOST_CACHED_BIT, true);
+        buffer.memory = AllocateMemory(
+            requirements, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            VK_MEMORY_PROPERTY_HOST_CACHED_BIT, true);
     } else {
         buffer.memory = AllocateMemory(requirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, true);
     }
-    Check(vkBindBufferMemory(g.device, buffer.buffer, buffer.memory.memory, buffer.memory.offset), "vkBindBufferMemory");
+    Check(vkBindBufferMemory(g.device, buffer.buffer, buffer.memory.memory, buffer.memory.offset),
+          "vkBindBufferMemory");
     buffer.size = size;
     return buffer;
 }
@@ -215,7 +216,8 @@ TransientSpan AllocateTransient(VkDeviceSize size, VkDeviceSize alignment) {
         VkDeviceSize    offset = AlignUp(chunk.used, align);
         if (offset + size <= chunk.buffer.size) {
             chunk.used = offset + size;
-            return TransientSpan{chunk.buffer.buffer, offset, chunk.buffer.memory.mapped + offset, chunk.constants_set};
+            return TransientSpan{chunk.buffer.buffer, offset, chunk.buffer.memory.mapped + offset,
+                                 chunk.constants_set};
         }
     }
 

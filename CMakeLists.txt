@@ -8,6 +8,8 @@ set_property(CACHE PLATFORM PROPERTY STRINGS PS2 PC)
 if(PLATFORM STREQUAL "PS2")
     add_subdirectory(src/ps2)
 elseif(PLATFORM STREQUAL "PC")
+    # Here rather than in src/port so ctest finds the tests from the top of the build tree.
+    enable_testing()
     add_subdirectory(src/port)
 else()
     message(FATAL_ERROR "PLATFORM must be PS2 or PC, not ${PLATFORM}")

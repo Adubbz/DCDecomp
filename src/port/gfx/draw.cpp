@@ -22,7 +22,8 @@ struct Target {
 
 LogicalMapping TextureMapping(const Texture &texture) {
     return LogicalMapping{static_cast<float>(texture.image.width) / static_cast<float>(texture.logical_width),
-                          static_cast<float>(texture.image.height) / static_cast<float>(texture.logical_height),
+                          static_cast<float>(texture.image.height) /
+                              static_cast<float>(texture.logical_height),
                           0.0f,
                           0.0f,
                           texture.image.width,
@@ -96,8 +97,9 @@ bool EnsureRendering(Target &target) {
     vkCmdBeginRendering(cmd, &info);
     g.rendering = true;
 
-    VkViewport viewport = {0.0f, 0.0f, static_cast<float>(target.color->width), static_cast<float>(target.color->height),
-                           0.0f, 1.0f};
+    VkViewport viewport = {
+        0.0f, 0.0f, static_cast<float>(target.color->width), static_cast<float>(target.color->height),
+        0.0f, 1.0f};
     vkCmdSetViewport(cmd, 0, 1, &viewport);
     g.bound.scissor = {
         {-1, -1},
@@ -107,10 +109,14 @@ bool EnsureRendering(Target &target) {
 }
 
 VkRect2D PixelRect(const LogicalMapping &mapping, const LogicalRect &rect) {
-    float x0 = std::clamp(std::floor(rect.x * mapping.scale_x + mapping.offset_x), 0.0f, static_cast<float>(mapping.pixel_width));
-    float y0 = std::clamp(std::floor(rect.y * mapping.scale_y + mapping.offset_y), 0.0f, static_cast<float>(mapping.pixel_height));
-    float x1 = std::clamp(std::ceil((rect.x + rect.w) * mapping.scale_x + mapping.offset_x), x0, static_cast<float>(mapping.pixel_width));
-    float y1 = std::clamp(std::ceil((rect.y + rect.h) * mapping.scale_y + mapping.offset_y), y0, static_cast<float>(mapping.pixel_height));
+    float x0 = std::clamp(std::floor(rect.x * mapping.scale_x + mapping.offset_x), 0.0f,
+                          static_cast<float>(mapping.pixel_width));
+    float y0 = std::clamp(std::floor(rect.y * mapping.scale_y + mapping.offset_y), 0.0f,
+                          static_cast<float>(mapping.pixel_height));
+    float x1 = std::clamp(std::ceil((rect.x + rect.w) * mapping.scale_x + mapping.offset_x), x0,
+                          static_cast<float>(mapping.pixel_width));
+    float y1 = std::clamp(std::ceil((rect.y + rect.h) * mapping.scale_y + mapping.offset_y), y0,
+                          static_cast<float>(mapping.pixel_height));
     return VkRect2D{
         {static_cast<int32_t>(x0),       static_cast<int32_t>(y0)      },
         {static_cast<uint32_t>(x1 - x0), static_cast<uint32_t>(y1 - y0)}
@@ -137,8 +143,8 @@ VkCompareOp DepthOp(DepthTest test) {
 
 // Resolves the binding and the state into push constants and binds the pipeline and dynamic
 // state. False when the draw must be dropped.
-bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureBinding &binding, const DrawState &state,
-             PushConstants &push) {
+bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureBinding &binding,
+             const DrawState &state, PushConstants &push) {
     if (!g.in_frame) {
         return false;
     }
@@ -283,15 +289,17 @@ void BindVertices(VkBuffer buffer, VkDeviceSize offset) {
 }
 
 void BindConstants(const MeshConstants &constants) {
-    TransientSpan span = AllocateTransient(sizeof(MeshConstants), g.properties.limits.minUniformBufferOffsetAlignment);
+    TransientSpan span =
+        AllocateTransient(sizeof(MeshConstants), g.properties.limits.minUniformBufferOffsetAlignment);
     std::memcpy(span.data, &constants, sizeof(MeshConstants));
     uint32_t offset = static_cast<uint32_t>(span.offset);
-    vkCmdBindDescriptorSets(DrawCommands(), VK_PIPELINE_BIND_POINT_GRAPHICS, g.pipeline_layout, 1, 1, &span.constants_set,
-                            1, &offset);
+    vkCmdBindDescriptorSets(DrawCommands(), VK_PIPELINE_BIND_POINT_GRAPHICS, g.pipeline_layout, 1, 1,
+                            &span.constants_set, 1, &offset);
 }
 
 // Pixel rectangle of a logical one on an image, for copies and blits.
-bool ResolveCopyRect(TextureHandle handle, const Rect &rect, Image *&image, Texture *&texture, VkOffset3D offsets[2]) {
+bool ResolveCopyRect(TextureHandle handle, const Rect &rect, Image *&image, Texture *&texture,
+                     VkOffset3D offsets[2]) {
     texture = nullptr;
     LogicalMapping mapping;
     if (handle == kMainTarget || handle == kPreviousFrame) {
@@ -307,12 +315,14 @@ bool ResolveCopyRect(TextureHandle handle, const Rect &rect, Image *&image, Text
         mapping = TextureMapping(*texture);
     }
     auto x = [&](int32_t value) {
-        return std::clamp(static_cast<int32_t>(std::lround(static_cast<float>(value) * mapping.scale_x + mapping.offset_x)),
-                          0, static_cast<int32_t>(image->width));
+        return std::clamp(
+            static_cast<int32_t>(std::lround(static_cast<float>(value) * mapping.scale_x + mapping.offset_x)),
+            0, static_cast<int32_t>(image->width));
     };
     auto y = [&](int32_t value) {
-        return std::clamp(static_cast<int32_t>(std::lround(static_cast<float>(value) * mapping.scale_y + mapping.offset_y)),
-                          0, static_cast<int32_t>(image->height));
+        return std::clamp(
+            static_cast<int32_t>(std::lround(static_cast<float>(value) * mapping.scale_y + mapping.offset_y)),
+            0, static_cast<int32_t>(image->height));
     };
     offsets[0] = {x(rect.x), y(rect.y), 0};
     offsets[1] = {x(rect.x + rect.w), y(rect.y + rect.h), 1};
@@ -335,14 +345,16 @@ void MarkUsed(Texture *texture) {
 
 // A copy or blit from src to dst, through a scratch image when both are one image, since
 // Vulkan copies within an image need GENERAL layout and must not overlap.
-void Transfer(VkCommandBuffer cmd, Image &src, const VkOffset3D src_offsets[2], Image &dst, const VkOffset3D dst_offsets[2],
-              VkFilter filter) {
+void Transfer(VkCommandBuffer cmd, Image &src, const VkOffset3D src_offsets[2], Image &dst,
+              const VkOffset3D dst_offsets[2], VkFilter filter) {
     auto width = [](const VkOffset3D o[2]) { return std::abs(o[1].x - o[0].x); };
     auto height = [](const VkOffset3D o[2]) { return std::abs(o[1].y - o[0].y); };
 
     if (&src == &dst) {
-        Image      scratch = CreateImage(static_cast<uint32_t>(width(src_offsets)), static_cast<uint32_t>(height(src_offsets)), 1,
-                                         src.format, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+        Image      scratch = CreateImage(static_cast<uint32_t>(width(src_offsets)),
+                                         static_cast<uint32_t>(height(src_offsets)), 1, src.format,
+                                         VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                             VK_IMAGE_USAGE_SAMPLED_BIT);
         VkOffset3D whole[2] = {
             {0,                                   0,                                    0},
             {static_cast<int32_t>(scratch.width), static_cast<int32_t>(scratch.height), 1}
@@ -376,9 +388,10 @@ void Transfer(VkCommandBuffer cmd, Image &src, const VkOffset3D src_offsets[2], 
         region.srcOffset = src_offsets[0];
         region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
         region.dstOffset = dst_offsets[0];
-        region.extent = {static_cast<uint32_t>(width(src_offsets)), static_cast<uint32_t>(height(src_offsets)), 1};
-        vkCmdCopyImage(cmd, src.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
-                       &region);
+        region.extent = {static_cast<uint32_t>(width(src_offsets)),
+                         static_cast<uint32_t>(height(src_offsets)), 1};
+        vkCmdCopyImage(cmd, src.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.image,
+                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
     } else {
         VkImageBlit region = {};
         region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
@@ -387,8 +400,8 @@ void Transfer(VkCommandBuffer cmd, Image &src, const VkOffset3D src_offsets[2], 
         region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
         region.dstOffsets[0] = dst_offsets[0];
         region.dstOffsets[1] = dst_offsets[1];
-        vkCmdBlitImage(cmd, src.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
-                       &region, filter);
+        vkCmdBlitImage(cmd, src.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.image,
+                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, filter);
     }
     ToRest(cmd, src);
     ToRest(cmd, dst);
@@ -400,8 +413,12 @@ LogicalMapping MainMapping(uint32_t width, uint32_t height) {
     float w = static_cast<float>(width);
     float h = static_cast<float>(height);
     float scale = std::min(w / kLogicalWidth, h / kLogicalHeight);
-    return LogicalMapping{scale, scale, std::floor((w - kLogicalWidth * scale) * 0.5f),
-                          std::floor((h - kLogicalHeight * scale) * 0.5f), width, height};
+    return LogicalMapping{scale,
+                          scale,
+                          std::floor((w - kLogicalWidth * scale) * 0.5f),
+                          std::floor((h - kLogicalHeight * scale) * 0.5f),
+                          width,
+                          height};
 }
 
 void EndRendering() {
@@ -414,7 +431,8 @@ void EndRendering() {
 void ResetDrawState() {
     g.bound = {};
     VkCommandBuffer cmd = DrawCommands();
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, g.pipeline_layout, 0, 1, &g.texture_set, 0, nullptr);
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, g.pipeline_layout, 0, 1, &g.texture_set, 0,
+                            nullptr);
     vkCmdSetFrontFace(cmd, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 }
 
@@ -447,9 +465,7 @@ void SetRenderTarget(TextureHandle handle) {
     g.target = handle;
 }
 
-TextureHandle CurrentRenderTarget() {
-    return g.target;
-}
+TextureHandle CurrentRenderTarget() { return g.target; }
 
 LogicalMapping GetLogicalMapping(TextureHandle handle) {
     if (handle == kMainTarget || handle == kPreviousFrame) {
@@ -463,7 +479,8 @@ LogicalMapping GetLogicalMapping(TextureHandle handle) {
     return TextureMapping(*texture);
 }
 
-void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding, const DrawState &state) {
+void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
+            const DrawState &state) {
     if (vertices.empty()) {
         return;
     }
@@ -526,19 +543,22 @@ void DrawMesh(MeshHandle handle, uint32_t first_index, uint32_t index_count, con
         return;
     }
     PushConstants push;
-    if (index_count == 0 || !Prepare(kFamilyMesh, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, binding, state, push)) {
+    if (index_count == 0 ||
+        !Prepare(kFamilyMesh, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, binding, state, push)) {
         return;
     }
     mesh->last_draw_use = g.frame_serial;
     VkCommandBuffer cmd = DrawCommands();
     BindConstants(constants);
     BindVertices(mesh->buffer.buffer, 0);
-    vkCmdBindIndexBuffer(cmd, mesh->buffer.buffer, mesh->vertex_count * sizeof(Vertex3D), VK_INDEX_TYPE_UINT32);
+    vkCmdBindIndexBuffer(cmd, mesh->buffer.buffer, mesh->vertex_count * sizeof(Vertex3D),
+                         VK_INDEX_TYPE_UINT32);
     vkCmdDrawIndexed(cmd, index_count, 1, first_index, 0, 0);
 }
 
 void DrawMeshImmediate(std::span<const Vertex3D> vertices, std::span<const uint32_t> indices,
-                       const MeshConstants &constants, const TextureBinding &binding, const DrawState &state) {
+                       const MeshConstants &constants, const TextureBinding &binding,
+                       const DrawState &state) {
     PushConstants push;
     if (vertices.empty() || indices.empty() ||
         !Prepare(kFamilyMesh, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, binding, state, push)) {
@@ -597,7 +617,8 @@ bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t ds
     VkOffset3D src_offsets[2];
     VkOffset3D dst_offsets[2];
     Rect       dst_rect = {dst_x, dst_y, src_rect.w, src_rect.h};
-    if (src_rect.w <= 0 || src_rect.h <= 0 || !ResolveCopyRect(src, src_rect, src_image, src_texture, src_offsets) ||
+    if (src_rect.w <= 0 || src_rect.h <= 0 ||
+        !ResolveCopyRect(src, src_rect, src_image, src_texture, src_offsets) ||
         !ResolveCopyRect(dst, dst_rect, dst_image, dst_texture, dst_offsets)) {
         return false;
     }
@@ -637,7 +658,8 @@ bool BlitTexture(TextureHandle src, Rect src_rect, TextureHandle dst, Rect dst_r
         Error("BlitTexture between an index and a colour texture");
         return false;
     }
-    VkFilter        vk_filter = filter == Filter::Linear && src_image->format == kColorFormat ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
+    VkFilter vk_filter =
+        filter == Filter::Linear && src_image->format == kColorFormat ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
     VkCommandBuffer cmd = CopyCommands();
     MarkUsed(src_texture);
     MarkUsed(dst_texture);
@@ -651,7 +673,8 @@ bool SnapshotFrame(TextureHandle dst) {
         Error("SnapshotFrame: %#x is not a texture", dst);
         return false;
     }
-    return BlitTexture(kMainTarget, Rect{0, 0, static_cast<int32_t>(kLogicalWidth), static_cast<int32_t>(kLogicalHeight)},
+    return BlitTexture(kMainTarget,
+                       Rect{0, 0, static_cast<int32_t>(kLogicalWidth), static_cast<int32_t>(kLogicalHeight)},
                        dst, Rect{0, 0, static_cast<int32_t>(info->width), static_cast<int32_t>(info->height)},
                        Filter::Linear);
 }
