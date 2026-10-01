@@ -19,18 +19,6 @@
 #include "texture.hpp"
 #include "vutext.hpp"
 
-int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, register float *position, float width, float height, int fog) {
-    PS2_STUB();
-}
-
-void MGCalcColor(register float *color, register float *normal) {
-    PS2_STUB();
-}
-
-int VSyncCallBack(int id) {
-    PS2_STUB();
-}
-
 void MGBeginFrame() {
     PS2_STUB();
 }

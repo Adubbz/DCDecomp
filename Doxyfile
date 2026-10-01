@@ -7,7 +7,7 @@ HTML_OUTPUT            = .
 EXTRACT_PRIVATE        = YES
 EXTRACT_PRIV_VIRTUAL   = YES
 EXTRACT_STATIC         = YES
-INPUT                  = src/common \
+INPUT                  = src/ps2 \
                          include \
                          README.md
 FILE_PATTERNS          = *.c \

@@ -3,7 +3,7 @@
 #
 #   scripts/lint/tidy.sh [--fix] [file.cpp ...]
 #
-# With no files, every unit under src/common is checked. The plugin's own source is
+# With no files, every unit under src/ps2 is checked. The plugin's own source is
 # checked as well, against tools/tidy-module/.clang-tidy. Each unit is checked twice,
 # as NTSC and as PAL (-DPAL), since both releases compile from the same
 # sources. The dcdecomp-* checks are a clang-tidy plugin built from
@@ -56,7 +56,7 @@ if [ "${1:-}" = "--fix" ]; then
     shift
 fi
 if [ $# -eq 0 ]; then
-    set -- $(find src/common -name '*.cpp' ! -name 'tmp*' | sort)
+    set -- $(find src/ps2 -name '*.cpp' ! -name 'tmp*' | sort)
 fi
 
 for f in "$@"; do

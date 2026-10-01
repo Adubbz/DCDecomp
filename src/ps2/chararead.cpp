@@ -798,7 +798,6 @@ void CCharacter::StopCloth(int unused) {
  * @address 0x13B3E0
  * @size 0x64
  */
-#ifndef DC_PC
 void StretchBind2(float *point_a, float *point_b, float *spring) {
     asm {
         lqc2 $vf10, 0x0($4)
@@ -826,7 +825,6 @@ void StretchBind2(float *point_a, float *point_b, float *spring) {
         sqc2 $vf11, 0x0($5)
     }
 }
-#endif
 
 /**
  * Gives the length of a three-component vector, on the vector unit.
@@ -835,7 +833,6 @@ void StretchBind2(float *point_a, float *point_b, float *spring) {
  * @address 0x13B450
  * @size 0x30
  */
-#ifndef DC_PC
 float vuabs(float *vector) {
     asm {
         lqc2 $vf4, 0x0($4)
@@ -850,4 +847,3 @@ float vuabs(float *vector) {
         mtc1 $2, $f0
     }
 }
-#endif

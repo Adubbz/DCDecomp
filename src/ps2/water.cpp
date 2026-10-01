@@ -15,9 +15,6 @@ int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 /**
  * Loads the matrix and translation used by cell transforms into VU0 registers.
  */
-#ifdef DC_PC
-void pretest(float matrix[4][4], float *translation);
-#else
 static void pretest(float matrix[4][4], float *translation) {
     register float *matrix_data = &matrix[0][0];
     register float *offset = translation;
@@ -30,14 +27,10 @@ static void pretest(float matrix[4][4], float *translation) {
         lqc2 vf14, 0(offset)
     }
 }
-#endif
 
 /**
  * Transforms one cell and advances its source position by the loaded translation.
  */
-#ifdef DC_PC
-void Trans_AddCell(float *output, float *position);
-#else
 static void Trans_AddCell(float *output, float *position) {
     register float *destination = output;
     register float *source = position;
@@ -53,7 +46,6 @@ static void Trans_AddCell(float *output, float *position) {
         sqc2 vf16, 0(source)
     }
 }
-#endif
 
 void CWater::SetParam(float speed, float damping_rate, float scale, float shift) {
     wave_speed = speed;

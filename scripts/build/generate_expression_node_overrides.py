@@ -213,7 +213,7 @@ def retail_rows(root):
     spans = placements(root)
     units = {}
     for _kind, _image, source, _reference in disassemble.read_units(
-            os.path.join(root, region.CONFIG), os.path.join(root, 'src', 'common')):
+            os.path.join(root, region.CONFIG), os.path.join(root, 'src', 'ps2')):
         source = os.path.relpath(source, root)
         units[os.path.basename(source)] = source
     with open(os.path.join(root, region.CONFIG, 'object_fixups.json'),
@@ -267,9 +267,9 @@ def live_rows(root, legacy_ref=None):
     """Compile every game C++ unit and read identities from MWCC memory."""
     found = {}
     for kind, _image, source, _reference in disassemble.read_units(
-            os.path.join(root, region.CONFIG), os.path.join(root, 'src', 'common')):
+            os.path.join(root, region.CONFIG), os.path.join(root, 'src', 'ps2')):
         source = os.path.relpath(source, root)
-        if kind != 'mixed' or not source.endswith('.cpp') or source.startswith('src/common/lib/'):
+        if kind != 'mixed' or not source.endswith('.cpp') or source.startswith('src/ps2/lib/'):
             continue
         default, legacy_ones = legacy_values(source, legacy_ref)
         obj, log, _stem = quicktu.compile_unit(source, [], verify=True)

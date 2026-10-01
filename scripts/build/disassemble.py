@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import region  # noqa: E402
 
 CONFIG = Path(region.CONFIG)
-SRC = Path("src/common")
+SRC = Path("src/ps2")
 # Where splat writes the release's reference assembly.
 ASM = region.ASM
 

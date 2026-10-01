@@ -640,7 +640,7 @@ def main():
     rename_symbols(args.object, template_aliases)
     globalize_symbols(args.object, fixups.get("globalize_symbols", []))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
-                     disassemble.image_of_unit(args.source[len("src/common/"):]),
+                     disassemble.image_of_unit(args.source[len("src/ps2/"):]),
                      fixups.get("symbols", {}).values())
     if deferred_sections:
         elf = Elf(args.object.read_bytes())

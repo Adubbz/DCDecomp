@@ -4,7 +4,6 @@
 #include "dataalloc.hpp"
 
 // clang-format off
-#ifndef DC_PC
 asm CDataAlloc2<1>::CDataAlloc2() {
     addiu sp,sp,-16
     sq ra,0(sp)
@@ -16,7 +15,6 @@ asm CDataAlloc2<1>::CDataAlloc2() {
     jr ra
     nop
 }
-#endif
 // clang-format on
 
 /* @ 0x143850 (0x20 bytes) -- __ct__18CDataAlloc<1,6000>Fv */

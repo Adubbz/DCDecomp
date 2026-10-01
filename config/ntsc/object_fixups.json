@@ -1,11 +1,11 @@
 {
-  "src/common/shop.cpp": {
+  "src/ps2/shop.cpp": {
     "symbols": {
       "FishFrameImage": "@2948",
       "FishMessageFile": "@2964"
     }
   },
-  "src/common/gamepad.cpp": {
+  "src/ps2/gamepad.cpp": {
     "sections": {
       ".padbss": [
         "pad_dma_buf",
@@ -19,7 +19,7 @@
       "rpad$398": "rpad$180"
     }
   },
-  "src/common/main.cpp": {
+  "src/ps2/main.cpp": {
     "symbols": {
       "gamemode_empty_string": "@567",
       "@1171": "@905",
@@ -84,7 +84,7 @@
       "wt$965": "wt$685"
     }
   },
-  "src/common/dungeonmap.cpp": {
+  "src/ps2/dungeonmap.cpp": {
     "symbols": {
       "info_cfg_literal": "@1007__2"
     },
@@ -108,14 +108,14 @@
       "wait$1551": "wait$1659"
     }
   },
-  "src/common/dungeonparts.cpp": {
+  "src/ps2/dungeonparts.cpp": {
     "symbols": {
       "MaxFloorTbl": "MaxFloorTbl__2",
       "@370": "@826__2",
       "info_cfg_literal": "@1007__2"
     }
   },
-  "src/common/battlemenu.cpp": {
+  "src/ps2/battlemenu.cpp": {
     "extern_functions": [
       "__ct__10CCharacterFv"
     ],
@@ -151,7 +151,7 @@
       "warningcnt$992": "warningcnt$1676"
     }
   },
-  "src/common/ebattle.cpp": {
+  "src/ps2/ebattle.cpp": {
     "symbols": {
       "draw_rect_store": "draw_rect"
     },
@@ -175,7 +175,7 @@
       "wait_cnt$1307": "wait_cnt$858"
     }
   },
-  "src/common/hitmark.cpp": {
+  "src/ps2/hitmark.cpp": {
     "rodata_exports": [
       "@1430"
     ],
@@ -196,7 +196,7 @@
       "DebugInfoMsgSetChrKey": "@1535"
     }
   },
-  "src/common/clsmes.cpp": {
+  "src/ps2/clsmes.cpp": {
     "rodata_exports": [
       "@821",
       "@822",
@@ -204,7 +204,7 @@
       "@1557"
     ]
   },
-  "src/common/dun/gameloop.cpp": {
+  "src/ps2/dun/gameloop.cpp": {
     "symbols": {
       "run_speed": "run_speed__2",
       "MainDraw__Fv": "MainDraw__Fv__3",
@@ -366,7 +366,7 @@
       "y$2907": "y$4444"
     }
   },
-  "src/common/collisiondata.cpp": {
+  "src/ps2/collisiondata.cpp": {
     "symbols": {
       "DebugInfoMsgMiniMapView": "@1522",
       "DebugInfoMsgCollision": "@1523",
@@ -395,7 +395,7 @@
       "@1557__2"
     ]
   },
-  "src/common/edit_in.cpp": {
+  "src/ps2/edit_in.cpp": {
     "symbols": {
       "InitWorkBuffer__Fv": "InitWorkBuffer__Fv__2",
       "CommandAMBIENT__FPPv": "CommandAMBIENT__FPPv__2",
@@ -541,7 +541,7 @@
       "texdata$759": "texdata$1374"
     }
   },
-  "src/common/editground.cpp": {
+  "src/ps2/editground.cpp": {
     "symbols": {
       "@114": "@335__4",
       "@315": "@575__2",
@@ -554,7 +554,7 @@
       "old_parts$801": "old_parts$1125"
     }
   },
-  "src/common/edit.cpp": {
+  "src/ps2/edit.cpp": {
     "rodata_exports": [
       "@353__2",
       "@369__2",
@@ -697,7 +697,7 @@
       "se_open$731": "se_open$510"
     }
   },
-  "src/common/editloop.cpp": {
+  "src/ps2/editloop.cpp": {
     "extern_functions": [
       "__ct__10CCharacterFv"
     ],
@@ -774,7 +774,7 @@
       "top$789": "top$798"
     }
   },
-  "src/common/editloop3.cpp": {
+  "src/ps2/editloop3.cpp": {
     "symbols": {
       "fishing_line_origin": "@2242",
       "CurrentDir": "CurrentDir__4",
@@ -824,12 +824,12 @@
       "vv$4088": "vv$2757"
     }
   },
-  "src/common/nowload.cpp": {
+  "src/ps2/nowload.cpp": {
     "symbols": {
       "count": "count__2"
     }
   },
-  "src/common/textureanime.cpp": {
+  "src/ps2/textureanime.cpp": {
     "rodata_exports": [
       "@447__2",
       "@448",
@@ -842,7 +842,7 @@
       "CommandExe": "CommandExe__4"
     }
   },
-  "src/common/snd.cpp": {
+  "src/ps2/snd.cpp": {
     "rodata_exports": [
       "@799",
       "@800"
@@ -852,7 +852,7 @@
       "system_snd_id$716": "system_snd_id$551"
     }
   },
-  "src/common/btmisc.cpp": {
+  "src/ps2/btmisc.cpp": {
     "rodata_exports": [
       "@887__4",
       "@888__3",
@@ -870,7 +870,7 @@
       "MdsExtension": "@863"
     }
   },
-  "src/common/cloth.cpp": {
+  "src/ps2/cloth.cpp": {
     "sections": {
       ".cloth-step": [
         "@390",
@@ -918,7 +918,7 @@
       "vuabs__FPf"
     ]
   },
-  "src/common/bound.cpp": {
+  "src/ps2/bound.cpp": {
     "globalize_symbols": [
       "vuabs__FPf"
     ],
@@ -926,7 +926,7 @@
       "vuabs__FPf"
     ]
   },
-  "src/common/chararead.cpp": {
+  "src/ps2/chararead.cpp": {
     "symbols": {
       "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
       "buffer": "buffer__2"
@@ -955,12 +955,12 @@
       "CommandEVENT__FPPv"
     ]
   },
-  "src/common/collisionmdt.cpp": {
+  "src/ps2/collisionmdt.cpp": {
     "globalize_symbols": [
       "GetVertexAddress__10CCollisionFPi"
     ]
   },
-  "src/common/dataset.cpp": {
+  "src/ps2/dataset.cpp": {
     "symbols": {
       "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2<1>": "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2_1_",
       "CopyFrame__FP6CFrameP14CDataAlloc2<1>": "CopyFrame__FP6CFrameP14CDataAlloc2_1_",
@@ -985,7 +985,7 @@
       "init$350": "init$333"
     }
   },
-  "src/common/dataalloc2_1.cpp": {
+  "src/ps2/dataalloc2_1.cpp": {
     "symbols": {
       "__ct__14CDataAlloc2<1>Fi": "__ct__14CDataAlloc2_1_Fi",
       "Alloc__14CDataAlloc2<1>Fi": "Alloc__14CDataAlloc2_1_Fi",
@@ -994,7 +994,7 @@
       "Alloc64__21CDataAlloc<1,1690000>Fi": "Alloc64__21CDataAlloc_1_1690000_Fi"
     }
   },
-  "src/common/dataread.cpp": {
+  "src/ps2/dataread.cpp": {
     "symbols": {
       "CurrentDir": "CurrentDir__2"
     },
@@ -1013,7 +1013,7 @@
       "@468"
     ]
   },
-  "src/common/dispctrl.cpp": {
+  "src/ps2/dispctrl.cpp": {
     "sections": {
       ".vtables": [
         "__vt__6CBound"
@@ -1023,7 +1023,7 @@
       "@230"
     ]
   },
-  "src/common/gameutil.cpp": {
+  "src/ps2/gameutil.cpp": {
     "rodata_exports": [
       "@25"
     ],
@@ -1037,7 +1037,7 @@
       "vert$267": "vert$388"
     }
   },
-  "src/common/mathutil.cpp": {
+  "src/ps2/mathutil.cpp": {
     "rodata_exports": [
       "@424",
       "@425"
@@ -1068,7 +1068,7 @@
       "BadExceptionBaseClasses": "@1036"
     }
   },
-  "src/common/mglib.cpp": {
+  "src/ps2/mglib.cpp": {
     "symbols": {
       "WorkBuffer": "WorkBuffer__2",
       "mgWindowRectStore": "mgWindowRect"
@@ -1106,7 +1106,7 @@
       "tga_head$320": "tga_head$211"
     }
   },
-  "src/common/dngstatusdata.cpp": {
+  "src/ps2/dngstatusdata.cpp": {
     "symbols": {
       "defWeapon": "defWeapon__3",
       "ItemPutListTbl12_bytes": "ItemPutListTbl12",
@@ -1120,7 +1120,7 @@
       "@541__2"
     ]
   },
-  "src/common/title/op_a.cpp": {
+  "src/ps2/title/op_a.cpp": {
     "symbols": {
       "LoadData__Fv": "LoadData__Fv__2",
       "LoadTexture__Fv": "LoadTexture__Fv__3"
@@ -1188,7 +1188,7 @@
       "wait$717": "wait$970"
     }
   },
-  "src/common/title/op_b.cpp": {
+  "src/ps2/title/op_b.cpp": {
     "symbols": {
       "FaceChangeC__Fi": "FaceChange__Fi__2"
     },
@@ -1216,7 +1216,7 @@
       "wait$586": "wait$675"
     }
   },
-  "src/common/title/op_c.cpp": {
+  "src/ps2/title/op_c.cpp": {
     "symbols": {
       "FaceChange__Fi": "FaceChange__Fi__2",
       "FaceChangeD__Fi": "FaceChange__Fi__3",
@@ -1257,7 +1257,7 @@
       "wait$775": "wait$1094"
     }
   },
-  "src/common/title/op_d.cpp": {
+  "src/ps2/title/op_d.cpp": {
     "symbols": {
       "FaceChangeMovie__Fi": "FaceChange__Fi__4",
       "FaceChange__Fi": "FaceChange__Fi__3"
@@ -1341,7 +1341,7 @@
       "y3$706": "y3$1096"
     }
   },
-  "src/common/title/rushmovi.cpp": {
+  "src/ps2/title/rushmovi.cpp": {
     "symbols": {
       "DispFade": "DispFade__2",
       "frame_info_cam": "frame_info_cam__2",
@@ -1378,12 +1378,12 @@
       "wait$392": "wait$703"
     }
   },
-  "src/common/title/script.cpp": {
+  "src/ps2/title/script.cpp": {
     "symbols": {
       "Command": "Command__7"
     }
   },
-  "src/common/title/opening.cpp": {
+  "src/ps2/title/opening.cpp": {
     "symbols": {},
     "drop_functions": [
       "OpeningWorkInit__Fv",
@@ -1405,7 +1405,7 @@
       "no$564": "no$920"
     }
   },
-  "src/common/title/title.cpp": {
+  "src/ps2/title/title.cpp": {
     "rodata_exports": [
       "@1277",
       "@1326",
@@ -1429,7 +1429,7 @@
       "lightning$167": "lightning$958"
     }
   },
-  "src/common/title/titleloop.cpp": {
+  "src/ps2/title/titleloop.cpp": {
     "symbols": {
       "WaterProcess__Fv": "WaterProcess__Fv__2"
     },
@@ -1439,7 +1439,7 @@
       "rot$227": "rot$545"
     }
   },
-  "src/common/fish.cpp": {
+  "src/ps2/fish.cpp": {
     "drop_functions": [
       "fish_file_01",
       "fish_file_02",
@@ -1452,12 +1452,12 @@
       "name$645": "name$419"
     }
   },
-  "src/common/stockitem.cpp": {
+  "src/ps2/stockitem.cpp": {
     "symbols": {
       "LIT_459": "@459"
     }
   },
-  "src/common/weaponlevelup.cpp": {
+  "src/ps2/weaponlevelup.cpp": {
     "symbols": {
       "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "CMenuEffectDataLoad__14CWeaponLevelUpFP14CWeaponLevelUpi": "CMenuEffectDataLoad__14CWeaponLevelUpFP1i",
@@ -1467,7 +1467,7 @@
       "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i"
     }
   },
-  "src/common/monstorunit.cpp": {
+  "src/ps2/monstorunit.cpp": {
     "symbols": {
       "__sinit_monstorunit.cpp": "__sinit_monstor.cpp",
       ".p__sinit_monstorunit.cpp": ".p__sinit_monstor.cpp"
@@ -1487,7 +1487,7 @@
       "init$1454": "init$1193"
     }
   },
-  "src/common/runscript.cpp": {
+  "src/ps2/runscript.cpp": {
     "rodata_exports": [
       "@15",
       "@17",
@@ -1499,7 +1499,7 @@
       "@52"
     ]
   },
-  "src/common/runscript_opcodes.cpp": {
+  "src/ps2/runscript_opcodes.cpp": {
     "symbols": {
       "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__3",
       "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__3",
@@ -1531,7 +1531,7 @@
       "@1040"
     ]
   },
-  "src/common/btsysscript.cpp": {
+  "src/ps2/btsysscript.cpp": {
     "symbols": {
       "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__2",
       "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__2",
@@ -1551,7 +1551,7 @@
       "SetStack__FP12RS_STACKDATAf__2"
     ]
   },
-  "src/common/menu_dungeon.cpp": {
+  "src/ps2/menu_dungeon.cpp": {
     "symbols": {
       "@1106": "@1074",
       "chara_change_frame_image": "@1301",
@@ -1574,7 +1574,7 @@
       "init$949": "init$866"
     }
   },
-  "src/common/clothread.cpp": {
+  "src/ps2/clothread.cpp": {
     "symbols": {
       "Command": "Command__2",
       "CommandExe": "CommandExe__2",
@@ -1605,7 +1605,7 @@
       "CheckChar__Fc__2"
     ]
   },
-  "src/common/editmapscript.cpp": {
+  "src/ps2/editmapscript.cpp": {
     "import_constants_shared": [
       [
         "p47a",
@@ -2104,7 +2104,7 @@
       "rev$932": "rev$874"
     }
   },
-  "src/common/menu_draw.cpp": {
+  "src/ps2/menu_draw.cpp": {
     "symbols": {
       "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2",
       "sort_table": "sort_table__2",
@@ -2113,7 +2113,7 @@
       "asort_top_type": "asort_top_type__2"
     }
   },
-  "src/common/menu_misc.cpp": {
+  "src/ps2/menu_misc.cpp": {
     "symbols": {
       "FrameImageTexture": "@1254",
       "CharaFileExtension": "@1037__2",
@@ -2124,7 +2124,7 @@
       "@1254"
     ]
   },
-  "src/common/itemdata.cpp": {
+  "src/ps2/itemdata.cpp": {
     "symbols": {
       "skipSpace__FPci": "skipSpace__FPci__2",
       "checkArg__FPciPi": "checkArg__FPciPi__2",
@@ -2191,7 +2191,7 @@
       "@829": "@768"
     }
   },
-  "src/common/memcard.cpp": {
+  "src/ps2/memcard.cpp": {
     "globalize_symbols": [
       "ExitSaveSelect__Fv"
     ],
@@ -2208,7 +2208,7 @@
       "tipcurCnt$452": "tipcurCnt$998"
     }
   },
-  "src/common/battle_globals.cpp": {
+  "src/ps2/battle_globals.cpp": {
     "symbols": {
       "NameEntryTextureFile": "@781__3",
       "NameEntryMessageFile": "@787__2",
@@ -2226,12 +2226,12 @@
       "up_or_down$642": "up_or_down$942"
     }
   },
-  "src/common/hitvalue.cpp": {
+  "src/ps2/hitvalue.cpp": {
     "symbols": {
       "@663": "@612"
     }
   },
-  "src/common/menu_save.cpp": {
+  "src/ps2/menu_save.cpp": {
     "symbols": {
       "allmenu_mes": "@2347"
     },
@@ -2256,7 +2256,7 @@
       "SaveMenuKeyLoadDecide__Fv"
     ]
   },
-  "src/common/memorycardaccess.cpp": {
+  "src/ps2/memorycardaccess.cpp": {
     "symbols": {
       "@594__2": "AtoraVibeTextureName"
     },
@@ -2269,7 +2269,7 @@
       "old_format$94": "old_format$442"
     }
   },
-  "src/common/btitem.cpp": {
+  "src/ps2/btitem.cpp": {
     "symbols": {
       "BtEffectInfoFile": "@902",
       "BtAtraShortCharaFile": "@656__4",
@@ -2432,12 +2432,12 @@
       "frameWait$245": "frameWait$907"
     }
   },
-  "src/common/shot_utils.cpp": {
+  "src/ps2/shot_utils.cpp": {
     "symbols": {
       "fishing_err_format": "@604"
     }
   },
-  "src/common/shot_freefuncs.cpp": {
+  "src/ps2/shot_freefuncs.cpp": {
     "symbols": {
       "StatusTextureName": "@1150",
       "StayFrameTextureName": "@778"
@@ -2449,7 +2449,7 @@
       "popupYRate$314": "popupYRate$864"
     }
   },
-  "src/common/visualvu1.cpp": {
+  "src/ps2/visualvu1.cpp": {
     "sections": {
       ".vt-visual": [
         "__vt__7CVisual"
@@ -2462,12 +2462,12 @@
       ]
     }
   },
-  "src/common/healeffect.cpp": {
+  "src/ps2/healeffect.cpp": {
     "symbols": {
       "HealEffectTextureName": "@1430"
     }
   },
-  "src/common/mainitemmodel.cpp": {
+  "src/ps2/mainitemmodel.cpp": {
     "symbols": {
       "MainItemRemoveMessage": "@880__3",
       "MainItemHandMessage": "@892__4"
@@ -2481,20 +2481,20 @@
       ]
     }
   },
-  "src/common/water.cpp": {
+  "src/ps2/water.cpp": {
     "sections": {
       ".vt-visualpolyvu1": [
         "__vt__14CVisualPolyVu1"
       ]
     }
   },
-  "src/common/dranmapfield.cpp": {
+  "src/ps2/dranmapfield.cpp": {
     "symbols": {
       "OverMessage": "@3606",
       "info_cfg_literal": "@1007__2"
     }
   },
-  "src/common/shot_firebar.cpp": {
+  "src/ps2/shot_firebar.cpp": {
     "rodata_exports": [
       "@1211"
     ],
@@ -2503,62 +2503,62 @@
       "msg_cnt$84": "msg_cnt$1151"
     }
   },
-  "src/common/menu_manual.cpp": {
+  "src/ps2/menu_manual.cpp": {
     "symbols": {
       "manual_frame_image": "@354__3"
     }
   },
-  "src/common/randomitem.cpp": {
+  "src/ps2/randomitem.cpp": {
     "rodata_exports": [
       "@1383"
     ]
   },
-  "src/common/menuiconautoget.cpp": {
+  "src/ps2/menuiconautoget.cpp": {
     "sections": {
       ".menuiconautoget-c1515": [
         "@37"
       ]
     }
   },
-  "src/common/menuetc.cpp": {
+  "src/ps2/menuetc.cpp": {
     "symbols": {
       "@567": "@567__2"
     }
   },
-  "src/common/fishing.cpp": {
+  "src/ps2/fishing.cpp": {
     "symbols": {
       "fishing_err_format": "@604"
     }
   },
-  "src/common/charakey.cpp": {
+  "src/ps2/charakey.cpp": {
     "statics": {
       "init$1257": "init$916",
       "wait$1256": "wait$915"
     }
   },
-  "src/common/editarea.cpp": {
+  "src/ps2/editarea.cpp": {
     "statics": {
       "ext$599": "ext$839",
       "init$600": "init$840",
       "sound$518": "sound$740"
     }
   },
-  "src/common/effectmacro.cpp": {
+  "src/ps2/effectmacro.cpp": {
     "statics": {
       "rd$103": "rd$690"
     }
   },
-  "src/common/itembombeffect.cpp": {
+  "src/ps2/itembombeffect.cpp": {
     "statics": {
       "uvTable$135": "uvTable$1129"
     }
   },
-  "src/common/savedata.cpp": {
+  "src/ps2/savedata.cpp": {
     "statics": {
       "sub_map$104": "sub_map$439"
     }
   },
-  "src/common/sound.cpp": {
+  "src/ps2/sound.cpp": {
     "statics": {
       "init$180": "init$572",
       "load_m_flg$179": "load_m_flg$571",
@@ -2566,7 +2566,7 @@
       "wk_name2$89": "wk_name2$397"
     }
   },
-  "src/common/texture.cpp": {
+  "src/ps2/texture.cpp": {
     "statics": {
       "block_table32$944": "block_table32$990",
       "block_table8$943": "block_table8$989",
@@ -2575,7 +2575,7 @@
       "lut$978": "lut$1024"
     }
   },
-  "src/common/literals.cpp": {
+  "src/ps2/literals.cpp": {
     "symbols": {
       "LiteralPool": "__data_end"
     },

@@ -7,9 +7,6 @@
  * bind to chararead's copy; the body is here so the compiler knows which
  * registers the call leaves alone.
  */
-#ifdef DC_PC
-float vuabs(float *vector);
-#else
 static float vuabs(float *vector) {
     asm {
         lqc2 $vf4, 0x0($4)
@@ -24,7 +21,6 @@ static float vuabs(float *vector) {
         mtc1 $2, $f0
     }
 }
-#endif
 
 int CBound::InCheck(float *point, float *result) {
     float length;

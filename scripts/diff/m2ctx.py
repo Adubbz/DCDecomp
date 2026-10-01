@@ -3,7 +3,7 @@
 
     m2ctx.py                     whole project -> ctx.c at the repo root
     m2ctx.py -o build/ntsc/ctx.c ...somewhere else; this is what the build runs
-    m2ctx.py src/common/savedata.cpp    one translation unit instead of the project
+    m2ctx.py src/ps2/savedata.cpp    one translation unit instead of the project
 
 Whole-project mode writes ctx.cpp, every header folded into one C++ file, and
 ctx.c, that same content re-emitted as C by clang. m2c parses context as C;

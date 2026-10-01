@@ -171,9 +171,6 @@ int CVisualVu1::RemakeData(unsigned int *data) {
 /**
  * One over the length of the first three components of a vector, from the vector unit.
  */
-#ifdef DC_PC
-float InverseLength(float *vector);
-#else
 static inline float InverseLength(float *vector) {
     register float *source = vector;
     register int    root;
@@ -206,7 +203,6 @@ static inline float InverseLength(float *vector) {
 
     return length;
 }
-#endif
 
 /**
  * Whether a render flag is clear.

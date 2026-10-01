@@ -18,6 +18,9 @@
 /** Stands in for PlayStation 2 code: asserts when it is reached. */
 #define PS2_STUB() Ps2Stub(__func__, __FILE__, __LINE__)
 
+/** Stands in for a block of MWCC inline assembly in src/ps2: asserts when it is reached. */
+#define PS2_ASM() PS2_STUB()
+
 /**
  * The Metrowerks runtime's assertion failure, in its own argument order.
  */

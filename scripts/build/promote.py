@@ -6,9 +6,9 @@ supplying the build. A draft that already compiles to retail's bytes belongs in
 the build instead, and this is what moves it -- and moves it back, which is the
 common case.
 
-    promote.py --out src/common/fader.cpp                 every draft of that source
-    promote.py --out src/common/fader.cpp In__5FaderFv    just that one
-    promote.py --in  src/common/fader.cpp [name ...]      put them back behind the guard
+    promote.py --out src/ps2/fader.cpp                 every draft of that source
+    promote.py --out src/ps2/fader.cpp In__5FaderFv    just that one
+    promote.py --in  src/ps2/fader.cpp [name ...]      put them back behind the guard
 
 Nothing here decides whether a promotion is right: `build/lenchk.py` on the
 object says whether the span still matches, and `scripts/build/verify.py`

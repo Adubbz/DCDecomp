@@ -30,7 +30,7 @@ RUN apt-get update \
 
 
 # Install build requirements. clang, lld and llvm build the PC port
-# (cmake/PC.cmake). gdb is one of them too: scripts/build/statefix.py
+# (src/port/CMakeLists.txt). gdb is one of them too: scripts/build/statefix.py
 # drives the compiler under it to put back the state MWCC carries and never
 # resets, which the build compiles every unit through. It has to be the full
 # gdb rather than gdb-minimal -- statefix runs as a gdb Python script.

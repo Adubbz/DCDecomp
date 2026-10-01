@@ -40,9 +40,6 @@ void DevInit() {
    library as calls; done inline the arithmetic costs less than the call around it would, and the
    unit's accumulator does a whole row of a multiply in one pass. The pointers are register
    variables because that is how an assembly block reaches a value the compiler is holding. */
-#ifdef DC_PC
-void MulFrameMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2);
-#else
 static inline void MulFrameMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2) {
     register float *out = &m0[0][0];
     register float *left = &m1[0][0];
@@ -79,13 +76,9 @@ static inline void MulFrameMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMAT
         sqc2    vf23, 48(out)
     }
 }
-#endif
 
 /* vf0's w is the constant one, which is what lets the row that carries the translation go through
    the same multiply as the three the scale applies to. */
-#ifdef DC_PC
-void ScaleMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FVECTOR scale);
-#else
 static inline void ScaleMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FVECTOR scale) {
     register float *out = &m0[0][0];
     register float *in = &m1[0][0];
@@ -107,15 +100,11 @@ static inline void ScaleMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FVECTOR
         sqc2    vf4, 48(out)
     }
 }
-#endif
 
 /* A whole matrix in four quadwords, held in four registers so that none of the loads waits on a
    store. Written out because the same copy spelled in C costs a fresh address for every row: the
    compiler pairs each load with its store and recomputes the source, which is three instructions
    more and no faster. */
-#ifdef DC_PC
-void CopyMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1);
-#else
 static inline void CopyMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1) {
     register float *in = &m1[0][0];
     register float *out = &m0[0][0];
@@ -131,13 +120,9 @@ static inline void CopyMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1) {
         sq      $9, 48(out)
     }
 }
-#endif
 
 /* vf15 minus itself is the zero the unit already has, so wiping a matrix costs one arithmetic
    instruction and four stores rather than a constant to load. */
-#ifdef DC_PC
-void ZeroMatrix(sceVu0FMATRIX m0);
-#else
 static inline void ZeroMatrix(sceVu0FMATRIX m0) {
     register float *out = &m0[0][0];
 
@@ -149,16 +134,12 @@ static inline void ZeroMatrix(sceVu0FMATRIX m0) {
         sqc2    vf15, 48(out)
     }
 }
-#endif
 
 /* The screen extent of eight already-transformed corners. Each is divided through by the magnitude
    of its own depth, so a corner behind the camera folds onto the side it came from instead of
    changing sign, and the eight results are reduced to one pair of extremes. It is written as one
    block because the divider is what costs: every division is issued a whole quadword of work
    before its result is waited on, which is what the interleaving here is for. */
-#ifdef DC_PC
-void ScreenBound(sceVu0FVECTOR *screen, sceVu0FVECTOR max, sceVu0FVECTOR min);
-#else
 static inline void ScreenBound(sceVu0FVECTOR *screen, sceVu0FVECTOR max, sceVu0FVECTOR min) {
     register float *in = &screen[0][0];
     register float *hi = &max[0];
@@ -225,7 +206,6 @@ static inline void ScreenBound(sceVu0FVECTOR *screen, sceVu0FVECTOR max, sceVu0F
         sqc2    vf31, 0(lo)
     }
 }
-#endif
 
 /* The rotation a frame carries is stored as a quaternion whose scalar part comes first, so the
    caller's four floats are w, x, y, z in that order. */
@@ -1379,9 +1359,6 @@ CFrameVu1 &CFrameVu1::operator=(CFrameVu1 &other) {
 
 /* The matrix every polygon of one pick-up is transformed by, parked in the unit's registers once
    instead of being reloaded per triangle. */
-#ifdef DC_PC
-void pre_trance_normal(sceVu0FMATRIX matrix);
-#else
 static void pre_trance_normal(sceVu0FMATRIX matrix) {
     register float *m = &matrix[0][0];
 
@@ -1392,14 +1369,10 @@ static void pre_trance_normal(sceVu0FMATRIX matrix) {
         lqc2    vf13, 48(m)
     }
 }
-#endif
 
 /* A triangle through that matrix, and its plane normal rebuilt afterwards rather than transformed:
    the collision answers in its own space and a normal does not survive a transform the way a point
    does. */
-#ifdef DC_PC
-void trance_normal(float *p0, float *p1, float *p2, float *plane);
-#else
 static void trance_normal(float *p0, float *p1, float *p2, float *plane) {
     register float *a = p0;
     register float *b = p1;
@@ -1433,7 +1406,6 @@ static void trance_normal(float *p0, float *p1, float *p2, float *plane) {
         sqc2    vf22, 0(normal)
     }
 }
-#endif
 
 /* The polygons of this frame's collision, and of every frame under it, that reach into a bound the
    caller gives in world space. The bound is carried the other way instead of the geometry: it is

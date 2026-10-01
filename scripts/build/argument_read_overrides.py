@@ -275,8 +275,8 @@ def main():
     unit = os.path.basename(args.source)
 
     if args.search:
-        image = args.image or ('title' if args.source.startswith('src/common/title/')
-                               else 'dun' if args.source.startswith('src/common/dun/')
+        image = args.image or ('title' if args.source.startswith('src/ps2/title/')
+                               else 'dun' if args.source.startswith('src/ps2/dun/')
                                else 'main')
         text = open(os.path.join(REPO, args.body or args.source)).read()
         table = search(args.source, text, unit, args.search, image,

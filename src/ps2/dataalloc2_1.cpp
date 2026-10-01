@@ -37,11 +37,9 @@ u_char *CDataAlloc2<1>::Alloc64(int quads) {
 
 void CDataAlloc2<1>::Align64() {
     /* Falls through as it stands; flipping the branch turns the whole alignment step off. */
-#ifndef DC_PC
     asm {
         bne $0, $0, done
     }
-#endif
 
     int slack = (int) (base + used * 16) & 63;
 
@@ -77,11 +75,9 @@ u_char *CDataAlloc<1, 1690000>::Alloc64(int quads) {
 
 void CDataAlloc<1, 1690000>::Align64() {
     /* Falls through as it stands; flipping the branch turns the whole alignment step off. */
-#ifndef DC_PC
     asm {
         bne $0, $0, done
     }
-#endif
 
     u_int slack = (u_int) ((u_char *) block + used * 16) & 63;
 

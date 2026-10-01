@@ -46,7 +46,7 @@ extern "C" void *__construct_new_array(void *allocation, MWRuntimeObjectFunction
  * @address 0x122550
  * @size 0x40
  */
-void __dl(void *storage);
+void __dl(void *storage) throw();
 
 /**
  * Reports whether a thrown type matches a catch clause's type.

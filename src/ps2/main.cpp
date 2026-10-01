@@ -119,7 +119,7 @@ static CSaveData save_data __attribute__((aligned(64)));
 CSaveData       *SaveData;
 
 /* main()'s own top-level game-state globals -- moved here from
- * src/common/mainselect.cpp/include/mainselect.hpp for the same reason as `pBound` etc. above:
+ * src/ps2/mainselect.cpp/include/mainselect.hpp for the same reason as `pBound` etc. above:
  * retail's `main.sbss` interleaves these (GLOBAL linkage) with `SaveData`
  * just above and `mode`/etc. just below, all in one contiguous run
  * (0x2a2510-0x2a2548) that must come from ONE compiled object. Still
@@ -245,7 +245,7 @@ sceDmaChan *d8;
 s32 mc_mode;
 
 /* `PolyCount` (GLOBAL linkage) immediately follows `mc_mode` in retail's
- * main.sbss (0x2a2548) -- moved here from src/common/mainselect.cpp for the same reason
+ * main.sbss (0x2a2548) -- moved here from src/ps2/mainselect.cpp for the same reason
  * as `GameClearFlag` etc. above. Still declared `extern` in
  * include/mainselect.hpp. */
 s32 PolyCount;
@@ -520,7 +520,7 @@ int main(int argc, const char **argv, const char **envp) {
     /* `(in_range = ...) != 0` rather than a bare `i < 60`: the anonymous
      * form routes the slti result through $at, the named form through a
      * real register ($v0, as retail has) -- see CLAUDE.md's named-
-     * variable register trick, applied throughout src/common/savedata.cpp. */
+     * variable register trick, applied throughout src/ps2/savedata.cpp. */
     for (i = 0; (in_range = i < 60) != 0; i++) {
         sceGsSyncV(0);
         GamePad.UpDate();
@@ -1890,11 +1890,9 @@ u_char *CDataAlloc<1, 6000>::Alloc(int quads) {
  * @size 0x90
  */
 void CDataAlloc<1, 6000>::Align64() {
-#ifndef DC_PC
     asm {
         bne $0, $0, done
     }
-#endif
 
     u_int slack = (u_int) ((u_char *) block + used * 16) & 63;
 

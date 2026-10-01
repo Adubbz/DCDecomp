@@ -737,7 +737,7 @@ class Statics:
 def carry_fixups(carry, fixups, problems):
     def image_of(source):
         for image in ("title", "dun"):
-            if source.startswith(f"src/common/{image}/"):
+            if source.startswith(f"src/ps2/{image}/"):
                 return image
         return "main"
 

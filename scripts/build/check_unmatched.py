@@ -9,7 +9,7 @@ drafts and nothing more: the object is thrown away, and mwccgap is bypassed,
 since it cannot pair a marker with a gap that the compiled draft has filled.
 
     check_unmatched.py                every source
-    check_unmatched.py src/common/snd.cpp    those sources
+    check_unmatched.py src/ps2/snd.cpp    those sources
     check_unmatched.py --jobs 8       how many compiles at once
     check_unmatched.py --quiet        only the count
 
@@ -40,7 +40,7 @@ GUARD = re.compile(r"^#ifdef\s+NON_MATCHING\s*$", re.M)
 def sources() -> list[Path]:
     return sorted(
         path.relative_to(ROOT)
-        for path in (ROOT / "src" / "common").rglob("*")
+        for path in (ROOT / "src" / "ps2").rglob("*")
         if path.suffix in {".c", ".cpp"} and "lib/" not in str(path.relative_to(ROOT))
     )
 

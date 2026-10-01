@@ -12,8 +12,6 @@
 
 #include "literals.hpp"
 
-// The Metrowerks C++ runtime and overlay loader, which the PC build replaces.
-#ifndef DC_PC
 /* Virtual table of std::exception: type information, this adjustment, destructor, what(). */
 extern "C" void *__vt__Q23std9exception[4] __attribute__((section(".vtables"))) = {
     (void *) __RTTI__Q23std9exception, 0, (void *) __dt__Q23std9exceptionFv,
@@ -717,13 +715,11 @@ extern "C" int mwLoadOverlay(char *path, void *address) {
 
     return result;
 }
-#endif
 
 static float sin_table_num = 1024.0f;
 static float sin_table_unit_1 = 162.97466f;
 static float SinTable[1024];
 
-#ifndef DC_PC
 void VectorMax(float *max, float *a, float *b) {
     register float *out = max;
     register float *p0 = a;
@@ -736,9 +732,7 @@ void VectorMax(float *max, float *a, float *b) {
         sqc2    vf18, 0(out)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMax(float *max, float *a, float *b, float *c) {
     register float *out = max;
     register float *p0 = a;
@@ -754,9 +748,7 @@ void VectorMax(float *max, float *a, float *b, float *c) {
         sqc2    vf19, 0(out)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMax(float *max, float *a, float *b, float *c, float *d) {
     register float *out = max;
     register float *p0 = a;
@@ -775,9 +767,7 @@ void VectorMax(float *max, float *a, float *b, float *c, float *d) {
         sqc2    vf20, 0(out)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMin(float *min, float *a, float *b) {
     register float *out = min;
     register float *p0 = a;
@@ -790,9 +780,7 @@ void VectorMin(float *min, float *a, float *b) {
         sqc2    vf18, 0(out)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMin(float *min, float *a, float *b, float *c, float *d) {
     register float *out = min;
     register float *p0 = a;
@@ -811,9 +799,7 @@ void VectorMin(float *min, float *a, float *b, float *c, float *d) {
         sqc2    vf20, 0(out)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMaxMin(float *max, float *min, float *a, float *b) {
     register float *out_max = max;
     register float *out_min = min;
@@ -829,9 +815,7 @@ void VectorMaxMin(float *max, float *min, float *a, float *b) {
         sqc2    vf20, 0(out_min)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMaxMin(float *max, float *min, float *a, float *b, float *c) {
     register float *out_max = max;
     register float *out_min = min;
@@ -851,9 +835,7 @@ void VectorMaxMin(float *max, float *min, float *a, float *b, float *c) {
         sqc2    vf21, 0(out_min)
     }
 }
-#endif
 
-#ifndef DC_PC
 void VectorMaxMin(float *max, float *min, float *a, float *b, float *c, float *d) {
     register float *out_max = max;
     register float *out_min = min;
@@ -877,9 +859,7 @@ void VectorMaxMin(float *max, float *min, float *a, float *b, float *c, float *d
         sqc2    vf21, 0(out_min)
     }
 }
-#endif
 
-#ifndef DC_PC
 void PlaneNormal(float *normal, float *v0, float *v1, float *v2) {
     register float *out = normal;
     register float *p0 = v0;
@@ -897,7 +877,6 @@ void PlaneNormal(float *normal, float *v0, float *v1, float *v2) {
         sqc2    vf12, 0(out)
     }
 }
-#endif
 
 float DistPlanePoint(float *normal, float *on_plane, float *point) {
     sceVu0FVECTOR offset;
@@ -983,7 +962,6 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
    so the block hands the bits over in an integer and reinterprets them where a float return value
    has to be. Both variables are the compiler's to place; the initializer is what stops it warning
    about the one nothing in C ever writes. */
-#ifndef DC_PC
 float DistVector(float *vector) {
     register float *pointer = vector;
     register int    root;
@@ -1004,9 +982,7 @@ float DistVector(float *vector) {
 
     return length;
 }
-#endif
 
-#ifndef DC_PC
 float DistVector(float *a, float *b) {
     register float *p0 = a;
     register float *p1 = b;
@@ -1030,9 +1006,7 @@ float DistVector(float *a, float *b) {
 
     return length;
 }
-#endif
 
-#ifndef DC_PC
 void MulMatrix(sceVu0FMATRIX product, sceVu0FMATRIX left_matrix, sceVu0FMATRIX right_matrix) {
     register float *out = (float *) product;
     register float *left = (float *) left_matrix;
@@ -1069,9 +1043,7 @@ void MulMatrix(sceVu0FMATRIX product, sceVu0FMATRIX left_matrix, sceVu0FMATRIX r
         sqc2      vf23, 48(out)
     }
 }
-#endif
 
-#ifndef DC_PC
 void RotMatrixY(sceVu0FMATRIX matrix, float angle_y) {
     register float *out = (float *) matrix;
     float           angle = angle_y;
@@ -1093,7 +1065,6 @@ void RotMatrixY(sceVu0FMATRIX matrix, float angle_y) {
     matrix[2][0] = Sinf(angle);
     matrix[0][2] = -matrix[2][0];
 }
-#endif
 
 void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     sceVu0FMATRIX pitch;
@@ -1133,7 +1104,6 @@ void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     MulMatrix(matrix, yaw, pitch);
 }
 
-#ifndef DC_PC
 void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, int count) {
     register float *dst = (float *) out;
     register float *m = (float *) matrix;
@@ -1169,7 +1139,6 @@ row:
     }
     // clang-format on
 }
-#endif
 
 void VectorInterpolate(float *out, float *from, float *to, float step, int mode) {
     sceVu0FVECTOR gap;

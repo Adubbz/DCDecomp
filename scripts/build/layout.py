@@ -38,7 +38,7 @@ import region  # noqa: E402
 
 SECTIONS = ("main", "title", "dun")
 
-SRC_DIR = "src/common"
+SRC_DIR = "src/ps2"
 # Where splat files a function's own assembly: still supplied by a marker
 # under the first, decompiled under the second.
 ASM_DIRS = (f"{region.ASM}/nonmatchings", f"{region.ASM}/matchings")
@@ -106,8 +106,8 @@ OBJDIFF = {
 # overlays are called out because they are separate images; everything else
 # objdiff is shown falls through to `game`.
 CATEGORY_DIRS = (
-    ("src/common/title/", "title"),
-    ("src/common/dun/", "dun"),
+    ("src/ps2/title/", "title"),
+    ("src/ps2/dun/", "dun"),
 )
 
 
@@ -121,7 +121,7 @@ def category_of(source):
 
 def included_in_objdiff(source):
     """Return whether objdiff should expose this translation unit."""
-    return not source.startswith("src/common/lib/")
+    return not source.startswith("src/ps2/lib/")
 
 
 # Which image an address belongs to. The overlays share a range with each

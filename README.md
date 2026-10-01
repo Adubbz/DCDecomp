@@ -36,8 +36,8 @@ It needs no disc image:
 ```
 
 PlayStation 2 code is stubbed out for now, so `build/pc/darkcloud` stops at
-the first call into it. [docs/PC.md](docs/PC.md) explains how `src/pc`
-replaces code in `src/common`.
+the first call into it. [docs/PC.md](docs/PC.md) explains how `src/port`
+replaces code in `src/ps2`.
 
 ## Diffing
 

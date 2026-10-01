@@ -41,7 +41,6 @@ CDataAlloc2<1>         ActiveData1(-1);
 CDataAlloc<1, 1690000> GlobalDataBuffer;
 CDataAlloc2<1>         workbuffer(-1);
 
-#ifndef DC_PC
 void InitializeDataBuffer() {
     GlobalDataBuffer.used = 0;
     memset(&GlobalDataBuffer.block[GlobalDataBuffer.used], 0, 1690000 * 16);
@@ -73,7 +72,6 @@ void InitializeDataBuffer() {
     ActiveData0.used = 0;
     ActiveData1.used = 0;
 }
-#endif
 
 void SetDataBuffer(CDataAlloc2<1> *arena, int quads) {
     arena->base = GlobalDataBuffer.Alloc64(quads);
@@ -96,7 +94,6 @@ void SetPacketReadBuffer(int packet_quads, int read_quads) {
     printf("%d/%d\n", GlobalDataBuffer.used, 1690000);
 }
 
-#ifndef DC_PC
 void BufferAllClear() {
     GlobalDataBuffer.used = 0;
     asm {
@@ -155,7 +152,6 @@ clear_test:
     ActiveData0.used = 0;
     ActiveData1.used = 0;
 }
-#endif
 
 static int htoi(char *text) {
     char *cursor;

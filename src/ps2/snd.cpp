@@ -23,7 +23,7 @@
 #include "texture.hpp"
 
 /* The sound manager: BGM loading, playback and fading, and the SE table.
- * CSound itself is in src/common/sound.cpp. */
+ * CSound itself is in src/ps2/sound.cpp. */
 
 /**
  * Reads one sound configuration file through the script interpreter.

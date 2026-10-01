@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Declarations of what src/common/title/titleloop.cpp defines for the rest of the title overlay.
+ * Declarations of what src/ps2/title/titleloop.cpp defines for the rest of the title overlay.
  */
 
 #include "common.h"

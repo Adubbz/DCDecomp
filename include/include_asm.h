@@ -11,7 +11,7 @@
  * an outside .s without moving everything after it.
  *
  * splat writes the reference assembly, one file per function, under the
- * translation unit it belongs to -- so `src/common/shop.cpp`'s PAL markers name
+ * translation unit it belongs to -- so `src/ps2/shop.cpp`'s PAL markers name
  * `asm/pal/nonmatchings/shop`. tools/mwccgap reads the marker, finds
  * `<directory>/<mangled name>.s`, and puts the assembled bytes where the
  * marker stands. The compiler itself sees nothing, which is why the marker is

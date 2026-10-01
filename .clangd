@@ -1,5 +1,5 @@
 If:
-  PathMatch: (src/common|include)/.*
+  PathMatch: (src/ps2|include)/.*
 CompileFlags:
   Add: [-xc++, -std=c++98, --target=mipsel-unknown-elf, -nostdinc, -nostdinc++, -Wno-deprecated-writable-strings,
         -I../include, -I../include/std, -I../include/sce, -I../../include, -I../../include/std, -I../../include/sce,
@@ -10,6 +10,6 @@ Documentation:
   CommentFormat: Doxygen
 ---
 If:
-  PathMatch: src/pc/.*
+  PathMatch: src/port/.*
 CompileFlags:
   CompilationDatabase: build/pc
