@@ -218,3 +218,34 @@ for globals, though not for the heap or stack.
 An edit to `src/ps2` or `include/ps2` made for the port is checked by building
 both regions (`scripts/build/cmake.sh build`, and again with `REGION=PAL`),
 which verifies every image byte for byte.
+
+## Game data
+
+The game reads its files from a plain directory, not from the disc.
+`build/pc/dcdata` (`tools/dcdata`) makes it:
+
+```sh
+build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
+build/pc/dcdata list "rom/Dark Cloud (PAL).iso"
+```
+
+The source is a disc image, read through its ISO 9660 tree, or a directory
+that holds `DATA.DAT` and `DATA.HD2` (such as `rom/pal/extracted/iso`).
+`extract` writes every file `DATA.HD2` indexes to `<data>/<path>`, the path
+lowercased with `/` separators and no leading separator, at its exact size,
+and copies the index itself to `<data>/data.hd2`. A file already present at
+its size is kept, so a rerun only repairs what is missing. When a path is
+listed twice, only the first is written, as the game only ever finds the
+first. `list` prints each file's sector, size and path.
+
+The layout of `data/` is the archive's own: `dun/pack/maindat.pac`,
+`commenu/a_eng/savetex.pak`, `sound/bgm/...` and so on. Lookups fold case,
+as the game's `strcasecmp` does, so the case on disk does not matter.
+
+`src/port/platform/paths.cpp` finds the data directory from `--data <dir>`,
+then `DC_DATA`, then `data/` in the working directory, then `data/` beside
+the executable. The save directory comes from `--save`, `DC_SAVE`, or
+`save/` in the same places, and is created when first used. `InitCDFile`
+stops the game, naming the directory and the `dcdata` command, when the
+data directory is missing or empty, and warns when `data.hd2` lists a file
+that is missing or the wrong size. `WriteFile` writes under `save/host0/`.
