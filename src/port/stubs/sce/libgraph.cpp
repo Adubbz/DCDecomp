@@ -8,10 +8,6 @@ void sceGsResetPath() {
     PS2_UNIMPLEMENTED();
 }
 
-int sceGsSyncV(int mode) {
-    PS2_UNIMPLEMENTED();
-}
-
 int sceGsSyncPath(int mode, u_short timeout) {
     PS2_UNIMPLEMENTED();
 }

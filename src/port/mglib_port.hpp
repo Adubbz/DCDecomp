@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gfx/gfx.hpp"
-
 #include <libgraph.h>
+
+#include "gfx/gfx.hpp"
 
 // What the 2D and 3D replacement units share with mglib.cpp: the draw state the game's current
 // register shadows describe, and the conversions from GS units into the renderer's.
@@ -29,3 +29,21 @@ float MGPortDepth(unsigned gs_z);
 // MGGetFBuffBackTex hand out. Texture lookups by TEX0 recognise these two TBP0 values.
 inline constexpr unsigned kMGPortFrameTbp0 = 0;
 inline constexpr unsigned kMGPortPreviousFrameTbp0 = 0xFFF;
+
+// ---- Additions of the 3D phase ---------------------------------------------------------------
+
+// Logical rows per GS row of a texture the game addresses by TEX0. The frame buffer and its
+// previous copy are 640x480 logical but the game's rects and UVs on them count field rows (2);
+// every other texture counts its own texel rows (1).
+int MGPortFrameRowScale(gfx::TextureHandle texture);
+
+// How the 640x480 logical frame maps onto a target the game draws 3D into as if it were the frame:
+// 1 on the main target and on frame-height targets, 0.5 on the field-height copies (shadow_buf,
+// water, blender: 224 to 256 rows) whose rows are the frame's field rows.
+float MGPortTargetRowScale(gfx::TextureHandle target);
+
+// World space (what mgRenderInfo.view_scaled transforms) to Vulkan clip space of the current
+// render target, column-major [column][row] as sceVu0FMATRIX: the logical frame lands where the 2D
+// units put it, depth is MGPortDepth's of the GS Z MGRotTransPers gives. 3D sprites and long-tail
+// geometry multiply their model matrix onto it.
+void MGPortWorldToClip(float clip[4][4]);

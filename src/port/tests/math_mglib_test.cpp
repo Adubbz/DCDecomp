@@ -10,9 +10,10 @@
 
 namespace {
 
-// Projection scale 800, near 10, far 65535 (what main.cpp sets), and an identity camera. PAL's
-// view_scaled halves y, so a camera-space point (x, y, z) lands at x * 800 / z + 2048 and
-// y * 400 / z + 2048.
+// Projection scale 800, near 10, far 65535 (what main.cpp sets), and an identity camera. The
+// port's view_scaled no longer halves y, but view_screen still maps into GS field rows (its
+// screen[1][1] is 800 * 0.5), so a camera-space point (x, y, z) lands, as on retail, at
+// x * 800 / z + 2048 and y * 400 / z + 2048.
 void SetUpCamera() {
     MGSetRenderInfo(800.0f, 10.0f, 65535.0f);
     sceVu0FMATRIX view;
