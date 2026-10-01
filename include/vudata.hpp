@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The DMA tag chain and drawing environment the frame starts with, which src/vudata.cpp holds.
+ * The DMA tag chain and drawing environment the frame starts with, which src/common/vudata.cpp holds.
  */
 
 #include "common.h"

@@ -94,6 +94,9 @@ static int over_vsync;
 static int (*VSyncCallBack2)(int);
 static int call_back_active;
 
+#ifdef DC_PC
+int VSyncCallBack(int id);
+#else
 static int VSyncCallBack(int id) {
     iFlushCache(0);
     call_back_active = 1;
@@ -116,6 +119,7 @@ static int VSyncCallBack(int id) {
     iFlushCache(0);
     return 0;
 }
+#endif
 
 int MGGetVSyncCount() {
     return vcount;
@@ -1017,6 +1021,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
    on screen is read off the Vector Unit's sticky status flags rather than compared as floats: four
    subtractions leave a bit set for any field that came out zero or negative, testing both corners
    against 0 and against 4096.0 and, through w, against the eye. */
+#ifndef DC_PC
 int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, register float *position, float width, float height, int fog) {
     sceVu0FVECTOR   half;
     register float *half_size;
@@ -1155,12 +1160,14 @@ int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, r
 
     return visible;
 }
+#endif
 
 /* One vertex colour from one normal, on the Vector Unit in macro mode: the normal through the three
    light directions, clamped up at zero so a light behind the surface contributes nothing, then the
    four light colours accumulated onto the ambient and clamped down at 255. The caller's own buffer
    is where the ceiling comes from — 255 is written into it first and read straight back as a
    quadword, so the clamp costs no constant of its own. */
+#ifndef DC_PC
 void MGCalcColor(register float *color, register float *normal) {
     register float *intensity;
     register float *direction;
@@ -1207,6 +1214,7 @@ void MGCalcColor(register float *color, register float *normal) {
         sqc2    vf14, 0(color)
     }
 }
+#endif
 
 /* Where one point falls outside the screen, as six bits rather than a yes or no: near, far, and one
    per side. The half-widths are the guard band's and not the window's, so a point off the edge is

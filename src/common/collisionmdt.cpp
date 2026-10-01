@@ -11,6 +11,9 @@
    from one pass over the pair, so this costs less than the two the library would need. The
    pointers are register variables because that is how an assembly block reaches a value the
    compiler is holding. */
+#ifdef DC_PC
+void vu_maxmin3(float *max, float *min, float *a, float *b, float *c);
+#else
 static void vu_maxmin3(float *max, float *min, float *a, float *b, float *c) {
     register float *out_max = max;
     register float *out_min = min;
@@ -30,8 +33,12 @@ static void vu_maxmin3(float *max, float *min, float *a, float *b, float *c) {
         sqc2    vf21, 0(out_min)
     }
 }
+#endif
 
 /* The plane normal of a triangle, as the outer product of two of its edges. */
+#ifdef DC_PC
+void vu_normal(float *normal, float *a, float *b, float *c);
+#else
 static void vu_normal(float *normal, float *a, float *b, float *c) {
     register float *out = normal;
     register float *p0 = a;
@@ -49,9 +56,13 @@ static void vu_normal(float *normal, float *a, float *b, float *c) {
         sqc2    vf12, 0(out)
     }
 }
+#endif
 
 /* The query bound of a box search, parked in the unit's registers once instead of being reloaded
    per triangle. */
+#ifdef DC_PC
+void vu_hold_box(float *max, float *min);
+#else
 static inline void vu_hold_box(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
@@ -61,11 +72,15 @@ static inline void vu_hold_box(float *max, float *min) {
         lqc2    vf11, 0(p1)
     }
 }
+#endif
 
 /* Whether a triangle's own bound misses the one held above, as the two subtractions that would
    both have to come out positive for the two to overlap. Neither result is wanted — the answer is
    the unit's sticky sign and zero flags, cleared before the pair and read back after them, which
    is why the status register rather than a register file entry is what the block hands back. */
+#ifdef DC_PC
+int vu_box_missed(float *max, float *min);
+#else
 static inline int vu_box_missed(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
@@ -90,6 +105,7 @@ static inline int vu_box_missed(float *max, float *min) {
 
     return status & 0xc0;
 }
+#endif
 
 /* The bound of whatever the shape is made of, which the base can build because the vertices are
    the one thing every shape answers. A shape with no vertices leaves the bound all zero. */

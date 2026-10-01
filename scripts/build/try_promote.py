@@ -12,7 +12,7 @@ in them, builds, and keeps the promotion only if the image is still
 byte-perfect in data and no function that matched before stopped matching.
 Anything less and the sources go back exactly as they were.
 
-    try_promote.py src/fader.cpp src/water.cpp
+    try_promote.py src/common/fader.cpp src/common/water.cpp
     try_promote.py --all                 every source carrying a draft
 
 Run it from the repository root, outside the container -- it drives
@@ -66,7 +66,7 @@ def main() -> None:
     if args.all or not sources:
         sources = [
             path.relative_to(ROOT)
-            for path in sorted((ROOT / "src").rglob("*"))
+            for path in sorted((ROOT / "src" / "common").rglob("*"))
             if path.suffix in {".c", ".cpp"} and GUARD.search(path.read_text(errors="replace"))
         ]
     if not sources:

@@ -1,9 +1,15 @@
 If:
-  PathMatch: (src|include)/.*
+  PathMatch: (src/common|include)/.*
 CompileFlags:
   Add: [-xc++, -std=c++98, --target=mipsel-unknown-elf, -nostdinc, -nostdinc++, -Wno-deprecated-writable-strings,
-        -I../include, -I../include/std, -I../include/sce, -I../../include, -I../../include/std, -I../../include/sce]
+        -I../include, -I../include/std, -I../include/sce, -I../../include, -I../../include/std, -I../../include/sce,
+        -I../../../include, -I../../../include/std, -I../../../include/sce]
 Diagnostics:
   UnusedIncludes: None
 Documentation:
   CommentFormat: Doxygen
+---
+If:
+  PathMatch: src/pc/.*
+CompileFlags:
+  CompilationDatabase: build/pc

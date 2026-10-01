@@ -40,7 +40,7 @@ times over, which says the same thing about the linker that built it.
 
 ## Why that is not enough, and what is done instead
 
-Retail's pool is data of its own -- src/literals.cpp defines it -- and it
+Retail's pool is data of its own -- src/common/literals.cpp defines it -- and it
 cannot be rebuilt from the objects' constants. So an object that brings its own
 copy of a constant has that copy appended rather than merged, and the small
 data after the pool moves. Writing `0.1f` in a source used to be enough to

@@ -9,7 +9,12 @@
 // Every source can mark a function that is not decompiled yet.
 #include "include_asm.h"
 
+#ifdef DC_PC
+// The layouts these check are the PS2's: 32-bit pointers and longs as MWCC lays them out.
+#define STATIC_ASSERT(expr)
+#else
 #define STATIC_ASSERT(expr) typedef char _static_assert_##__COUNTER__[(expr) ? 1 : -1]
+#endif
 
 #ifdef PAL
 #define SCREEN_HEIGHT 480

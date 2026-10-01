@@ -86,7 +86,7 @@ def main() -> int:
     rows = []
     failed = 0
 
-    for source in sorted((ROOT / "src").rglob("*")):
+    for source in sorted((ROOT / "src" / "common").rglob("*")):
         if source.suffix not in (".cpp", ".c"):
             continue
         if args.sources and source.relative_to(ROOT) not in args.sources:
@@ -96,8 +96,8 @@ def main() -> int:
         if not guards:
             continue
         relative_source = str(source.relative_to(ROOT))
-        image = "dun" if relative_source.startswith("src/dun/") else (
-            "title" if relative_source.startswith("src/title/") else "main")
+        image = "dun" if relative_source.startswith("src/common/dun/") else (
+            "title" if relative_source.startswith("src/common/title/") else "main")
         with tempfile.TemporaryDirectory(prefix="draft_score_", dir=source.parent) as work:
             temporary = Path(work) / source.name
             obj = Path(work) / (source.stem + ".o")

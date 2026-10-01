@@ -3922,7 +3922,8 @@ void WeaponMenuSelect() {
         case WEP_MENU_BUILDUP_SELECT:
         case WEP_MENU_BUILDUP_PREVIEW:
             EnableBuildUpModel(builds, weapon);
-            int i = 0;
+            int i;
+            i = 0;
 
             while (builds[i].weapon_no != -1) {
                 COM_ITEM_INFO *info = GetCommonItemInfo(builds[i].weapon_no);

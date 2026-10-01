@@ -88,6 +88,9 @@ void CCloth::Clear() {
 /**
  * Blends two bone transforms for a stretched vertex, on the vector unit.
  */
+#ifdef DC_PC
+void StretchBind2(float *point_a, float *point_b, float *spring);
+#else
 static void StretchBind2(float *point_a, float *point_b, float *spring) {
     asm {
         lqc2 $vf10, 0x0($4)
@@ -115,10 +118,14 @@ static void StretchBind2(float *point_a, float *point_b, float *spring) {
         sqc2 $vf11, 0x0($5)
     }
 }
+#endif
 
 /**
  * Gives the length of a three-component vector, on the vector unit.
  */
+#ifdef DC_PC
+float vuabs(float *vector);
+#else
 static float vuabs(float *vector) {
     asm {
         lqc2 $vf4, 0x0($4)
@@ -133,6 +140,7 @@ static float vuabs(float *vector) {
         mtc1 $2, $f0
     }
 }
+#endif
 
 /**
  * Advances the cloth simulation, pushing its vertices out of the exclusion boxes.
@@ -141,6 +149,7 @@ static float vuabs(float *vector) {
  * @address 0x13B8A0
  * @size 0xBCC
  */
+#ifndef DC_PC
 void CCloth::Step(int step) {
     float *velocity;
     int    i;
@@ -452,6 +461,7 @@ void CCloth::Step(int step) {
         }
     }
 }
+#endif
 
 /**
  * Draws the cloth through the vector unit.

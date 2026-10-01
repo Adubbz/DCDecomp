@@ -240,6 +240,13 @@ int LoadFileBGMenuData(char *name, u_long128 *buffer);
  */
 int LoadFileMenuData(char *name, unsigned int *buffer);
 
+#ifdef DC_PC
+/**
+ * Loads a menu file named by a string literal, which MWCC passes as a char pointer.
+ */
+inline int LoadFileMenuData(const char *name, unsigned int *buffer) { return LoadFileMenuData(const_cast<char *>(name), buffer); }
+#endif
+
 /**
  * Returns the buffer the battle menu or the edit menu loads its files into.
  *
@@ -437,6 +444,15 @@ void FrameImageDraw(int brightness, int alpha);
  * @size 0x7C
  */
 void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right);
+
+#ifdef DC_PC
+/**
+ * Draws a temporary rectangle, which MWCC binds to the non-const reference.
+ */
+inline void DrawMenuColorGradation(const CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+    DrawMenuColorGradation(const_cast<CRect_i_ &>(rect), top_left, top_right, bottom_left, bottom_right);
+}
+#endif
 
 /**
  * Draws a rectangle shaded between two colours from side to side.

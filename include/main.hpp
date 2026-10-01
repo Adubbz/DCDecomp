@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Declarations of what src/main.cpp defines for the rest of the game.
+ * Declarations of what src/common/main.cpp defines for the rest of the game.
  */
 
 #include "common.h"

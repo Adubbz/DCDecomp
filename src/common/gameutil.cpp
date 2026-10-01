@@ -398,6 +398,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
  */
 static sceVu0FVECTOR def_vrtx[3000];
 
+#ifndef DC_PC
 Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info, Mot_List *list) {
     static sceVu0FMATRIX  Bone_Matrix;
     static sceVu0FMATRIX  Bone_Matrix_inv;
@@ -505,6 +506,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
 
     return list->next;
 }
+#endif
 
 void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state, tagFRAME_INF *frame_info) {
     Mot_List *list;
@@ -895,6 +897,9 @@ int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint) {
 }
 
 /* Loads a box's corners into VU0 registers vf10 and vf11 for the box tests that follow. */
+#ifdef DC_PC
+void vu_hold_box(float *max, float *min);
+#else
 static inline void vu_hold_box(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
@@ -904,9 +909,13 @@ static inline void vu_hold_box(float *max, float *min) {
         lqc2    vf11, 0(p1)
     }
 }
+#endif
 
 /* Whether a triangle's bound misses the box held in VU0: the sign flags of the two subtractions,
    cleared before them and read back after. */
+#ifdef DC_PC
+int vu_box_missed(float *max, float *min);
+#else
 static inline int vu_box_missed(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
@@ -931,6 +940,7 @@ static inline int vu_box_missed(float *max, float *min) {
 
     return status & 0xc0;
 }
+#endif
 
 /**
  * Collects the polygons of a set that meet a box.

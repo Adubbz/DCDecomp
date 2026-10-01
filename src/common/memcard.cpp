@@ -3251,7 +3251,8 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
                     cell_x += 36;
                 }
 
-                int off_u = 0;
+                int off_u;
+                off_u = 0;
 
                 if (setting != 3) {
                     off_u += 64;
@@ -3340,7 +3341,8 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
                     cell_x += 36;
                 }
 
-                int off_u = 0;
+                int off_u;
+                off_u = 0;
 
                 if (setting != 3) {
                     off_u += 64;

@@ -25,6 +25,20 @@ The build produces the main executable `SCUS_971.11` with matching text and data
 `run.sh` builds the disc image and boots it in PCSX2. 
 `build.sh` builds only the game.
 
+## PC port
+
+The same code also builds as an x64 program with clang, from the PAL release.
+It needs no disc image:
+
+```sh
+./dev.sh cmake -S . -B build/pc -G Ninja -DPLATFORM=PC
+./dev.sh ninja -C build/pc
+```
+
+PlayStation 2 code is stubbed out for now, so `build/pc/darkcloud` stops at
+the first call into it. [docs/PC.md](docs/PC.md) explains how `src/pc`
+replaces code in `src/common`.
+
 ## Diffing
 
 `diff.sh <symbol>` compares a function against the retail original with

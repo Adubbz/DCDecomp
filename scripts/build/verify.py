@@ -109,12 +109,12 @@ def _scan(pattern, src_dir):
     return out
 
 
-def declarations(src_dir='src'):
+def declarations(src_dir='src/common'):
     """{symbol: source} for every FUZZY_MATCH in the tree."""
     return _scan(DECLARATION, src_dir)
 
 
-def markers(src_dir='src'):
+def markers(src_dir='src/common'):
     """{symbol: source} for every INCLUDE_ASM in the tree."""
     return _scan(ASM_MARKER, src_dir)
 

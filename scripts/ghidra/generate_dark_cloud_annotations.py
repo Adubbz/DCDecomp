@@ -311,7 +311,7 @@ def documented_functions() -> dict[str, dict[str, object]]:
     so that a name documented in both keeps the header's wording.
     """
     docs: dict[str, dict[str, object]] = {}
-    sources = sorted((ROOT / "include").rglob("*")) + sorted((ROOT / "src").rglob("*"))
+    sources = sorted((ROOT / "include").rglob("*")) + sorted((ROOT / "src" / "common").rglob("*"))
     for path in sources:
         if not path.is_file() or path.suffix not in {".h", ".hpp", ".c", ".cpp"}:
             continue
@@ -432,7 +432,7 @@ def main() -> None:
     seen: set[tuple[str, int]] = set()
     missing_assembly = 0
 
-    for source in sorted((ROOT / "src").rglob("*")):
+    for source in sorted((ROOT / "src" / "common").rglob("*")):
         if not source.is_file() or source.suffix not in {".c", ".cpp"}:
             continue
         text = source.read_text(errors="replace")

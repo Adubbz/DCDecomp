@@ -512,6 +512,13 @@ public:
      */
     int CheckPartsRect(int parts_no, int area_no, CRect_i_ &rect);
 
+#ifdef DC_PC
+    /**
+     * Checks a temporary rectangle, which MWCC binds to the non-const reference.
+     */
+    int CheckPartsRect(int parts_no, int area_no, const CRect_i_ &rect) { return CheckPartsRect(parts_no, area_no, const_cast<CRect_i_ &>(rect)); }
+#endif
+
     /**
      * Gives the grid rectangle a part covers, widened by a margin on every side.
      *

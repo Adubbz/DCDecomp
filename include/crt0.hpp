@@ -2,7 +2,7 @@
 
 /**
  * @file
- * What the hand-written src/crt0.s defines for the rest of the game.
+ * What the hand-written src/common/crt0.s defines for the rest of the game.
  */
 
 #include "common.h"

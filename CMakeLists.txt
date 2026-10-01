@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.20)
 project(dcdecomp NONE)
 
+# PLATFORM picks what is built: PS2 builds and verifies the retail images, PC
+# builds the x64 port described in cmake/PC.cmake.
+set(PLATFORM PS2 CACHE STRING "Platform to build: PS2 or PC")
+set_property(CACHE PLATFORM PROPERTY STRINGS PS2 PC)
+if(PLATFORM STREQUAL "PC")
+    include(cmake/PC.cmake)
+    return()
+elseif(NOT PLATFORM STREQUAL "PS2")
+    message(FATAL_ERROR "PLATFORM must be PS2 or PC, not ${PLATFORM}")
+endif()
+
 # The default target builds and verifies the executable.
 
 set(BASENAME SCUS_971.11)
@@ -22,7 +33,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(ObjectLists)
 include(Overlays)
 
-set(SRC_DIR src)
+set(SRC_DIR src/common)
 set(INCLUDE_DIR include)
 set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)

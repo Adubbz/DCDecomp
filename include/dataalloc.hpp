@@ -9,11 +9,11 @@
 /**
  * Constructs an object inside allocator-owned quadword storage.
  */
-void *operator new(u_int size, u_long128 *block);
+void *operator new(size_t size, u_long128 *block);
 /**
  * Constructs an array inside allocator-owned quadword storage.
  */
-void *operator new[](u_int size, u_long128 *block);
+void *operator new[](size_t size, u_long128 *block);
 
 /**
  * Allocates sixteen-byte units from an externally supplied buffer.
@@ -135,9 +135,11 @@ u_char *CDataAlloc<Kind, Size>::Alloc64(int quads) {
 template <int Kind, int Size>
 void CDataAlloc<Kind, Size>::Align64() {
     /* Falls through as it stands; flipping the branch turns the whole alignment step off. */
+#ifndef DC_PC
     asm {
         bne $0, $0, done
     }
+#endif
 
     u_int slack = (u_int) ((u_char *) block + used * 16) & 63;
 

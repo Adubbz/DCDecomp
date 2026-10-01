@@ -204,7 +204,7 @@ def is_compiler_local_label(name):
         return True
     # MWCC also emits anonymous per-compiland literal-pool/jump-table labels
     # named "@NNN" (confirmed: e.g. "@181"/"@182" rodata literals emitted for
-    # src/main.cpp's own switch statements) -- same non-unique-across-the-
+    # src/common/main.cpp's own switch statements) -- same non-unique-across-the-
     # whole-binary problem as "$NNN", just a different prefix convention.
     # Confirmed by direct count: retail's `main` section alone has 1149
     # duplicate-by-name symbols, of which 953 are "@NNN"-prefixed.

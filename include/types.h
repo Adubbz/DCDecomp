@@ -16,4 +16,10 @@ typedef unsigned int      u_int;
 typedef unsigned long     u_long;
 typedef unsigned __int128 u_long128;
 
+#ifdef DC_PC
+#include <cstddef>
+using std::size_t;
+#else
+typedef unsigned int size_t;
 #define NULL 0
+#endif

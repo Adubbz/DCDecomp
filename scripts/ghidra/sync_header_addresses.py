@@ -92,7 +92,7 @@ def main() -> None:
     total = 0
     # A file-scope static cannot be declared in a header, so the unit that
     # defines it documents it in place; those blocks are read the same way.
-    sources = sorted((ROOT / "include").rglob("*")) + sorted((ROOT / "src").rglob("*"))
+    sources = sorted((ROOT / "include").rglob("*")) + sorted((ROOT / "src" / "common").rglob("*"))
     for path in sources:
         if not path.is_file() or path.suffix not in {".h", ".hpp", ".c", ".cpp"}:
             continue

@@ -1607,7 +1607,8 @@ int EditLoop() {
             NowCamera = (CCamera *) &MainCamera;
             Chara->GetVelocity()->y = 0.0f;
 
-            CCharacter *chara = Chara;
+            CCharacter *chara;
+            chara = Chara;
 
             chara->motion_no = 0;
             chara->motion_flags = 0;
