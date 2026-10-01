@@ -14,3 +14,6 @@ foreach(source IN LISTS TEST_SOURCES)
         add_test(NAME ${name} COMMAND darkcloud_tests ${name})
     endforeach()
 endforeach()
+
+# Measures sleep accuracy, which the parallel gfx tests on four cores skew.
+set_tests_properties(platform_clock_wait_accuracy PROPERTIES RUN_SERIAL TRUE)
