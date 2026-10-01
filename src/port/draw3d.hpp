@@ -35,6 +35,10 @@ void           Draw3DSetResolvers(Draw3DTex0Resolver tex0, Draw3DHandleResolver 
 PortTextureRef Draw3DResolveTex0(u_long tex0);
 PortTextureRef Draw3DResolveHandle(int handle);
 
+// The texture the game last copied the frame into (MGMoveImage, MGStretchMoveImage), if it is
+// still alive: the water samples it, as retail's "work" aliased the copy's VRAM.
+gfx::TextureHandle Draw3DLastFrameCopy();
+
 // Shadow passes 1 and 2 draw only between MGBeginDrawShadow and MGEndDrawShadow, into the target
 // the former picked; with no target they are dropped rather than brightening the frame.
 bool Draw3DShadowTargetActive();

@@ -1,9 +1,12 @@
+// SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
+#include <SDL3/SDL.h>
 #include <libgraph.h>
 
 #include "dataset.hpp"
 #include "draw3d_fixture.hpp"
 #include "framevu1.hpp"
 #include "rect.hpp"
+#include "texture_port.hpp"
 #include "visualshadow.hpp"
 
 using namespace dc::test;
@@ -260,9 +263,13 @@ DC_TEST(draw3d_shadow_composite) {
     sceVu0FVECTOR normal = {0.0f, 1.0f, 0.0f, 0.0f};
 
     MGSetBGColor(200.0f, 200.0f, 200.0f, 128.0f);
+    // dun/gameloop.cpp passes shadow_buf's TEX0; an unknown one falls back on the name.
+    unsigned  key = PortRegisterNamedTarget("shadow_buf", 640, 256, false, PortTextureOwner::Other);
+    u_long    bits = SCE_GS_SET_TEX0(key, 10, SCE_GS_PSMCT24, 10, 8, 0, 0, 0, 0, 0, 0, 0);
+    sceGsTex0 shadow_tex0;
+    std::memcpy(&shadow_tex0, &bits, sizeof(bits));
     fixture.Frame([&] {
-        sceGsTex0 unknown = {};
-        MGBeginDrawShadow(unknown);
+        MGBeginDrawShadow(shadow_tex0);
         DC_CHECK(gfx::CurrentRenderTarget() == target);
         MGDrawShadowFast(&frame, point, normal);
         MGEndDrawShadow(0x40);
@@ -280,11 +287,14 @@ DC_TEST(draw3d_shadow_composite) {
     // The volume pass casts the triangles that face away from the light: the same footprint.
     fixture.Frame([&] {
         sceGsTex0 unknown = {};
+        unknown.TBP0 = 0x3FFE;
         MGBeginDrawShadow(unknown);
+        DC_CHECK(gfx::CurrentRenderTarget() == target);
         MGDrawShadow(&frame, point, normal);
         MGEndDrawShadow(0x40);
     });
     DC_CHECK(fixture.PixelNear(320, 285, 100, 100, 100));
     DC_CHECK(fixture.PixelNear(320, 250, 200, 200, 200));
+    PortReleaseKey(key);
     gfx::DestroyTexture(target);
 }

@@ -18,19 +18,19 @@ namespace {
 constexpr float kFieldCentreX = 320.0f;
 constexpr float kFieldCentreY = SCREEN_QUARTER_HEIGHT_F;
 
-// The game copies the frame into "water" (dungeon) or "water_buff" (town, title) and draws with
-// "work"'s TEX0, which retail's VRAM layout puts at the same address; the named copies win.
+// The game copies the frame into "water" (dungeon) or "water_buff" (town, title) with MGMoveImage
+// and then draws with "work"'s TEX0, which retail's VRAM layout puts at the copy's address. The
+// port's registry keeps them apart, so the copy the game made last wins and "work" is the
+// fallback.
 PortTextureRef FrameCopy() {
-    for (const char *name : {"water", "water_buff"}) {
-        gfx::TextureHandle target = gfx::FindNamedRenderTarget(name);
-        if (std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(target); target != gfx::kNullTexture && info) {
-            PortTextureRef ref;
-            ref.binding.texture = target;
-            ref.width = info->width;
-            ref.height = info->height;
-            ref.valid = true;
-            return ref;
-        }
+    gfx::TextureHandle copy = Draw3DLastFrameCopy();
+    if (std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(copy); copy != gfx::kNullTexture && info) {
+        PortTextureRef ref;
+        ref.binding.texture = copy;
+        ref.width = info->width;
+        ref.height = info->height;
+        ref.valid = true;
+        return ref;
     }
     char      name[] = "work";
     CTexture *work = TexManager.GetTexture(TexManager.GetTextureHandle(name, -1));

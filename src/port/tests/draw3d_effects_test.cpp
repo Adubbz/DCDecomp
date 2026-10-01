@@ -1,7 +1,12 @@
+// SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
+#include <SDL3/SDL.h>
+
 #include "cloth.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "draw3d_fixture.hpp"
+#include "rect.hpp"
+#include "texture_port.hpp"
 #include "water.hpp"
 
 using namespace dc::test;
@@ -12,7 +17,10 @@ using namespace dc::test;
 DC_TEST(draw3d_water_samples_frame_copy_in_screen_space) {
     Draw3DFixture fixture;
     SetDataBuffer(&WaterData, 4096);
-    gfx::TextureHandle copy = gfx::NamedRenderTarget("water", 640, 256, true);
+    unsigned  key = PortRegisterNamedTarget("water", 640, SCREEN_HALF_HEIGHT, true, PortTextureOwner::Other);
+    u_long    water_bits = SCE_GS_SET_TEX0(key, 10, SCE_GS_PSMCT32, 10, 8, 1, 0, 0, 0, 0, 0, 0);
+    sceGsTex0 water_tex0;
+    std::memcpy(&water_tex0, &water_bits, sizeof(water_bits));
 
     static CWater water;
     water.SetSize(8, 8, &WaterData);
@@ -28,21 +36,20 @@ DC_TEST(draw3d_water_samples_frame_copy_in_screen_space) {
     water.frame.SetPosition(0.0f, 5.0f, 0.0f);
 
     fixture.Frame([&] {
-        gfx::SetRenderTarget(copy);
-        uint8_t          red[4] = {200, 0, 0, 0x80};
-        uint8_t          blue[4] = {0, 0, 200, 0x80};
-        gfx::LogicalRect left = {0.0f, 0.0f, 320.0f, 256.0f};
-        gfx::LogicalRect right = {320.0f, 0.0f, 320.0f, 256.0f};
-        gfx::Clear(true, red, false, 0.0f, &left);
-        gfx::Clear(true, blue, false, 0.0f, &right);
-        gfx::SetRenderTarget(gfx::kMainTarget);
+        // As the dungeon does: grab the frame's field into "water", then draw over the frame.
+        MGFillBox(CRect_i_(0, 0, 320 * 16, SCREEN_HALF_HEIGHT * 16), 200, 0, 0, 0x80);
+        MGFillBox(CRect_i_(320 * 16, 0, 320 * 16, SCREEN_HALF_HEIGHT * 16), 0, 0, 200, 0x80);
+        sceGsTex0 frame;
+        MGGetFBuffTex(&frame);
+        MGMoveImage(&frame, CRect_i_(0, 0, 640, SCREEN_HALF_HEIGHT), &water_tex0, 0, 0, 0);
+        MGClearScreen(0, 0, 0, 0x80);
         DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(&water, &mgRenderInfo, GetVif1Packet(), nullptr);
     });
     DC_CHECK(fixture.PixelNear(300, 285, 200, 0, 0, 4));
     DC_CHECK(fixture.PixelNear(340, 285, 0, 0, 200, 4));
     DC_CHECK(fixture.PixelNear(320, 250, 0, 0, 0));
     DC_CHECK(mgRenderInfo.fog_enabled == 0);
-    gfx::DestroyTexture(copy);
+    PortReleaseKey(key);
 }
 
 // The cloth is rebuilt from its grid every draw and lit with its fixed material: ambient 0.3 of

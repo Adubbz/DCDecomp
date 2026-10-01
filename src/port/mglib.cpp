@@ -43,13 +43,13 @@ constexpr float kGsCentre = 2048.0f;
 constexpr float kGsDepthRange = 16699999.0f;
 
 int                g_old_vcount;
-bool               g_frame_open;
 sceVif1Packet      g_null_packet;
 u_long128          g_null_packet_words[4];
 unsigned int       g_draw_cursor[64];
 std::optional<int> g_pick_pending[16];
 
 gfx::TextureHandle g_shadow_target = gfx::kNullTexture;
+gfx::TextureHandle g_last_frame_copy = gfx::kNullTexture;
 gfx::TextureHandle g_shadow_previous = gfx::kMainTarget;
 u_long             g_shadow_tex0;
 
@@ -128,7 +128,14 @@ void BlitWithin(gfx::TextureHandle texture, gfx::Rect src, gfx::Rect dst, gfx::F
     gfx::BlitTexture(scratch, middle, texture, dst, filter);
 }
 
+bool IsFrame(const sceGsTex0 &tex0) {
+    return tex0.TBP0 == kMGPortFrameTbp0 || tex0.TBP0 == kMGPortPreviousFrameTbp0;
+}
+
 void Blit(const ResolvedRect &src, const ResolvedRect &dst, gfx::Filter filter) {
+    if (src.texture == gfx::kMainTarget && dst.texture != gfx::kMainTarget) {
+        g_last_frame_copy = dst.texture;
+    }
     if (src.texture == dst.texture) {
         BlitWithin(src.texture, src.rect, dst.rect, filter);
     } else if (src.rect.w == dst.rect.w && src.rect.h == dst.rect.h && src.texture != gfx::kMainTarget &&
@@ -216,6 +223,13 @@ PortTextureRef Draw3DResolveTex0(u_long tex0) {
 
 PortTextureRef Draw3DResolveHandle(int handle) {
     return g_handle_resolver ? g_handle_resolver(handle) : PortTextureFromHandle(handle);
+}
+
+gfx::TextureHandle Draw3DLastFrameCopy() {
+    if (g_last_frame_copy != gfx::kNullTexture && !gfx::GetTextureInfo(g_last_frame_copy)) {
+        g_last_frame_copy = gfx::kNullTexture;
+    }
+    return g_last_frame_copy;
 }
 
 bool Draw3DShadowTargetActive() {
@@ -427,7 +441,7 @@ void MGInitVSyncCallBack(int (*callback)(int)) {
 
 void MGBeginFrame() {
     if (!gfx::InFrame()) {
-        g_frame_open = gfx::BeginFrame();
+        gfx::BeginFrame();
     }
     gfx::SetRenderTarget(gfx::kMainTarget);
     g_shadow_target = gfx::kNullTexture;
@@ -486,7 +500,6 @@ void MGEndFrame() {
 
     gfx::SetRenderTarget(gfx::kMainTarget);
     gfx::EndFrame();
-    g_frame_open = false;
 
     for (int i = 0; i < 16; i++) {
         if (!g_pick_pending[i]) {
@@ -835,8 +848,14 @@ void MGGetFBuffBackTex(sceGsTex0 *tex0) {
     *reinterpret_cast<u_long *>(tex0) = FrameTex0(kMGPortPreviousFrameTbp0);
 }
 
+// Moves between two of the texture manager's images (CLUT moves included) are its business; a move
+// that reads or writes the frame scales the frame's field rows to its logical ones.
 void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y, int direction) {
     if (rect.width <= 0 || rect.height <= 0) {
+        return;
+    }
+    if (g_tex0_resolver == nullptr && !IsFrame(*src) && !IsFrame(*dst)) {
+        PortMoveImage(*src, rect.x, rect.y, rect.width, rect.height, *dst, dst_x, dst_y);
         return;
     }
     std::optional<ResolvedRect> from = ResolveRect(*src, rect.x, rect.y, rect.width, rect.height);
@@ -971,7 +990,8 @@ void MGBeginDrawShadow(sceGsTex0 tex0) {
     PortTextureRef     ref = Draw3DResolveTex0(*reinterpret_cast<u_long *>(&tex0));
     if (ref.valid) {
         std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(ref.binding.texture);
-        if (info && info->render_target) {
+        if (info && info->render_target && ref.binding.texture != gfx::kMainTarget &&
+            ref.binding.texture != gfx::kPreviousFrame) {
             target = ref.binding.texture;
         }
     }

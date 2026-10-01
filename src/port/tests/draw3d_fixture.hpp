@@ -1,6 +1,7 @@
 #pragma once
 
-// SDL's headers name parameters A and B, which libgraph.h defines as macros: they go first.
+// SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
+#include <SDL3/SDL.h>
 #include <libvu0.h>
 
 #include <array>

@@ -1,3 +1,6 @@
+// SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
+#include <SDL3/SDL.h>
+
 #include "draw3d_fixture.hpp"
 #include "framevu1.hpp"
 #include "rect.hpp"
