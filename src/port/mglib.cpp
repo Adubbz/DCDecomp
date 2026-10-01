@@ -14,22 +14,16 @@
 #include "dataalloc.hpp"
 #include "dataset.hpp"
 #include "frame.hpp"
+#include "gfx/gfx.hpp"
 #include "mathutil.hpp"
-#include "platform/renderer.hpp"
 #include "rect.hpp"
 #include "texture.hpp"
 #include "vutext.hpp"
 
-/** Whether MGBeginFrame started a frame for MGEndFrame to present. */
-static bool frame_begun;
-
 void MGBeginFrame() {
-    frame_begun = RendererBeginFrame();
+    gfx::BeginFrame();
 }
 
 void MGEndFrame() {
-    if (frame_begun) {
-        RendererEndFrame();
-        frame_begun = false;
-    }
+    gfx::EndFrame();
 }

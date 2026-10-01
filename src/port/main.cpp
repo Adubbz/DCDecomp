@@ -1,7 +1,13 @@
+#include <cstdio>
+#include <cstdlib>
+#include <string_view>
+#include <vector>
+
 #include "battle_globals.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "gamemode.hpp"
+#include "gfx/gfx.hpp"
 #include "langset.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
@@ -16,14 +22,76 @@ int  EditInit(void *param);
 int  EditLoop();
 void SndInit();
 
+namespace {
+
+[[noreturn]] void Usage(const char *program) {
+    std::fprintf(stderr,
+                 "usage: %s [--headless] [--frames N] [--screenshot PATH] [--width W] [--height H]\n"
+                 "  --headless         render offscreen (SDL offscreen driver, VK_EXT_headless_surface)\n"
+                 "  --frames N         exit after N frames\n"
+                 "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
+                 "  --width, --height  window size in pixels\n",
+                 program);
+    std::exit(2);
+}
+
+} // namespace
+
 int main(int argc, const char **argv, const char **envp) {
-    WindowInit();
-    while (WindowPollEvents()) {
+    WindowConfig window;
+    long         frames = -1;
+    const char  *screenshot = nullptr;
+    for (int i = 1; i < argc; i++) {
+        std::string_view arg = argv[i];
+        auto             value = [&]() {
+            if (i + 1 >= argc) {
+                Usage(argv[0]);
+            }
+            return argv[++i];
+        };
+        auto number = [&]() {
+            char *end = nullptr;
+            long  result = std::strtol(value(), &end, 10);
+            if (end == nullptr || *end != '\0' || result < 0) {
+                Usage(argv[0]);
+            }
+            return result;
+        };
+        if (arg == "--headless") {
+            window.headless = true;
+        } else if (arg == "--frames") {
+            frames = number();
+        } else if (arg == "--screenshot") {
+            screenshot = value();
+        } else if (arg == "--width") {
+            window.width = static_cast<int>(number());
+        } else if (arg == "--height") {
+            window.height = static_cast<int>(number());
+        } else {
+            Usage(argv[0]);
+        }
+    }
+
+    WindowInit(window);
+    gfx::RendererInit(WindowHandle(), gfx::RendererConfig{});
+    for (long frame = 0; (frames < 0 || frame < frames) && WindowPollEvents(); frame++) {
         MGBeginFrame();
         MGEndFrame();
     }
+
+    int status = 0;
+    if (screenshot != nullptr) {
+        std::vector<uint8_t> pixels;
+        uint32_t             width = 0;
+        uint32_t             height = 0;
+        if (!gfx::ReadbackFrame(pixels, width, height) || !gfx::WritePng(screenshot, pixels.data(), width, height)) {
+            std::fprintf(stderr, "cannot write the screenshot to %s\n", screenshot);
+            status = 1;
+        }
+    }
+    gfx::RendererShutdown();
     WindowShutdown();
-    return 0;
+    return status;
 }
 
 extern "C" {

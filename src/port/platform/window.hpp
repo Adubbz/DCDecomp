@@ -1,7 +1,20 @@
 #pragma once
 
-void WindowInit();
+struct SDL_Window;
+union SDL_Event;
 
-void WindowShutdown();
+struct WindowConfig {
+    int  width = 1280;
+    int  height = 960;
+    bool headless = false;
+};
 
+// Starts SDL's video subsystem and opens the window. Headless uses SDL's offscreen driver, which
+// gives Vulkan a VK_EXT_headless_surface.
+void        WindowInit(const WindowConfig &config);
+void        WindowShutdown();
+SDL_Window *WindowHandle();
+// Pumps events; false once the window is asked to close. A pixel-size change reaches the renderer.
 bool WindowPollEvents();
+// Sees every event WindowPollEvents pumps, before the window handles it.
+void WindowAddEventHook(void (*hook)(const SDL_Event &event));

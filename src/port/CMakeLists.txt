@@ -29,6 +29,7 @@ find_package(SDL3 REQUIRED CONFIG)
 find_package(Vulkan 1.4 REQUIRED)
 
 set(PS2_DIR ${CMAKE_SOURCE_DIR}/src/ps2)
+set(PORT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB_RECURSE PS2_SOURCES CONFIGURE_DEPENDS RELATIVE ${PS2_DIR} ${PS2_DIR}/*.cpp)
 file(GLOB_RECURSE PORT_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 list(FILTER PORT_SOURCES EXCLUDE REGEX "/tests/")
@@ -102,8 +103,42 @@ add_custom_command(OUTPUT ${PS2_OBJECT}
 # src/ps2 copy. Objects named on the link line always do.
 set(PORT_LIB_SOURCES ${PORT_SOURCES})
 list(FILTER PORT_LIB_SOURCES EXCLUDE REGEX "/tests/|/main\\.cpp$")
+# The host side (platform, gfx, audio) never sees a game header, so it is built
+# without dc_options: no port.h ahead of each unit and no game include paths.
+set(HOST_SOURCES ${PORT_LIB_SOURCES})
+list(FILTER HOST_SOURCES INCLUDE REGEX "/src/port/(platform|gfx|audio)/")
+list(FILTER PORT_LIB_SOURCES EXCLUDE REGEX "/src/port/(platform|gfx|audio)/")
+
+# Every shaders/*.vert|frag under src/port/gfx becomes a header holding its
+# SPIR-V words as a const uint32_t array named after the file (draw.frag ->
+# draw_frag), in ${SHADER_HEADER_DIR}/shaders/<file>.spv.hpp.
+find_program(GLSLANG_VALIDATOR NAMES glslangValidator REQUIRED)
+set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gfx/shaders)
+set(SHADER_HEADER_DIR ${CMAKE_BINARY_DIR}/generated)
+file(GLOB SHADER_SOURCES CONFIGURE_DEPENDS ${SHADER_DIR}/*.vert ${SHADER_DIR}/*.frag)
+set(SHADER_HEADERS "")
+foreach(shader IN LISTS SHADER_SOURCES)
+    get_filename_component(shader_name ${shader} NAME)
+    string(REPLACE "." "_" shader_symbol ${shader_name})
+    set(header ${SHADER_HEADER_DIR}/shaders/${shader_name}.spv.hpp)
+    add_custom_command(OUTPUT ${header}
+        COMMAND ${GLSLANG_VALIDATOR} -V --target-env vulkan1.4 --quiet --vn ${shader_symbol}
+            --depfile ${header}.d -o ${header} ${shader}
+        DEPENDS ${shader}
+        DEPFILE ${header}.d
+        COMMENT "Compiling ${shader_name} to SPIR-V")
+    list(APPEND SHADER_HEADERS ${header})
+endforeach()
+
+add_library(dc_host OBJECT ${HOST_SOURCES} ${SHADER_HEADERS})
+target_include_directories(dc_host PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${SHADER_HEADER_DIR})
+target_link_libraries(dc_host PRIVATE SDL3::SDL3 Vulkan::Vulkan)
+target_compile_options(dc_host PRIVATE -Wall -ffunction-sections -fdata-sections)
+
 add_library(dc_port OBJECT ${PORT_LIB_SOURCES})
 target_link_libraries(dc_port PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
+# Replacement units reach the host side as "gfx/gfx.hpp", "platform/window.hpp".
+target_include_directories(dc_port PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # The game's headers trip a few warnings that only describe how MWCC's source
 # was written, not a problem in the port.
 target_compile_options(dc_port PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-label
@@ -115,8 +150,9 @@ target_compile_options(dc_port PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-la
 # round-trip. ItemPutListTbl12_bytes is a second name for the table, as the
 # PS2 build gives it through object_fixups.json.
 function(dc_link_game target)
-    target_sources(${target} PRIVATE $<TARGET_OBJECTS:dc_port> ${PS2_OBJECT})
+    target_sources(${target} PRIVATE $<TARGET_OBJECTS:dc_port> $<TARGET_OBJECTS:dc_host> ${PS2_OBJECT})
     target_link_libraries(${target} PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
+    target_include_directories(${target} PRIVATE ${PORT_DIR})
     target_compile_options(${target} PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-label
         -Wno-overloaded-virtual -Wno-unused-function)
     target_link_options(${target} PRIVATE -fuse-ld=lld -no-pie -Wl,--gc-sections -Wl,--error-limit=0
