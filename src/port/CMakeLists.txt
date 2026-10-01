@@ -31,6 +31,7 @@ find_package(Vulkan 1.4 REQUIRED)
 set(PS2_DIR ${CMAKE_SOURCE_DIR}/src/ps2)
 file(GLOB_RECURSE PS2_SOURCES CONFIGURE_DEPENDS RELATIVE ${PS2_DIR} ${PS2_DIR}/*.cpp)
 file(GLOB_RECURSE PORT_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+list(FILTER PORT_SOURCES EXCLUDE REGEX "/tests/")
 # tools/mwccgap compiles a temporary beside the source it came from.
 list(FILTER PS2_SOURCES EXCLUDE REGEX "(^|/)tmp[^/]*$")
 
@@ -95,16 +96,37 @@ add_custom_command(OUTPUT ${PS2_OBJECT}
     COMMAND_EXPAND_LISTS
     COMMENT "Merging src/ps2 into one weak object")
 
-# The executable is linked without PIE so its code and data sit below 4 GiB,
-# where the game's 32-bit pointer casts still round-trip.
-add_executable(darkcloud ${PORT_SOURCES} ${PS2_OBJECT})
-set_target_properties(darkcloud PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-target_link_libraries(darkcloud PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
+# Everything in src/port except main.cpp is an object library rather than an
+# archive: an archive member only enters the link when something references
+# it, so a strong definition sitting in one would never displace the weak
+# src/ps2 copy. Objects named on the link line always do.
+set(PORT_LIB_SOURCES ${PORT_SOURCES})
+list(FILTER PORT_LIB_SOURCES EXCLUDE REGEX "/tests/|/main\\.cpp$")
+add_library(dc_port OBJECT ${PORT_LIB_SOURCES})
+target_link_libraries(dc_port PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
 # The game's headers trip a few warnings that only describe how MWCC's source
 # was written, not a problem in the port.
-target_compile_options(darkcloud PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-label
+target_compile_options(dc_port PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-label
     -Wno-overloaded-virtual -Wno-unused-function)
-# ItemPutListTbl12_bytes is a second name for the table, as the PS2 build
-# gives it through object_fixups.json.
-target_link_options(darkcloud PRIVATE -fuse-ld=lld -no-pie -Wl,--gc-sections -Wl,--error-limit=0
-    -Wl,--defsym=ItemPutListTbl12_bytes=ItemPutListTbl12)
+
+# Shared by the game and its tests: the port's objects, the weakened game and
+# the link flags they need. The executable is linked without PIE so its code
+# and data sit below 4 GiB, where the game's 32-bit pointer casts still
+# round-trip. ItemPutListTbl12_bytes is a second name for the table, as the
+# PS2 build gives it through object_fixups.json.
+function(dc_link_game target)
+    target_sources(${target} PRIVATE $<TARGET_OBJECTS:dc_port> ${PS2_OBJECT})
+    target_link_libraries(${target} PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
+    target_compile_options(${target} PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-label
+        -Wno-overloaded-virtual -Wno-unused-function)
+    target_link_options(${target} PRIVATE -fuse-ld=lld -no-pie -Wl,--gc-sections -Wl,--error-limit=0
+        -Wl,--defsym=ItemPutListTbl12_bytes=ItemPutListTbl12)
+endfunction()
+
+add_executable(darkcloud ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+set_target_properties(darkcloud PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+dc_link_game(darkcloud)
+
+enable_testing()
+add_subdirectory(tests)
+add_subdirectory(${CMAKE_SOURCE_DIR}/tools/dcdata ${CMAKE_BINARY_DIR}/tools/dcdata)

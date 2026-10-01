@@ -45,3 +45,7 @@ AGENTS.md
 
 # The lock every build of the tree takes; see scripts/build/cmake.sh.
 /.build.lock
+
+# The PC port's extracted game data and its saves; see docs/PC_PORT_PLAN.md.
+/data/
+/save/
