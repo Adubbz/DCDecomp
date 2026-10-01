@@ -452,7 +452,7 @@ void MGBeginFrame() {
     if (WorkBuffer) {
         WorkBuffer->used = 0;
     }
-    Draw3DDropTransientVisuals();
+    Draw3DSweepVisuals();
 
     *reinterpret_cast<u_long128 *>(&GiftagAD) = 0;
     GiftagAD.EOP = 1;

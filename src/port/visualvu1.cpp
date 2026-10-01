@@ -124,8 +124,18 @@ Draw3DVisual &Draw3DRegisterVisual(unsigned int *block, bool transient) {
     return *slot;
 }
 
-void Draw3DDropTransientVisuals() {
+// Arenas are cleared or reused when the game moves on (BufferAllClear, a mode's own SetDataBuffer),
+// and nothing tells the records; a block whose tag is gone no longer holds a visual.
+void Draw3DSweepVisuals() {
     g_transient.clear();
+    std::erase_if(g_visuals, [](auto &entry) {
+        const unsigned int *block = static_cast<const unsigned int *>(entry.first);
+        if (block[8] == kBlockTag) {
+            return false;
+        }
+        Release(*entry.second);
+        return true;
+    });
 }
 
 void Draw3DFinishVisual(Draw3DVisual &visual) {

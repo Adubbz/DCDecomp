@@ -85,9 +85,10 @@ struct Draw3DVisual {
 
 Draw3DVisual *Draw3DFindVisual(const void *block);
 // A fresh record for block, replacing (and destroying) what an earlier build left there. A
-// transient record lives until the next MGBeginFrame.
+// transient record lives until the next MGBeginFrame, a lasting one until its block loses its tag.
 Draw3DVisual &Draw3DRegisterVisual(unsigned int *block, bool transient);
-void          Draw3DDropTransientVisuals();
+// MGBeginFrame's: drops transient records and those whose block was cleared or reused.
+void Draw3DSweepVisuals();
 // Uploads the record's vertices and indices as a mesh, or keeps them for immediate draws.
 void Draw3DFinishVisual(Draw3DVisual &visual);
 void Draw3DDrawVisual(const Draw3DVisual &visual, const float model[4][4], const RenderInfo &info, int program);

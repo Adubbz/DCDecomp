@@ -239,3 +239,19 @@ DC_TEST(draw3d_strip_winding) {
         DC_CHECK(area > 0.0f);
     }
 }
+
+// A block the game's arena clears or reuses loses its record (and mesh) at the next frame.
+DC_TEST(draw3d_model_record_swept_with_its_block) {
+    Draw3DFixture fixture;
+    MdtBuilder    builder;
+    builder.Quad(-10.0f, -5.0f, 10.0f, 5.0f, 100.0f, builder.Material(kOrange));
+    Model model(builder);
+    DC_CHECK(Draw3DFindVisual(model.block) != nullptr);
+    MGBeginFrame();
+    MGEndFrame();
+    DC_CHECK(Draw3DFindVisual(model.block) != nullptr);
+    std::memset(model.block, 0, sizeof(model.block));
+    MGBeginFrame();
+    MGEndFrame();
+    DC_CHECK(Draw3DFindVisual(model.block) == nullptr);
+}
