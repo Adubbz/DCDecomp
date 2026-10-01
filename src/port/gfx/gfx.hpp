@@ -38,6 +38,9 @@ struct RendererConfig {
     bool validation = true;
 #endif
     std::function<void(uint32_t done, uint32_t total)> progress;
+    // False forces the pipeline variants that stand in for a dynamic colour write mask where
+    // VK_EXT_extended_dynamic_state3 lacks it, so that path can be exercised on any device.
+    bool dynamic_color_write_mask = true;
 };
 
 // Exits the process with a message if no Vulkan 1.4 device can drive the window.
@@ -92,6 +95,7 @@ struct TextureInfo {
     uint32_t      mip_levels;
     bool          has_alpha;
     bool          render_target;
+    bool          shares_main_depth;
 };
 
 // Returns kNullTexture, with a message, for a size the device cannot hold. Contents start zeroed.
@@ -100,11 +104,19 @@ TextureHandle CreateTexture(const TextureDesc &desc);
 TextureHandle CreatePalette();
 // A texture the renderer can draw into, logical_width x logical_height scaled by the render
 // scale, with its own depth buffer. Starts black, alpha 0x80, depth far.
-TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha);
+//
+// With share_main_depth it has no depth buffer of its own: drawing into it tests and writes the
+// main target's depth and stencil, as drawn so far this frame. It is then the main target's pixel
+// size and mapped like it (640x480 logical, letterboxed), whatever size is asked for, follows the
+// main target through resizes (contents lost, like the main target's) and ignores the render
+// scale. A Clear of depth or stencil on it clears the main target's.
+TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha,
+                                 bool share_main_depth = false);
 // The render target registered under name (the game's "#name#w#h#bpp" placeholders), created on
-// first use and recreated if asked for at another size or alpha. Destroying it drops the name.
+// first use and recreated if asked for at another size, alpha or depth sharing. Destroying it
+// drops the name.
 TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
-                                bool has_alpha);
+                                bool has_alpha, bool share_main_depth = false);
 TextureHandle FindNamedRenderTarget(std::string_view name);
 void          DestroyTexture(TextureHandle texture);
 // Pixels are tightly packed rows of row_length texels (0: w), RGBA8 as bytes r,g,b,a, or one
@@ -191,6 +203,48 @@ enum class CullMode : uint8_t {
     Front,
 };
 
+// Vulkan's order, for the stencil test.
+enum class CompareOp : uint8_t {
+    Never,
+    Less,
+    Equal,
+    LEqual,
+    Greater,
+    NotEqual,
+    GEqual,
+    Always,
+};
+
+enum class StencilOp : uint8_t {
+    Keep,
+    Zero,
+    Replace,
+    IncrementClamp,
+    DecrementClamp,
+    Invert,
+    IncrementWrap,
+    DecrementWrap,
+};
+
+// The test passes when (reference & compare_mask) compare (stored & compare_mask).
+struct StencilFace {
+    CompareOp compare = CompareOp::Always;
+    StencilOp fail = StencilOp::Keep;
+    StencilOp pass = StencilOp::Keep;
+    StencilOp depth_fail = StencilOp::Keep;
+    uint8_t   reference = 0;
+    uint8_t   compare_mask = 0xFF;
+    uint8_t   write_mask = 0xFF;
+};
+
+enum ColorWriteBits : uint8_t {
+    kWriteRed = 1u << 0,
+    kWriteGreen = 1u << 1,
+    kWriteBlue = 1u << 2,
+    kWriteAlpha = 1u << 3,
+    kWriteRgba = 0xF,
+};
+
 struct LogicalRect {
     float x;
     float y;
@@ -214,6 +268,13 @@ struct DrawState {
     uint8_t     texa_ta0 = 0x80;
     bool        scissor = false;
     LogicalRect scissor_rect = {0.0f, 0.0f, kLogicalWidth, kLogicalHeight};
+    // Faces are told apart by winding, as for culling; lines are front faces.
+    bool        stencil_test = false;
+    StencilFace stencil_front;
+    StencilFace stencil_back;
+    // ColorWriteBits. Without VK_EXT_extended_dynamic_state3's dynamic mask only none or all of
+    // them are honoured; any other non-zero mask writes every channel.
+    uint8_t color_write_mask = kWriteRgba;
 };
 
 // ---- Drawing ---------------------------------------------------------------------------------
@@ -304,6 +365,8 @@ LogicalMapping GetLogicalMapping(TextureHandle target);
 // Clears the current target within rect (logical; null: all of it). color is GS bytes.
 void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float depth,
            const LogicalRect *rect = nullptr);
+// Clears the stencil of the current target's depth buffer within rect (logical; null: all of it).
+void ClearStencil(uint8_t value, const LogicalRect *rect = nullptr);
 bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t dst_x, int32_t dst_y);
 bool BlitTexture(TextureHandle src, Rect src_rect, TextureHandle dst, Rect dst_rect, Filter filter);
 // The main target's logical 640x480, as drawn so far this frame, stretched over all of dst.

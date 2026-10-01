@@ -336,6 +336,12 @@ uint32_t PipelineIndex(PipelineFamily family, uint32_t blend_slot, TextureMode m
     return ((family * g.blend_slot_count + blend_slot) * kTextureModeCount + mode) * 2 + (alpha_test ? 1 : 0);
 }
 
+uint32_t NoColorPipelineIndex(PipelineFamily family, TextureMode mode, bool alpha_test) {
+    uint32_t families = kFamilyCount;
+    uint32_t modes = kTextureModeCount;
+    return families * g.blend_slot_count * modes * 2 + (family * modes + mode) * 2 + (alpha_test ? 1 : 0);
+}
+
 BlendMapping MapBlend(const GsBlend &blend, bool enable) {
     if (!enable) {
         return BlendMapping{0, kSourceColor, false};
@@ -411,9 +417,10 @@ void CreatePipelines() {
     depth.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     depth.depthCompareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
 
-    // Depth test, depth write, compare op, cull mode and topology within a class are core
-    // dynamic state, so they multiply no pipelines.
-    VkDynamicState dynamic_states[] = {
+    // Depth and stencil state, cull mode and topology within a class are core dynamic state, and
+    // so is the colour write mask where VK_EXT_extended_dynamic_state3 offers it: they multiply no
+    // pipelines.
+    std::vector<VkDynamicState> dynamic_states = {
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR,
         VK_DYNAMIC_STATE_CULL_MODE,
@@ -422,18 +429,27 @@ void CreatePipelines() {
         VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE,
         VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE,
         VK_DYNAMIC_STATE_DEPTH_COMPARE_OP,
+        VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE,
+        VK_DYNAMIC_STATE_STENCIL_OP,
+        VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
+        VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
+        VK_DYNAMIC_STATE_STENCIL_REFERENCE,
     };
+    if (g.dynamic_color_write_mask) {
+        dynamic_states.push_back(VK_DYNAMIC_STATE_COLOR_WRITE_MASK_EXT);
+    }
     VkPipelineDynamicStateCreateInfo dynamic = {};
     dynamic.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-    dynamic.dynamicStateCount = static_cast<uint32_t>(std::size(dynamic_states));
-    dynamic.pDynamicStates = dynamic_states;
+    dynamic.dynamicStateCount = static_cast<uint32_t>(dynamic_states.size());
+    dynamic.pDynamicStates = dynamic_states.data();
 
     VkFormat                      color_format = kColorFormat;
     VkPipelineRenderingCreateInfo rendering = {};
     rendering.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
     rendering.colorAttachmentCount = 1;
     rendering.pColorAttachmentFormats = &color_format;
-    rendering.depthAttachmentFormat = kDepthFormat;
+    rendering.depthAttachmentFormat = g.depth_format;
+    rendering.stencilAttachmentFormat = g.depth_format;
 
     std::vector<VkPipelineColorBlendAttachmentState> attachments(g.blend_slot_count);
     std::vector<VkPipelineColorBlendStateCreateInfo> blends(g.blend_slot_count);
@@ -474,16 +490,32 @@ void CreatePipelines() {
         }
     }
 
-    uint32_t total = kFamilyCount * g.blend_slot_count * kTextureModeCount * 2;
+    // Without a dynamic mask, writing no colour is a pipeline of its own: blending is moot then,
+    // so one per family, texture mode and alpha test (the test still discards).
+    VkPipelineColorBlendAttachmentState no_color_attachment = {};
+    VkPipelineColorBlendStateCreateInfo no_color = {};
+    no_color.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    no_color.attachmentCount = 1;
+    no_color.pAttachments = &no_color_attachment;
+
+    uint32_t blended = kFamilyCount * g.blend_slot_count * kTextureModeCount * 2;
+    uint32_t families = kFamilyCount;
+    uint32_t modes = kTextureModeCount;
+    uint32_t total = blended + (g.dynamic_color_write_mask ? 0 : families * modes * 2);
 
     std::vector<VkPipelineShaderStageCreateInfo> stages(total * 2);
     std::vector<VkGraphicsPipelineCreateInfo>    infos(total);
+    uint32_t                                     blend_variants = g.blend_slot_count + (g.dynamic_color_write_mask ? 0 : 1);
     for (uint32_t family = 0; family < kFamilyCount; family++) {
-        for (uint32_t blend = 0; blend < g.blend_slot_count; blend++) {
+        for (uint32_t blend = 0; blend < blend_variants; blend++) {
+            bool writes_color = blend < g.blend_slot_count;
             for (uint32_t mode = 0; mode < kTextureModeCount; mode++) {
                 for (uint32_t test = 0; test < 2; test++) {
-                    uint32_t index = PipelineIndex(static_cast<PipelineFamily>(family), blend,
-                                                   static_cast<TextureMode>(mode), test != 0);
+                    uint32_t index = writes_color
+                                         ? PipelineIndex(static_cast<PipelineFamily>(family), blend,
+                                                         static_cast<TextureMode>(mode), test != 0)
+                                         : NoColorPipelineIndex(static_cast<PipelineFamily>(family),
+                                                                static_cast<TextureMode>(mode), test != 0);
 
                     VkPipelineShaderStageCreateInfo *stage = &stages[index * 2];
                     stage[0] = {};
@@ -508,7 +540,7 @@ void CreatePipelines() {
                     info.pRasterizationState = &raster;
                     info.pMultisampleState = &multisample;
                     info.pDepthStencilState = &depth;
-                    info.pColorBlendState = &blends[blend];
+                    info.pColorBlendState = writes_color ? &blends[blend] : &no_color;
                     info.pDynamicState = &dynamic;
                     info.layout = g.pipeline_layout;
                 }

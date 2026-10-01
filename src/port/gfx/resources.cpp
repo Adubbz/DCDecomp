@@ -53,7 +53,7 @@ void ClearImage(VkCommandBuffer cmd, Image &image, const VkClearColorValue &colo
 
 void ClearDepth(VkCommandBuffer cmd, Image &image) {
     Transition(cmd, image, TransferDst());
-    VkImageSubresourceRange  range = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
+    VkImageSubresourceRange  range = {image.aspect, 0, 1, 0, 1};
     VkClearDepthStencilValue far = {0.0f, 0};
     vkCmdClearDepthStencilImage(cmd, image.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &far, 1, &range);
     ToRest(cmd, image);
@@ -119,7 +119,7 @@ Image CreateTargetImage(uint32_t width, uint32_t height) {
 }
 
 Image CreateTargetDepth(uint32_t width, uint32_t height) {
-    return CreateImage(width, height, 1, kDepthFormat,
+    return CreateImage(width, height, 1, g.depth_format,
                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
                            VK_IMAGE_USAGE_TRANSFER_DST_BIT);
 }
@@ -130,9 +130,27 @@ uint32_t ScaledSize(uint32_t logical, float scale) {
 
 } // namespace
 
+bool IsDepthFormat(VkFormat format) {
+    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT ||
+           format == VK_FORMAT_D32_SFLOAT;
+}
+
+LogicalMapping TextureMapping(const Texture &texture) {
+    if (texture.shares_main_depth) {
+        return MainMapping(texture.image.width, texture.image.height);
+    }
+    return LogicalMapping{static_cast<float>(texture.image.width) / static_cast<float>(texture.logical_width),
+                          static_cast<float>(texture.image.height) /
+                              static_cast<float>(texture.logical_height),
+                          0.0f,
+                          0.0f,
+                          texture.image.width,
+                          texture.image.height};
+}
+
 ImageState RestState(const Image &image) {
     if (image.aspect & VK_IMAGE_ASPECT_DEPTH_BIT) {
-        return {VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+        return {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
                 VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT,
                 VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
                     VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT};
@@ -154,7 +172,9 @@ ImageState TransferDst() {
 Image CreateImage(uint32_t width, uint32_t height, uint32_t mips, VkFormat format, VkImageUsageFlags usage) {
     Image image;
     image.format = format;
-    image.aspect = format == kDepthFormat ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+    image.aspect = !IsDepthFormat(format)           ? VK_IMAGE_ASPECT_COLOR_BIT
+                   : format == VK_FORMAT_D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT
+                                                    : VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
     image.width = width;
     image.height = height;
     image.mips = mips;
@@ -315,7 +335,7 @@ void RecreateRenderTargets() {
     RunOneShot([](VkCommandBuffer cmd) {
         for (uint32_t slot = kFirstUserSlot; slot < g.textures.size(); slot++) {
             Texture &texture = g.textures[slot];
-            if (!texture.live || !texture.render_target) {
+            if (!texture.live || !texture.render_target || texture.shares_main_depth) {
                 continue;
             }
             uint32_t width = ScaledSize(texture.logical_width, g.render_scale);
@@ -351,6 +371,27 @@ void RecreateRenderTargets() {
     });
 }
 
+void RecreateSharedTargets() {
+    const Image &main = g.main_color[0];
+    RunOneShot([&](VkCommandBuffer cmd) {
+        for (uint32_t slot = kFirstUserSlot; slot < g.textures.size(); slot++) {
+            Texture &texture = g.textures[slot];
+            if (!texture.live || !texture.shares_main_depth) {
+                continue;
+            }
+            Image image = CreateTargetImage(main.width, main.height);
+            ClearImage(cmd, image,
+                       VkClearColorValue{
+                           {0.0f, 0.0f, 0.0f, 1.0f}
+            });
+            Image old_image = texture.image;
+            DeferDestroy([old_image]() mutable { DestroyImage(old_image); });
+            texture.image = image;
+            WriteTextureDescriptor(slot, image.view);
+        }
+    });
+}
+
 } // namespace detail
 
 using namespace detail;
@@ -374,6 +415,7 @@ TextureHandle CreateTexture(const TextureDesc &desc) {
     texture.generation = NextGeneration(texture.generation);
     texture.desc = desc;
     texture.render_target = false;
+    texture.shares_main_depth = false;
     texture.logical_width = desc.width;
     texture.logical_height = desc.height;
     texture.last_draw_use = 0;
@@ -387,9 +429,14 @@ TextureHandle CreateTexture(const TextureDesc &desc) {
 
 TextureHandle CreatePalette() { return CreateTexture(TextureDesc{256, 1, TextureFormat::Rgba8, 1, true}); }
 
-TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha) {
-    uint32_t width = ScaledSize(logical_width, g.render_scale);
-    uint32_t height = ScaledSize(logical_height, g.render_scale);
+TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha,
+                                 bool share_main_depth) {
+    if (share_main_depth) {
+        logical_width = static_cast<uint32_t>(kLogicalWidth);
+        logical_height = static_cast<uint32_t>(kLogicalHeight);
+    }
+    uint32_t width = share_main_depth ? g.main_color[0].width : ScaledSize(logical_width, g.render_scale);
+    uint32_t height = share_main_depth ? g.main_color[0].height : ScaledSize(logical_height, g.render_scale);
     if (logical_width == 0 || logical_height == 0 || !CheckSize(width, height)) {
         return kNullTexture;
     }
@@ -403,33 +450,37 @@ TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height
     texture.generation = NextGeneration(texture.generation);
     texture.desc = TextureDesc{logical_width, logical_height, TextureFormat::Rgba8, 1, has_alpha};
     texture.render_target = true;
+    texture.shares_main_depth = share_main_depth;
     texture.logical_width = logical_width;
     texture.logical_height = logical_height;
     texture.last_draw_use = 0;
     texture.image = CreateTargetImage(width, height);
-    texture.depth = CreateTargetDepth(width, height);
     VkCommandBuffer cmd = UploadCommands();
     ClearImage(cmd, texture.image,
                VkClearColorValue{
                    {0.0f, 0.0f, 0.0f, 1.0f}
     });
-    ClearDepth(cmd, texture.depth);
+    if (!share_main_depth) {
+        texture.depth = CreateTargetDepth(width, height);
+        ClearDepth(cmd, texture.depth);
+    }
     WriteTextureDescriptor(slot, texture.image.view);
     return MakeHandle(texture.generation, slot);
 }
 
 TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
-                                bool has_alpha) {
+                                bool has_alpha, bool share_main_depth) {
     TextureHandle existing = FindNamedRenderTarget(name);
     if (existing != kNullTexture) {
         const Texture &texture = *LookupTexture(existing);
-        if (texture.logical_width == logical_width && texture.logical_height == logical_height &&
-            texture.desc.has_alpha == has_alpha) {
+        bool           same_size = share_main_depth || (texture.logical_width == logical_width &&
+                                              texture.logical_height == logical_height);
+        if (same_size && texture.desc.has_alpha == has_alpha && texture.shares_main_depth == share_main_depth) {
             return existing;
         }
         DestroyTexture(existing);
     }
-    TextureHandle created = CreateRenderTarget(logical_width, logical_height, has_alpha);
+    TextureHandle created = CreateRenderTarget(logical_width, logical_height, has_alpha, share_main_depth);
     if (created != kNullTexture) {
         g.named_targets.emplace(std::string(name), created);
     }
@@ -520,7 +571,8 @@ std::optional<TextureInfo> GetTextureInfo(TextureHandle handle) {
                            TextureFormat::Rgba8,
                            1,
                            true,
-                           true};
+                           true,
+                           false};
     }
     Texture *texture = LookupTexture(handle);
     if (texture == nullptr) {
@@ -528,7 +580,7 @@ std::optional<TextureInfo> GetTextureInfo(TextureHandle handle) {
     }
     return TextureInfo{texture->logical_width, texture->logical_height, texture->image.width,
                        texture->image.height, texture->desc.format, texture->desc.mip_levels,
-                       texture->desc.has_alpha, texture->render_target};
+                       texture->desc.has_alpha, texture->render_target, texture->shares_main_depth};
 }
 
 void ConvertPs2Alpha(uint32_t *rgba, size_t count) {
