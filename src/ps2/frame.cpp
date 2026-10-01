@@ -35,7 +35,7 @@ void DevInit() {
     sceDmaPutEnv(&env);
     sceGsResetPath();
 }
-
+#ifndef PORT
 /* The two matrix operations the frame does often enough to spell out. Both exist in the vector
    library as calls; done inline the arithmetic costs less than the call around it would, and the
    unit's accumulator does a whole row of a multiply in one pass. The pointers are register
@@ -206,7 +206,7 @@ static inline void ScreenBound(sceVu0FVECTOR *screen, sceVu0FVECTOR max, sceVu0F
         sqc2    vf31, 0(lo)
     }
 }
-
+#endif
 /* The rotation a frame carries is stored as a quaternion whose scalar part comes first, so the
    caller's four floats are w, x, y, z in that order. */
 static void QuatToMat(float *quaternion, sceVu0FMATRIX matrix) {
@@ -1356,7 +1356,7 @@ CFrameVu1 &CFrameVu1::operator=(CFrameVu1 &other) {
 
     return *this;
 }
-
+#ifndef PORT
 /* The matrix every polygon of one pick-up is transformed by, parked in the unit's registers once
    instead of being reloaded per triangle. */
 static void pre_trance_normal(sceVu0FMATRIX matrix) {
@@ -1406,7 +1406,7 @@ static void trance_normal(float *p0, float *p1, float *p2, float *plane) {
         sqc2    vf22, 0(normal)
     }
 }
-
+#endif
 /* The polygons of this frame's collision, and of every frame under it, that reach into a bound the
    caller gives in world space. The bound is carried the other way instead of the geometry: it is
    eight corners through the inverse of this frame's transform and then their extent, so the

@@ -37,7 +37,7 @@ def compile_drafts(source: Path, temporary: Path, obj: Path) -> str:
     ]
     result = subprocess.run(
         command, cwd=ROOT, capture_output=True, text=True,
-        env={**os.environ, "MWCIncludes": "include/std;include/sce",
+        env={**os.environ, "MWCIncludes": "include/ps2/std;include/ps2/sce",
              "STATEFIX_SOURCE": str(relative_source)},
     )
     output = (result.stdout + result.stderr).replace("\r", "")

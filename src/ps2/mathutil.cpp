@@ -719,7 +719,7 @@ extern "C" int mwLoadOverlay(char *path, void *address) {
 static float sin_table_num = 1024.0f;
 static float sin_table_unit_1 = 162.97466f;
 static float SinTable[1024];
-
+#ifndef PORT
 void VectorMax(float *max, float *a, float *b) {
     register float *out = max;
     register float *p0 = a;
@@ -877,7 +877,7 @@ void PlaneNormal(float *normal, float *v0, float *v1, float *v2) {
         sqc2    vf12, 0(out)
     }
 }
-
+#endif
 float DistPlanePoint(float *normal, float *on_plane, float *point) {
     sceVu0FVECTOR offset;
 
@@ -957,7 +957,7 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
 
     return 0;
 }
-
+#ifndef PORT
 /* The square root leaves the Vector Unit in Q, which only a general register can be moved out of,
    so the block hands the bits over in an integer and reinterprets them where a float return value
    has to be. Both variables are the compiler's to place; the initializer is what stops it warning
@@ -1065,7 +1065,7 @@ void RotMatrixY(sceVu0FMATRIX matrix, float angle_y) {
     matrix[2][0] = Sinf(angle);
     matrix[0][2] = -matrix[2][0];
 }
-
+#endif
 void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     sceVu0FMATRIX pitch;
     sceVu0FMATRIX yaw;
@@ -1103,7 +1103,7 @@ void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     yaw[2][2] = sine;
     MulMatrix(matrix, yaw, pitch);
 }
-
+#ifndef PORT
 void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, int count) {
     register float *dst = (float *) out;
     register float *m = (float *) matrix;
@@ -1139,7 +1139,7 @@ row:
     }
     // clang-format on
 }
-
+#endif
 void VectorInterpolate(float *out, float *from, float *to, float step, int mode) {
     sceVu0FVECTOR gap;
     int           i;

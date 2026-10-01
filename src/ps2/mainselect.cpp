@@ -2,7 +2,7 @@
 
 #include "mainselect.hpp"
 
-// LOW CONFIDENCE: this file's name is a guess (see include/mainselect.hpp).
+// LOW CONFIDENCE: this file's name is a guess (see include/ps2/mainselect.hpp).
 char main_select_param[256];
 
 #ifdef PAL

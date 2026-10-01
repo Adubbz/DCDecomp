@@ -40,7 +40,7 @@ CDataAlloc2<1>         ActiveData0(-1);
 CDataAlloc2<1>         ActiveData1(-1);
 CDataAlloc<1, 1690000> GlobalDataBuffer;
 CDataAlloc2<1>         workbuffer(-1);
-
+#ifndef PORT
 void InitializeDataBuffer() {
     GlobalDataBuffer.used = 0;
     memset(&GlobalDataBuffer.block[GlobalDataBuffer.used], 0, 1690000 * 16);
@@ -72,7 +72,7 @@ void InitializeDataBuffer() {
     ActiveData0.used = 0;
     ActiveData1.used = 0;
 }
-
+#endif
 void SetDataBuffer(CDataAlloc2<1> *arena, int quads) {
     arena->base = GlobalDataBuffer.Alloc64(quads);
     arena->limit = quads;
@@ -93,7 +93,7 @@ void SetPacketReadBuffer(int packet_quads, int read_quads) {
     WorkBuffer->used = 0;
     printf("%d/%d\n", GlobalDataBuffer.used, 1690000);
 }
-
+#ifndef PORT
 void BufferAllClear() {
     GlobalDataBuffer.used = 0;
     asm {
@@ -152,7 +152,7 @@ clear_test:
     ActiveData0.used = 0;
     ActiveData1.used = 0;
 }
-
+#endif
 static int htoi(char *text) {
     char *cursor;
     int   len;

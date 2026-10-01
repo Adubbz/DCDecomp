@@ -6,6 +6,7 @@
 #include "menu_save.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
+#include "platform/window.hpp"
 #include "snd.hpp"
 #include "title/opening.hpp"
 #include "title/rushmovi.hpp"
@@ -16,11 +17,15 @@ int  EditLoop();
 void SndInit();
 
 int main(int argc, const char **argv, const char **envp) {
-    PS2_STUB();
+    WindowInit();
+    while (WindowPollEvents()) {
+        MGBeginFrame();
+        MGEndFrame();
+    }
+    WindowShutdown();
+    return 0;
 }
 
-// main.cpp calls these through the names MWCC gives them, and the overlays'
-// entry points through their retail addresses.
 extern "C" {
 void init_all__Fv() {
     init_all();

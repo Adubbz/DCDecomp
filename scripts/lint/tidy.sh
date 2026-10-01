@@ -32,8 +32,8 @@ if [ "$(clang-tidy --load="$plugin" --list-checks -checks='-*,dcdecomp-*' 2>/dev
 fi
 
 # The flags .clangd gives the editor: C++98 for a 32-bit MIPS target, with the
-# SDK and standard headers from include/ rather than the host's.
-flags="-xc++ -std=c++98 -Wno-deprecated-writable-strings -nostdinc -nostdinc++ --target=mipsel-unknown-elf -Iinclude -Iinclude/std -Iinclude/sce"
+# SDK and standard headers from include/ps2/ rather than the host's.
+flags="-xc++ -std=c++98 -Wno-deprecated-writable-strings -nostdinc -nostdinc++ --target=mipsel-unknown-elf -Iinclude/ps2 -Iinclude/ps2/std -Iinclude/ps2/sce"
 
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT

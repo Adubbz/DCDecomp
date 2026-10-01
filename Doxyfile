@@ -8,7 +8,7 @@ EXTRACT_PRIVATE        = YES
 EXTRACT_PRIV_VIRTUAL   = YES
 EXTRACT_STATIC         = YES
 INPUT                  = src/ps2 \
-                         include \
+                         include/ps2 \
                          README.md \
                          docs/PC.md
 FILE_PATTERNS          = *.c \

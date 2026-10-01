@@ -1,9 +1,9 @@
 If:
-  PathMatch: (src/ps2|include)/.*
+  PathMatch: (src/ps2|include/ps2)/.*
 CompileFlags:
   Add: [-xc++, -std=c++98, --target=mipsel-unknown-elf, -nostdinc, -nostdinc++, -Wno-deprecated-writable-strings,
-        -I../include, -I../include/std, -I../include/sce, -I../../include, -I../../include/std, -I../../include/sce,
-        -I../../../include, -I../../../include/std, -I../../../include/sce]
+        -I../include/ps2, -I../include/ps2/std, -I../include/ps2/sce, -I../../include/ps2, -I../../include/ps2/std, -I../../include/ps2/sce,
+        -I../../../include/ps2, -I../../../include/ps2/std, -I../../../include/ps2/sce]
 Diagnostics:
   UnusedIncludes: None
 Documentation:

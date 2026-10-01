@@ -1,13 +1,12 @@
 # The x64 port: the game's code built with clang as C++26 for the host.
 #
-# src/ps2 holds only the game's code as the PS2 build compiles it. Each of its
-# units is copied into the build tree with its MWCC inline assembly replaced
-# (cmake/StubAsm.cmake), the copies are compiled, and the objects are merged
-# into one relocatable object whose definitions are all made weak. Units in
-# src/port are compiled normally, so any function or variable defined there
-# takes precedence at link time and the src/ps2 definition is discarded. That
-# is how the PS2-only parts are replaced: the SDK, the Metrowerks runtime and
-# the functions that touch the hardware directly.
+# src/ps2 holds only the game's code as the PS2 build compiles it. Its units are
+# compiled as they are and merged into one relocatable object whose definitions
+# are all made weak. Units in src/port are compiled normally, so any function or
+# variable defined there takes precedence at link time and the src/ps2
+# definition is discarded. That is how the PS2-only parts are replaced: the SDK,
+# the Metrowerks runtime, the functions that touch the hardware directly and
+# those written in assembly.
 #
 # The port is always the PAL release.
 
@@ -25,6 +24,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # strong, so a missing replacement is still a link error.
 find_program(OBJCOPY NAMES llvm-objcopy llvm-objcopy-19 REQUIRED)
 find_program(LD_RELOCATABLE NAMES ld.lld REQUIRED)
+# SDL3 owns the window and input; Vulkan 1.4 renders.
+find_package(SDL3 REQUIRED CONFIG)
+find_package(Vulkan 1.4 REQUIRED)
 
 set(PS2_DIR ${CMAKE_SOURCE_DIR}/src/ps2)
 file(GLOB_RECURSE PS2_SOURCES CONFIGURE_DEPENDS RELATIVE ${PS2_DIR} ${PS2_DIR}/*.cpp)
@@ -32,24 +34,16 @@ file(GLOB_RECURSE PORT_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.c
 # tools/mwccgap compiles a temporary beside the source it came from.
 list(FILTER PS2_SOURCES EXCLUDE REGEX "(^|/)tmp[^/]*$")
 
-# The copies of src/ps2 that clang compiles.
-set(STUB_ASM ${CMAKE_CURRENT_SOURCE_DIR}/cmake/StubAsm.cmake)
-set(PS2_COPIES "")
+set(PS2_UNITS "")
+# include/port/stubs/<unit>.hpp, if it exists, is included ahead of that unit
+# of src/ps2: it declares what the port defines in place of code PORT leaves
+# out, and supplies or renames what the unit takes from MWCC alone.
 foreach(unit IN LISTS PS2_SOURCES)
-    set(copy ${CMAKE_CURRENT_BINARY_DIR}/ps2/${unit})
-    add_custom_command(OUTPUT ${copy}
-        COMMAND ${CMAKE_COMMAND} -DSOURCE=${PS2_DIR}/${unit} -DOUTPUT=${copy}
-                -DDISPLAY=src/ps2/${unit} -P ${STUB_ASM}
-        DEPENDS ${PS2_DIR}/${unit} ${STUB_ASM}
-        COMMENT "Stubbing the assembly in src/ps2/${unit}"
-        VERBATIM)
-    list(APPEND PS2_COPIES ${copy})
-    # shims/<unit>.h is included ahead of a unit that needs MWCC-only
-    # constructs supplied or renamed before clang can compile it.
-    string(REGEX REPLACE "\\.cpp$" ".h" shim ${CMAKE_CURRENT_SOURCE_DIR}/shims/${unit})
-    if(EXISTS ${shim})
-        set_source_files_properties(${copy} PROPERTIES
-            COMPILE_OPTIONS "-include;${shim}" OBJECT_DEPENDS ${shim})
+    list(APPEND PS2_UNITS ${PS2_DIR}/${unit})
+    string(REGEX REPLACE "\\.cpp$" ".hpp" header ${CMAKE_SOURCE_DIR}/include/port/stubs/${unit})
+    if(EXISTS ${header})
+        set_property(SOURCE ${PS2_DIR}/${unit} APPEND PROPERTY COMPILE_OPTIONS -include ${header})
+        set_property(SOURCE ${PS2_DIR}/${unit} APPEND PROPERTY OBJECT_DEPENDS ${header})
     endif()
 endforeach()
 
@@ -57,17 +51,18 @@ endforeach()
 # accepts constructs clang rejects by default: pointers truncated to 32-bit
 # integers, narrowing in braced initialisers and the register keyword.
 add_library(dc_options INTERFACE)
-target_compile_definitions(dc_options INTERFACE DC_PC PAL)
+# PORT leaves out the functions src/ps2 writes in MIPS assembly.
+target_compile_definitions(dc_options INTERFACE PORT PAL)
 target_include_directories(dc_options INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/sce)
+    ${CMAKE_SOURCE_DIR}/include/port ${CMAKE_SOURCE_DIR}/include/ps2 ${CMAKE_SOURCE_DIR}/include/ps2/sce)
 target_compile_options(dc_options INTERFACE
-    -include ${CMAKE_CURRENT_SOURCE_DIR}/include/pc_prelude.h
+    "SHELL:-include ${CMAKE_SOURCE_DIR}/include/port/port.h"
     -fms-extensions -ffunction-sections -fdata-sections
     -Wno-register -Wno-c++11-narrowing -Wno-return-mismatch)
 
 # src/ps2: semantic interposition keeps clang from inlining or folding a call
 # to a function src/port may replace, so every such call reaches the linker.
-add_library(dc_ps2 OBJECT ${PS2_COPIES})
+add_library(dc_ps2 OBJECT ${PS2_UNITS})
 target_link_libraries(dc_ps2 PRIVATE dc_options)
 target_compile_options(dc_ps2 PRIVATE -fPIC -fsemantic-interposition)
 # Retail's code reads locals it never set and falls off the end of functions
@@ -104,7 +99,7 @@ add_custom_command(OUTPUT ${PS2_OBJECT}
 # where the game's 32-bit pointer casts still round-trip.
 add_executable(darkcloud ${PORT_SOURCES} ${PS2_OBJECT})
 set_target_properties(darkcloud PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-target_link_libraries(darkcloud PRIVATE dc_options)
+target_link_libraries(darkcloud PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)
 # The game's headers trip a few warnings that only describe how MWCC's source
 # was written, not a problem in the port.
 target_compile_options(darkcloud PRIVATE -Wall -Wno-mismatched-tags -Wno-unused-label

@@ -13,7 +13,7 @@ obj=tmp.rsplit('.',1)[0]+'.o'
 open(tmp,'w').write(open(src).read())
 try:
     cmd=['scripts/build/statefix-wibo.sh','tools/compilers/mw/2.3.3/mwccmips.exe']+q.FLAGS+['-define','NON_MATCHING','-lang','c' if src.endswith('.c') else 'c++','-o',obj,tmp]
-    r=subprocess.run(cmd,capture_output=True,text=True,env=dict(os.environ,MWCIncludes='include/std;include/sce',STATEFIX_SOURCE=src))
+    r=subprocess.run(cmd,capture_output=True,text=True,env=dict(os.environ,MWCIncludes='include/ps2/std;include/ps2/sce',STATEFIX_SOURCE=src))
     out=(r.stdout+r.stderr).replace('\r','')
     if 'caused tool to abort' in out or not os.path.exists(obj):
         print('COMPILE FAILED'); print('\n'.join(l for l in out.splitlines() if l.startswith('#'))[:4000]); sys.exit(1)

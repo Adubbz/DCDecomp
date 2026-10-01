@@ -30,7 +30,8 @@ RUN apt-get update \
 
 
 # Install build requirements. clang, lld and llvm build the PC port
-# (src/port/CMakeLists.txt). gdb is one of them too: scripts/build/statefix.py
+# (src/port/CMakeLists.txt), against SDL3 for the window and input and Vulkan
+# for rendering. gdb is one of them too: scripts/build/statefix.py
 # drives the compiler under it to put back the state MWCC carries and never
 # resets, which the build compiles every unit through. It has to be the full
 # gdb rather than gdb-minimal -- statefix runs as a gdb Python script.
@@ -44,6 +45,8 @@ RUN apt-get update \
         clang \
         lld \
         llvm \
+        libsdl3-dev \
+        libvulkan-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # The binutils built for PS2 decompilation projects. This is the assembler the

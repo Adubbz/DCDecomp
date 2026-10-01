@@ -93,7 +93,7 @@ static int vcount;
 static int over_vsync;
 static int (*VSyncCallBack2)(int);
 static int call_back_active;
-
+#ifndef PORT
 static int VSyncCallBack(int id) {
     iFlushCache(0);
     call_back_active = 1;
@@ -116,7 +116,7 @@ static int VSyncCallBack(int id) {
     iFlushCache(0);
     return 0;
 }
-
+#endif
 int MGGetVSyncCount() {
     return vcount;
 }
@@ -1008,7 +1008,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
     screen[1] -= 2048 - SCREEN_HALF_HEIGHT;
     return visible;
 }
-
+#ifndef PORT
 /* Both of a screen-facing sprite's opposite corners out of a single transform: the half-width and
    half-height are scaled by the render info once and then by the same Q the perspective divide
    produced, so the second corner costs an add rather than a second pass through the matrix. The
@@ -1207,7 +1207,7 @@ void MGCalcColor(register float *color, register float *normal) {
         sqc2    vf14, 0(color)
     }
 }
-
+#endif
 /* Where one point falls outside the screen, as six bits rather than a yes or no: near, far, and one
    per side. The half-widths are the guard band's and not the window's, so a point off the edge is
    still inside until it is off by half a screen. A point at or behind the eye keeps its bits and

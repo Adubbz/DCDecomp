@@ -8,26 +8,53 @@ C++26. The port is always the PAL release; there is no region setting.
 ./dev.sh ninja -C build/pc
 ```
 
-The result is `build/pc/darkcloud`. Every piece of PlayStation 2 code is a stub
-that asserts, so for now the program stops at the first one it reaches -- a VU0
-call made by a static constructor, before `main` runs.
+The result is `build/pc/darkcloud`. It links against SDL3 and the Vulkan loader
+(`libsdl3-dev` and `libvulkan-dev` in the dev image) and needs a GPU with
+Vulkan 1.4 to run.
+
+The game's start-up still reaches PlayStation 2 code the port does not
+implement, so for now `main` only opens the window and presents cleared frames
+until it is closed. Every other piece of PlayStation 2 code is a stub that
+asserts.
+
+## Platform
+
+`src/port/platform` is the host side, with no game headers or SDK types in
+its interfaces:
+
+- `window.cpp` starts SDL3, opens a resizable 1280x960 window and pumps its
+  events.
+- `renderer.cpp` is a Vulkan 1.4 renderer: one graphics queue that presents,
+  a FIFO swapchain rebuilt when the window's size changes, two frames in
+  flight, dynamic rendering and synchronization2. A frame begins by clearing
+  the swapchain image.
+
+`MGBeginFrame` and `MGEndFrame` (`src/port/mglib.cpp`) begin and present a
+frame. The Khronos validation layer is enabled when it is installed, always in
+a build without `NDEBUG` and otherwise when `DC_VULKAN_VALIDATION` is set.
 
 ## Layout
 
 The root `CMakeLists.txt` only picks the platform:
 
 - `src/ps2` is the game's code, exactly as the PS2 build compiles it, and
-  nothing else: no `DC_PC` guards and no other accommodation for the port.
+  nothing else. Port accommodations never live in `src/ps2` or `include/ps2`;
+  the one exception is the `#ifndef PORT` around functions written in
+  assembly (below).
   `src/ps2/CMakeLists.txt` (with `src/ps2/cmake/`) is the PS2 build.
-- `src/port` is code only the port compiles. `src/port/CMakeLists.txt` (with
-  `src/port/cmake/`) is the port's build.
+- `src/port` is code only the port compiles. `src/port/CMakeLists.txt` is the
+  port's build.
+- `include/ps2` holds the game's headers and, under `include/ps2/sce` and
+  `include/ps2/std`, the SDK and standard headers MWCC compiles against. Both
+  builds use them.
+- `include/port` holds headers only the port uses: `port.h`, included ahead
+  of every unit it compiles, and `stubs/` (below).
 
 ## How `src/port` takes precedence
 
 `src/port/CMakeLists.txt` builds the two halves like this:
 
-1. Every unit in `src/ps2` is copied into `build/pc/src/port/ps2/` with its
-   MWCC inline assembly replaced (see below), and the copy is compiled.
+1. Every unit in `src/ps2` is compiled as it is, with `PORT` defined.
 2. The objects are merged into one relocatable object, `build/pc/dc_ps2.o`,
    and `llvm-objcopy --weaken` makes every definition in it weak. References
    stay strong, so a missing function is still a link error.
@@ -42,47 +69,80 @@ calls inside a `src/ps2` unit reach the replacement too.
 To replace a function, define it with the same signature in `src/port`. By
 convention it goes in the file that mirrors its unit: `src/port/mglib.cpp`
 holds the replacements for `src/ps2/mglib.cpp`. A `static` function cannot be
-replaced this way; it keeps whatever body the copy gives it.
+replaced this way; it keeps the body `src/ps2` gives it.
 
 ## What is stubbed
 
-A stub calls `PS2_STUB()` (`src/port/include/pc_prelude.h`), which prints the
-function, file and line, then aborts.
+A stub calls `PS2_UNIMPLEMENTED()` (`include/port/port.h`), which
+prints the function, file and line, then aborts. Every stub the port defines
+is in `src/port/stubs/`, in the file named after the source it replaces:
+`src/port/stubs/<unit>.cpp` for a unit of `src/ps2`, and
+`src/port/stubs/sce/<library>.cpp` for a library of `include/ps2/sce`. The
+stubs are:
 
-- **The SDK.** `src/port/sce/<library>.cpp` stubs every function declared in
-  `include/sce`.
-- **MWCC inline assembly.** Clang cannot compile MWCC's `asm {}` blocks, so
-  `src/port/cmake/StubAsm.cmake` rewrites them in the copy:
-  - a block that is only `bne $0, $0, <label>` (the `Align64` functions) can
-    never branch, so it is dropped;
-  - any other block becomes `PS2_ASM()`, a stub, so a function using the
-    vector unit aborts when it is reached;
-  - a function written entirely in assembly keeps its declarator and gets
-    `PS2_ASM()` as its body. `CDataAlloc2<1>::CDataAlloc2()` only delegates,
-    so `src/port/dataalloc.cpp` gives the same thing in C++.
-
-  Every rewrite keeps the line count, and the copy starts with a `#line`
-  naming the `src/ps2` file, so diagnostics and stub reports point at the
-  original.
+- **The SDK.** Every function declared in `include/ps2/sce`, except libvu0,
+  which is implemented (below).
 - **The hardware.** Functions that read or write PS2 registers or the
-  scratchpad directly: `main`, `MGBeginFrame`, `MGEndFrame`,
-  `VSyncCallBack_Load` and `CVisualShadow::CreateVUdataShadowCLIP`.
+  scratchpad directly: `VSyncCallBack_Load` and
+  `CVisualShadow::CreateVUdataShadowCLIP`. `main`, `MGBeginFrame` and
+  `MGEndFrame` are replaced by the platform layer instead.
 - **The Metrowerks runtime.** The C++ runtime and overlay loader at the top of
   `src/ps2/mathutil.cpp` compile, but `mwInit`, the one entry point the game
   calls, is stubbed.
 
+- **MWCC inline assembly.** Every function in `src/ps2` that is written in
+  MIPS assembly, in whole or in part: `VectorMax`, `MulMatrix`,
+  `InitializeDataBuffer`, the `Align64` functions, `vuabs`, the frame matrix
+  helpers and the rest.
+
+Clang cannot compile MWCC's MIPS `asm {}` blocks, so each function that uses
+one sits behind `#ifndef PORT` in `src/ps2`; the port defines `PORT` and gets
+the function from `src/port/stubs/<unit>.cpp` instead. The directives take the place of the
+blank lines around the function, so no line in the unit moves. A `static` one
+is still called from its own unit, so `include/port/stubs/<unit>.hpp` declares
+it (below).
+Two that share a name across units (`vuabs`, `StretchBind2`, `vu_hold_box`,
+`vu_box_missed`) share one stub. `CDataAlloc2<1>::CDataAlloc2()`, which only
+delegates, is implemented in `src/port/dataalloc.cpp` rather than stubbed.
+
 `src/port/runtime.cpp` implements, rather than stubs, the runtime calls with a
 host equivalent: `__assert` (in its Metrowerks argument order) and `exit__2`.
 
-## Unit shims
+`src/port/sce/libvu0.cpp` implements libvu0 in C++, since static constructors
+call it before `main`. Each function writes the lanes the library's VU0 code
+writes (`sceVu0Normalize` and `sceVu0OuterProduct` zero w, the `XYZ` variants
+keep it, `sceVu0RotMatrix` applies Z, then Y, then X). The rotations use the
+host's `sin` and `cos` rather than the library's polynomial, and
+`sceVpu0Reset` does nothing.
 
-`src/port/shims/<unit>.h`, if it exists, is included ahead of the copy of
-`src/ps2/<unit>.cpp` and nothing else. It supplies or renames what that unit
-takes from MWCC alone:
+## Per-unit adjustments
 
-- `mathutil.h` renames the runtime's own `std::exception` and
-  `std::bad_exception` apart from the host library's, and declares
+`include/port/stubs/<unit>.hpp`, if it exists, is included ahead of
+`src/ps2/<unit>.cpp`, after `port.h`, and nothing else. It declares what the
+port defines in place of code `PORT` leaves out, and supplies or renames what
+the unit takes from MWCC alone:
+
+- `bound`, `cloth`, `collisionmdt`, `frame`, `gameutil`, `mglib`, `visualvu1`
+  and `water` get declarations of their `static` assembly functions, which
+  `src/port/stubs/` defines.
+- `battlemenu` and `editground` pass each temporary `CRect_i_` as an lvalue
+  (`Ps2Lvalue`, `include/port/port.h`): MWCC binds a temporary to the non-const
+  references of `DrawMenuColorGradation` and `CEditGround::CheckPartsRect`.
+- `main` gets an overload of `LoadFileMenuData` for a `const char *`: one call
+  names its file with a comma expression ending in a string literal.
+- `mathutil` gets the Metrowerks runtime's own `std::exception` and
+  `std::bad_exception` renamed apart from the host library's, and
   `__exception_magic`, which MWCC provides inside an exception handler.
+
+## Game headers
+
+`include/port/port.h` adjusts two game headers for the host, from outside:
+
+- `types.h` defines the PS2's `size_t` and `NULL`. `port.h` includes it with
+  `size_t` renamed and `NULL` saved, so the host's stay in force, and
+  `#pragma once` keeps the game from including it again.
+- `common.h` defines `STATIC_ASSERT`, which checks the PS2's layouts. `port.h`
+  includes it and redefines the macro to check nothing.
 
 ## Names the PS2 build renames
 
@@ -108,8 +168,9 @@ equivalent yet, so the merge keeps the first definition of each name:
 
 ## Keeping the PS2 build matching
 
-Edits to `src/ps2` or `include` that help clang must leave both PS2 builds
-byte-identical:
+Edits to `src/ps2` or `include/ps2` that help clang must leave both PS2 builds
+byte-identical. They are corrections that are standard C++ either way, never
+code for the port:
 
 - **Initialisations a `switch` jumps over.** They are split into a declaration
   and an assignment.
@@ -117,11 +178,10 @@ byte-identical:
   declared `extern "C"` to match their definitions.
 - **Exception specifications.** `__dl` is declared `throw()`, as it is
   defined.
-- **`DC_PC` in `include` only.** Headers are not copied, so the few port
-  accommodations they need stay behind `DC_PC`: `size_t`, `STATIC_ASSERT`
-  (which checks the PS2 layout), the `asm` block in the `CDataAlloc` template
-  and overloads that accept a temporary `CRect_i_` or a string literal where
-  MWCC bound them to a non-const parameter.
+- **`#ifndef PORT` around assembly functions**, the one exception: clang
+  cannot parse them. It replaces blank lines, so no line number moves. The
+  generic `CDataAlloc<Kind, Size>::Align64()` in `include/ps2/dataalloc.hpp`
+  is guarded too; nothing instantiates it, since both arenas specialise it.
 
 Retail's own mistakes stay in `src/ps2`, because the match reproduces them:
 locals read before anything sets them (`SaveToMc`'s `status`, `main`'s
@@ -155,6 +215,6 @@ for globals, though not for the heap or stack.
 
 ## Checking the PS2 build
 
-An edit to `src/ps2` or `include` made for the port is checked by building
+An edit to `src/ps2` or `include/ps2` made for the port is checked by building
 both regions (`scripts/build/cmake.sh build`, and again with `REGION=PAL`),
 which verifies every image byte for byte.

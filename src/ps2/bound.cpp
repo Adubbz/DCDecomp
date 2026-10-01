@@ -1,7 +1,7 @@
 #include "bound.hpp"
 
 #include "frame.hpp"
-
+#ifndef PORT
 /**
  * Gives the length of a three-component vector, on the vector unit. Calls
  * bind to chararead's copy; the body is here so the compiler knows which
@@ -21,7 +21,7 @@ static float vuabs(float *vector) {
         mtc1 $2, $f0
     }
 }
-
+#endif
 int CBound::InCheck(float *point, float *result) {
     float length;
 

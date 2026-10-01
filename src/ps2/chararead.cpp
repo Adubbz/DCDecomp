@@ -790,7 +790,7 @@ void CCharacter::StopCloth(int unused) {
         }
     }
 }
-
+#ifndef PORT
 /**
  * Blends two bone transforms for a stretched vertex, on the vector unit.
  *
@@ -847,3 +847,4 @@ float vuabs(float *vector) {
         mtc1 $2, $f0
     }
 }
+#endif

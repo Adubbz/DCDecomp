@@ -15,14 +15,21 @@
 #include "dataset.hpp"
 #include "frame.hpp"
 #include "mathutil.hpp"
+#include "platform/renderer.hpp"
 #include "rect.hpp"
 #include "texture.hpp"
 #include "vutext.hpp"
 
+/** Whether MGBeginFrame started a frame for MGEndFrame to present. */
+static bool frame_begun;
+
 void MGBeginFrame() {
-    PS2_STUB();
+    frame_begun = RendererBeginFrame();
 }
 
 void MGEndFrame() {
-    PS2_STUB();
+    if (frame_begun) {
+        RendererEndFrame();
+        frame_begun = false;
+    }
 }

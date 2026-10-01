@@ -6,7 +6,7 @@
 #include <libvu0.h>
 
 #include "mathutil.hpp"
-
+#ifndef PORT
 /* The extent of three points, which is the bound of one triangle. The unit answers both extremes
    from one pass over the pair, so this costs less than the two the library would need. The
    pointers are register variables because that is how an assembly block reaches a value the
@@ -90,7 +90,7 @@ static inline int vu_box_missed(float *max, float *min) {
 
     return status & 0xc0;
 }
-
+#endif
 /* The bound of whatever the shape is made of, which the base can build because the vertices are
    the one thing every shape answers. A shape with no vertices leaves the bound all zero. */
 void CCollision::CreateBBox() {

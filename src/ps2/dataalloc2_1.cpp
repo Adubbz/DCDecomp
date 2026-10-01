@@ -34,7 +34,7 @@ u_char *CDataAlloc2<1>::Alloc64(int quads) {
 
     return block;
 }
-
+#ifndef PORT
 void CDataAlloc2<1>::Align64() {
     /* Falls through as it stands; flipping the branch turns the whole alignment step off. */
     asm {
@@ -56,7 +56,7 @@ void CDataAlloc2<1>::Align64() {
 
 done:;
 }
-
+#endif
 u_char *CDataAlloc<1, 1690000>::Alloc64(int quads) {
     Align64();
 
@@ -72,7 +72,7 @@ u_char *CDataAlloc<1, 1690000>::Alloc64(int quads) {
 
     return allocation;
 }
-
+#ifndef PORT
 void CDataAlloc<1, 1690000>::Align64() {
     /* Falls through as it stands; flipping the branch turns the whole alignment step off. */
     asm {
@@ -94,7 +94,7 @@ void CDataAlloc<1, 1690000>::Align64() {
 
 done:;
 }
-
+#endif
 CDataAlloc2<1>::CDataAlloc2(int limit) {
     this->limit = limit;
     used = 0;

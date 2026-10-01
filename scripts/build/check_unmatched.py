@@ -29,10 +29,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MW = Path(os.environ.get("MW_DIR", "tools/compilers/mw/2.3.3"))
-LIB_INCLUDES = os.environ.get("LIB_INCLUDE_DIRS", "include/std;include/sce")
+LIB_INCLUDES = os.environ.get("LIB_INCLUDE_DIRS", "include/ps2/std;include/ps2/sce")
 FLAGS = [
     "-O2", "-c", "-Cpp_exceptions", "off", "-RTTI", "off", "-strings", "readonly",
-    "-pragma", "divbyzerocheck on", "-i", "include", "-define", "NON_MATCHING",
+    "-pragma", "divbyzerocheck on", "-i", "include/ps2", "-define", "NON_MATCHING",
 ]
 GUARD = re.compile(r"^#ifdef\s+NON_MATCHING\s*$", re.M)
 

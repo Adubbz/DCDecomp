@@ -2,7 +2,7 @@
 #pragma helper_mask_fpr 0x1000
 
 #include "dataalloc.hpp"
-
+#ifndef PORT
 // clang-format off
 asm CDataAlloc2<1>::CDataAlloc2() {
     addiu sp,sp,-16
@@ -16,7 +16,7 @@ asm CDataAlloc2<1>::CDataAlloc2() {
     nop
 }
 // clang-format on
-
+#endif
 /* @ 0x143850 (0x20 bytes) -- __ct__18CDataAlloc<1,6000>Fv */
 CDataAlloc<1, 6000>::CDataAlloc() {
     used = 0;

@@ -84,7 +84,7 @@ void CCloth::Clear() {
         }
     }
 }
-
+#ifndef PORT
 /**
  * Blends two bone transforms for a stretched vertex, on the vector unit.
  */
@@ -452,7 +452,7 @@ void CCloth::Step(int step) {
         }
     }
 }
-
+#endif
 /**
  * Draws the cloth through the vector unit.
  *

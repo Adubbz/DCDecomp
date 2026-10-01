@@ -32,13 +32,13 @@ import clang.cindex as ci
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.abspath(os.path.join(script_dir, "..", ".."))
-include_dir = os.path.join(root_dir, "include")
+include_dir = os.path.join(root_dir, "include", "ps2")
 
 # Project-specific. -ffreestanding keeps the host's system headers out of a
 # context describing a PlayStation 2 binary; M2CTX is the escape hatch for
 # anything a header needs to say differently here.
 CPP_FLAGS = [
-    "-Iinclude",
+    "-Iinclude/ps2",
     "-Isrc",
     "-D_LANGUAGE_C",
     "-DF3DEX_GBI_2",
@@ -320,7 +320,7 @@ def usable(cur, root):
         return False
 
     loc = cur.location.file
-    # clang reports each path as it was written, which under `-Iinclude` is
+    # clang reports each path as it was written, which under `-Iinclude/ps2` is
     # relative to the working directory -- resolve before comparing. Builtins
     # have no file at all, and are what this mainly filters out.
     if loc is None or not os.path.abspath(str(loc)).startswith(root):

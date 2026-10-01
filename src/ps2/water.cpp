@@ -11,7 +11,7 @@
 #include "texture.hpp"
 
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
-
+#ifndef PORT
 /**
  * Loads the matrix and translation used by cell transforms into VU0 registers.
  */
@@ -46,7 +46,7 @@ static void Trans_AddCell(float *output, float *position) {
         sqc2 vf16, 0(source)
     }
 }
-
+#endif
 void CWater::SetParam(float speed, float damping_rate, float scale, float shift) {
     wave_speed = speed;
     damping = damping_rate;

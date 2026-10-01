@@ -841,7 +841,7 @@ def drive(arguments, executable=None, verify=False, quiet=False):
         f.write('\n'.join(commands) + '\n')
         path = f.name
     environment = dict(os.environ, MWCIncludes=os.environ.get(
-        'MWCIncludes', 'include/std;include/sce'))
+        'MWCIncludes', 'include/ps2/std;include/ps2/sce'))
     if verify:
         environment['STATEFIX_VERIFY'] = '1'
     if quiet:

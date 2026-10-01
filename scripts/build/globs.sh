@@ -20,8 +20,8 @@ out=$dir/globbed.txt
 listing=$(
     {
         find src -type f \( -name '*.cpp' -o -name '*.c' \) ! -name 'tmp*'
-        find include -maxdepth 1 -type f \( -name '*.hpp' -o -name '*.h' \)
-        find include/std include/sce -maxdepth 1 -type f
+        find include/ps2 -maxdepth 1 -type f \( -name '*.hpp' -o -name '*.h' \)
+        find include/ps2/std include/ps2/sce -maxdepth 1 -type f
     } | LC_ALL=C sort
 )
 if [ ! -f "$out" ] || [ "$(cat "$out")" != "$listing" ]; then

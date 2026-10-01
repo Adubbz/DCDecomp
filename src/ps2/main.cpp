@@ -119,11 +119,11 @@ static CSaveData save_data __attribute__((aligned(64)));
 CSaveData       *SaveData;
 
 /* main()'s own top-level game-state globals -- moved here from
- * src/ps2/mainselect.cpp/include/mainselect.hpp for the same reason as `pBound` etc. above:
+ * src/ps2/mainselect.cpp/include/ps2/mainselect.hpp for the same reason as `pBound` etc. above:
  * retail's `main.sbss` interleaves these (GLOBAL linkage) with `SaveData`
  * just above and `mode`/etc. just below, all in one contiguous run
  * (0x2a2510-0x2a2548) that must come from ONE compiled object. Still
- * *declared* `extern` in include/mainselect.hpp (in case another, not-yet-
+ * *declared* `extern` in include/ps2/mainselect.hpp (in case another, not-yet-
  * decompiled TU needs them), just no longer *defined* there. Declaration
  * order here matches retail's exact main.sbss address order. */
 s32    GameClearFlag;
@@ -1881,7 +1881,7 @@ u_char *CDataAlloc<1, 6000>::Alloc(int quads) {
     used = filled;
     return run;
 }
-
+#ifndef PORT
 /**
  * Rounds the six-thousand-quadword arena's cursor up to sixty-four bytes.
  *
@@ -1909,3 +1909,4 @@ void CDataAlloc<1, 6000>::Align64() {
 
 done:;
 }
+#endif

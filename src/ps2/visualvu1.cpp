@@ -167,7 +167,7 @@ CVisual::CVisual() {
 int CVisualVu1::RemakeData(unsigned int *data) {
     return 0;
 }
-
+#ifndef PORT
 /**
  * One over the length of the first three components of a vector, from the vector unit.
  */
@@ -203,7 +203,7 @@ static inline float InverseLength(float *vector) {
 
     return length;
 }
-
+#endif
 /**
  * Whether a render flag is clear.
  */

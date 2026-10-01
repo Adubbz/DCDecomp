@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import region  # noqa: E402
 PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
 FLAGS = ['-O2', '-c', '-Cpp_exceptions', 'off', '-RTTI', 'off',
-         '-strings', 'readonly', '-pragma', 'divbyzerocheck on', '-i', 'include']
+         '-strings', 'readonly', '-pragma', 'divbyzerocheck on', '-i', 'include/ps2']
 if region.NAME == region.PAL:
     FLAGS.append('-DPAL')
 OVERLAY_BASE = region.OVERLAY_ORIGIN

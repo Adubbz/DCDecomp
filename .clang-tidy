@@ -15,6 +15,6 @@ CheckOptions:
   readability-identifier-naming.LocalVariableCase: lower_case
   readability-identifier-naming.StaticVariableCase: aNy_CasE
 WarningsAsErrors: ''
-HeaderFilterRegex: '(^|/)include/((title|dun)/)?[^/]+\.(h|hpp)$'
+HeaderFilterRegex: '(^|/)include/ps2/((title|dun)/)?[^/]+\.(h|hpp)$'
 FormatStyle: file
 ...

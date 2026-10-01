@@ -64,7 +64,7 @@ fi
 : "${MIPS_TOOL_PREFIX:=mips-ps2-decompals-}"
 # mwcc's <> search list: the library headers, and only those, so a library is
 # spelled `#include <libvu0.h>` while the game's own headers come through -i.
-: "${LIB_INCLUDE_DIRS:=include/std;include/sce}"
+: "${LIB_INCLUDE_DIRS:=include/ps2/std;include/ps2/sce}"
 
 # mwccgap's second pass compiles a temporary whose name says nothing about the
 # unit, so the source is named through the environment for the parts of the
@@ -84,7 +84,7 @@ python3 scripts/build/mwccgap_region.py "$src" "$obj" \
     --asm-dir-prefix "${ASM_DIR:-.}" \
     -lang "$lang" \
     "$@" \
-    --as-flags -g -mno-pdr -non_shared -G0 -Iinclude < /dev/null
+    --as-flags -g -mno-pdr -non_shared -G0 -Iinclude/ps2 < /dev/null
 
 # MWCC writes its dependency map to `<stem>.d` in the working directory. The
 # first of mwccgap's two compiles reads the real source, so that pass leaves

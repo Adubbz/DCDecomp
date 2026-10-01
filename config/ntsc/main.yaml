@@ -43,7 +43,7 @@ options:
   # Every source already exists; splat reads the markers out of them
   # to decide which functions still need reference assembly.
   create_c_files: False
-  # include/macro.inc is written by hand and load-bearing: its `alabel`
+  # include/ps2/macro.inc is written by hand and load-bearing: its `alabel`
   # is deliberately not global, because a branch to a global label
   # becomes a relocation mwld and gas disagree about. splat's generated
   # one makes it global, so it must not overwrite this project's.

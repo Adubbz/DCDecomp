@@ -43,7 +43,7 @@ KNOWN_TYPES = [
             "SHOT_COLLISION_PLAYER": 2,
             "SHOT_COLLISION_MONSTER": 3,
         },
-        "documentation": "include/shot_utils.hpp",
+        "documentation": "include/ps2/shot_utils.hpp",
     },
     {
         "kind": "structure",
@@ -62,7 +62,7 @@ KNOWN_TYPES = [
             {"offset": "0x510", "name": "active", "type": "s32", "comment": "Indicates that the particle effect is advancing."},
             {"offset": "0x514", "name": "unk_514", "type": "u8", "dimensions": [12]},
         ],
-        "documentation": "include/healeffect.hpp",
+        "documentation": "include/ps2/healeffect.hpp",
     },
     {
         "kind": "structure",
@@ -81,7 +81,7 @@ KNOWN_TYPES = [
             {"offset": "0x20", "name": "unk_20", "type": "s16", "dimensions": [4]},
             {"offset": "0x28", "name": "pending_volume", "type": "s32", "comment": "Inventory-volume steps waiting to be applied."},
         ],
-        "documentation": "include/menuitemstep.hpp",
+        "documentation": "include/ps2/menuitemstep.hpp",
     },
     {
         "kind": "opaque",
@@ -96,7 +96,7 @@ KNOWN_TYPES = [
     {
         "kind": "structure", "name": "CRect_i_", "size": "0x10",
         "comment": "Names a rectangle by its origin and extent.",
-        "documentation": "include/rect.hpp",
+        "documentation": "include/ps2/rect.hpp",
         "fields": [
             {"offset": "0x0", "name": "x", "type": "s32", "comment": "Horizontal origin."},
             {"offset": "0x4", "name": "y", "type": "s32", "comment": "Vertical origin."},
@@ -107,7 +107,7 @@ KNOWN_TYPES = [
     {
         "kind": "structure", "name": "spRGBA", "size": "0x4",
         "comment": "Stores a sprite corner colour and opacity.",
-        "documentation": "include/rect.hpp",
+        "documentation": "include/ps2/rect.hpp",
         "fields": [
             {"offset": "0x0", "name": "r", "type": "u8", "comment": "Red channel."},
             {"offset": "0x1", "name": "g", "type": "u8", "comment": "Green channel."},
@@ -118,13 +118,13 @@ KNOWN_TYPES = [
     {
         "kind": "structure", "name": "Fader", "size": "0x4",
         "comment": "Tracks a linearly changing 0-to-128 fade level.",
-        "documentation": "include/fader.hpp",
+        "documentation": "include/ps2/fader.hpp",
         "fields": [{"offset": "0x0", "name": "value", "type": "s32", "comment": "Current fade level."}],
     },
     {
         "kind": "structure", "name": "MAP_TRAP_CIRCLE", "size": "0x20",
         "comment": "Describes one trap circle that a trap left on the floor.",
-        "documentation": "include/dungeonmap.hpp",
+        "documentation": "include/ps2/dungeonmap.hpp",
         "fields": [
             {"offset":"0x00","name":"pos","type":"float","dimensions":[4],"comment":"World position of the circle."},
             {"offset":"0x10","name":"state","type":"s32","comment":"Lifecycle state of the circle slot."},
@@ -136,7 +136,7 @@ KNOWN_TYPES = [
     {
         "kind": "structure", "name": "CCandleEffect", "size": "0x30",
         "comment": "Animates and draws the camera-facing sprite used for a candle flame.",
-        "documentation": "include/candleeffect.hpp",
+        "documentation": "include/ps2/candleeffect.hpp",
         "fields": [
             {"offset": "0x00", "name": "enabled", "type": "s32", "comment": "Whether the candle sprite can be drawn."},
             {"offset": "0x04", "name": "animation_frame", "type": "float", "comment": "Fractional frame within the eight-frame flame cycle."},
@@ -155,7 +155,7 @@ KNOWN_TYPES.extend([
     {
         "kind": "structure", "name": "CEffectParam", "size": "0xE0",
         "comment": "Describes the initial motion, appearance, and animation of one effect.",
-        "documentation": "include/effect.hpp",
+        "documentation": "include/ps2/effect.hpp",
         "fields": [
             {"offset":"0x00","name":"lifetime","type":"s32","comment":"Number of frames before retirement."},
             {"offset":"0x04","name":"position_oscillation_flags","type":"s32","comment":"Enables sinusoidal position offsets."},
@@ -175,7 +175,7 @@ KNOWN_TYPES.extend([
         ],
     },
     {
-        "kind":"structure","name":"CEffect","size":"0x100","comment":"Stores one live animated sprite effect in an effect-group pool.","documentation":"include/effect.hpp",
+        "kind":"structure","name":"CEffect","size":"0x100","comment":"Stores one live animated sprite effect in an effect-group pool.","documentation":"include/ps2/effect.hpp",
         "fields":[
             {"offset":"0x00","name":"active","type":"s16"},{"offset":"0x02","name":"frame","type":"s16"},{"offset":"0x04","name":"lifetime","type":"s16"},{"offset":"0x06","name":"draw_mode","type":"s16"},
             {"offset":"0x08","name":"width","type":"float"},{"offset":"0x0C","name":"height","type":"float"},{"offset":"0x10","name":"position_oscillation_flags","type":"s32"},
@@ -194,7 +194,7 @@ KNOWN_TYPES.extend([
         ],
     },
     {
-        "kind":"structure","name":"C3DSprite","size":"0x40","comment":"Draws a textured rectangle positioned in three-dimensional world space.","documentation":"include/effect.hpp",
+        "kind":"structure","name":"C3DSprite","size":"0x40","comment":"Draws a textured rectangle positioned in three-dimensional world space.","documentation":"include/ps2/effect.hpp",
         "fields":[
             {"offset":"0x00","name":"position","type":"float","dimensions":[4]},{"offset":"0x10","name":"half_width","type":"float"},{"offset":"0x14","name":"half_height","type":"float"},
             {"offset":"0x18","name":"texture","type":"CTexture *"},{"offset":"0x1C","name":"unk_1c","type":"u32"},{"offset":"0x20","name":"texel","type":"CRect_i_"},
@@ -202,7 +202,7 @@ KNOWN_TYPES.extend([
         ],
     },
     {
-        "kind":"structure","name":"CEffectGroup","size":"0x8","comment":"Owns access to a caller-supplied fixed-capacity pool of effects.","documentation":"include/effectgroup.hpp",
+        "kind":"structure","name":"CEffectGroup","size":"0x8","comment":"Owns access to a caller-supplied fixed-capacity pool of effects.","documentation":"include/ps2/effectgroup.hpp",
         "fields":[{"offset":"0x0","name":"effect_table","type":"CEffect *"},{"offset":"0x4","name":"capacity","type":"s32"}],
     },
 ])
@@ -311,7 +311,7 @@ def documented_functions() -> dict[str, dict[str, object]]:
     so that a name documented in both keeps the header's wording.
     """
     docs: dict[str, dict[str, object]] = {}
-    sources = sorted((ROOT / "include").rglob("*")) + sorted((ROOT / "src" / "ps2").rglob("*"))
+    sources = sorted((ROOT / "include" / "ps2").rglob("*")) + sorted((ROOT / "src" / "ps2").rglob("*"))
     for path in sources:
         if not path.is_file() or path.suffix not in {".h", ".hpp", ".c", ".cpp"}:
             continue
