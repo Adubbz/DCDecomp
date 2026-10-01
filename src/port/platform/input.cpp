@@ -25,12 +25,12 @@ enum Axis {
 };
 
 struct Action {
-    std::string_view                         name;
-    ActionKind                               kind;
-    std::uint16_t                            button;
-    Axis                                     axis;
-    int                                      direction;
-    SDL_Scancode                             default_key;
+    std::string_view name;
+    ActionKind       kind;
+    std::uint16_t    button;
+    Axis             axis;
+    int              direction;
+    SDL_Scancode     default_key;
 };
 
 // clang-format off
@@ -101,7 +101,7 @@ struct PadSlot {
     Uint64       rumble_time = 0;
 };
 
-std::array<std::vector<SDL_Scancode>, kActionCount>       g_bindings;
+std::array<std::vector<SDL_Scancode>, kActionCount>      g_bindings;
 bool                                                     g_bindings_ready = false;
 std::array<PadSlot, kInputPadCount>                      g_slots;
 std::array<InputPadState, kInputPadCount>                g_state;
@@ -148,15 +148,15 @@ void ReadGamepad(SDL_Gamepad *gamepad, InputPadState &state) {
     if (SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) > kTriggerThreshold) {
         state.buttons |= kInputR2;
     }
-    state.left_x  = StickToByte(SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTX));
-    state.left_y  = StickToByte(SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTY));
+    state.left_x = StickToByte(SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTX));
+    state.left_y = StickToByte(SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTY));
     state.right_x = StickToByte(SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHTX));
     state.right_y = StickToByte(SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHTY));
 }
 
 void ReadKeyboard(InputPadState &state) {
     int         key_count = 0;
-    const bool *keys      = SDL_GetKeyboardState(&key_count);
+    const bool *keys = SDL_GetKeyboardState(&key_count);
     if (keys == nullptr) {
         return;
     }
@@ -193,7 +193,7 @@ void SyncGamepads() {
         }
     }
     int             count = 0;
-    SDL_JoystickID *ids   = SDL_GetGamepads(&count);
+    SDL_JoystickID *ids = SDL_GetGamepads(&count);
     if (ids == nullptr) {
         return;
     }
@@ -223,7 +223,7 @@ void SendRumble(int pad) {
     if (slot.gamepad == nullptr) {
         return;
     }
-    Uint16 low  = static_cast<Uint16>(slot.rumble.large_motor * 257);
+    Uint16 low = static_cast<Uint16>(slot.rumble.large_motor * 257);
     Uint16 high = slot.rumble.small_motor ? 0xFFFF : 0;
     SDL_RumbleGamepad(slot.gamepad, low, high, kRumbleMilliseconds);
     slot.rumble_sent = true;
@@ -294,10 +294,10 @@ void InputSetRumble(int pad, InputRumble rumble) {
     if (pad < 0 || pad >= kInputPadCount) {
         return;
     }
-    PadSlot &slot    = g_slots[pad];
+    PadSlot &slot = g_slots[pad];
     bool     changed = slot.rumble.small_motor != rumble.small_motor || slot.rumble.large_motor != rumble.large_motor;
-    bool     active  = rumble.small_motor || rumble.large_motor != 0;
-    slot.rumble      = rumble;
+    bool     active = rumble.small_motor || rumble.large_motor != 0;
+    slot.rumble = rumble;
     if (changed || (active && SDL_GetTicks() - slot.rumble_time >= kRumbleMilliseconds / 2)) {
         SendRumble(pad);
     }

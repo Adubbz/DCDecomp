@@ -26,7 +26,7 @@
 // tick and waiting returns at once.
 
 using ClockTickCallback = int (*)(int);
-using ClockIdleHook     = void (*)();
+using ClockIdleHook = void (*)();
 
 void ClockSetTickRate(double hertz);
 

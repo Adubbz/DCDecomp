@@ -12,33 +12,33 @@ constexpr int kInputPadCount = 2;
 // libpad's button word with its bytes in the order the game reads them
 // (`((data[2] << 8) | data[3]) ^ 0xFFFF`), active-high: the game's PadButton.
 enum InputButton : std::uint16_t {
-    kInputL2       = 0x0001,
-    kInputR2       = 0x0002,
-    kInputL1       = 0x0004,
-    kInputR1       = 0x0008,
+    kInputL2 = 0x0001,
+    kInputR2 = 0x0002,
+    kInputL1 = 0x0004,
+    kInputR1 = 0x0008,
     kInputTriangle = 0x0010,
-    kInputCircle   = 0x0020,
-    kInputCross    = 0x0040,
-    kInputSquare   = 0x0080,
-    kInputSelect   = 0x0100,
-    kInputL3       = 0x0200,
-    kInputR3       = 0x0400,
-    kInputStart    = 0x0800,
-    kInputUp       = 0x1000,
-    kInputRight    = 0x2000,
-    kInputDown     = 0x4000,
-    kInputLeft     = 0x8000,
+    kInputCircle = 0x0020,
+    kInputCross = 0x0040,
+    kInputSquare = 0x0080,
+    kInputSelect = 0x0100,
+    kInputL3 = 0x0200,
+    kInputR3 = 0x0400,
+    kInputStart = 0x0800,
+    kInputUp = 0x1000,
+    kInputRight = 0x2000,
+    kInputDown = 0x4000,
+    kInputLeft = 0x8000,
 };
 
 constexpr std::uint8_t kInputAxisCentre = 128;
 
 struct InputPadState {
     bool          connected = false;
-    std::uint16_t buttons   = 0;
-    std::uint8_t  left_x    = kInputAxisCentre;
-    std::uint8_t  left_y    = kInputAxisCentre;
-    std::uint8_t  right_x   = kInputAxisCentre;
-    std::uint8_t  right_y   = kInputAxisCentre;
+    std::uint16_t buttons = 0;
+    std::uint8_t  left_x = kInputAxisCentre;
+    std::uint8_t  left_y = kInputAxisCentre;
+    std::uint8_t  right_x = kInputAxisCentre;
+    std::uint8_t  right_y = kInputAxisCentre;
 };
 
 struct InputRumble {

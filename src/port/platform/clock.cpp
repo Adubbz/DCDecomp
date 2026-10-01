@@ -14,23 +14,23 @@ using SteadyClock = std::chrono::steady_clock;
 constexpr auto kSpinMargin = std::chrono::microseconds(1500);
 
 struct ClockState {
-    double                  hertz        = 50.0;
-    bool                    unbounded    = false;
-    bool                    anchored     = false;
-    SteadyClock::time_point anchor       = {};
+    double                  hertz = 50.0;
+    bool                    unbounded = false;
+    bool                    anchored = false;
+    SteadyClock::time_point anchor = {};
     std::int64_t            anchor_count = 0;
-    std::int64_t            count        = 0;
-    ClockTickCallback       callback     = nullptr;
-    ClockIdleHook           idle         = nullptr;
-    bool                    pumping      = false;
+    std::int64_t            count = 0;
+    ClockTickCallback       callback = nullptr;
+    ClockIdleHook           idle = nullptr;
+    bool                    pumping = false;
 };
 
 ClockState g_clock;
 
 void Anchor(SteadyClock::time_point now) {
-    g_clock.anchor       = now;
+    g_clock.anchor = now;
     g_clock.anchor_count = g_clock.count;
-    g_clock.anchored     = true;
+    g_clock.anchored = true;
 }
 
 void EnsureAnchored() {
@@ -48,7 +48,7 @@ SteadyClock::time_point Deadline(std::int64_t tick) {
 // a wait that ends exactly on a boundary always counts that tick.
 std::int64_t TickAt(SteadyClock::time_point now) {
     std::chrono::duration<double> elapsed = now - g_clock.anchor;
-    std::int64_t tick = g_clock.anchor_count + static_cast<std::int64_t>(std::floor(elapsed.count() * g_clock.hertz));
+    std::int64_t                  tick = g_clock.anchor_count + static_cast<std::int64_t>(std::floor(elapsed.count() * g_clock.hertz));
     while (Deadline(tick + 1) <= now) {
         ++tick;
     }
@@ -116,8 +116,10 @@ std::int64_t ClockPump() {
     if (g_clock.pumping) {
         return g_clock.count;
     }
+
     struct Guard {
         Guard() { g_clock.pumping = true; }
+
         ~Guard() { g_clock.pumping = false; }
     } guard;
 

@@ -10,10 +10,10 @@ namespace {
 // Controller ID byte of a DualShock 2 in analog mode: terminal type 7 in the
 // high nibble (what pad_button_read keeps as the mode), the payload length in
 // halfwords in the low one.
-constexpr unsigned char kDualShockId    = 0x73;
-constexpr int           kTerminalId     = kDualShockId >> 4;
-constexpr int           kReadLength     = 2 + (kDualShockId & 0x0F) * 2;
-constexpr int           kActuatorCount  = 2;
+constexpr unsigned char kDualShockId = 0x73;
+constexpr int           kTerminalId = kDualShockId >> 4;
+constexpr int           kReadLength = 2 + (kDualShockId & 0x0F) * 2;
+constexpr int           kActuatorCount = 2;
 constexpr int           kReadBufferSize = 32;
 
 std::array<bool, kInputPadCount> g_open;
@@ -41,7 +41,7 @@ int scePadRead(int port, int slot, unsigned char *data) {
     if (!Ready(port)) {
         return 0;
     }
-    const InputPadState &pad    = InputGetPad(port);
+    const InputPadState &pad = InputGetPad(port);
     std::uint16_t        active = static_cast<std::uint16_t>(~pad.buttons);
     std::memset(data, 0, kReadBufferSize);
     data[0] = 0;

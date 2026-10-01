@@ -15,7 +15,7 @@ Config g_config;
 
 std::string_view Trim(std::string_view text) {
     constexpr std::string_view kSpace = " \t\r\n";
-    std::size_t                first  = text.find_first_not_of(kSpace);
+    std::size_t                first = text.find_first_not_of(kSpace);
     if (first == std::string_view::npos) {
         return {};
     }
@@ -70,7 +70,7 @@ std::vector<std::string> SplitList(std::string_view text) {
     std::vector<std::string> items;
     while (!text.empty()) {
         std::size_t      comma = text.find(',');
-        std::string_view item  = Trim(text.substr(0, comma));
+        std::string_view item = Trim(text.substr(0, comma));
         if (!item.empty()) {
             items.emplace_back(item);
         }
@@ -148,7 +148,7 @@ Config ConfigParse(std::string_view text) {
     std::string section;
     int         line_no = 0;
     while (!text.empty()) {
-        std::size_t      end  = text.find('\n');
+        std::size_t      end = text.find('\n');
         std::string_view line = Trim(text.substr(0, end));
         text.remove_prefix(end == std::string_view::npos ? text.size() : end + 1);
         ++line_no;
@@ -164,7 +164,7 @@ Config ConfigParse(std::string_view text) {
             std::fprintf(stderr, "config.ini:%d: expected key = value\n", line_no);
             continue;
         }
-        std::string_view key   = Trim(line.substr(0, equals));
+        std::string_view key = Trim(line.substr(0, equals));
         std::string_view value = Trim(line.substr(equals + 1));
         if (!Apply(config, section, key, value)) {
             std::fprintf(stderr, "config.ini:%d: ignoring [%s] %.*s = %.*s\n", line_no, section.c_str(),

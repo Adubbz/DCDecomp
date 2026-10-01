@@ -35,9 +35,9 @@ namespace {
 
 // Words of CSaveData::config that main() reads and writes directly.
 constexpr int kConfigVibrationOff = 7;
-constexpr int kConfigScreenX      = 12;
-constexpr int kConfigScreenY      = 13;
-constexpr int kConfigGameClear    = 14;
+constexpr int kConfigScreenX = 12;
+constexpr int kConfigScreenY = 13;
+constexpr int kConfigGameClear = 14;
 
 // CSaveData::map_no is private; retail's main() writes it by offset.
 constexpr int kSaveMapNoOffset = 0x1C8;
@@ -47,7 +47,7 @@ constexpr int kWarmUpTicks = 60;
 // Retail's save_data and config_data are static in main.cpp, so the port
 // keeps its own; everything else reaches the save through SaveData.
 alignas(64) CSaveData g_save_data;
-SV_CONFIG_SYS         g_config_data;
+SV_CONFIG_SYS g_config_data;
 
 s32 *ConfigWords() {
     return static_cast<s32 *>(SaveData->GetConfigData());
@@ -85,7 +85,7 @@ void ModeInit(int &title_ran, int &exist_data, bool &skip_title) {
             GlobalNameInit();
             SndInitialize(4, 30, 4, 5);
             if (!title_ran) {
-                title_ran  = 1;
+                title_ran = 1;
                 exist_data = InitExistData();
                 if (ConfigWords()[kConfigGameClear] != 0) {
                     GameClearFlag = 1;
@@ -154,7 +154,7 @@ int ModeLoop(bool &skip_title) {
             result = LangsetLoop();
             if (result != 0) {
                 MapNo = -1;
-                mode  = GAME_MODE_MEMORY_CHECK;
+                mode = GAME_MODE_MEMORY_CHECK;
             }
             break;
         case GAME_MODE_TITLE:
@@ -165,7 +165,7 @@ int ModeLoop(bool &skip_title) {
                 mode = GAME_MODE_EDIT;
             }
             if (result == 3) {
-                mode                = GAME_MODE_DUNGEON;
+                mode = GAME_MODE_DUNGEON;
                 main_select_menu_no = 0;
             }
             if (result == 5) {
@@ -227,14 +227,14 @@ int ModeLoop(bool &skip_title) {
             result = MemCheckLoop();
             if (result != 0) {
                 MapNo = 801;
-                mode  = GAME_MODE_RUSH_MOVIE;
+                mode = GAME_MODE_RUSH_MOVIE;
             }
             break;
         case GAME_MODE_TRIAL_END:
             result = TrialEndLoop();
             if (result != 0) {
                 MapNo = 800;
-                mode  = GAME_MODE_TITLE;
+                mode = GAME_MODE_TITLE;
             }
             break;
         case GAME_MODE_OPENING:
@@ -269,17 +269,17 @@ void FollowMapJump() {
     }
     OldMapNo = MapNo;
     if (NextMapNo < 200) {
-        mode  = GAME_MODE_EDIT;
+        mode = GAME_MODE_EDIT;
         MapNo = NextMapNo;
     } else if (NextMapNo < 300) {
-        mode                = GAME_MODE_DUNGEON;
-        MapNo               = NextMapNo;
-        LocalMapNo          = NextMapNo - 200;
+        mode = GAME_MODE_DUNGEON;
+        MapNo = NextMapNo;
+        LocalMapNo = NextMapNo - 200;
         main_select_menu_no = LocalMapNo;
     } else if (NextMapNo == 400) {
-        mode                = GAME_MODE_OPENING;
-        MapNo               = NextMapNo;
-        LocalMapNo          = 0;
+        mode = GAME_MODE_OPENING;
+        MapNo = NextMapNo;
+        LocalMapNo = 0;
         main_select_menu_no = 0;
     } else if (NextMapNo >= 800) {
         main_select_menu_no = 0;
@@ -290,14 +290,14 @@ void FollowMapJump() {
         if (NextMapNo == 801) {
             mode = GAME_MODE_RUSH_MOVIE;
         }
-        MapNo      = NextMapNo;
+        MapNo = NextMapNo;
         LocalMapNo = 0;
     }
     if (NextMapNo == 1000) {
-        MapNo      = -1;
+        MapNo = -1;
         LocalMapNo = 0;
-        mode       = GAME_MODE_SAVE;
-        mc_mode    = SAVE_MENU_MODE_ENDING;
+        mode = GAME_MODE_SAVE;
+        mc_mode = SAVE_MENU_MODE_ENDING;
     }
 }
 
@@ -305,8 +305,8 @@ void FollowMapJump() {
 
 int RunGame(int argc, char **argv) {
     // mwInit is not called: the host has run every static constructor.
-    DebugMode           = 0;
-    mode                = GAME_MODE_MENU;
+    DebugMode = 0;
+    mode = GAME_MODE_MENU;
     main_select_menu_no = 0;
     std::strcpy(main_select_param, "e01");
     InitAll();
@@ -314,11 +314,11 @@ int RunGame(int argc, char **argv) {
     ClockSyncV();
     GamePad.Init();
 
-    SaveData      = &g_save_data;
-    NextMapNo     = -1;
-    MapNo         = -1;
-    OldMapNo      = -1;
-    StartEventNo  = -1;
+    SaveData = &g_save_data;
+    NextMapNo = -1;
+    MapNo = -1;
+    OldMapNo = -1;
+    StartEventNo = -1;
     GameClearFlag = 0;
     std::memset(static_cast<void *>(&g_save_data), 0, sizeof(CSaveData));
     g_save_data.Initialize();
@@ -334,14 +334,14 @@ int RunGame(int argc, char **argv) {
     }
     if (!DebugMode) {
         MapNo = -1;
-        mode  = GAME_MODE_LANGUAGE;
+        mode = GAME_MODE_LANGUAGE;
         GamePad.KeyLock2(1);
     }
 
-    int  title_ran   = 0;
-    int  exist_data  = 0;
+    int  title_ran = 0;
+    int  exist_data = 0;
     bool data_loaded = false;
-    bool skip_title  = false;
+    bool skip_title = false;
     for (;;) {
         if (mode != GAME_MODE_UNUSED_12 && !data_loaded) {
             initialize_data();
@@ -352,7 +352,7 @@ int RunGame(int argc, char **argv) {
 
         if (!DebugMode && mode == GAME_MODE_MENU) {
             MapNo = 801;
-            mode  = GAME_MODE_RUSH_MOVIE;
+            mode = GAME_MODE_RUSH_MOVIE;
         }
 
         LoadOverlay(mode);
@@ -362,7 +362,7 @@ int RunGame(int argc, char **argv) {
             case GAME_MODE_MENU:
             case GAME_MODE_MEMORY_CHECK:
             case GAME_MODE_LANGUAGE:
-                MapNo    = -1;
+                MapNo = -1;
                 OldMapNo = -1;
                 break;
         }
@@ -392,7 +392,7 @@ int RunGame(int argc, char **argv) {
             ConfigWords()[kConfigGameClear] = GameClearFlag;
 
             MGBeginFrame();
-            PolyCount     = 0;
+            PolyCount = 0;
             old_main_mode = mode;
 
             result = ModeLoop(skip_title);
@@ -412,8 +412,8 @@ int RunGame(int argc, char **argv) {
 
         FollowMapJump();
         if (CheckTrialEnd() != 0) {
-            mode       = GAME_MODE_TRIAL_END;
-            MapNo      = -1;
+            mode = GAME_MODE_TRIAL_END;
+            MapNo = -1;
             LocalMapNo = -1;
         }
 

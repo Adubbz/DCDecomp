@@ -25,7 +25,7 @@ namespace {
 namespace fs = std::filesystem;
 
 constexpr int kPortCount = 2;
-constexpr int kMaxFiles  = 16;
+constexpr int kMaxFiles = 16;
 
 // What a freshly formatted 8 MB card reports free, in kilobyte clusters.
 constexpr int kFreeClusters = 8000;
@@ -33,34 +33,34 @@ constexpr int kFreeClusters = 8000;
 constexpr int kResultNoCard = -10;
 
 enum McFunction {
-    kFuncGetInfo  = 0x01,
-    kFuncOpen     = 0x02,
-    kFuncClose    = 0x03,
-    kFuncRead     = 0x05,
-    kFuncWrite    = 0x06,
-    kFuncFlush    = 0x0A,
-    kFuncMkdir    = 0x0B,
-    kFuncChdir    = 0x0C,
-    kFuncGetDir   = 0x0D,
-    kFuncDelete   = 0x0F,
-    kFuncFormat   = 0x10,
+    kFuncGetInfo = 0x01,
+    kFuncOpen = 0x02,
+    kFuncClose = 0x03,
+    kFuncRead = 0x05,
+    kFuncWrite = 0x06,
+    kFuncFlush = 0x0A,
+    kFuncMkdir = 0x0B,
+    kFuncChdir = 0x0C,
+    kFuncGetDir = 0x0D,
+    kFuncDelete = 0x0F,
+    kFuncFormat = 0x10,
     kFuncUnformat = 0x11,
 };
 
 enum McOpenFlag {
-    kOpenRead   = 0x0001,
-    kOpenWrite  = 0x0002,
+    kOpenRead = 0x0001,
+    kOpenWrite = 0x0002,
     kOpenCreate = 0x0200,
 };
 
 enum McAttribute : std::uint16_t {
-    kAttrReadable   = 0x0001,
-    kAttrWriteable  = 0x0002,
+    kAttrReadable = 0x0001,
+    kAttrWriteable = 0x0002,
     kAttrExecutable = 0x0004,
-    kAttrFile       = 0x0010,
-    kAttrSubdir     = 0x0020,
-    kAttrClosed     = 0x0080,
-    kAttrExists     = 0x8000,
+    kAttrFile = 0x0010,
+    kAttrSubdir = 0x0020,
+    kAttrClosed = 0x0080,
+    kAttrExists = 0x8000,
 };
 
 struct McDateTime {
@@ -87,13 +87,13 @@ struct McDirEntry {
 static_assert(sizeof(McDirEntry) == 0x40);
 
 struct Card {
-    std::string cwd         = "/";
+    std::string cwd = "/";
     bool        unformatted = false;
-    std::size_t listed      = 0;
+    std::size_t listed = 0;
 };
 
 struct OpenFile {
-    std::FILE *file  = nullptr;
+    std::FILE *file = nullptr;
     int        flags = 0;
 };
 
@@ -147,7 +147,7 @@ std::vector<std::string> Components(int port, std::string_view name) {
     std::string              path = name.starts_with('/') ? std::string(name) : g_cards[port].cwd + "/" + std::string(name);
     std::size_t              start = 0;
     while (start <= path.size()) {
-        std::size_t end  = path.find('/', start);
+        std::size_t end = path.find('/', start);
         std::string part = path.substr(start, end == std::string::npos ? std::string::npos : end - start);
         if (part == "..") {
             if (!parts.empty()) {
@@ -215,10 +215,10 @@ McDateTime DateTime(const fs::path &path) {
 
 McDirEntry Entry(const fs::path &path, const std::string &name, bool directory) {
     McDirEntry entry{};
-    entry.created  = DateTime(path);
+    entry.created = DateTime(path);
     entry.modified = entry.created;
     std::error_code error;
-    entry.size       = directory ? 0 : static_cast<std::uint32_t>(fs::file_size(path, error));
+    entry.size = directory ? 0 : static_cast<std::uint32_t>(fs::file_size(path, error));
     entry.attributes = kAttrExists | kAttrReadable | kAttrWriteable | kAttrExecutable | (directory ? kAttrSubdir : kAttrFile | kAttrClosed);
     std::strncpy(entry.name, name.c_str(), sizeof(entry.name) - 1);
     return entry;
@@ -250,9 +250,9 @@ int sceMcGetInfo(int port, int slot, int *type, int *free_size, int *formatted) 
         return -1;
     }
     bool present = CardPresent(port);
-    *type        = present ? sceMcTypePS2 : sceMcTypeNoCard;
-    *free_size   = present ? kFreeClusters : 0;
-    *formatted   = present && !g_cards[port].unformatted;
+    *type = present ? sceMcTypePS2 : sceMcTypeNoCard;
+    *free_size = present ? kFreeClusters : 0;
+    *formatted = present && !g_cards[port].unformatted;
     if (!present) {
         return Finish(kFuncGetInfo, kResultNoCard);
     }
@@ -278,8 +278,8 @@ int sceMcOpen(int port, int slot, char *name, int flag) {
     if (fs::is_directory(path, error)) {
         return Finish(kFuncOpen, sceMcResNoEntry);
     }
-    bool        exists = fs::exists(path, error);
-    std::FILE  *file   = nullptr;
+    bool       exists = fs::exists(path, error);
+    std::FILE *file = nullptr;
     if (exists) {
         file = std::fopen(path.c_str(), (flag & kOpenWrite) != 0 ? "r+b" : "rb");
     } else if ((flag & kOpenCreate) != 0 && fs::is_directory(path.parent_path(), error)) {
@@ -361,7 +361,7 @@ int sceMcMkdir(int port, int slot, char *name) {
         return Finish(kFuncMkdir, status);
     }
     std::vector<std::string> parts = Components(port, name);
-    fs::path                 path  = HostPath(port, parts);
+    fs::path                 path = HostPath(port, parts);
     std::error_code          error;
     if (parts.empty() || fs::exists(path, error) || !fs::is_directory(path.parent_path(), error)) {
         return Finish(kFuncMkdir, sceMcResNoEntry);
@@ -395,10 +395,10 @@ int sceMcGetDir(int port, int slot, char *name, unsigned int mode, int count, vo
         return Finish(kFuncGetDir, status);
     }
     std::string_view         spec(name);
-    std::size_t              slash   = spec.rfind('/');
+    std::size_t              slash = spec.rfind('/');
     std::string              pattern(slash == std::string_view::npos ? spec : spec.substr(slash + 1));
-    std::vector<std::string> parts   = Components(port, slash == std::string_view::npos ? "." : std::string(spec.substr(0, slash + 1)));
-    fs::path                 dir     = HostPath(port, parts);
+    std::vector<std::string> parts = Components(port, slash == std::string_view::npos ? "." : std::string(spec.substr(0, slash + 1)));
+    fs::path                 dir = HostPath(port, parts);
     std::error_code          error;
     if (!fs::is_directory(dir, error)) {
         return Finish(kFuncGetDir, sceMcResNoEntry);
@@ -444,7 +444,7 @@ int sceMcFormat(int port, int slot) {
         return Finish(kFuncFormat, kResultNoCard);
     }
     g_cards[port].unformatted = false;
-    g_cards[port].cwd         = "/";
+    g_cards[port].cwd = "/";
     return Finish(kFuncFormat, sceMcResSucceed);
 }
 
@@ -456,6 +456,6 @@ int sceMcUnformat(int port, int slot) {
         return Finish(kFuncUnformat, kResultNoCard);
     }
     g_cards[port].unformatted = true;
-    g_cards[port].cwd         = "/";
+    g_cards[port].cwd = "/";
     return Finish(kFuncUnformat, sceMcResSucceed);
 }

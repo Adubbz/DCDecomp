@@ -47,7 +47,7 @@ void Zero(const Block &block) {
 }
 
 Block MapBlock(const void *owner, std::size_t bytes, std::size_t lead) {
-    std::size_t page     = PageSize();
+    std::size_t page = PageSize();
     std::size_t capacity = RoundUp(bytes == 0 ? 64 : bytes, 64);
     std::size_t map_size = RoundUp(lead + capacity, page) + page;
     void       *map = mmap(nullptr, map_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE | MAP_32BIT, -1, 0);
@@ -61,9 +61,9 @@ Block MapBlock(const void *owner, std::size_t bytes, std::size_t lead) {
 }
 
 void Carve(CDataAlloc2<1> *arena, int quads) {
-    arena->base  = ArenaBlock(arena, static_cast<std::size_t>(quads) * 16 * kArenaHeadroom);
+    arena->base = ArenaBlock(arena, static_cast<std::size_t>(quads) * 16 * kArenaHeadroom);
     arena->limit = quads * kArenaHeadroom;
-    arena->used  = 0;
+    arena->used = 0;
 }
 
 void CarveWorkBuffer(int quads) {

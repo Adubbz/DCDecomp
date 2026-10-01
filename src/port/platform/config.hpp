@@ -17,11 +17,11 @@ struct ConfigKeyBinding {
 };
 
 struct Config {
-    double                        tick_rate     = 50.0;
-    ConfigPresentMode             present_mode  = ConfigPresentMode::Fifo;
-    int                           window_width  = 1280;
+    double                        tick_rate = 50.0;
+    ConfigPresentMode             present_mode = ConfigPresentMode::Fifo;
+    int                           window_width = 1280;
     int                           window_height = 960;
-    bool                          fullscreen    = false;
+    bool                          fullscreen = false;
     float                         master_volume = 1.0f;
     std::vector<ConfigKeyBinding> key_bindings;
 };

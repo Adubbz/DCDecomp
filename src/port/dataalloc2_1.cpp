@@ -1,8 +1,7 @@
-#include "dataalloc.hpp"
-
 #include <cstdint>
 
 #include "arena.hpp"
+#include "dataalloc.hpp"
 
 // Retail's arena methods with its arithmetic and its off-by-one checks kept;
 // only the endless loop on overflow becomes an abort that names the arena.
