@@ -735,7 +735,7 @@ int EditInit(void *param) {
     }
 
     if (NowEditMap == 99) {
-        strcpy(EditDataDir, "\0");
+        strcpy(EditDataDir, "");
         interior_test = 1;
     } else {
         strcpy(EditDataDir, "gedit/");
@@ -3704,7 +3704,7 @@ void EdDeleteE05RoboParts() {
  * Loads the interior a door leads to and places the player and camera in it.
  */
 int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int start_event) {
-    char          *suffix[5] = {"m", "e", "n", "m", "\0"};
+    char          *suffix[5] = {"m", "e", "n", "m", ""};
     char           path[0x40];
     ED_EVENT_PARAM entry;
     sceVu0FVECTOR  position;
@@ -4466,7 +4466,7 @@ int LoadTexture() {
         {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0x18, 0},
         {"#font_buff#640#" HALF_BUFFER_HEIGHT_STR "#4",   0x1F, 0},
         {"img/system.img",                                0x14, 0},
-        {"\0",                                            0x14, 0},
+        {"",                                              0x14, 0},
         {"s_eff.img",                                     0x14, 0},
         {"img/ankfont.img",                               0x1F, 0},
         {"#frame_image#640#" SCREEN_HEIGHT_STR "#4",      0x13, 0},
