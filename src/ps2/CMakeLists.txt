@@ -361,9 +361,29 @@ foreach(obj IN LISTS OBJDIFF_TARGET_OBJS OBJDIFF_BASE_OBJS)
     list(APPEND OBJDIFF_ABS_OBJS ${CMAKE_SOURCE_DIR}/${obj})
 endforeach()
 
+set(OBJDIFF_DATA_STAMP ${BUILD_DIR}/objdiff/stamp)
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/${OBJDIFF_DATA_STAMP}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/objdiff_data.py
+            --build-dir ${BUILD_DIR} --lcf ${LD_TEMPLATE}
+            --stamp ${OBJDIFF_DATA_STAMP}
+    DEPENDS ${CMAKE_SOURCE_DIR}/${OUTPUT} ${OBJDIFF_ABS_OBJS}
+            ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
+            ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/main.symbols.txt
+            ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/title.symbols.txt
+            ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/dun.symbols.txt
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/objdiff_data.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/retail.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Writing objdiff's targets with each unit's data"
+    VERBATIM)
+
 add_custom_target(objdiff
     DEPENDS ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG} ${OBJDIFF_ABS_OBJS} ${ABS_OBJS}
-            ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES})
+            ${CMAKE_SOURCE_DIR}/${SYMBOL_ALIASES}
+            ${CMAKE_SOURCE_DIR}/${OBJDIFF_DATA_STAMP})
 add_dependencies(objdiff provenance)
 
 add_custom_target(verify_extracted
