@@ -538,6 +538,11 @@ struct MWBaseClass {
     int               offset; /**< Where the base sits inside the derived object. */
 };
 
+struct MWSingleBaseClass {
+    MWBaseClass       base;
+    const MWTypeInfo *end;
+};
+
 /**
  * Qualified name of std::bad_exception.
  */
@@ -556,7 +561,7 @@ extern const MWTypeInfo ExceptionTypeInfo;
 /**
  * The base classes of std::bad_exception: std::exception alone.
  */
-extern const MWBaseClass BadExceptionBaseClasses[2];
+extern const MWSingleBaseClass BadExceptionBaseClasses;
 
 /**
  * Run-time type information record of std::bad_exception.

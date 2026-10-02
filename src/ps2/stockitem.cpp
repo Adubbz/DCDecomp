@@ -18,10 +18,10 @@ int sort_top_type__3 = ITEM_SORT_FOOD;
 int asort_top_type__3 = 1;
 
 /** Maps each dungeon-item sort key to its current stock sort priority. */
-int sort_table__3[10] = {9, 0, 1, 2, 3, 4, 5, 6, 7, 0};
+int sort_table__3[9] = {9, 0, 1, 2, 3, 4, 5, 6, 7};
 
 /** Maps each AttachKind to its current stock sort priority. */
-int asort_table__3[6] = {5, 1, 2, 3, 4, 0};
+int asort_table__3[5] = {5, 1, 2, 3, 4};
 
 /**
  * Contains the slot limits for each stock inventory section.

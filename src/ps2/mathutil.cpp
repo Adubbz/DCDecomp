@@ -571,14 +571,14 @@ extern "C" void __unexpected(void *exception_record) {
 static const int __unexpected_generated = 0;
 #pragma exceptions reset
 // The runtime's type information for std::exception and std::bad_exception.
-const char        BadExceptionTypeName[] = "std::bad_exception";
-const char        ExceptionTypeName[] = "std::exception";
-const MWTypeInfo  ExceptionTypeInfo = {ExceptionTypeName, 0};
-const MWBaseClass BadExceptionBaseClasses[2] = {
+const char              BadExceptionTypeName[] = "std::bad_exception";
+const char              ExceptionTypeName[] = "std::exception";
+const MWTypeInfo        ExceptionTypeInfo = {ExceptionTypeName, 0};
+const MWSingleBaseClass BadExceptionBaseClasses = {
     {&ExceptionTypeInfo, 0},
-    {0,                  0}
+    0
 };
-const MWTypeInfo __RTTI__Q23std13bad_exception = {BadExceptionTypeName, BadExceptionBaseClasses};
+const MWTypeInfo __RTTI__Q23std13bad_exception = {BadExceptionTypeName, &BadExceptionBaseClasses.base};
 const char       BadExceptionWhat[] = "bad_exception";
 /**
  * Destroys a `std::bad_exception`.
