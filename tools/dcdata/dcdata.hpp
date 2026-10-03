@@ -307,6 +307,8 @@ inline std::vector<Record> ParseIndex(std::span<const unsigned char> hd2) {
     for (std::uint32_t i = 0; i < count; i++) {
         const unsigned char *raw = hd2.data() + i * 32;
         std::uint32_t        name_offset = Le32(raw);
+        // The retail index ends with one all-zero record, which the game's linear search
+        // never matches; the count above includes it.
         if (name_offset >= hd2.size()) {
             Fail("DATA.HD2 record {}: name offset {} is past the end of the index", i, name_offset);
         }
@@ -317,6 +319,10 @@ inline std::vector<Record> ParseIndex(std::span<const unsigned char> hd2) {
         }
         Record &record = records[i];
         record.name.assign(name_start, static_cast<const char *>(name_end));
+        if (record.name.empty() && i > 0 && Le32(raw + 20) == 0) {
+            records.resize(i);
+            break;
+        }
         std::replace(record.name.begin(), record.name.end(), '\\', '/');
         record.path = FoldPath(record.name);
         if (!IsSafeRelative(record.path)) {
