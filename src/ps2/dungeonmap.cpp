@@ -81,7 +81,7 @@ s32 chainTableDoor[4][3] = {
 };
 
 /** Gives the corridor that joins the cells that touch a corridor cell. */
-s32 chainTableRoad[16][3] = {
+s32 chainTableRoad[15][3] = {
     {6,  MAP_PARTS_ROAD_STRAIGHT, 0},
     {9,  MAP_PARTS_ROAD_STRAIGHT, 1},
     {5,  MAP_PARTS_ROAD_CORNER,   0},
@@ -97,7 +97,6 @@ s32 chainTableRoad[16][3] = {
     {11, MAP_PARTS_ROAD_DEAD_END, 1},
     {14, MAP_PARTS_ROAD_DEAD_END, 2},
     {13, MAP_PARTS_ROAD_DEAD_END, 3},
-    {0,  0,                       0},
 };
 
 /** Gives the wall that closes the edges of a room cell. */

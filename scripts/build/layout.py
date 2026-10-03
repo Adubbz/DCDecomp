@@ -443,13 +443,36 @@ def provenance(path, placed, functions, marked, build_dir):
     return sum(1 for r in rows if r[1] == "cpp"), sum(1 for r in rows if r[1] == "asm")
 
 
+def objdiff_target(build_dir, source):
+    """Where scripts/build/objdiff_data.py writes a unit's target."""
+    return f"{build_dir}/objdiff/{source}.o"
+
+
+def objdiff_data_units(lcf=LCF, build_dir=region.BUILD):
+    """[(source, code reference object or None, base object)] for every unit
+    whose target scripts/build/objdiff_data.py writes: each compiled unit
+    objdiff is shown, including those that define data and no code."""
+    kinds = {source: kind for kind, _image, source, _ref
+             in disassemble.read_units()}
+    reference = unit_references()
+    out = []
+    for _address, _image, source in read_units(read_sources(), lcf):
+        if not included_in_objdiff(source) or kinds.get(source) == "asm":
+            continue
+        code = f"{build_dir}/{reference[source]}.o"
+        out.append((source, code if os.path.exists(reference[source]) else None,
+                    f"{build_dir}/diff/{source}.o"))
+    return out
+
+
 def objdiff(path, placed, functions, marked, build_dir, declared):
     """objdiff.json: one unit per translation unit.
 
-    The target is the assembly splat writes for the whole unit -- code and
-    constants together, the same shape the compiler produces from the source --
-    and the base is the object the build links. Pairing them that way is what
-    lets a function be opened and diffed on its own.
+    The target of a compiled unit is written by scripts/build/objdiff_data.py:
+    the assembly splat writes for the unit's code, and retail's bytes for the
+    data the unit defines, cut and named as its source does. The base is the
+    unit compiled on its own. Pairing them that way is what lets a function be
+    opened and diffed on its own, and what lets objdiff count the data.
 
     Progress stays honest because the functions a marker still supplies are
     declared hidden in the target, and objdiff leaves a hidden symbol out of
@@ -471,12 +494,14 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
         name = os.path.splitext(os.path.relpath(source, SRC_DIR))[0]
         unit = {"name": name.replace(os.sep, "/")}
 
-        if not os.path.exists(reference[source]):
-            # No code in this unit at all -- mainselect.cpp and userstatus.cpp
-            # supply data and nothing else -- so there is nothing to compare.
+        if kinds.get(source) != "asm":
+            # Code and data both, or only data -- mainselect.cpp and literals.cpp
+            # define nothing else -- written after the link.
+            unit["target_path"] = objdiff_target(build_dir, source)
+        elif os.path.exists(reference[source]):
+            unit["target_path"] = f"{build_dir}/{reference[source]}.o"
+        else:
             continue
-
-        unit["target_path"] = f"{build_dir}/{reference[source]}.o"
         # The source compiled on its own, not the object the link takes: that
         # one has retail's instructions spliced into every marker and would
         # match whether the function was written or not.

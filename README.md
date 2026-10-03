@@ -1,20 +1,17 @@
-# Dark Cloud Decompilation Project
+# Chronicle
 
-[![Code NTSC Progress]](https://decomp.dev/Adubbz/DCDecomp/ntsc)
-[![Code PAL Progress]](https://decomp.dev/Adubbz/DCDecomp/pal)
+[![NTSC Progress]](https://decomp.dev/TheMoonPeople/Chronicle/ntsc)
+[![PAL Progress]](https://decomp.dev/TheMoonPeople/Chronicle/pal)
 
-[Code NTSC Progress]: https://decomp.dev/Adubbz/DCDecomp/ntsc.svg?mode=shield&label=NTSC&measure=matched_code_percent
-[Code PAL Progress]: https://decomp.dev/Adubbz/DCDecomp/pal.svg?mode=shield&label=PAL&measure=matched_code_percent
-[progress_link]: https://decomp.dev/Adubbz/DCDecomp/ntsc
+[NTSC Progress]: https://decomp.dev/TheMoonPeople/Chronicle/ntsc.svg?mode=shield&label=NTSC&measure=matched_code_percent
+[PAL Progress]: https://decomp.dev/TheMoonPeople/Chronicle/pal.svg?mode=shield&label=PAL&measure=matched_code_percent
+[progress_link]: https://decomp.dev/TheMoonPeople/Chronicle/
 
+[<img src="https://decomp.dev/TheMoonPeople/Chronicle/ntsc.svg?w=512&h=256" width="512" height="256" alt="A visual">][progress_link]
 
-[<img src="https://decomp.dev/Adubbz/DCDecomp/ntsc.svg?w=512&h=256" width="512" height="256" alt="A visual">][progress_link]
+Chronicle is a decompilation project and port of Dark Cloud for the PlayStation 2.
 
-DCDecomp is a decompilation project for Dark Cloud for the PlayStation 2.
-
-This project is targeting the NTSC 1.02 and PAL review versions.
-
-The build produces the main executable `SCUS_971.11` with matching text and data sections and completely matching `TITLE.BIN` and `DUN.BIN` overlays. Matching the main executable's symbol/string tables may be explored in future, though this isn't a current priority.
+This project produces 100% matching text and data sections for the main executable for the NTSC 1.02 and PAL review versions, and 100% matching `TITLE.BIN` and `DUN.BIN` overlays. Matching the main executable's debug symbols may be explored in the future.
 
 # Building and running
 
@@ -22,7 +19,8 @@ The build produces the main executable `SCUS_971.11` with matching text and data
 2. Place the NTSC 1.02 disc image or PAL July 12th build, named `Dark Cloud (NTSC).iso` or `Dark Cloud (PAL).iso`, in the `rom` folder at the root of the project.
 3. Run `run.sh`.
 
-`run.sh` builds the disc image and boots it in PCSX2. 
+`run.sh` builds the disc image and boots it in PCSX2.
+
 `build.sh` builds only the game.
 
 ## Diffing
@@ -60,4 +58,4 @@ decompile.sh DataLoad__Fv --stack-structs  # extra flags go to m2c
 
 ## Documentation
 
-Source documentation is available on [GitHub Pages](https://adubbz.github.io/DCDecomp/).
+Source documentation is available on [GitHub Pages](https://themoonpeople.github.io/Chronicle/).

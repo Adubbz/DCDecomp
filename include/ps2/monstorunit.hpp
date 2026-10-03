@@ -565,7 +565,7 @@ void InitBee(CFrame *frame, int count);
 extern "C" MONSTOR_MODEL MonstorTable[167];
 
 /** Projectile effects the monsters fire, indexed by MONSTOR_MODEL::shot_effect. */
-extern "C" BT_SHOT_EFFECT *BtEntryEffectTbl[34];
+extern "C" BT_SHOT_EFFECT *BtEntryEffectTbl[35];
 
 /** The monsters each floor of each dungeon lays out. */
 extern "C" BT_ENEMY_FLOOR *BtEnemyLayoutList[];

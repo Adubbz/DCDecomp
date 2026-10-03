@@ -56,8 +56,11 @@ def print_summary(report):
         ("Unmatched", red, unmatched_share, unmatched),
     ):
         print(f"  {color}{label:<11}{reset} {share:6.2f}%    {count:4d} functions")
-    # Objdiff's data score includes sections it cannot compare. It is not a
-    # byte-for-byte linked-image comparison, so do not call its gap a diff.
+    # Each unit's target carries the data the unit defines, at retail's bytes
+    # and sizes (scripts/build/objdiff_data.py); what objdiff leaves unmatched
+    # is a datum the source sizes or places apart from retail's symbol table.
+    # It is not a byte-for-byte linked-image comparison, so do not call its
+    # gap a diff.
     total_data = int(measures.get("total_data", 0))
     if total_data:
         unmatched_data = total_data - int(measures.get("matched_data", 0))
