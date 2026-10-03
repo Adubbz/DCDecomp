@@ -43,9 +43,9 @@ Run RunScripted(const char *name, const fs::path &data, const std::string &scrip
     Run         run;
     run.screenshot = dir / (std::string(name) + ".png");
     std::string command = "'" + executable.string() + "' --headless --frames " + std::to_string(frames) +
-                          " --screenshot '" + run.screenshot.string() + "' --data '" + data.string() + "' --save '" +
-                          (dir / "save").string() + "' --input '" + (dir / "input.txt").string() + "' > '" +
-                          log.string() + "' 2>&1";
+                          " --screenshot '" + run.screenshot.string() + "' --data '" + data.string() +
+                          "' --save '" + (dir / "save").string() + "' --input '" +
+                          (dir / "input.txt").string() + "' > '" + log.string() + "' 2>&1";
     int raw = std::system(command.c_str());
     run.status = WIFEXITED(raw) ? WEXITSTATUS(raw) : 128 + WTERMSIG(raw);
     std::ifstream     file(log);
@@ -65,7 +65,9 @@ Run RunScripted(const char *name, const fs::path &data, const std::string &scrip
 DC_TEST(integration_real_data_reaches_the_title_menu) {
     fs::path data = RealData();
     Run      run = RunScripted("title", data,
-                               "0\n70 cross\n75\n90 cross\n95\n200 start\n205\n480 start\n485\n520 start\n525\n", 560);
+                               "0\n70 cross\n75\n90 cross\n95\n200 start\n205\n480 start\n485\n520 start\n"
+                               "525\n",
+                               560);
     DC_CHECK(run.status == kExitOk);
     DC_CHECK(run.output.find("SND_INF= title.txt") != std::string::npos);
     DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
@@ -77,7 +79,8 @@ DC_TEST(integration_real_data_reaches_the_title_menu) {
 DC_TEST(integration_real_data_developer_menu_opens_the_dungeon_loader) {
     fs::path data = RealData();
     Run      run = RunScripted("loader", data,
-                               "0 pad2 l1 r1 l2 r2\n1 pad2\n10 down\n12\n14 down\n16\n18 down\n20\n22 down\n24\n"
+                               "0 pad2 l1 r1 l2 r2\n1 pad2\n10 down\n12\n14 down\n16\n18 down\n20\n"
+                               "22 down\n24\n"
                                "30 circle\n32\n",
                                45);
     DC_CHECK(run.status == kExitOk);

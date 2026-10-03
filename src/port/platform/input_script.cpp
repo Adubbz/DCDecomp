@@ -14,10 +14,10 @@ struct ButtonName {
 };
 
 constexpr ButtonName kButtonNames[] = {
-    {"cross", kInputCross},   {"circle", kInputCircle}, {"square", kInputSquare}, {"triangle", kInputTriangle},
-    {"start", kInputStart},   {"select", kInputSelect}, {"l1", kInputL1},         {"r1", kInputR1},
-    {"l2", kInputL2},         {"r2", kInputR2},         {"l3", kInputL3},         {"r3", kInputR3},
-    {"up", kInputUp},         {"down", kInputDown},     {"left", kInputLeft},     {"right", kInputRight},
+    {"cross", kInputCross}, {"circle", kInputCircle}, {"square", kInputSquare}, {"triangle", kInputTriangle},
+    {"start", kInputStart}, {"select", kInputSelect}, {"l1", kInputL1},         {"r1", kInputR1},
+    {"l2", kInputL2},       {"r2", kInputR2},         {"l3", kInputL3},         {"r3", kInputR3},
+    {"up", kInputUp},       {"down", kInputDown},     {"left", kInputLeft},     {"right", kInputRight},
 };
 
 InputScript g_script;
@@ -155,8 +155,10 @@ InputPadState InputScriptStateAt(const InputScript &script, int pad, std::int64_
 }
 
 bool InputScriptDrivesPad(const InputScript &script, int pad) {
-    return pad == 0 ? !script.steps.empty()
-                    : std::ranges::any_of(script.steps, [&](const InputScriptStep &step) { return step.pad == pad; });
+    if (pad == 0) {
+        return !script.steps.empty();
+    }
+    return std::ranges::any_of(script.steps, [&](const InputScriptStep &step) { return step.pad == pad; });
 }
 
 void InputScriptInstall(InputScript script) {

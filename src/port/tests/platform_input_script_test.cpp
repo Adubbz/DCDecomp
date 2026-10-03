@@ -6,7 +6,8 @@
 DC_TEST(platform_input_script_holds_buttons_until_the_next_line) {
     InputScript script;
     std::string error;
-    DC_CHECK(InputScriptParse("# boot\n0\n70 cross start   # both\n75\n\n90 Up 0 255 128 128\n", script, error));
+    const char *text = "# boot\n0\n70 cross start   # both\n75\n\n90 Up 0 255 128 128\n";
+    DC_CHECK(InputScriptParse(text, script, error));
     DC_CHECK(script.steps.size() == 4);
 
     InputPadState before = InputScriptStateAt(script, 0, 69);
