@@ -165,8 +165,8 @@ replacement units.
 
 `src/port/gfx` is a Vulkan 1.4 renderer: one graphics queue that presents,
 two frames in flight, dynamic rendering, synchronization2, a bindless texture
-array, all 504 pipelines created at start-up against the on-disk pipeline
-cache, reverse-Z D32 depth, an immediate 2D API in the game's 640x480 logical
+array, every pipeline created at start-up against the on-disk pipeline
+cache, reverse-Z D32 depth with stencil, an immediate 2D API in the game's 640x480 logical
 space (letterboxed on the window) and a mesh API in 3D, named render targets,
 copies, blits, depth readback and screenshots. `src/port/gfx/README.md` is its
 contract: spaces, colour and alpha units, how the GS blend equation maps to
@@ -204,8 +204,9 @@ share small internal headers:
   `cloth_draw.cpp`, `water_draw.cpp`, the `*_math.cpp` units): MDT data built
   into meshes keyed by the game's vu_data block (the record dies with the
   block), `DrawVu1` submitting meshes with the constants the VU1 header
-  carried (matrices, four lights, ambient, material, fog), shadows into
-  `shadow_buf` and composited, cloth rebuilt per draw, water sampling the
+  carried (matrices, four lights, ambient, material, fog), shadow volumes
+  extruded to the shadow plane and counted into `shadow_buf` against the
+  scene's depth, then composited, cloth rebuilt per draw, water sampling the
   last frame copy. The assembly functions (`MulMatrix`, `MotionProc2`,
   `CCloth::Step`, the shadow CLIP builder and the rest) are C++ with the
   lanes retail writes.
@@ -264,57 +265,41 @@ The Metrowerks runtime calls are in `src/port/runtime.cpp`: `mwInit` and
 `LoadOverlay` do nothing, `mwLoadOverlay` succeeds, `__assert` prints and
 exits with status 4, `exit__2` exits.
 
-Of the 39 stubbed functions, 8 are still linked into `darkcloud`
-(`--gc-sections` keeps only what `main` reaches): `sceVif1PkAddGsAD`,
-`sceVif1PkCall`, `sceVif1PkCloseDirectCode`, `sceVif1PkCloseGifTag`,
-`sceVif1PkCnt`, `sceVif1PkOpenDirectCode`, `sceVif1PkOpenGifTag`,
-`sceVif1PkTerminate`. These are the functions in the final link that call
-one of them directly (from `llvm-objdump -d build/pc/darkcloud`, callers
-mapped to their source with `llvm-addr2line`):
+None of the 39 stubbed functions is linked into `darkcloud`, and neither is
+`Ps2Unimplemented` itself: `--gc-sections` keeps only what `main` reaches,
+and no function it reaches calls a stub. `darkcloud_tests` still links some
+through the units the tests call directly. To check after a change,
+disassemble `build/pc/darkcloud` (`llvm-objdump -d`), collect the functions
+with a `call` to a stub's address and map them to their source with
+`llvm-addr2line`; static helpers inlined into a caller show under that
+caller.
 
-- `src/ps2/edit.cpp`: `DrawLine(int*, int*, unsigned char, unsigned char, unsigned char, unsigned char)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
-- `src/ps2/editloop.cpp`: `EditLoop()` -> sceVif1PkCall
-- `src/ps2/title/op_a.cpp`: `setCloudTexScroll()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
-- `src/ps2/title/op_b.cpp`: `FaceChange(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
-- `src/ps2/title/op_b.cpp`: `setTexAnime()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
-- `src/ps2/title/op_c.cpp`: `FaceChangeC(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
-- `src/ps2/title/op_c.cpp`: `setTexAnim()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
-- `src/ps2/title/op_c.cpp`: `setTexScroll()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
-- `src/ps2/title/op_d.cpp`: `FaceChangeD(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
-- `src/ps2/title/rushmovi.cpp`: `DrawProcess()` -> sceVif1PkCall, sceVif1PkTerminate
-- `src/ps2/title/rushmovi.cpp`: `FaceChangeMovie(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
-- `src/ps2/title/titleloop.cpp`: `TitleLoop()` -> sceVif1PkCall
-Static helpers inlined into a caller are listed under that caller. To
-recompute the list, disassemble `build/pc/darkcloud`, collect the functions
-with a `call` to a stub's address, and map them back to their source.
-
-At the last count the final link held 198 `src/ps2` definitions displaced
-by a strong one in `src/port` and 3,982 that survive as the game's own
+At the last count the final link held 249 `src/ps2` definitions displaced
+by a strong one in `src/port` and 3,912 that survive as the game's own
 (`nm` of `dc_ps2.o`'s weak definitions against the port's objects and the
 executable's symbols).
 
 ## Known gaps
 
-- **Rendering approximations.** Shadows are drawn flat into `shadow_buf` and
-  composited, not depth-tested volumes. DATE/DATM (destination alpha test,
-  `MakeFukidashi`'s mask) has no equivalent without a stencil. TEX1 LOD (L,
-  K) is ignored in favour of standard trilinear filtering. The GS blends that
-  need a factor above 1 or a destination scaled past 1 are approximated
-  (`src/port/gfx/README.md`, "Blending").
+- **Rendering approximations.** DATE/DATM (destination alpha test,
+  `MakeFukidashi`'s mask) is not emulated. TEX1 LOD (L, K) is ignored in
+  favour of standard trilinear filtering. The GS blends that need a factor
+  above 1 or a destination scaled past 1 are approximated
+  (`src/port/gfx/README.md`, "Blending" and "Not done here").
 - **Overlay re-initialisation.** Retail reloads `TITLE.BIN` or `DUN.BIN` and
   re-runs its constructors on every switch; the port links both once and
   runs nothing again. Globals a mode expects fresh keep the previous visit's
   values.
 - **Arena headroom** is four times retail's request across the board, a
   stopgap rather than measured peaks.
-- **Title overlay layouts.** Some title units declare another unit's class
-  themselves with the PS2 layout: rushmovi's `OBJ_ANIME_SEQ` is 0x90 bytes
-  while `objanime.hpp`'s holds ten `CFrame *` and grows on the host, so
-  `ObjAnimePlay(&OP_AnimeSeq[i])` strides wrongly and faults; op_c's `CWater`
-  is smaller than the host's. These need the units' callers replaced.
-- `InitCDFile`'s check of the files against `data.hd2` stops at record 5425
-  of the PAL index ("unusable path") and so checks nothing on real data.
-- The stub list above: every function in it aborts the first time it runs.
+- **Title overlay layouts.** The title units declare other units' classes
+  themselves with the PS2 layout. Their `OBJ_ANIME_SEQ` is 0x90 bytes, with
+  the ten `CFrame *` that `objanime.hpp`'s declares hidden in padding, so
+  `OP_AnimeSeq[32]` (op_a.cpp) is laid out with the PS2 stride while
+  `ObjAnimePlay` reads the host's: the frame pointers it reads run into the
+  next entry's name and fault. op_c's `CWater` is smaller than the host's
+  too. The arrays need defining with the host classes and their users
+  replaced.
 
 ## How far the game runs
 
@@ -323,7 +308,8 @@ boots, compiles the pipelines, runs the 60-tick warm-up and the loading
 screen, draws the language select (English highlighted) and exits 0 with
 that frame in the screenshot. With Cross pressed it goes on through the
 memory card check to the attract movie, whose first frame faults in
-`ObjAnimePlay` on rushmovi's `OBJ_ANIME_SEQ` layout (above).
+`ObjAnimePlay`, called from `MotionProcess` (`src/port/title/rushmovi.cpp`),
+on the `OBJ_ANIME_SEQ` layout (above). No stub is reached on the way.
 
 ## Layout
 

@@ -45,11 +45,11 @@ update its status here and move the architectural facts into `docs/PC.md`.
 
 ## 2. Where the port stands
 
-Waves 1 to 3 have landed except P7c (section 5). `darkcloud` runs the
-game's main loop: with the PAL data it boots to the language select, and
-with input reaches the attract movie, which faults on a title-overlay layout
-(`docs/PC.md`, "How far the game runs", lists that and every function still
-reaching a stub). The four subsystem surveys that back this plan are
+Waves 1 to 3 have landed (section 5), and shadow volumes after them.
+`darkcloud` runs the game's main loop and no stub is reachable from `main`:
+with the PAL data it boots to the language select, and with input reaches
+the attract movie, which faults on a title-overlay layout (`docs/PC.md`,
+"How far the game runs" and "Known gaps"). The four subsystem surveys that back this plan are
 summarised in section 3. Key facts:
 
 - The game has no threads, semaphores, interrupt handlers or alarms. The one
@@ -416,7 +416,7 @@ render a sprite table headless and check pixels.
 **P7c Long tail B** (`title/titleloop.cpp`, `title/opening.cpp`,
 `title/rushmovi.cpp`, `title/op_a..op_d.cpp`, `title/sprite.cpp`,
 `edit.cpp`, `edit_in.cpp`, `editloop.cpp` draw functions).
-**Status: in progress.** `docs/PC.md` lists the title and edit functions still reaching a stub.
+**Status: landed.** Title scenes, opening, rush movie, title loop and the editor's draw functions; no stub is reachable from `main`.
 
 **P10 Integration** (`src/port/main.cpp`, `gameloop.cpp`, `docs/PC.md`,
 CI). The game's main loop runs through the title path headless with the
