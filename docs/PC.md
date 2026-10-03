@@ -11,7 +11,11 @@ to and records the phases; this document describes what is built.
 cmake -S . -B build/pc -G Ninja -DPLATFORM=PC -DCMAKE_CXX_COMPILER=clang++-20
 ninja -C build/pc
 (cd build/pc && ctest --output-on-failure -j4)
+(cd build/pc && DC_DATA=$PWD/../../data ctest -R integration_real_data)
 ```
+
+The `integration_real_data_*` cases run `darkcloud` on the extracted data
+and are skipped unless `DC_DATA` names it.
 
 It needs clang 20 with lld and `llvm-objcopy`, CMake 3.28, Ninja,
 `glslangValidator`, SDL3 (3.2) and the Vulkan 1.4 headers and loader, and at
@@ -35,9 +39,10 @@ build/pc/darkcloud --data data --save save
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
 | `--frames N` | stop after N frames of the game's main loop |
 | `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
+| `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
 | `--width W`, `--height H` | window size in pixels, over `config.ini` |
 
-Environment: `DC_DATA` and `DC_SAVE` (above), `DC_AUDIO=off` (no audio
+Environment: `DC_DATA` and `DC_SAVE` (above), `DC_INPUT` (above), `DC_AUDIO=off` (no audio
 device), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
 release build; a debug build always asks for it), and SDL's own variables.
 
@@ -72,6 +77,75 @@ Z cross, X circle, C square, V triangle, Q/E L1/R1, 1/3 L2/R2, F/H L3/R3,
 Return start, Backspace select, WASD the left stick and IJKL the right. The
 actions are `up down left right cross circle square triangle l1 r1 l2 r2 l3
 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+`. A second gamepad is pad 2.
+
+### Scripted input
+
+`--input FILE` (`src/port/platform/input_script.cpp`) replaces the pads with
+a script, through `InputSetOverride`. Each line is
+
+```
+<frame> [pad1|pad2] [button ...] [lx ly rx ry]
+```
+
+and holds the named buttons (`cross circle square triangle start select l1
+r1 l2 r2 l3 r3 up down left right`, any case) and the four stick bytes
+(0-255, centred at 128 when left out) on that pad, pad 1 unless the line
+says `pad2`, from that frame until the pad's next line. A line with no
+button releases everything. Frames count the game's main loop as
+`--frames` does; frame 0 also covers the 60-tick warm-up and the loading
+screens before the first frame. `#` starts a comment; a pad's frames must
+not decrease. Pad 1 is held released until its first line; pad 2 keeps its
+device unless a line names it. A bad script stops `darkcloud` with status 2
+before the window opens. `GamePad.Down` fires on a press edge, so a press
+needs a later line that releases it:
+
+```
+# language select (English), memory check, attract movie, title logo, menu
+0
+70 cross
+75
+90 cross
+95
+200 start
+205
+480 start
+485
+520 start
+525
+```
+
+reaches the title menu at frame 560.
+
+### Developer menu
+
+PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
+the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
+(`MenuLoop`, `src/ps2/main.cpp`), instead of the language select, and leaves
+pad 2 unlocked. Up and down (pad 1) pick a row, left and right change its
+number, circle or triangle enters it:
+
+| Row | Goes to |
+|---|---|
+| game start | the attract movie (`MapNo` 801), then the title |
+| `e0N` | the town `N` (1-5; `main_select_menu_no` N-1, `GAME_MODE_EDIT`) |
+| `sN` | the sub map `N` (map number N+10, `GAME_MODE_EDIT`); R1/L1 step by ten |
+| interior | map 99, `GAME_MODE_EDIT` |
+| dungeon | the dungeon loader (`LoaderLoop`): up and down pick one of the seven dungeons, circle, cross or start enters floor 1 |
+| opening | the opening (`GAME_MODE_OPENING`, scenes op_a to op_d) |
+| `eventN` | one of three story events (map 23 event 310, map 41 event 150, map 19 event 305) |
+| `memory card N` | the save screen in mode N |
+| `Language N` | sets `LanguageCode` (PAL default 2, British English) |
+
+```
+0 pad2 l1 r1 l2 r2
+1 pad2
+10 down
+12
+20 circle
+22
+```
+
+enters town 1 (Norune).
 
 ## Start-up and the main loop
 
@@ -122,10 +196,15 @@ with the hardware taken out, line for line otherwise:
   loading screen's are not counted.
 
 Overlays are not re-initialised: `TITLE.BIN` and `DUN.BIN` are linked in
-once and `LoadOverlay` does nothing, where retail reloaded the overlay's
-data, zeroed its `.bss` and re-ran its static constructors on every switch
-between the title and the dungeon. A mode that relies on fresh overlay
-globals is a known gap (below).
+once, where retail reloaded the overlay's data, zeroed its `.bss` and re-ran
+its static constructors on every switch between the title and the dungeon.
+`LoadOverlay` only rebuilds the title objects the port defines with host
+classes ("The title overlay's own class declarations"). A mode that relies
+on fresh overlay globals is a known gap (below).
+
+Each mode's loop result is applied by the mode that ran the loop
+(`GameApplyLoopResult(old_main_mode, result)`), as retail handles it inside
+that mode's `case`: the developer menu sets `mode` itself and returns 1.
 
 ## Platform
 
@@ -213,7 +292,9 @@ share small internal headers:
 - The long tail on top of those: `dun/gameloop.cpp` (`DunMainDraw`,
   `LoaderLoop`), `effectmacro.cpp`, `runeffect.cpp`, `fireomni.cpp`,
   `fishing.cpp`, `shot_freefuncs.cpp`, `battlemenu.cpp`, `clothread.cpp`,
-  `langset.cpp`.
+  `langset.cpp`, and `editloop_init.cpp` (`EditInit`, its town objects
+  carved out of `EtcDataBuffer` at host sizes where retail's quadword counts
+  are the PS2's).
 
 ## Audio
 
@@ -288,28 +369,86 @@ executable's symbols).
   (`src/port/gfx/README.md`, "Blending" and "Not done here").
 - **Overlay re-initialisation.** Retail reloads `TITLE.BIN` or `DUN.BIN` and
   re-runs its constructors on every switch; the port links both once and
-  runs nothing again. Globals a mode expects fresh keep the previous visit's
+  runs nothing again but the title objects it lays out with host classes
+  (below). Other globals a mode expects fresh keep the previous visit's
   values.
 - **Arena headroom** is four times retail's request across the board, a
   stopgap rather than measured peaks.
-- **Title overlay layouts.** The title units declare other units' classes
-  themselves with the PS2 layout. Their `OBJ_ANIME_SEQ` is 0x90 bytes, with
-  the ten `CFrame *` that `objanime.hpp`'s declares hidden in padding, so
-  `OP_AnimeSeq[32]` (op_a.cpp) is laid out with the PS2 stride while
-  `ObjAnimePlay` reads the host's: the frame pointers it reads run into the
-  next entry's name and fault. op_c's `CWater` is smaller than the host's
-  too. The arrays need defining with the host classes and their users
-  replaced.
+- **Retail statics of the title units.** The title units' own static
+  constructors still build their file-local `CFireOmni`, `CMapObject`,
+  `CEffectGroup` and `OBJ_ANIME_SEQ` objects at PS2 sizes with the host
+  constructors, which write up to 16 bytes past each. Every such object is
+  dead in the port (its users are the port's copies, with their own
+  statics), and what the writes reach is another dead title static or
+  padding, but the bytes are written.
+- **File records read with host structs.** Data the game reads straight
+  from the disc into structures with pointers is laid out with 4-byte
+  pointers. The town stops on the first: `LoadPTS` (`editloop.cpp`) copies
+  a `.pts` record into `EPARTS_INFO_HEADER` and walks its `func` table,
+  whose offsets and 0xC0-byte `EPARTS_FUNC_DATA` stride are the PS2's, so
+  `EdInitEventPoint` reads a count of 1572864 functions from a wild
+  pointer and faults. The dungeon stops on the second: the event script
+  VM (`runscript.cpp`) reads the STB file's `funcdata` table (16-byte
+  records, a 4-byte name pointer) with the host's 24-byte struct, and
+  `CRunScript::exe` faults printing a function name from it.
 
 ## How far the game runs
 
 With the PAL data extracted and no input, `darkcloud --headless --frames 120`
 boots, compiles the pipelines, runs the 60-tick warm-up and the loading
 screen, draws the language select (English highlighted) and exits 0 with
-that frame in the screenshot. With Cross pressed it goes on through the
-memory card check to the attract movie, whose first frame faults in
-`ObjAnimePlay`, called from `MotionProcess` (`src/port/title/rushmovi.cpp`),
-on the `OBJ_ANIME_SEQ` layout (above). No stub is reached on the way.
+that frame in the screenshot. Scripted (above), it plays the attract movie,
+the title screen and its menu, and START opens the opening book. Through the
+developer menu, the opening's scenes play, the dungeon loader lists the
+seven dungeons and floor 1 of the first starts (its name card fades in)
+before the event script faults on its first frame; the town faults while
+`EditInit` loads its parts (both under "Known gaps"). No stub is reached on
+the way. `integration_real_data_*` (skipped unless `DC_DATA` names the
+data) run the first two routes.
+
+## The title overlay's own class declarations
+
+The title units (`src/ps2/title/*.cpp`) declare other units' classes
+themselves, with only the members they touch named and the PS2 extents
+padded out, and the PS2 link binds them to the main executable's code. On
+the host the main executable's code uses the real classes, with 8-byte
+pointers:
+
+| Class | Title units' size | Host size | Declared by |
+|---|---|---|---|
+| `OBJ_ANIME_SEQ` | 144 | 192 | op_a, op_b, op_c, opening, rushmovi, title |
+| `CMap` | 2800 | 3120 | op_a, opening, rushmovi, title, titleloop |
+| `CMapObject` | 240 (op_a), 256 | 272 | all but sprite |
+| `CObjectFrame` | 176 | 224 | op_b, op_c, op_d, opening, rushmovi, title, titleloop |
+| `CWater` | 816 | 848 | op_c, rushmovi, title, titleloop |
+| `CFireOmni` | 64 | 80 | op_a, op_b, op_c, rushmovi, title, titleloop |
+| `CEffectParam` | 240 | 256 | op_a, op_c |
+| `CEffectGroup` | 8 | 16 | op_a, op_c |
+| `CategoryAttr` (`CMapCategoryAttr`) | 24 | 24 | op_a, opening |
+| `CRunEffect` | 208 | 208 | rushmovi, title, titleloop |
+| `CRect<int>` (`CRect_i_`), `RECT` | 16 | 16 | all |
+| `SND_INFO` (op_c's own table row, unrelated to `snd.hpp`'s) | 24 | 16 | op_c |
+
+The port defines every shared object of a mismatched class with the real
+one: op_a's `OP_GroundMap`, `OP_BuildingMap`, `OP_BuildingMap2`,
+`OP_AnimeSeq[32]` and `CFire`, op_b's `OP_NornMapObj[76]` and
+`OP_NornMapObj2[87]`, op_c's `Water`, rushmovi's `Water__2` and `CFire__4`.
+Every function that indexes or sizes them is the port's, compiled against
+the real headers: the long-tail copies of op_a, op_b, op_c, opening and
+rushmovi, `src/port/title/title.cpp` (all of title.cpp's scene set-ups and
+draws), `opening_mds.cpp` (`OPAnalyz`, `OPMdsLoad` and the definition
+reader's state) and op_d's `OpD_InitProcess`, `OpD_InitProcess2` and
+`OpD_DrawProcess`, which reach op_d's statics through names its stub header
+gives them. The smoke pools are sized from the host `CEffect` (288 bytes,
+where retail asked for fifty 256-byte ones). `title_layout_test.cpp` checks
+the linked symbols' sizes.
+
+The title units' static constructors still run after the port's, over the
+port's objects, at the PS2 strides and through op_a's inline `CMap`
+constructor. `LoadOverlay` (`src/port/runtime.cpp`) therefore does what
+retail's overlay loader did when a mode needs TITLE.BIN and DUN.BIN (or
+nothing) was loaded before: `TitleOverlayConstruct` zeroes those objects and
+constructs them again (and initialises the maps, as op_a's constructor did).
 
 ## Layout
 
@@ -327,7 +466,7 @@ The root `CMakeLists.txt` only picks the platform:
   functions of `src/ps2/<unit>.cpp`, sometimes split as `<unit>_math.cpp`,
   `<unit>_draw.cpp` or `<unit>_port.cpp`; `linknames.cpp` supplies link-time
   names (below); `tests/` is `darkcloud_tests`, one ctest case per
-  `DC_TEST`.
+  `DC_TEST` (`DC_SKIP` ends a case as skipped, exit status 77).
 - `tools/dcdata` is the data extraction tool.
 - `include/ps2` holds the game's headers and, under `include/ps2/sce` and
   `include/ps2/std`, the SDK and standard headers MWCC compiles against. Both
@@ -384,6 +523,11 @@ renames what the unit takes from MWCC or from the PS2 link alone:
 - `title/rushmovi` declares title.cpp's `DataLoad`, `DrawProcA`..`I` and
   `DrawProcTitle` static; its header defines those statics as forwarders to
   the global ones.
+- `title/op_d` declares the state and the helpers `OpD_InitProcess`,
+  `OpD_InitProcess2` and `OpD_DrawProcess` share with the rest of the unit
+  `extern` under `OpD_*` names before the unit declares them `static`, and
+  gives the static helpers global forwarders, so the port's copies of those
+  three reach them.
 - The per-object renames below.
 
 ## Names the PS2 build renames
@@ -424,9 +568,8 @@ linker script rather than through the source. The port reproduces each:
   `GaijiDataTbl` keeps its layout on the host where `EditPartsData`'s
   pointers grow.
 
-Data the title overlay's units type themselves with PS2 layouts (op_c's own
-`CWater`, rushmovi's own `OBJ_ANIME_SEQ`) is not reconciled: see the known
-gaps.
+Data the title overlay's units type themselves with PS2 layouts: see "The
+title overlay's own class declarations".
 
 ## Game headers
 

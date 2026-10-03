@@ -15,12 +15,16 @@
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "fireomni.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mainselect.hpp"
+#include "mapobject.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
+#include "objanime.hpp"
+#include "objectframe.hpp"
 #include "renderinfo.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
@@ -76,69 +80,6 @@ public:
    headers of their own because each is another unit's to type. Only the members this file touches
    are named; the extents are the sizes the executable gives the objects below. */
 
-/* A frame parented to an object, which is what lets the world transform drive a model. */
-class CObjectFrame : public CObject {
-public:
-    virtual void FrameObjectOnOff(char *name, int on);
-    virtual void Draw();
-
-    void SetFrame(CFrameVu1 *frame, int unknown0);
-};
-
-/* One piece of scenery. The scene builds a table of them, hands each its model, and drives them
-   through the object dispatch like anything else in the world. */
-class CMapObject : public CObjectFrame {
-public:
-    char       unk_00[36];
-    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from. */
-    char       unk_28[8];
-    float      shadow_offset; /**< Height the shadow drops below the object. */
-    int        unk_34;        /**< Map category the object is sorted under. */
-    int        handle;        /**< Map handle; below zero leaves the object undrawn. */
-    char       unk_EC[4];
-
-    CMapObject();
-
-    virtual void Draw();
-
-    void Initialize();
-    void DrawShadow(int unknown0);
-};
-
-/* The scene's one fire, which is a light rather than a model. */
-class CFireOmni {
-public:
-    char          unk_00[32];
-    sceVu0FVECTOR pos; /**< World position DrawFire draws the next fire at. */
-    char          unk_30[16];
-
-    CFireOmni();
-
-    void FireStep();
-    void FireCreate();
-    void DrawFire(int unknown0, int unknown1, CCamera *camera, float *eye, float scale, int unknown2, float unknown3);
-};
-
-/* One looping object animation: a frame is found by name and one of its properties is driven from
-   a start value towards an end value by a step each tick. */
-class OBJ_ANIME_SEQ {
-public:
-    char          name[16]; /**< Name of the frame the animation drives. */
-    int           property; /**< Property animated: rotation, position, scale or colour. */
-    int           mode;     /**< How the value moves between its two ends. */
-    char          unk_18[8];
-    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
-    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
-    float         step_x;      /**< Amount added to the first component each tick. */
-    float         step_y;      /**< Amount added to the second component each tick. */
-    float         step_z;      /**< Amount added to the third component each tick. */
-    char          unk_4C[60];
-
-    OBJ_ANIME_SEQ();
-
-    void Initialize();
-};
-
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
    stacked bottom-up in one 256-wide texture — the eyes down the left half and the mouth down the
    right — and a tick copies the current frame of each over the plate the model draws with. The two
@@ -167,8 +108,6 @@ struct MAPOBJ_INFO {
     float rotation[3]; /**< Heading about each axis in degrees. */
 };
 
-void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
-void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
 void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect, int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
 void DepthOfField(float *dist, int level, int alpha, int blur);
 
@@ -179,8 +118,8 @@ static int        VolFade;
 static void setTexAnime();
 void        FaceChangeC(int no);
 
-extern CMapObject OP_NornMapObj[76];
-extern CMapObject OP_NornMapObj2[87];
+CMapObject OP_NornMapObj[76];
+CMapObject OP_NornMapObj2[87];
 
 static CFireOmni     CFire;
 static CCharacter    Komono;
@@ -550,7 +489,7 @@ void OpB_InitProcess() {
         object->Initialize();
         object->SetFrame(frame, 0);
         OP_NornMapObj[i].handle = 0;
-        OP_NornMapObj[i].unk_34 = 0;
+        OP_NornMapObj[i].category_no = 0;
 
         object->SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
         object->SetRotation(CVector3_f_((float) (PI_D * norn[i].rotation[0] / 180), (float) (PI_D * norn[i].rotation[1] / 180), (float) (PI_D * norn[i].rotation[2] / 180)));
@@ -617,7 +556,7 @@ void OpB_InitProcess() {
         object->Initialize();
         object->SetFrame(frame, 0);
         OP_NornMapObj2[i].handle = 0;
-        OP_NornMapObj2[i].unk_34 = 0;
+        OP_NornMapObj2[i].category_no = 0;
 
         object->SetPosition(CVector3_f_(10.0f * ground[i].position[0], 10.0f * ground[i].position[1], 10.0f * ground[i].position[2]));
         ((CMapObject &) OP_NornMapObj2[i]).SetRotation(CVector3_f_((float) (PI_D * ground[i].rotation[0] / 180), (float) (PI_D * ground[i].rotation[1] / 180), (float) (PI_D * ground[i].rotation[2] / 180)));
@@ -639,44 +578,44 @@ void OpB_InitProcess() {
     Fuusya[0].Initialize();
     Fuusya[0].property = 0;
     Fuusya[0].mode = 0;
-    Fuusya[0].start_value[2] = 0.0f;
-    Fuusya[0].start_value[1] = 0.0f;
-    Fuusya[0].start_value[0] = 0.0f;
-    Fuusya[0].end_value[2] = 0.0f;
-    Fuusya[0].end_value[1] = 0.0f;
-    Fuusya[0].end_value[0] = 0.0f;
-    Fuusya[0].step_y = 0.0f;
-    Fuusya[0].step_x = 0.0f;
-    Fuusya[0].step_z = -0.5f;
-    strcpy(Fuusya[0].name, "hane");
+    Fuusya[0].from[2] = 0.0f;
+    Fuusya[0].from[1] = 0.0f;
+    Fuusya[0].from[0] = 0.0f;
+    Fuusya[0].to[2] = 0.0f;
+    Fuusya[0].to[1] = 0.0f;
+    Fuusya[0].to[0] = 0.0f;
+    Fuusya[0].step[1] = 0.0f;
+    Fuusya[0].step[0] = 0.0f;
+    Fuusya[0].step[2] = -0.5f;
+    strcpy(Fuusya[0].frame_name, "hane");
     InitObjAnime(DoransFuusya[0], &Fuusya[0]);
 
     Fuusya[1].Initialize();
     Fuusya[1].property = 0;
     Fuusya[1].mode = 0;
-    Fuusya[1].start_value[2] = 0.0f;
-    Fuusya[1].start_value[1] = 0.0f;
-    Fuusya[1].start_value[0] = 0.0f;
-    Fuusya[1].end_value[2] = 0.0f;
-    Fuusya[1].end_value[1] = 0.0f;
-    Fuusya[1].end_value[0] = 0.0f;
-    Fuusya[1].step_y = 0.0f;
-    Fuusya[1].step_x = 0.0f;
-    Fuusya[1].step_z = -0.5f;
-    strcpy(Fuusya[1].name, "hane");
+    Fuusya[1].from[2] = 0.0f;
+    Fuusya[1].from[1] = 0.0f;
+    Fuusya[1].from[0] = 0.0f;
+    Fuusya[1].to[2] = 0.0f;
+    Fuusya[1].to[1] = 0.0f;
+    Fuusya[1].to[0] = 0.0f;
+    Fuusya[1].step[1] = 0.0f;
+    Fuusya[1].step[0] = 0.0f;
+    Fuusya[1].step[2] = -0.5f;
+    strcpy(Fuusya[1].frame_name, "hane");
     InitObjAnime(DoransFuusya[1], &Fuusya[1]);
 
     for (int i = 0; i < 12; i++) {
         Taimatsu[i].Initialize();
         Taimatsu[i].property = 3;
         Taimatsu[i].mode = 4;
-        Taimatsu[i].start_value[2] = 80.0f;
-        Taimatsu[i].start_value[1] = 80.0f;
-        Taimatsu[i].start_value[0] = 80.0f;
-        Taimatsu[i].end_value[2] = 128.0f;
-        Taimatsu[i].end_value[1] = 128.0f;
-        Taimatsu[i].end_value[0] = 128.0f;
-        strcpy(Taimatsu[i].name, "effect");
+        Taimatsu[i].from[2] = 80.0f;
+        Taimatsu[i].from[1] = 80.0f;
+        Taimatsu[i].from[0] = 80.0f;
+        Taimatsu[i].to[2] = 128.0f;
+        Taimatsu[i].to[1] = 128.0f;
+        Taimatsu[i].to[0] = 128.0f;
+        strcpy(Taimatsu[i].frame_name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
 
@@ -768,7 +707,7 @@ void OpB_InitProcess2() {
     OP_ToanMapObj.Initialize();
     OP_ToanMapObj.SetFrame(ToansHouse, 0);
     OP_ToanMapObj.handle = 0;
-    OP_ToanMapObj.unk_34 = 0;
+    OP_ToanMapObj.category_no = 0;
 
     LoadFile("opdat/toan/03komono.chr", (void *) read_buffer, 0);
     Komono.LoadPackData(read_buffer, "03komono.cfg", &MapDataBuffer, 0);
@@ -836,16 +775,16 @@ void OpB_InitProcess2() {
     Door.Initialize();
     Door.property = 0;
     Door.mode = 3;
-    Door.start_value[0] = 0.0f;
-    Door.start_value[1] = 0.0f;
-    Door.start_value[2] = 0.0f;
-    Door.end_value[0] = 0.0f;
-    Door.end_value[1] = 0.0f;
-    Door.end_value[2] = 0.0f;
-    Door.step_x = 0.0f;
-    Door.step_y = 0.0f;
-    Door.step_z = 0.0f;
-    strcpy(Door.name, "door_1");
+    Door.from[0] = 0.0f;
+    Door.from[1] = 0.0f;
+    Door.from[2] = 0.0f;
+    Door.to[0] = 0.0f;
+    Door.to[1] = 0.0f;
+    Door.to[2] = 0.0f;
+    Door.step[0] = 0.0f;
+    Door.step[1] = 0.0f;
+    Door.step[2] = 0.0f;
+    strcpy(Door.frame_name, "door_1");
     InitObjAnime(ToansHouse, &Door);
 
     CSnd.SE_Stop(MIDI_PORT_SE_TITLE, 16, 22, 0);
@@ -938,13 +877,13 @@ void OpB_MotionProcess() {
 
     if (CScript__2.scene == OP_SCENE_TOAN_HOUSE) {
         if (CScript__2.sprite == 1) {
-            Door.end_value[1] = -85.0f;
-            Door.step_y = -2.8f;
+            Door.to[1] = -85.0f;
+            Door.step[1] = -2.8f;
         }
 
         if (CScript__2.sprite == 2) {
-            Door.end_value[1] = 0.0f;
-            Door.step_y = 1.2f;
+            Door.to[1] = 0.0f;
+            Door.step[1] = 1.2f;
         }
 
         if (!Pause) {

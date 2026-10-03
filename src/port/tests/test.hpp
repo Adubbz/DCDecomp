@@ -39,4 +39,11 @@ struct Registrar {
         }                                                                                          \
     } while (0)
 
+// Ends the case as skipped: ctest reads exit status 77 as a skip.
+#define DC_SKIP(reason)                                                                            \
+    do {                                                                                           \
+        std::fprintf(stderr, "skipped: %s\n", reason);                                            \
+        std::exit(77);                                                                             \
+    } while (0)
+
 #define DC_CHECK_NEAR(a, b, tolerance) DC_CHECK(std::fabs((a) - (b)) <= (tolerance))

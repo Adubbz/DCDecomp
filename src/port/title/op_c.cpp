@@ -14,13 +14,19 @@
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "effect.hpp"
+#include "effectgroup.hpp"
+#include "fireomni.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "main.hpp"
 #include "mainselect.hpp"
+#include "mapobject.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
+#include "objanime.hpp"
+#include "objectframe.hpp"
 #include "renderinfo.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
@@ -32,6 +38,7 @@
 #include "title/opening.hpp"
 #include "title/script.hpp"
 #include "vector.hpp"
+#include "water.hpp"
 #include "wind.hpp"
 
 // The bodies are retail's, which pass string literals as char *.
@@ -73,49 +80,6 @@ public:
    headers of their own because each is another unit's to type. Only the members this file touches
    are named; the extents are the sizes the executable gives the objects below. */
 
-/* A frame parented to an object, which is what lets the world transform drive a model. */
-class CObjectFrame : public CObject {
-public:
-    virtual void FrameObjectOnOff(char *name, int on);
-    virtual void Draw();
-
-    void SetFrame(CFrameVu1 *frame, int level);
-};
-
-/* One piece of scenery. The scene builds a table of them, hands each its model, and drives them
-   through the object dispatch like anything else in the world. */
-class CMapObject : public CObjectFrame {
-public:
-    char       unk_00[36];
-    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
-    char       unk_28[8];
-    float      shadow_offset; /**< Height the shadow drops below the object. */
-    int        unk_34;        /**< Category of map part the object belongs to. */
-    int        handle;        /**< Handle the map gave the object. */
-    char       unk_3C[4];
-
-    CMapObject();
-
-    virtual void Draw();
-
-    void Initialize();
-    void DrawShadow(int fast);
-};
-
-/* The scene's one fire, which is a light rather than a model. */
-class CFireOmni {
-public:
-    char          unk_00[32];
-    sceVu0FVECTOR position; /**< World position the fire draws at. */
-    char          unk_30[16];
-
-    CFireOmni();
-
-    void FireStep();
-    void FireCreate();
-    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale, int layers, float camera_offset);
-};
-
 /* One piece of scenery as the scene was laid out: the model, the model its shadow is drawn
    from, where it stands in tenths of a world unit, and its heading in degrees. */
 struct MAPOBJ_INFO {
@@ -128,94 +92,10 @@ struct MAPOBJ_INFO {
 /* The river the scene draws, which is a grid the file sizes and colours once and then shakes every
    tick. Another unit's class to type; only what this file calls and the extent are named. */
 
-class CWater {
-public:
-    char   unk_00[176];
-    CFrame frame; /**< Places and draws the water surface. */
-    char   unk_320[16];
-
-    CWater();
-
-    void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
-    void SetSize(int rows, int columns, CDataAlloc2<1> *arena);
-    void SetParam(float wave_speed, float damping, float height_scale, float distortion);
-    void SetColor(u_char red, u_char green, u_char blue, u_char alpha);
-    void Shake(int x, int y, float height_change);
-    void Hamon();
-    void DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *buffer);
-};
-
-/* One looping object animation: a frame is found by name and then driven between two motion
-   numbers at a rate, with a scale and a position offset of its own. */
-class OBJ_ANIME_SEQ {
-public:
-    char          name[16];  /**< Name of the frame the animation drives. */
-    int           anim_type; /**< What is animated: 0 rotation, 1 position, 2 scale, 3 colour. */
-    int           play_mode; /**< How the value runs between its two ends. */
-    char          unk_18[8];
-    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
-    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
-    float         step_x;      /**< Amount added to the first component each tick. */
-    float         step_y;      /**< Amount added to the second component each tick. */
-    float         step_z;      /**< Amount added to the third component each tick. */
-    char          unk_4C[60];
-
-    OBJ_ANIME_SEQ();
-
-    void Initialize();
-};
-
 /* One particle of the smoke this scene gives off, and the pool the group hands them out of. Both
    classes are another unit's to type; this file only sizes the pool and names the group. */
 class CEffect;
 class CEffectParam;
-
-class CEffectGroup {
-public:
-    char unk_00[8];
-
-    CEffectGroup() { Initialize(0, 0); }
-
-    void Initialize(CEffect *table, int count);
-    void Clear();
-    void EnterEffect(CEffectParam *param);
-    void Step(int unused);
-    void Draw();
-};
-
-/* What one particle is entered with. Only the fields the smoke sets are named; the rectangle is a
-   member rather than filler because the block's own construction zeroes it. */
-class CEffectParam {
-public:
-    int           lifetime;                   /**< Number of frames before the particle is retired. */
-    int           position_oscillation_flags; /**< Bit zero enables sinusoidal position offsets. */
-    float         unk_08;                     /**< Initial unscaled sprite width. */
-    float         unk_0C;                     /**< Initial unscaled sprite height. */
-    char          unk_10[16];
-    sceVu0FVECTOR position; /**< Initial world-space position. */
-    char          unk_30[4];
-    float         rise_speed; /**< Upward velocity added to the position every step. */
-    char          unk_38[24];
-    float         wobble_scale; /**< Amplitude of the sideways position oscillation. */
-    char          unk_54[12];
-    float         wobble_rate; /**< Phase rate of the sideways position oscillation. */
-    char          unk_64[28];
-    float         width_growth;  /**< Width scale added every step. */
-    float         height_growth; /**< Height scale added every step. */
-    char          unk_88[40];
-    int           opacity_mode; /**< Selects constant, increasing, or decreasing opacity. */
-    int           render_flags; /**< Selects temporary alpha and depth-buffer state. */
-    float         opacity;      /**< Initial opacity. */
-    CTexture     *texture;      /**< Texture the particle is drawn from. */
-    CRect<int>    texel;        /**< Rectangle sampled from the texture. */
-    char          unk_D0[4];
-    int           texture_frame_period; /**< Modulus applied before selecting a texture frame. */
-    char          unk_D8[8];
-
-    CEffectParam() {}
-
-    void Initialize();
-};
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
    stacked bottom-up in one 256-wide texture — the eyes down the left half and the mouth down the
@@ -248,8 +128,6 @@ struct SND_INFO {
     int unk_14;
 };
 
-void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
-void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
 void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect, int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &src, const CRect<int> &dst, u_char r, u_char g, u_char b, u_char a);
 void MGMoveImage(sceGsTex0 *dst, const CRect<int> &rect, sceGsTex0 *src, int dsax, int dsay, int dir);
@@ -275,7 +153,7 @@ static OBJ_ANIME_SEQ Fuusya[2];
 static CWind         Wind;
 static CFrame       *TaimatsuFrame[12];
 static OBJ_ANIME_SEQ Taimatsu[12];
-extern CWater        Water;
+CWater               Water;
 static CMapObject    OP_NornMapObj3[4];
 static CBombEffect   CBomb[3];
 static CFrameVu1    *DoransFuusya[2];
@@ -599,45 +477,45 @@ void OpC_InitProcess() {
 
     for (int i = 0; i < 2; i++) {
         Fuusya[i].Initialize();
-        Fuusya[i].anim_type = 0;
-        Fuusya[i].play_mode = 0;
-        Fuusya[i].start_value[2] = 0.0f;
-        Fuusya[i].start_value[1] = 0.0f;
-        Fuusya[i].start_value[0] = 0.0f;
-        Fuusya[i].end_value[2] = 0.0f;
-        Fuusya[i].end_value[1] = 0.0f;
-        Fuusya[i].end_value[0] = 0.0f;
-        Fuusya[i].step_y = 0.0f;
-        Fuusya[i].step_x = 0.0f;
-        Fuusya[i].step_z = -0.5f;
-        strcpy(Fuusya[i].name, "hane");
+        Fuusya[i].property = 0;
+        Fuusya[i].mode = 0;
+        Fuusya[i].from[2] = 0.0f;
+        Fuusya[i].from[1] = 0.0f;
+        Fuusya[i].from[0] = 0.0f;
+        Fuusya[i].to[2] = 0.0f;
+        Fuusya[i].to[1] = 0.0f;
+        Fuusya[i].to[0] = 0.0f;
+        Fuusya[i].step[1] = 0.0f;
+        Fuusya[i].step[0] = 0.0f;
+        Fuusya[i].step[2] = -0.5f;
+        strcpy(Fuusya[i].frame_name, "hane");
         InitObjAnime(DoransFuusya[i], &Fuusya[i]);
     }
 
     for (int i = 0; i < 8; i++) {
         Taimatsu[i].Initialize();
-        Taimatsu[i].anim_type = 3;
-        Taimatsu[i].play_mode = 4;
-        Taimatsu[i].start_value[2] = 80.0f;
-        Taimatsu[i].start_value[1] = 80.0f;
-        Taimatsu[i].start_value[0] = 80.0f;
-        Taimatsu[i].end_value[2] = 128.0f;
-        Taimatsu[i].end_value[1] = 128.0f;
-        Taimatsu[i].end_value[0] = 128.0f;
-        strcpy(Taimatsu[i].name, "effect");
+        Taimatsu[i].property = 3;
+        Taimatsu[i].mode = 4;
+        Taimatsu[i].from[2] = 80.0f;
+        Taimatsu[i].from[1] = 80.0f;
+        Taimatsu[i].from[0] = 80.0f;
+        Taimatsu[i].to[2] = 128.0f;
+        Taimatsu[i].to[1] = 128.0f;
+        Taimatsu[i].to[0] = 128.0f;
+        strcpy(Taimatsu[i].frame_name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
 
     Taimatsu[8].Initialize();
-    Taimatsu[8].anim_type = 3;
-    Taimatsu[8].play_mode = 4;
-    Taimatsu[8].start_value[0] = 110.0f;
-    Taimatsu[8].start_value[2] = 120.0f;
-    Taimatsu[8].start_value[1] = 120.0f;
-    Taimatsu[8].end_value[0] = 128.0f;
-    Taimatsu[8].end_value[2] = 125.0f;
-    Taimatsu[8].end_value[1] = 125.0f;
-    strcpy(Taimatsu[8].name, "hikari");
+    Taimatsu[8].property = 3;
+    Taimatsu[8].mode = 4;
+    Taimatsu[8].from[0] = 110.0f;
+    Taimatsu[8].from[2] = 120.0f;
+    Taimatsu[8].from[1] = 120.0f;
+    Taimatsu[8].to[0] = 128.0f;
+    Taimatsu[8].to[2] = 125.0f;
+    Taimatsu[8].to[1] = 125.0f;
+    strcpy(Taimatsu[8].frame_name, "hikari");
     InitObjAnime(TaimatsuFrame[8], &Taimatsu[8]);
 
     sceVu0FVECTOR corner0 = {-160.0f, 0.0f, -160.0f, 1.0f};
@@ -888,7 +766,7 @@ void OpC_InitProcess3() {
     sky0.Initialize();
     sky0.SetFrame(frame, 0);
     OP_NornMapObj3[0].handle = 0;
-    OP_NornMapObj3[0].unk_34 = 0;
+    OP_NornMapObj3[0].category_no = 0;
     sky0.SetPosition(CVector3_f_(0.0f, 0.0f, 0.0f));
     sky0.SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
@@ -897,7 +775,7 @@ void OpC_InitProcess3() {
     OP_NornMapObj3[1].Initialize();
     OP_NornMapObj3[1].SetFrame(frame, 0);
     OP_NornMapObj3[1].handle = 0;
-    OP_NornMapObj3[1].unk_34 = 0;
+    OP_NornMapObj3[1].category_no = 0;
 
     CMapObject &sky1 = OP_NornMapObj3[1];
 
@@ -908,7 +786,7 @@ void OpC_InitProcess3() {
     OP_NornMapObj3[2].Initialize();
     OP_NornMapObj3[2].SetFrame(frame, 0);
     OP_NornMapObj3[2].handle = 0;
-    OP_NornMapObj3[2].unk_34 = 0;
+    OP_NornMapObj3[2].category_no = 0;
 
     CMapObject &sky2 = OP_NornMapObj3[2];
 
@@ -919,7 +797,7 @@ void OpC_InitProcess3() {
     OP_NornMapObj3[3].Initialize();
     OP_NornMapObj3[3].SetFrame(frame, 0);
     OP_NornMapObj3[3].handle = 0;
-    OP_NornMapObj3[3].unk_34 = 0;
+    OP_NornMapObj3[3].category_no = 0;
 
     CMapObject &sky3 = OP_NornMapObj3[3];
 
@@ -1079,62 +957,63 @@ void OpC_InitProcess5() {
     Chara__3[3].motion_type.state.playing_no = 0;
 
     Fuusya[0].Initialize();
-    Fuusya[0].anim_type = 0;
-    Fuusya[0].play_mode = 0;
-    Fuusya[0].start_value[2] = 0.0f;
-    Fuusya[0].start_value[1] = 0.0f;
-    Fuusya[0].start_value[0] = 0.0f;
-    Fuusya[0].end_value[2] = 0.0f;
-    Fuusya[0].end_value[1] = 0.0f;
-    Fuusya[0].end_value[0] = 0.0f;
-    Fuusya[0].step_y = 0.0f;
-    Fuusya[0].step_x = 0.0f;
-    Fuusya[0].step_z = -0.5f;
-    strcpy(Fuusya[0].name, "hane");
+    Fuusya[0].property = 0;
+    Fuusya[0].mode = 0;
+    Fuusya[0].from[2] = 0.0f;
+    Fuusya[0].from[1] = 0.0f;
+    Fuusya[0].from[0] = 0.0f;
+    Fuusya[0].to[2] = 0.0f;
+    Fuusya[0].to[1] = 0.0f;
+    Fuusya[0].to[0] = 0.0f;
+    Fuusya[0].step[1] = 0.0f;
+    Fuusya[0].step[0] = 0.0f;
+    Fuusya[0].step[2] = -0.5f;
+    strcpy(Fuusya[0].frame_name, "hane");
     InitObjAnime(DoransFuusya[0], &Fuusya[0]);
 
     Fuusya[1].Initialize();
-    Fuusya[1].anim_type = 0;
-    Fuusya[1].play_mode = 3;
-    Fuusya[1].start_value[2] = 0.0f;
-    Fuusya[1].start_value[1] = 0.0f;
-    Fuusya[1].start_value[0] = 0.0f;
-    Fuusya[1].end_value[0] = 0.0f;
-    Fuusya[1].end_value[1] = 0.0f;
-    Fuusya[1].end_value[2] = -90.0f;
-    Fuusya[1].step_x = 0.0f;
-    Fuusya[1].step_y = 0.0f;
-    Fuusya[1].step_z = -0.048f;
-    strcpy(Fuusya[1].name, "obj1");
+    Fuusya[1].property = 0;
+    Fuusya[1].mode = 3;
+    Fuusya[1].from[2] = 0.0f;
+    Fuusya[1].from[1] = 0.0f;
+    Fuusya[1].from[0] = 0.0f;
+    Fuusya[1].to[0] = 0.0f;
+    Fuusya[1].to[1] = 0.0f;
+    Fuusya[1].to[2] = -90.0f;
+    Fuusya[1].step[0] = 0.0f;
+    Fuusya[1].step[1] = 0.0f;
+    Fuusya[1].step[2] = -0.048f;
+    strcpy(Fuusya[1].frame_name, "obj1");
     InitObjAnime(DoransFuusya[1], &Fuusya[1]);
 
     for (int i = 0; i < 5; i++) {
         Taimatsu[i].Initialize();
-        Taimatsu[i].anim_type = 3;
-        Taimatsu[i].play_mode = 4;
-        Taimatsu[i].start_value[2] = 80.0f;
-        Taimatsu[i].start_value[1] = 80.0f;
-        Taimatsu[i].start_value[0] = 80.0f;
-        Taimatsu[i].end_value[2] = 128.0f;
-        Taimatsu[i].end_value[1] = 128.0f;
-        Taimatsu[i].end_value[0] = 128.0f;
-        strcpy(Taimatsu[i].name, "effect");
+        Taimatsu[i].property = 3;
+        Taimatsu[i].mode = 4;
+        Taimatsu[i].from[2] = 80.0f;
+        Taimatsu[i].from[1] = 80.0f;
+        Taimatsu[i].from[0] = 80.0f;
+        Taimatsu[i].to[2] = 128.0f;
+        Taimatsu[i].to[1] = 128.0f;
+        Taimatsu[i].to[0] = 128.0f;
+        strcpy(Taimatsu[i].frame_name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
 
     Taimatsu[8].Initialize();
-    Taimatsu[8].anim_type = 3;
-    Taimatsu[8].play_mode = 4;
-    Taimatsu[8].start_value[0] = 110.0f;
-    Taimatsu[8].start_value[2] = 120.0f;
-    Taimatsu[8].start_value[1] = 120.0f;
-    Taimatsu[8].end_value[0] = 128.0f;
-    Taimatsu[8].end_value[2] = 125.0f;
-    Taimatsu[8].end_value[1] = 125.0f;
-    strcpy(Taimatsu[8].name, "hikari");
+    Taimatsu[8].property = 3;
+    Taimatsu[8].mode = 4;
+    Taimatsu[8].from[0] = 110.0f;
+    Taimatsu[8].from[2] = 120.0f;
+    Taimatsu[8].from[1] = 120.0f;
+    Taimatsu[8].to[0] = 128.0f;
+    Taimatsu[8].to[2] = 125.0f;
+    Taimatsu[8].to[1] = 125.0f;
+    strcpy(Taimatsu[8].frame_name, "hikari");
     InitObjAnime(TaimatsuFrame[8], &Taimatsu[8]);
 
-    EffectTable = (CEffect *) CharaDataBuffer__2[0].Alloc(12800);
+    // Retail asked for 12800 bytes, fifty of the PS2's 256-byte CEffect.
+    EffectTable = (CEffect *) CharaDataBuffer__2[0].Alloc(50 * sizeof(CEffect));
     Smoke.Initialize(EffectTable, 50);
     Smoke.Clear();
     CScript__2.init_no = 0;
@@ -1264,7 +1143,7 @@ static void MapLoad() {
         object.Initialize();
         object.SetFrame(frame, 0);
         OP_NornMapObj[i].handle = 0;
-        OP_NornMapObj[i].unk_34 = 0;
+        OP_NornMapObj[i].category_no = 0;
 
         object.SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
         object.SetRotation(CVector3_f_((float) (PI_D * norn[i].rotation[0] / 180), (float) (PI_D * norn[i].rotation[1] / 180), (float) (PI_D * norn[i].rotation[2] / 180)));
@@ -1400,7 +1279,7 @@ static void MapLoad() {
         object.Initialize();
         object.SetFrame(ground_frame, 0);
         OP_NornMapObj2[j].handle = 0;
-        OP_NornMapObj2[j].unk_34 = 0;
+        OP_NornMapObj2[j].category_no = 0;
 
         object.SetPosition(CVector3_f_(10.0f * ground[j].position[0], 10.0f * ground[j].position[1], 10.0f * ground[j].position[2]));
         object.SetRotation(CVector3_f_((float) (PI_D * ground[j].rotation[0] / 180), (float) (PI_D * ground[j].rotation[1] / 180), (float) (PI_D * ground[j].rotation[2] / 180)));
@@ -1529,7 +1408,7 @@ static void MapLoad2() {
         object.Initialize();
         object.SetFrame(frame, 0);
         OP_NornMapObj[i].handle = 0;
-        OP_NornMapObj[i].unk_34 = 0;
+        OP_NornMapObj[i].category_no = 0;
 
         object.SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
         object.SetRotation(CVector3_f_((float) (PI_D * norn[i].rotation[0] / 180), (float) (PI_D * norn[i].rotation[1] / 180), (float) (PI_D * norn[i].rotation[2] / 180)));
@@ -1628,7 +1507,7 @@ static void MapLoad2() {
         object.Initialize();
         object.SetFrame(ground_frame, 0);
         OP_NornMapObj2[j].handle = 0;
-        OP_NornMapObj2[j].unk_34 = 0;
+        OP_NornMapObj2[j].category_no = 0;
 
         object.SetPosition(CVector3_f_(10.0f * ground[j].position[0], 10.0f * ground[j].position[1], 10.0f * ground[j].position[2]));
         object.SetRotation(CVector3_f_((float) (PI_D * ground[j].rotation[0] / 180), (float) (PI_D * ground[j].rotation[1] / 180), (float) (PI_D * ground[j].rotation[2] / 180)));
@@ -1771,18 +1650,18 @@ void OpC_MotionProcess() {
 
     switch (CScript__2.camera_start) {
         case 96:
-            Fuusya[1].step_z = -0.12f * 1.2f;
+            Fuusya[1].step[2] = -0.12f * 1.2f;
             break;
 
         case 97:
             d = 2.0f;
-            Fuusya[1].step_z = -0.04f * 1.2f;
+            Fuusya[1].step[2] = -0.04f * 1.2f;
             break;
 
         case 100:
             if (Cam__2[SceneNp__2].motion_type.state.time < 258.0f) {
                 step = 0.025f * 1.2f;
-                Fuusya[1].step_z = -0.0048f * 1.2f;
+                Fuusya[1].step[2] = -0.0048f * 1.2f;
 
                 if (FireStep >= 1.0f) {
                     FireStep = 0.0f;
@@ -1804,7 +1683,7 @@ void OpC_MotionProcess() {
                 }
 
                 step = 0.5f * 1.2f;
-                Fuusya[1].step_z = -10.0f * 1.2f;
+                Fuusya[1].step[2] = -10.0f * 1.2f;
                 FireStep = 1.0f;
             }
 
@@ -2445,10 +2324,10 @@ void OpC_DrawProcess() {
                 float y = OP_FirePosition[i][1];
                 float x = OP_FirePosition[i][0];
 
-                CFire.position[0] = 10.0f * x;
-                CFire.position[1] = 10.0f * y;
-                CFire.position[2] = 10.0f * z;
-                CFire.position[3] = 1.0f;
+                CFire.pos[0] = 10.0f * x;
+                CFire.pos[1] = 10.0f * y;
+                CFire.pos[2] = 10.0f * z;
+                CFire.pos[3] = 1.0f;
 
                 int fire_flag = OP_FireFlg[i];
 
@@ -2468,10 +2347,10 @@ void OpC_DrawProcess() {
                 float y = OP_FirePosition[i][1];
                 float x = OP_FirePosition[i][0];
 
-                CFire.position[0] = 10.0f * x;
-                CFire.position[1] = 10.0f * y;
-                CFire.position[2] = 10.0f * z;
-                CFire.position[3] = 1.0f;
+                CFire.pos[0] = 10.0f * x;
+                CFire.pos[1] = 10.0f * y;
+                CFire.pos[2] = 10.0f * z;
+                CFire.pos[3] = 1.0f;
 
                 int fire_flag = OP_FireFlg[i];
 
@@ -3009,37 +2888,37 @@ static void SmokeProcess() {
         param.Initialize();
         sceVu0CopyVector(param.position, position);
         param.position_oscillation_flags = 1;
-        param.wobble_scale = 0.5f * rand() / 2147483648.0f;
-        param.wobble_rate = (float) PI_D / (20.0f + 10 * rand() / 2147483648.0f);
+        param.position_oscillation_scale[0] = 0.5f * rand() / 2147483648.0f;
+        param.position_oscillation_rate[0] = (float) PI_D / (20.0f + 10 * rand() / 2147483648.0f);
         param.opacity_mode = 2;
         param.render_flags = 1;
         param.opacity = 0.15f;
-        param.rise_speed = 1.5f + 0.2f * rand() / 2147483648.0f;
-        param.width_growth = 0.04f;
-        param.height_growth = 0.04f;
+        param.velocity[1] = 1.5f + 0.2f * rand() / 2147483648.0f;
+        param.scale_velocity[0] = 0.04f;
+        param.scale_velocity[1] = 0.04f;
         param.lifetime = 120;
         param.texture = TexManager.GetTexture("gray smoke", -1);
 
         switch (rand() % 4) {
             case 0:
-                param.texel = CRect<int>(0, 0, 64, 64);
+                param.texel = CRect_i_(0, 0, 64, 64);
                 break;
 
             case 1:
-                param.texel = CRect<int>(64, 0, 64, 64);
+                param.texel = CRect_i_(64, 0, 64, 64);
                 break;
 
             case 2:
-                param.texel = CRect<int>(0, 64, 64, 64);
+                param.texel = CRect_i_(0, 64, 64, 64);
                 break;
 
             case 3:
-                param.texel = CRect<int>(64, 64, 64, 64);
+                param.texel = CRect_i_(64, 64, 64, 64);
                 break;
         }
 
-        param.unk_08 = 20.0f;
-        param.unk_0C = 20.0f;
+        param.width = 20.0f;
+        param.height = 20.0f;
         param.texture_frame_period = 60;
         Smoke.EnterEffect(&param);
 
@@ -3052,37 +2931,37 @@ static void SmokeProcess() {
         param2.Initialize();
         sceVu0CopyVector(param2.position, position);
         param2.position_oscillation_flags = 1;
-        param2.wobble_scale = 0.5f * rand() / 2147483648.0f;
-        param2.wobble_rate = (float) PI_D / (20.0f + 10 * rand() / 2147483648.0f);
+        param2.position_oscillation_scale[0] = 0.5f * rand() / 2147483648.0f;
+        param2.position_oscillation_rate[0] = (float) PI_D / (20.0f + 10 * rand() / 2147483648.0f);
         param2.opacity_mode = 2;
         param2.render_flags = 1;
         param2.opacity = 0.15f;
-        param2.rise_speed = 1.5f + 0.2f * rand() / 2147483648.0f;
-        param2.width_growth = 0.04f;
-        param2.height_growth = 0.04f;
+        param2.velocity[1] = 1.5f + 0.2f * rand() / 2147483648.0f;
+        param2.scale_velocity[0] = 0.04f;
+        param2.scale_velocity[1] = 0.04f;
         param2.lifetime = 120;
         param2.texture = TexManager.GetTexture("gray smoke", -1);
 
         switch (rand() % 4) {
             case 0:
-                param2.texel = CRect<int>(0, 0, 64, 64);
+                param2.texel = CRect_i_(0, 0, 64, 64);
                 break;
 
             case 1:
-                param2.texel = CRect<int>(64, 0, 64, 64);
+                param2.texel = CRect_i_(64, 0, 64, 64);
                 break;
 
             case 2:
-                param2.texel = CRect<int>(0, 64, 64, 64);
+                param2.texel = CRect_i_(0, 64, 64, 64);
                 break;
 
             case 3:
-                param2.texel = CRect<int>(64, 64, 64, 64);
+                param2.texel = CRect_i_(64, 64, 64, 64);
                 break;
         }
 
-        param2.unk_08 = 20.0f;
-        param2.unk_0C = 20.0f;
+        param2.width = 20.0f;
+        param2.height = 20.0f;
         param2.texture_frame_period = 60;
         Smoke.EnterEffect(&param2);
     }
@@ -3126,7 +3005,7 @@ static void WaterProcess() {
     MGSetGsZBUF(&zbuf);
     Water.Shake((int) (32.0f * rand() / 2147483648.0f), (int) (32.0f * rand() / 2147483648.0f), -0.5f);
     Water.Hamon();
-    Water.DrawVu1(&mgRenderInfo, GetVif1Packet(), 0);
+    DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(&Water, &mgRenderInfo, GetVif1Packet(), nullptr);
     MGSetGsZBUF(&mgZBuffer);
 }
 

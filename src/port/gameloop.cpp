@@ -228,8 +228,8 @@ void GameFollowMapJump() {
     }
 }
 
-void GameApplyLoopResult(int result) {
-    switch (mode) {
+void GameApplyLoopResult(int loop_mode, int result) {
+    switch (loop_mode) {
         case GAME_MODE_LANGUAGE:
             if (result != 0) {
                 MapNo = -1;
@@ -452,7 +452,7 @@ int RunGame(int argc, char **argv) {
             old_main_mode = mode;
 
             result = ModeLoop(skip_title);
-            GameApplyLoopResult(result);
+            GameApplyLoopResult(old_main_mode, result);
 
             GamePad.UpDate();
             GamePad.VibrationEnable(ConfigWords()[kConfigVibrationOff] == 0);

@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
+#include <string>
 #include <string_view>
 #include <system_error>
 #include <vector>
@@ -22,6 +23,7 @@
 #include "platform/clock.hpp"
 #include "platform/config.hpp"
 #include "platform/input.hpp"
+#include "platform/input_script.hpp"
 #include "platform/paths.hpp"
 #include "platform/window.hpp"
 #include "snd.hpp"
@@ -41,6 +43,7 @@ struct Options {
     bool         headless = false;
     std::int64_t frames = -1;
     const char  *screenshot = nullptr;
+    const char  *input = nullptr;
     int          width = 0;
     int          height = 0;
 };
@@ -48,7 +51,7 @@ struct Options {
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
                  "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
-                 "          [--width W] [--height H]\n"
+                 "          [--input FILE] [--width W] [--height H]\n"
                  "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
                  "                     beside the executable)\n"
                  "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
@@ -57,6 +60,7 @@ struct Options {
                  "                     no audio device, the game clock unbounded\n"
                  "  --frames N         stop after N frames of the game's main loop\n"
                  "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
+                 "  --input FILE       drive pad 1 from a script (default: DC_INPUT); see docs/PC.md\n"
                  "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n",
                  program);
     std::exit(kExitUsage);
@@ -86,6 +90,8 @@ Options ParseOptions(int argc, const char **argv) {
             options.frames = number();
         } else if (arg == "--screenshot") {
             options.screenshot = value();
+        } else if (arg == "--input") {
+            options.input = value();
         } else if (arg == "--width") {
             options.width = static_cast<int>(number());
         } else if (arg == "--height") {
@@ -132,6 +138,23 @@ void PumpHost() {
         GameRequestStop();
     }
     InputPoll();
+    InputScriptApply(GameFrameCount());
+}
+
+void LoadInputScript(const char *path) {
+    if (path == nullptr) {
+        path = std::getenv("DC_INPUT");
+    }
+    if (path == nullptr || *path == '\0') {
+        return;
+    }
+    InputScript script;
+    std::string error;
+    if (!InputScriptLoad(path, script, error)) {
+        std::fprintf(stderr, "bad input script: %s\n", error.c_str());
+        std::exit(kExitUsage);
+    }
+    InputScriptInstall(std::move(script));
 }
 
 void RenderAudio(void *, float *out, int frames) {
@@ -173,6 +196,7 @@ int main(int argc, const char **argv, const char **envp) {
     argc = PathsConsumeArgs(argc, argv);
     Options options = ParseOptions(argc, argv);
     RequireData();
+    LoadInputScript(options.input);
 
     ConfigLoad();
     const Config &config = ConfigGet();

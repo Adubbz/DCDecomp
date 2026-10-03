@@ -14,6 +14,7 @@ foreach(source IN LISTS TEST_SOURCES)
     foreach(line IN LISTS cases)
         string(REGEX REPLACE "^DC_TEST\\(([A-Za-z0-9_]+)\\).*" "\\1" name "${line}")
         add_test(NAME ${name} COMMAND darkcloud_tests ${name})
+        set_tests_properties(${name} PROPERTIES SKIP_RETURN_CODE 77)
     endforeach()
 endforeach()
 
