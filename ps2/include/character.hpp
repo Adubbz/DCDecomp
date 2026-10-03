@@ -86,7 +86,7 @@ STATIC_ASSERT(sizeof(CHARA_UNK_1068) == 0x14);
  */
 class MotionParam {
 public:
-    u8 storage[128]; /**< Room for the motions of one motion set beyond the first. */
+    u8 storage[sizeof(tagMOTION_TYPE)]; /**< Room for the motions of one motion set beyond the first. */
 
     /**
      * Constructs the motion parameters.

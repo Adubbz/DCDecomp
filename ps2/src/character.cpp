@@ -1095,8 +1095,8 @@ void CCharacter::Initialize() {
         this->shadow_motion[i] = NULL;
         this->motion_start[i] = -1;
         this->motion_end[i] = -1;
-        memset(this->motion_storage[i].storage, 0, 128);
-        memset(this->shadow_motion_storage[i].storage, 0, 128);
+        memset(this->motion_storage[i].storage, 0, sizeof(this->motion_storage[i].storage));
+        memset(this->shadow_motion_storage[i].storage, 0, sizeof(this->shadow_motion_storage[i].storage));
     }
 
     this->body_width = 7.0f;

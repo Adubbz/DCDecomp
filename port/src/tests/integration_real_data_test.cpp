@@ -181,6 +181,18 @@ DC_TEST(integration_real_data_dungeon_play) {
     DC_CHECK(fs::file_size(run.screenshot) > 0);
 }
 
+// The attract movie (--jump rush) through all ten of its scenes and back to the title, which then
+// rolls into it again. Its second scene gives Toan a third and a fourth motion set, the third
+// played straight away, and its skinning reads the frame table that the set carries.
+DC_TEST(integration_real_data_rush_movie) {
+    fs::path data = RealData();
+    Run      run = RunScripted("rush", data, "0\n", 9000, "--jump rush --fast-load");
+    DC_CHECK(run.status == kExitOk);
+    DC_CHECK(run.output.find("SND_INF= title.txt") != std::string::npos);
+    DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
+    DC_CHECK(fs::file_size(run.screenshot) > 0);
+}
+
 // The title's background after the attract movie: clouds of textured spheres inside a sky dome,
 // smeared upwards into smoke by the frame grab blended back at 112/128 every frame. Above the
 // logo (logical rows 0-79) that is all there is. Broken, the dome's near half covered the clouds

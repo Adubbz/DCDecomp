@@ -968,6 +968,12 @@ code for the port:
   declared `extern "C"` to match their definitions.
 - **Exception specifications.** `__dl` is declared `throw()`, as it is
   defined.
+- **Sizes spelled as `sizeof`.** `MotionParam::storage`, where a character
+  builds each motion set beyond its first, is `sizeof(tagMOTION_TYPE)` bytes
+  rather than 128, and `CCharacter::Initialize` clears it by its `sizeof`.
+  Both are 0x80 on the PS2; on the host a `tagMOTION_TYPE` is 0xB0, and with
+  128 bytes a set's `frame_info` and `motion_info` lay in the next set's
+  storage (`bits64_motion_storage_test.cpp`).
 - **`#ifndef PORT` around assembly functions**, the one exception: clang
   cannot parse them. It replaces blank lines, so no line number moves. The
   generic `CDataAlloc<Kind, Size>::Align64()` in `ps2/include/dataalloc.hpp`
