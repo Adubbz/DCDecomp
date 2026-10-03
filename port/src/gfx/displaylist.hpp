@@ -83,6 +83,7 @@ using Entry = std::variant<Draw2DEntry, MeshEntry, ClearEntry, TargetEntry, Copy
 struct MeshRecord {
     InterpKey key = 0;
     uint32_t  occurrence = 0;
+    uint32_t  entry = 0; // its MeshEntry in DisplayList::entries
     bool      no_interpolation = false;
     float     teleport_distance = INFINITY;
     bool      has_transform = false;
@@ -97,6 +98,7 @@ struct MeshRecord {
 struct MatchCache {
     uint64_t             previous_serial = 0;
     std::vector<int32_t> match;   // per record, the previous list's record, or -1
+    std::vector<bool>    blend;   // per record, whether its immediate vertices moved since the match's
     std::vector<int32_t> cameras; // per camera, the previous list's, or -1
 };
 

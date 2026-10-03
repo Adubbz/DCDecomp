@@ -232,6 +232,46 @@ void NoteMainDraw(DisplayList &list) {
     }
 }
 
+// Whether an immediate mesh is the one before with its vertices moved, none further than a teleport.
+bool VerticesBlend(const MeshEntry &before, const MeshEntry &after, float teleport_distance) {
+    if (before.mesh != kNullMesh || after.mesh != kNullMesh || before.vertices.size() != after.vertices.size()) {
+        return false;
+    }
+    bool moved = false;
+    for (size_t i = 0; i < after.vertices.size(); i++) {
+        const Vertex3D &a = before.vertices[i];
+        const Vertex3D &b = after.vertices[i];
+        float           dx = b.position[0] - a.position[0];
+        float           dy = b.position[1] - a.position[1];
+        float           dz = b.position[2] - a.position[2];
+        if (std::sqrt(dx * dx + dy * dy + dz * dz) > teleport_distance) {
+            return false;
+        }
+        moved = moved || dx != 0.0f || dy != 0.0f || dz != 0.0f ||
+                std::memcmp(a.normal, b.normal, sizeof(a.normal)) != 0;
+    }
+    return moved;
+}
+
+// Positions lerped, normals lerped and normalised; the rest is b's.
+void BlendVertices(const std::vector<Vertex3D> &a, const std::vector<Vertex3D> &b, float alpha,
+                   std::vector<Vertex3D> &out) {
+    out = b;
+    for (size_t i = 0; i < out.size(); i++) {
+        for (int k = 0; k < 3; k++) {
+            out[i].position[k] = a[i].position[k] + (b[i].position[k] - a[i].position[k]) * alpha;
+        }
+        Vec3 normal = {a[i].normal[0] + (b[i].normal[0] - a[i].normal[0]) * alpha,
+                       a[i].normal[1] + (b[i].normal[1] - a[i].normal[1]) * alpha,
+                       a[i].normal[2] + (b[i].normal[2] - a[i].normal[2]) * alpha};
+        if (Normalize(normal)) {
+            out[i].normal[0] = normal.x;
+            out[i].normal[1] = normal.y;
+            out[i].normal[2] = normal.z;
+        }
+    }
+}
+
 void BuildMatches(const DisplayList &list, const DisplayList &previous) {
     MatchCache &cache = list.cache;
     cache.previous_serial = previous.serial;
@@ -250,6 +290,7 @@ void BuildMatches(const DisplayList &list, const DisplayList &previous) {
         }
     }
     cache.match.assign(list.records.size(), -1);
+    cache.blend.assign(list.records.size(), false);
     for (size_t i = 0; i < list.records.size(); i++) {
         const MeshRecord &record = list.records[i];
         if (record.key == 0 || !record.has_transform || record.no_interpolation) {
@@ -265,6 +306,9 @@ void BuildMatches(const DisplayList &list, const DisplayList &previous) {
         float       dz = record.model[14] - before[14];
         if (!(std::sqrt(dx * dx + dy * dy + dz * dz) > record.teleport_distance)) {
             cache.match[i] = it->second;
+            cache.blend[i] =
+                VerticesBlend(std::get<MeshEntry>(previous.entries[previous.records[it->second].entry]),
+                              std::get<MeshEntry>(list.entries[record.entry]), record.teleport_distance);
         }
     }
     cache.cameras.assign(list.cameras.size(), -1);
@@ -276,8 +320,10 @@ void BuildMatches(const DisplayList &list, const DisplayList &previous) {
 }
 
 struct Overrides {
-    std::vector<int32_t>       index; // per record, into constants, or -1
-    std::vector<MeshConstants> constants;
+    std::vector<int32_t>               index; // per record, into constants, or -1
+    std::vector<MeshConstants>         constants;
+    std::vector<int32_t>               vertex_index; // per record, into vertices, or -1
+    std::vector<std::vector<Vertex3D>> vertices;
 };
 
 void Interpolated(const DisplayList &list, const DisplayList &previous, float alpha, Overrides &out) {
@@ -298,6 +344,8 @@ void Interpolated(const DisplayList &list, const DisplayList &previous, float al
 
     out.index.assign(list.records.size(), -1);
     out.constants.clear();
+    out.vertex_index.assign(list.records.size(), -1);
+    out.vertices.clear();
     const Mat4 *last_before = nullptr;
     const Mat4 *last_after = nullptr;
     Mat4        last_model;
@@ -314,6 +362,11 @@ void Interpolated(const DisplayList &list, const DisplayList &previous, float al
         }
         Mat4    model = record.model;
         int32_t match = cache.match[mesh->record];
+        if (match >= 0 && cache.blend[mesh->record]) {
+            const MeshEntry &before = std::get<MeshEntry>(previous.entries[previous.records[match].entry]);
+            out.vertex_index[mesh->record] = static_cast<int32_t>(out.vertices.size());
+            BlendVertices(before.vertices, mesh->vertices, alpha, out.vertices.emplace_back());
+        }
         if (match >= 0 && previous.records[match].model != record.model) {
             // A model's strips and passes come one after another with the same pair of matrices.
             const Mat4 &before = previous.records[match].model;
@@ -366,7 +419,11 @@ void Replay(const DisplayList &list, bool canonical, const Overrides *overrides)
                     if (e.mesh != kNullMesh) {
                         DrawMesh(e.mesh, e.first_index, e.index_count, *constants, e.binding, e.state);
                     } else {
-                        DrawMeshImmediate(e.vertices, e.indices, *constants, e.binding, e.state);
+                        const std::vector<Vertex3D> *vertices = &e.vertices;
+                        if (overrides != nullptr && overrides->vertex_index[e.record] >= 0) {
+                            vertices = &overrides->vertices[overrides->vertex_index[e.record]];
+                        }
+                        DrawMeshImmediate(*vertices, e.indices, *constants, e.binding, e.state);
                     }
                 } else if constexpr (std::is_same_v<T, ClearEntry>) {
                     if (e.stencil) {
@@ -475,6 +532,7 @@ void RecordMesh(MeshEntry &&entry, const MeshTransform *transform) {
         record.camera = CameraIndex(list, transform->view);
     }
     entry.record = static_cast<uint32_t>(list.records.size());
+    record.entry = static_cast<uint32_t>(list.entries.size());
     list.records.push_back(record);
     list.entries.push_back(std::move(entry));
 }

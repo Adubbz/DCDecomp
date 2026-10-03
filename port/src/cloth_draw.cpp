@@ -8,7 +8,9 @@
 
 // The grid is rebuilt every frame from the simulation, so it is drawn as an immediate triangle
 // list: one strip per row pair, each row drawn from the far side (wound the other way) when
-// polygon_divide says so, all with the fixed cloth material and the model's texture.
+// polygon_divide says so, all with the fixed cloth material and the model's texture. The vertices
+// are world positions under an identity model, so the draw is known by the cloth and the display
+// list interpolates its vertices between ticks as it does the matrices of the body it hangs from.
 int CCloth::CreateVUData(u_int *packet) {
     if (packet == nullptr) {
         return kDraw3DBlockQuads;
@@ -67,6 +69,7 @@ int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PRO
     CreateVUData(vu_block[DBuffID]);
     vu_data = vu_block[DBuffID];
     if (const Draw3DVisual *visual = Draw3DFindVisual(vu_data)) {
+        Draw3DIdentityScope identity(this, kDraw3DTeleportDistance);
         Draw3DDrawVisual(*visual, matrix, *info, program);
     }
     return 0;

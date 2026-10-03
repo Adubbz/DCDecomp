@@ -150,6 +150,62 @@ DC_TEST(decouple_mesh_interpolates_between_ticks) {
     DC_CHECK(SquareAt(fixture, 480));
 }
 
+// A keyed immediate mesh under an identity model (the cloth) has its vertices interpolated; a
+// vertex that moved past the teleport distance, or a different vertex count, leaves it as recorded.
+DC_TEST(decouple_immediate_mesh_vertices_interpolate) {
+    GfxFixture fixture;
+    auto       draw = [](float x, int copies = 1) {
+        std::vector<gfx::Vertex3D> vertices(4 * copies);
+        float                      corners[4][2] = {{-0.1f, -0.1f}, {0.1f, -0.1f}, {0.1f, 0.1f}, {-0.1f, 0.1f}};
+        std::vector<uint32_t>      indices = {0, 1, 2, 0, 2, 3};
+        for (int i = 0; i < 4 * copies; i++) {
+            vertices[i].position[0] = corners[i % 4][0] + x;
+            vertices[i].position[1] = corners[i % 4][1];
+            vertices[i].position[2] = 0.5f;
+            vertices[i].normal[2] = -1.0f;
+            for (uint8_t &c : vertices[i].color) {
+                c = 0x80;
+            }
+        }
+        gfx::MeshConstants constants = {};
+        std::memcpy(constants.mvp, kIdentity.data(), sizeof(constants.mvp));
+        constants.normal_matrix[0] = constants.normal_matrix[5] = constants.normal_matrix[10] = 1.0f;
+        for (float &value : constants.diffuse) {
+            value = 1.0f;
+        }
+        gfx::MeshTransform transform = gfx::IdentityMeshTransform();
+        gfx::DrawMeshImmediate(vertices, indices, constants, {}, {}, &transform);
+    };
+    gfx::DisplayListRef first = Tick([&] {
+        gfx::SetInterpKey(7);
+        draw(-0.5f);
+    });
+    gfx::DisplayListRef second = Tick([&] {
+        gfx::SetInterpKey(7);
+        draw(0.5f);
+    });
+    Display(fixture, second, first, 0.5f);
+    DC_CHECK(SquareAt(fixture, 320));
+    Display(fixture, second, first, 0.25f);
+    DC_CHECK(SquareAt(fixture, 240));
+    Display(fixture, second, first, 1.0f);
+    DC_CHECK(SquareAt(fixture, 480));
+
+    gfx::DisplayListRef jumped = Tick([&] {
+        gfx::SetInterpKey(7, false, 0.9f);
+        draw(-0.5f);
+    });
+    Display(fixture, jumped, second, 0.5f);
+    DC_CHECK(SquareAt(fixture, 160));
+
+    gfx::DisplayListRef resized = Tick([&] {
+        gfx::SetInterpKey(7);
+        draw(0.5f, 2);
+    });
+    Display(fixture, resized, jumped, 0.5f);
+    DC_CHECK(SquareAt(fixture, 480));
+}
+
 // The no-interpolation flag (a teleport), a cut list and an unkeyed draw all stay put.
 DC_TEST(decouple_flagged_mesh_does_not_interpolate) {
     GfxFixture          fixture;

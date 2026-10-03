@@ -229,6 +229,10 @@ renders one.
   list after `CutInterpolation()`, the views after `CutCameraInterpolation()`, non-affine or
   singular matrices, and anything 2D, including 3D sprites (2D vertices with depth): they replay as
   recorded. Vertex animation (skinning written with `UpdateMeshVertices`) shows the tick's pose.
+  A matched immediate mesh (`DrawMeshImmediate`: the cloth, simulated in world space under an
+  identity model) with as many vertices as its predecessor has them interpolated instead:
+  positions lerped, normals lerped and normalised, unless one moved further than the teleport
+  distance.
 
 ## Device
 

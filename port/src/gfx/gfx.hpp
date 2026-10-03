@@ -450,7 +450,9 @@ using DisplayListRef = std::shared_ptr<const DisplayList>;
 // Identity of the object the following mesh draws belong to, so a display frame can match each one
 // with the same object's draw in the previous tick (the n-th draw with a key matches the n-th with
 // it). 0 is none. no_interpolation draws them at this tick's transform, as does a model whose
-// translation moved more than teleport_distance since the previous tick (a teleport).
+// translation moved more than teleport_distance since the previous tick (a teleport). A matched
+// DrawMeshImmediate with the same vertex count has its vertices interpolated too, unless one moved
+// more than teleport_distance.
 using InterpKey = uint64_t;
 void      SetInterpKey(InterpKey key, bool no_interpolation = false, float teleport_distance = INFINITY);
 InterpKey CurrentInterpKey();
