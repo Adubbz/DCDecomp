@@ -19,5 +19,5 @@ foreach(source IN LISTS TEST_SOURCES)
 endforeach()
 
 # These measure sleep accuracy, which the parallel gfx tests on four cores skew.
-set_tests_properties(platform_clock_wait_accuracy platform_clock_rate_change_keeps_count
+set_tests_properties(platform_clock_wait_accuracy platform_clock_pump_runs_callback_per_elapsed_tick platform_clock_rate_change_keeps_count
     PROPERTIES RUN_SERIAL TRUE)
