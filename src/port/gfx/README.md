@@ -9,11 +9,13 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
 
 - `RendererInit(window, config)` creates the device, the swapchain, the main targets and every
   pipeline (below). `config.pipeline_cache` defaults to `save/pipeline_cache.bin`;
-  `config.progress(done, total)` is called on the calling thread while pipelines compile;
-  `config.present_mode` is FIFO unless Mailbox is asked for and supported.
-- `BeginFrame()` / `EndFrame()` bracket a frame. Two frames are in flight. `BeginFrame` returns
-  false when there is nothing to draw to (minimised); draws are then dropped and `EndFrame` does
-  nothing. Every frame starts on the main target. `EndFrame` presents.
+  `config.progress(done, total)` is called on the calling thread while pipelines compile.
+- `BeginFrame()` / `EndFrame()` bracket a frame drawn as it is called. Two frames are in flight.
+  `BeginFrame` returns false when there is nothing to draw to (minimised); draws are then dropped and
+  `EndFrame` does nothing. Every frame starts on the main target. `EndFrame` presents. The game's
+  ticks are recorded instead and rendered from their display lists (below).
+- `config.present_mode`: FIFO, Mailbox (FIFO where unsupported) or Immediate (Mailbox, then FIFO,
+  where unsupported).
 - `config.offscreen` renders without a surface or swapchain: each frame is drawn to the main target
   alone, at the window's pixel size, and `EndFrame` submits it and presents nothing. `ReadbackFrame`,
   `SnapshotFrame`, `kPreviousFrame`, depth queries and resizes behave as with a swapchain, so a
@@ -172,12 +174,59 @@ file and a rename.
 
 ## Readback
 
-- `ReadDepth(id, rect)` (16 ids) reads the main depth buffer at `EndFrame`, at most 64x64 pixels
+- `ReadDepth(id, rect)` (16 ids) reads the main depth buffer at `EndFrame` (or at the end of a
+  list's canonical render), at most 64x64 pixels
   around the rect's centre, and keeps the farthest (smallest) value: the game's pick-Z keeps the
   farthest of an 8x8 block. `EndFrame` waits for that frame when a query was made, so
   `DepthResult(id)` holds the answer as soon as `EndFrame` returns.
-- `ReadbackFrame` (the last presented frame) and `ReadbackTexture` are synchronous and only
-  allowed outside a frame. `WritePng` writes an RGB PNG with stored (uncompressed) deflate.
+- `ReadbackFrame` (the last presented frame: a display render, else the newest main image) and
+  `ReadbackTexture` are synchronous and only allowed outside a frame or recording. `WritePng`
+  writes an RGB PNG with stored (uncompressed) deflate.
+
+## Display lists
+
+The game runs at a fixed tick rate; the window is presented at its own. `BeginRecording()` /
+`EndRecording()` bracket one tick and return its `DisplayList`; `RenderList(list, alpha, options)`
+renders one.
+
+- **Recording.** Between the two, `Draw2D`, `DrawMesh`, `DrawMeshImmediate`, `Clear`, `ClearStencil`
+  and `SetRenderTarget` (draw state travels with each draw) are appended to the list, and so are the
+  stateful calls: `CopyTexture`, `BlitTexture`, `SnapshotFrame`, `UpdateTexture`, `UpdatePalette`,
+  `UpdateMeshVertices`, `ReadDepth`. Arguments are validated and copied at once, so each call returns
+  what it would have, and `CurrentRenderTarget`, `GetTextureInfo` and `GetLogicalMapping` answer as
+  inside a frame. Creating a texture, mesh or render target happens at once (the handle is needed);
+  `DestroyTexture` and `DestroyMesh` make the handle dead to every call but the list's own replays
+  and destroy the resource when the list is released. `InFrame()` is true while recording. Outside
+  a recording everything runs immediately, as before (`BeginFrame` / `EndFrame`, tests, the loading
+  screen).
+- **Canonical render** (`options.canonical`): every entry runs, in order, into the next of the two
+  main colour images, which then becomes what `kPreviousFrame` samples and what a copy or snapshot
+  of `kMainTarget` reads; depth queries are answered from it before `RenderList` returns. It is the
+  frame `BeginFrame` / `EndFrame` would have drawn, pixel for pixel, and nothing is presented.
+  `PresentCanonical()` presents it as it is.
+- **Display render**: only the drawing entries run, into a third colour image with its own depth
+  buffer (the window's size). There `kMainTarget` is that image, `kPreviousFrame` the image the
+  tick's canonical render sampled, and a target sharing the main depth shares that image's. Render
+  targets are drawn again (the shadow volumes follow the interpolated models); textures the stateful
+  entries wrote (frame copies, water, texture animation, palette swaps) hold what the canonical
+  render left. With `options.present` it is presented and becomes what `ReadbackFrame` reads. A list
+  that draws to the main target before clearing its logical frame starts from the canonical image.
+  Display renders are refused once an immediate frame has followed the canonical render (the
+  loading screen took the window).
+- **Interpolation.** A mesh draw may carry a `MeshTransform` (projection, view, middle, model,
+  local: `mvp` is their product) and is tagged with the current `InterpKey` (`SetInterpKey`). A
+  display render at `alpha` < 1 with `options.previous` matches each tagged draw with the previous
+  list's draw of the same key and occurrence, and draws the model interpolated: translation lerped,
+  rotation slerped (from the Gram-Schmidt rotation of the 3x3), the remaining scale and shear lerped
+  in that rotation's frame; `normal_matrix` turns with the rotation. Views are numbered by first
+  appearance in a list and the n-th is interpolated with the previous list's n-th as a placed
+  camera (inverse, interpolate, inverse), for every draw that carries a transform, tagged or not.
+  `mvp` is rebuilt only where the model or the view changed, so a still scene replays its recorded
+  constants bit for bit. Not interpolated: draws without a transform or without a match, those tagged
+  `no_interpolation` or whose model moved further than the tag's teleport distance, every draw of a
+  list after `CutInterpolation()`, the views after `CutCameraInterpolation()`, non-affine or
+  singular matrices, and anything 2D, including 3D sprites (2D vertices with depth): they replay as
+  recorded. Vertex animation (skinning written with `UpdateMeshVertices`) shows the tick's pose.
 
 ## Device
 

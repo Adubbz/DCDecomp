@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "context.hpp"
+#include "displaylist.hpp"
 
 namespace gfx {
 
@@ -29,6 +30,9 @@ void Fatal(const char *format, ...) {
 }
 
 void Error(const char *format, ...) {
+    if (g.quiet) {
+        return;
+    }
     std::va_list args;
     va_start(args, format);
     std::fputs("gfx: ", stderr);
@@ -354,14 +358,21 @@ VkSurfaceFormatKHR PickSurfaceFormat() {
 }
 
 VkPresentModeKHR PickPresentMode() {
-    if (g.config.present_mode == PresentMode::Mailbox) {
-        uint32_t count = 0;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(g.physical_device, g.surface, &count, nullptr);
-        std::vector<VkPresentModeKHR> modes(count);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(g.physical_device, g.surface, &count, modes.data());
-        if (std::find(modes.begin(), modes.end(), VK_PRESENT_MODE_MAILBOX_KHR) != modes.end()) {
-            return VK_PRESENT_MODE_MAILBOX_KHR;
-        }
+    if (g.config.present_mode == PresentMode::Fifo) {
+        return VK_PRESENT_MODE_FIFO_KHR;
+    }
+    uint32_t count = 0;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(g.physical_device, g.surface, &count, nullptr);
+    std::vector<VkPresentModeKHR> modes(count);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(g.physical_device, g.surface, &count, modes.data());
+    auto offered = [&](VkPresentModeKHR mode) {
+        return std::find(modes.begin(), modes.end(), mode) != modes.end();
+    };
+    if (g.config.present_mode == PresentMode::Immediate && offered(VK_PRESENT_MODE_IMMEDIATE_KHR)) {
+        return VK_PRESENT_MODE_IMMEDIATE_KHR;
+    }
+    if (offered(VK_PRESENT_MODE_MAILBOX_KHR)) {
+        return VK_PRESENT_MODE_MAILBOX_KHR;
     }
     return VK_PRESENT_MODE_FIFO_KHR;
 }
@@ -460,7 +471,20 @@ bool ResizeOffscreen() {
     return true;
 }
 
-bool RecreateSwapchain() {
+// The main targets follow the swapchain's size, losing their contents.
+void SyncMainTargets() {
+    const Image &main = g.main_color[0];
+    if (main.width != g.swapchain.extent.width || main.height != g.swapchain.extent.height) {
+        vkDeviceWaitIdle(g.device);
+        DestroyMainTargets();
+        CreateMainTargets();
+        RecreateSharedTargets();
+    }
+}
+
+// Without targets the main targets keep their size until a frame that draws the game's state
+// (immediate, or a list's canonical render) syncs them; a display frame blits across the difference.
+bool RecreateSwapchain(bool targets = true) {
     if (g.offscreen) {
         return ResizeOffscreen();
     }
@@ -470,11 +494,8 @@ bool RecreateSwapchain() {
         return false;
     }
     g.resize_pending = false;
-    const Image &main = g.main_color[0];
-    if (main.width != g.swapchain.extent.width || main.height != g.swapchain.extent.height) {
-        DestroyMainTargets();
-        CreateMainTargets();
-        RecreateSharedTargets();
+    if (targets) {
+        SyncMainTargets();
     }
     return true;
 }
@@ -671,26 +692,33 @@ void CreateMainTargets() {
                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
                                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     }
-    g.main_depth = CreateImage(width, height, 1, g.depth_format,
-                               VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
-                                   VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    g.display_color = CreateImage(width, height, 1, kColorFormat,
+                                  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+                                      VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    for (Image *depth : {&g.main_depth, &g.display_depth}) {
+        *depth = CreateImage(width, height, 1, g.depth_format,
+                             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
+                                 VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    }
 
     RunOneShot([](VkCommandBuffer cmd) {
         VkImageSubresourceRange range = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
         VkClearColorValue       black = {
             {0.0f, 0.0f, 0.0f, 1.0f}
         };
-        for (Image &image : g.main_color) {
-            Transition(cmd, image, TransferDst());
-            vkCmdClearColorImage(cmd, image.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &black, 1, &range);
-            ToRest(cmd, image);
+        for (Image *image : {&g.main_color[0], &g.main_color[1], &g.display_color}) {
+            Transition(cmd, *image, TransferDst());
+            vkCmdClearColorImage(cmd, image->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &black, 1, &range);
+            ToRest(cmd, *image);
         }
-        VkImageSubresourceRange  depth_range = {g.main_depth.aspect, 0, 1, 0, 1};
-        VkClearDepthStencilValue far = {0.0f, 0};
-        Transition(cmd, g.main_depth, TransferDst());
-        vkCmdClearDepthStencilImage(cmd, g.main_depth.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &far, 1,
-                                    &depth_range);
-        ToRest(cmd, g.main_depth);
+        for (Image *depth : {&g.main_depth, &g.display_depth}) {
+            VkImageSubresourceRange  depth_range = {depth->aspect, 0, 1, 0, 1};
+            VkClearDepthStencilValue far = {0.0f, 0};
+            Transition(cmd, *depth, TransferDst());
+            vkCmdClearDepthStencilImage(cmd, depth->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &far, 1,
+                                        &depth_range);
+            ToRest(cmd, *depth);
+        }
     });
 
     VkDescriptorImageInfo images[2];
@@ -713,14 +741,28 @@ void DestroyMainTargets() {
         DestroyImage(image);
     }
     DestroyImage(g.main_depth);
+    DestroyImage(g.display_color);
+    DestroyImage(g.display_depth);
 }
+
+Image &MainColorTarget() { return g.display_pass ? g.display_color : CurrentMainColor(); }
+
+Image &MainDepth() { return g.display_pass ? g.display_depth : g.main_depth; }
+
+// A display render of the newest list samples what its canonical render sampled, which the flip at
+// the end of that render left as the current image.
+Image &PreviousFrameImage() { return g.display_pass ? CurrentMainColor() : PreviousMainColor(); }
+
+uint32_t PreviousFrameSlot() { return kMainTarget + (g.display_pass ? g.main_current : g.main_current ^ 1); }
 
 } // namespace detail
 
 using namespace detail;
 
 void RendererInit(SDL_Window *window, const RendererConfig &config) {
+    static uint64_t instances = 0;
     g = {};
+    g.renderer_instance = ++instances;
     g.window = window;
     g.config = config;
     g.offscreen = config.offscreen;
@@ -754,6 +796,7 @@ void RendererShutdown() {
     if (g.device == VK_NULL_HANDLE) {
         return;
     }
+    g.list.reset();
     vkDeviceWaitIdle(g.device);
     for (Frame &frame : g.frames) {
         RunDeletions(frame);
@@ -822,31 +865,17 @@ void FinishFrame(Frame &frame) {
     AdvanceSlot();
 }
 
-} // namespace
-} // namespace detail
-
-bool BeginFrame() {
-    if (g.in_frame) {
-        Error("BeginFrame inside a frame");
-        return true;
-    }
-    if (g.offscreen) {
-        if (g.resize_pending && !ResizeOffscreen()) {
-            SubmitUploadsAndWait();
-            return false;
-        }
-        return OpenFrame();
-    }
-    if ((g.resize_pending || g.swapchain.handle == VK_NULL_HANDLE) && !RecreateSwapchain()) {
+// A swapchain image for this frame slot, recreating the swapchain when it is out of date.
+bool AcquireImage(bool targets) {
+    if ((g.resize_pending || g.swapchain.handle == VK_NULL_HANDLE) && !RecreateSwapchain(targets)) {
         SubmitUploadsAndWait();
         return false;
     }
-
     VkResult result = vkAcquireNextImageKHR(g.device, g.swapchain.handle, UINT64_MAX,
                                             CurrentFrame().image_available, VK_NULL_HANDLE, &g.image_index);
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         // Recreating may submit pending uploads and move to the next slot.
-        if (!RecreateSwapchain()) {
+        if (!RecreateSwapchain(targets)) {
             SubmitUploadsAndWait();
             return false;
         }
@@ -860,50 +889,30 @@ bool BeginFrame() {
         SubmitUploadsAndWait();
         return false;
     }
-
-    return OpenFrame();
+    return true;
 }
 
-void EndFrame() {
-    if (!g.in_frame) {
-        return;
-    }
-    Frame          &frame = CurrentFrame();
-    VkCommandBuffer cmd = frame.draw_cmd;
-    EndRendering();
-    ReleaseTarget();
-    RecordDepthQueries(cmd);
-
-    if (g.offscreen) {
-        // Every colour image rests shader-readable between operations; the next frame samples this
-        // one as kPreviousFrame.
-        ToRest(cmd, CurrentMainColor());
-        Check(vkEndCommandBuffer(cmd), "vkEndCommandBuffer");
-        Submit(true, VK_NULL_HANDLE, VK_NULL_HANDLE);
-        g.in_frame = false;
-        FinishFrame(frame);
-        return;
-    }
-
-    Image  &main = CurrentMainColor();
+// Ends the frame's draw commands with source blitted onto the acquired swapchain image, submits
+// and presents.
+void PresentImage(Frame &frame, VkCommandBuffer cmd, Image &source) {
     VkImage swapchain = g.swapchain.images[g.image_index];
-    Transition(cmd, main, TransferSrc());
+    Transition(cmd, source, TransferSrc());
     // Chained to the acquire semaphore, which the submit waits on at the transfer stage.
     SwapchainBarrier(cmd, swapchain, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                      VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_NONE,
                      VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT);
     VkImageBlit region = {};
     region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-    region.srcOffsets[1] = {static_cast<int32_t>(main.width), static_cast<int32_t>(main.height), 1};
+    region.srcOffsets[1] = {static_cast<int32_t>(source.width), static_cast<int32_t>(source.height), 1};
     region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
     region.dstOffsets[1] = {static_cast<int32_t>(g.swapchain.extent.width),
                             static_cast<int32_t>(g.swapchain.extent.height), 1};
-    vkCmdBlitImage(cmd, main.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchain,
+    vkCmdBlitImage(cmd, source.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchain,
                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
     SwapchainBarrier(cmd, swapchain, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
                      VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT, VK_ACCESS_2_TRANSFER_WRITE_BIT,
                      VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT, VK_ACCESS_2_NONE);
-    ToRest(cmd, main);
+    ToRest(cmd, source);
     Check(vkEndCommandBuffer(cmd), "vkEndCommandBuffer");
 
     VkSemaphore render_finished = g.swapchain.render_finished[g.image_index];
@@ -923,10 +932,155 @@ void EndFrame() {
     } else {
         Check(result, "vkQueuePresentKHR");
     }
+}
+
+void SubmitWithoutPresent(VkCommandBuffer cmd, Image &main) {
+    // Every colour image rests shader-readable between operations; the next frame samples this
+    // one as kPreviousFrame.
+    ToRest(cmd, main);
+    Check(vkEndCommandBuffer(cmd), "vkEndCommandBuffer");
+    Submit(true, VK_NULL_HANDLE, VK_NULL_HANDLE);
+    g.in_frame = false;
+}
+
+} // namespace
+
+void PrepareRecording() {
+    if (g.resize_pending) {
+        RecreateSwapchain();
+    } else if (!g.offscreen) {
+        SyncMainTargets();
+    }
+}
+
+bool OpenListFrame(bool canonical, bool present, bool base) {
+    if (canonical) {
+        // The game's state is drawn whether or not the window can show it: later ticks sample it.
+        if (g.offscreen) {
+            if (g.resize_pending) {
+                ResizeOffscreen();
+            }
+        } else if (g.resize_pending || g.swapchain.handle == VK_NULL_HANDLE) {
+            RecreateSwapchain();
+        } else {
+            SyncMainTargets();
+        }
+        return OpenFrame();
+    }
+    if (present && !g.offscreen && !AcquireImage(false)) {
+        return false;
+    }
+    OpenFrame();
+    g.display_pass = true;
+    if (base) {
+        VkCommandBuffer cmd = DrawCommands();
+        Image          &source = PreviousMainColor();
+        VkOffset3D      from[2] = {
+            {0,                                  0,                                   0},
+            {static_cast<int32_t>(source.width), static_cast<int32_t>(source.height), 1}
+        };
+        Transition(cmd, source, TransferSrc());
+        Transition(cmd, g.display_color, TransferDst());
+        VkImageBlit region = {};
+        region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
+        region.srcOffsets[0] = from[0];
+        region.srcOffsets[1] = from[1];
+        region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
+        region.dstOffsets[1] = {static_cast<int32_t>(g.display_color.width),
+                                static_cast<int32_t>(g.display_color.height), 1};
+        vkCmdBlitImage(cmd, source.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, g.display_color.image,
+                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
+        ToRest(cmd, source);
+        ToRest(cmd, g.display_color);
+    }
+    return true;
+}
+
+void CloseListFrame(bool canonical, bool present) {
+    Frame          &frame = CurrentFrame();
+    VkCommandBuffer cmd = frame.draw_cmd;
+    EndRendering();
+    ReleaseTarget();
+    if (canonical) {
+        RecordDepthQueries(cmd);
+        SubmitWithoutPresent(cmd, CurrentMainColor());
+        FinishFrame(frame);
+        g.canonical_newest = true;
+        g.presented_display = false;
+        return;
+    }
+    if (present && !g.offscreen) {
+        PresentImage(frame, cmd, g.display_color);
+    } else {
+        SubmitWithoutPresent(cmd, g.display_color);
+    }
+    g.display_pass = false;
+    g.target = kMainTarget;
+    if (present) {
+        g.presented_display = true;
+    }
+    AdvanceSlot();
+}
+
+} // namespace detail
+
+bool BeginFrame() {
+    if (g.in_frame || g.list != nullptr) {
+        Error("BeginFrame inside a frame");
+        return true;
+    }
+    if (g.offscreen) {
+        if (g.resize_pending && !ResizeOffscreen()) {
+            SubmitUploadsAndWait();
+            return false;
+        }
+        return OpenFrame();
+    }
+    if (!AcquireImage(true)) {
+        return false;
+    }
+    return OpenFrame();
+}
+
+void EndFrame() {
+    if (!g.in_frame) {
+        return;
+    }
+    Frame          &frame = CurrentFrame();
+    VkCommandBuffer cmd = frame.draw_cmd;
+    EndRendering();
+    ReleaseTarget();
+    RecordDepthQueries(cmd);
+    g.canonical_newest = false;
+    g.presented_display = false;
+    if (g.offscreen) {
+        SubmitWithoutPresent(cmd, CurrentMainColor());
+    } else {
+        PresentImage(frame, cmd, CurrentMainColor());
+    }
     FinishFrame(frame);
 }
 
-bool InFrame() { return g.in_frame; }
+bool PresentCanonical() {
+    if (!g.canonical_newest || g.in_frame || g.list != nullptr) {
+        return false;
+    }
+    g.presented_display = false;
+    if (g.offscreen) {
+        return true;
+    }
+    if (!AcquireImage(false)) {
+        return false;
+    }
+    OpenFrame();
+    Frame &frame = CurrentFrame();
+    PresentImage(frame, frame.draw_cmd, PreviousMainColor());
+    g.target = kMainTarget;
+    AdvanceSlot();
+    return true;
+}
+
+bool InFrame() { return g.in_frame || g.list != nullptr; }
 
 RendererFeatures ActiveRendererFeatures() {
     return {g.properties.apiVersion, g.offscreen, g.triangle_fans, g.separate_stencil_masks,
@@ -940,7 +1094,7 @@ uint32_t ValidationMessageCount() { return g.validation_messages; }
 float RenderScale() { return g.render_scale; }
 
 void SetRenderScale(float scale) {
-    if (scale <= 0.0f || scale == g.render_scale || g.in_frame) {
+    if (scale <= 0.0f || scale == g.render_scale || g.in_frame || g.list != nullptr) {
         return;
     }
     g.render_scale = scale;

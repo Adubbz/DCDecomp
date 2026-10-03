@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -95,6 +96,8 @@ struct Texture {
     uint32_t    logical_height = 0;
     // The frame serial in which the draw command buffer last touched the image.
     uint64_t last_draw_use = 0;
+    // Destroyed while a list that may draw it was recorded: dead to the API, alive to replays.
+    bool doomed = false;
 };
 
 struct Mesh {
@@ -104,6 +107,7 @@ struct Mesh {
     uint32_t vertex_count = 0;
     uint32_t index_count = 0;
     uint64_t last_draw_use = 0;
+    bool     doomed = false;
 };
 
 struct TransientChunk {
@@ -285,12 +289,38 @@ struct Context {
     std::array<DepthQuery, kDepthQueryCount> depth_queries;
     bool                                     depth_queries_recorded = false;
 
+    // Display lists. The canonical render of a list draws into main_color like an immediate frame;
+    // a display render draws into display_color with display_depth.
+    uint64_t                     renderer_instance = 0;
+    uint64_t                     list_serial = 0;
+    std::shared_ptr<DisplayList> list;
+    TextureHandle                record_target = kMainTarget;
+    InterpKey                    interp_key = 0;
+    bool                         interp_no_interpolation = false;
+    float                        interp_teleport_distance = INFINITY;
+    bool                         replaying = false;
+    bool                         display_pass = false;
+    // Errors are reported by the canonical render; display renders of the same list stay quiet.
+    bool  quiet = false;
+    Image display_color;
+    Image display_depth;
+    // The newest main_color image is a canonical render no immediate frame has followed.
+    bool canonical_newest = false;
+    bool presented_display = false;
+
     uint32_t validation_messages = 0;
 };
 
 extern Context g;
 
 // renderer.cpp
+// Frames of RenderList: a canonical one draws into main_color and harvests depth queries, a
+// display one into display_color (starting from the canonical image when base) and presents it
+// when present. False when a display frame cannot present.
+bool OpenListFrame(bool canonical, bool present, bool base);
+// The main targets take the window's size before a tick records draws laid out for them.
+void            PrepareRecording();
+void            CloseListFrame(bool canonical, bool present);
 Frame          &CurrentFrame();
 VkCommandBuffer UploadCommands();
 VkCommandBuffer DrawCommands();
@@ -300,8 +330,14 @@ void   SubmitUploadsAndWait();
 void   RunOneShot(const std::function<void(VkCommandBuffer)> &record);
 Image &CurrentMainColor();
 Image &PreviousMainColor();
-void   CreateMainTargets();
-void   DestroyMainTargets();
+// What kMainTarget and its depth are in the frame being drawn: the display image in a display render.
+Image &MainColorTarget();
+Image &MainDepth();
+// What kPreviousFrame samples, and its descriptor slot.
+Image   &PreviousFrameImage();
+uint32_t PreviousFrameSlot();
+void     CreateMainTargets();
+void     DestroyMainTargets();
 
 // memory.cpp
 TransientSpan AllocateTransient(VkDeviceSize size, VkDeviceSize alignment);
@@ -322,6 +358,9 @@ void            RecreateRenderTargets();
 // The targets that share the main depth buffer, at the main target's new size (contents lost).
 void           RecreateSharedTargets();
 LogicalMapping TextureMapping(const Texture &texture);
+// What DestroyTexture and DestroyMesh do once no list may draw the resource any more.
+void DestroyDoomedTexture(TextureHandle handle);
+void DestroyDoomedMesh(MeshHandle handle);
 
 // pipelines.cpp
 void     CreatePipelineLayout();
@@ -331,6 +370,10 @@ uint32_t PipelineIndex(PipelineFamily family, uint32_t blend_slot, TextureMode m
 // Without a dynamic colour write mask: the pipelines that write no colour, after the others.
 uint32_t     NoColorPipelineIndex(PipelineFamily family, TextureMode mode, bool alpha_test);
 BlendMapping MapBlend(const GsBlend &blend, bool enable);
+
+// displaylist.cpp
+// The public resource calls that record instead of executing while a list is recorded.
+bool RecordingCalls();
 
 // draw.cpp
 void           EndRendering();

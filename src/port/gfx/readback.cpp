@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "context.hpp"
+#include "displaylist.hpp"
 
 namespace gfx {
 
@@ -177,6 +178,12 @@ void ReadDepth(uint32_t id, float x, float y, float w, float h) {
         Error("ReadDepth: query %u is past %u", id, kDepthQueryCount);
         return;
     }
+    if (RecordingCalls()) {
+        RecordEntry(ReadDepthEntry{
+            id, LogicalRect{x, y, w, h}
+        });
+        return;
+    }
     DepthQuery &query = g.depth_queries[id];
     query.rect = LogicalRect{x, y, w, h};
     query.queued = true;
@@ -190,18 +197,18 @@ std::optional<float> DepthResult(uint32_t id) {
 }
 
 bool ReadbackFrame(std::vector<uint8_t> &rgba, uint32_t &width, uint32_t &height) {
-    if (g.in_frame) {
+    if (g.in_frame || RecordingCalls()) {
         Error("ReadbackFrame inside a frame");
         return false;
     }
-    Image &image = PreviousMainColor();
+    Image &image = g.presented_display ? g.display_color : PreviousMainColor();
     width = image.width;
     height = image.height;
     return ReadImage(image, 4, rgba);
 }
 
 bool ReadbackTexture(TextureHandle handle, std::vector<uint8_t> &pixels, uint32_t &width, uint32_t &height) {
-    if (g.in_frame) {
+    if (g.in_frame || RecordingCalls()) {
         Error("ReadbackTexture inside a frame");
         return false;
     }

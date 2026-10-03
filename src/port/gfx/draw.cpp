@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "context.hpp"
+#include "displaylist.hpp"
 
 namespace gfx {
 
@@ -23,15 +24,15 @@ struct Target {
 Target ResolveTarget(TextureHandle handle) {
     Target target;
     if (handle == kMainTarget) {
-        target.color = &CurrentMainColor();
-        target.depth = &g.main_depth;
+        target.color = &MainColorTarget();
+        target.depth = &MainDepth();
         target.mapping = MainMapping(target.color->width, target.color->height);
         return target;
     }
     Texture *texture = LookupTexture(handle);
     if (texture != nullptr && texture->render_target) {
         target.color = &texture->image;
-        target.depth = texture->shares_main_depth ? &g.main_depth : &texture->depth;
+        target.depth = texture->shares_main_depth ? &MainDepth() : &texture->depth;
         target.texture = texture;
         target.mapping = TextureMapping(*texture);
         target.has_alpha = texture->desc.has_alpha;
@@ -180,12 +181,12 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
             return false;
         }
         if (binding.texture == kPreviousFrame) {
-            const Image   &image = PreviousMainColor();
+            const Image   &image = PreviousFrameImage();
             LogicalMapping mapping = MainMapping(image.width, image.height);
             float          width = static_cast<float>(image.width);
             float          height = static_cast<float>(image.height);
             mode = kTextureRgba;
-            push.texture_slot = kMainTarget + (g.main_current ^ 1);
+            push.texture_slot = PreviousFrameSlot();
             if (family != kFamilyMesh) {
                 push.uv_xform[0] = mapping.scale_x / width;
                 push.uv_xform[1] = mapping.scale_y / height;
@@ -506,7 +507,7 @@ void ReleaseTarget() {
 using namespace detail;
 
 void SetRenderTarget(TextureHandle handle) {
-    if (handle == g.target) {
+    if (handle == (RecordingCalls() ? g.record_target : g.target)) {
         return;
     }
     if (handle != kMainTarget) {
@@ -516,6 +517,11 @@ void SetRenderTarget(TextureHandle handle) {
             return;
         }
     }
+    if (RecordingCalls()) {
+        RecordEntry(TargetEntry{handle});
+        g.record_target = handle;
+        return;
+    }
     if (g.in_frame) {
         EndRendering();
         ReleaseTarget();
@@ -523,7 +529,7 @@ void SetRenderTarget(TextureHandle handle) {
     g.target = handle;
 }
 
-TextureHandle CurrentRenderTarget() { return g.target; }
+TextureHandle CurrentRenderTarget() { return RecordingCalls() ? g.record_target : g.target; }
 
 LogicalMapping GetLogicalMapping(TextureHandle handle) {
     if (handle == kMainTarget || handle == kPreviousFrame) {
@@ -540,6 +546,11 @@ LogicalMapping GetLogicalMapping(TextureHandle handle) {
 void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
             const DrawState &state) {
     if (vertices.empty()) {
+        return;
+    }
+    if (RecordingCalls()) {
+        RecordEntry(
+            Draw2DEntry{primitive, std::vector<Vertex2D>(vertices.begin(), vertices.end()), binding, state});
         return;
     }
     bool lines = primitive == Primitive::Lines || primitive == Primitive::LineStrip;
@@ -614,10 +625,17 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
 }
 
 void DrawMesh(MeshHandle handle, uint32_t first_index, uint32_t index_count, const MeshConstants &constants,
-              const TextureBinding &binding, const DrawState &state) {
+              const TextureBinding &binding, const DrawState &state, const MeshTransform *transform) {
     Mesh *mesh = LookupMesh(handle);
     if (mesh == nullptr || first_index + index_count > mesh->index_count) {
         Error("DrawMesh: bad mesh %#x or index range", handle);
+        return;
+    }
+    if (RecordingCalls()) {
+        if (index_count != 0) {
+            RecordMesh(MeshEntry{handle, first_index, index_count, {}, {}, constants, binding, state, 0},
+                       transform);
+        }
         return;
     }
     PushConstants push;
@@ -635,8 +653,18 @@ void DrawMesh(MeshHandle handle, uint32_t first_index, uint32_t index_count, con
 }
 
 void DrawMeshImmediate(std::span<const Vertex3D> vertices, std::span<const uint32_t> indices,
-                       const MeshConstants &constants, const TextureBinding &binding,
-                       const DrawState &state) {
+                       const MeshConstants &constants, const TextureBinding &binding, const DrawState &state,
+                       const MeshTransform *transform) {
+    if (RecordingCalls()) {
+        if (!vertices.empty() && !indices.empty()) {
+            MeshEntry entry{kNullMesh, 0, 0, {}, {}, constants, binding, state, 0};
+            entry.index_count = static_cast<uint32_t>(indices.size());
+            entry.vertices.assign(vertices.begin(), vertices.end());
+            entry.indices.assign(indices.begin(), indices.end());
+            RecordMesh(std::move(entry), transform);
+        }
+        return;
+    }
     PushConstants push;
     if (vertices.empty() || indices.empty() ||
         !Prepare(kFamilyMesh, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, binding, state, push)) {
@@ -654,6 +682,19 @@ void DrawMeshImmediate(std::span<const Vertex3D> vertices, std::span<const uint3
 }
 
 void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float depth, const LogicalRect *rect) {
+    if (RecordingCalls() && (clear_color || clear_depth)) {
+        ClearEntry entry;
+        entry.color = clear_color;
+        entry.depth = clear_depth;
+        if (color != nullptr) {
+            std::memcpy(entry.rgba, color, sizeof(entry.rgba));
+        }
+        entry.z = depth;
+        entry.has_rect = rect != nullptr;
+        entry.rect = rect ? *rect : LogicalRect{};
+        RecordClear(entry);
+        return;
+    }
     if (!g.in_frame || (!clear_color && !clear_depth)) {
         return;
     }
@@ -688,6 +729,15 @@ void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float dep
 }
 
 void ClearStencil(uint8_t value, const LogicalRect *rect) {
+    if (RecordingCalls()) {
+        ClearEntry entry;
+        entry.stencil = true;
+        entry.stencil_value = value;
+        entry.has_rect = rect != nullptr;
+        entry.rect = rect ? *rect : LogicalRect{};
+        RecordClear(entry);
+        return;
+    }
     if (!g.in_frame) {
         return;
     }
@@ -736,6 +786,10 @@ bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t ds
         src_offsets[1] = {src_offsets[0].x + width, src_offsets[0].y + height, 1};
         dst_offsets[1] = {dst_offsets[0].x + width, dst_offsets[0].y + height, 1};
     }
+    if (RecordingCalls()) {
+        RecordEntry(CopyEntry{CopyEntry::Copy, src, src_rect, dst, dst_rect, Filter::Nearest});
+        return true;
+    }
     VkCommandBuffer cmd = CopyCommands();
     MarkUsed(src_texture);
     MarkUsed(dst_texture);
@@ -757,6 +811,10 @@ bool BlitTexture(TextureHandle src, Rect src_rect, TextureHandle dst, Rect dst_r
     if (src_image->format != dst_image->format) {
         Error("BlitTexture between an index and a colour texture");
         return false;
+    }
+    if (RecordingCalls()) {
+        RecordEntry(CopyEntry{CopyEntry::Blit, src, src_rect, dst, dst_rect, filter});
+        return true;
     }
     VkFilter vk_filter =
         filter == Filter::Linear && src_image->format == kColorFormat ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
