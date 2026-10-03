@@ -5,6 +5,9 @@ Every cast of a pointer to an integer narrower than a pointer in `src/ps2`, `src
 headers. On Linux the port keeps these values alive by linking without PIE and mapping its arenas
 below 2 GiB; arm64 macOS can do neither (the low 4 GiB are its hard page zero), so every
 **round-trip** site that runs must be widened in `src/port` before the game can run there.
+On Linux, `--high-arenas` (or `DC_HIGH_ARENAS=1` for the tests) maps the arenas above 4 GiB, and
+linking `darkcloud` as PIE as well puts the image there too: the macOS layout, where a round trip
+that runs faults at once.
 
 - **round-trip**: the value comes back as a pointer (cast back, stored or passed into an int that is
   cast back somewhere, returned from a function whose result is cast back, or an absolute address

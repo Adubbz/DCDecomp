@@ -108,7 +108,7 @@ DC_TEST(mac_arena_memory_zeroes_in_place) {
 }
 
 DC_TEST(mac_arena_memory_assert_low) {
-    auto *high = reinterpret_cast<const void *>(std::uintptr_t{0x7f0000000000});
+    [[maybe_unused]] auto *high = reinterpret_cast<const void *>(std::uintptr_t{0x7f0000000000});
     ArenaMemorySetHigh(true);
     DC_CHECK(SignalOf([&] { PortAssertLow(high); }) == 0);
 #if defined(__linux__) && !defined(NDEBUG)
