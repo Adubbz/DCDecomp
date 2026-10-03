@@ -49,9 +49,9 @@ alternative that may happen to work through the same loader.
 
 | Area | File | Linux assumption | macOS answer |
 |---|---|---|---|
-| Arenas | `src/port/dataset.cpp` | `mmap(MAP_32BIT)` keeps arenas below 2 GiB so the game's `(int)` pointer casts survive; `madvise(MADV_DONTNEED)` zeroes | No `MAP_32BIT`. Shrink `__PAGEZERO` (`-Wl,-pagezero_size,0x1000`) and map with a hint address, verifying the result is below 4 GiB; zero with `memset` or `MADV_FREE_REUSABLE` |
+| Arenas | `src/port/dataset.cpp` | `mmap(MAP_32BIT)` keeps arenas below 2 GiB so the game's `(int)` pointer casts survive; `madvise(MADV_DONTNEED)` zeroes | Impossible on arm64 (section 3): arenas live wherever `mmap` puts them and every pointer round trip is widened instead; zero with `memset` or `MADV_FREE_REUSABLE` |
 | Executable path | `src/port/platform/paths.cpp` | `/proc/self/exe` | `_NSGetExecutablePath` + `realpath` |
-| Executable layout | `src/port/CMakeLists.txt` | `-no-pie` keeps `.data`/`.bss` below 4 GiB | arm64 macOS is PIE-only and loads images above 4 GiB. Globals the game truncates to 32 bits must not live in the image (section 3) |
+| Executable layout | `src/port/CMakeLists.txt` | `-no-pie` keeps `.data`/`.bss` below 4 GiB | arm64 macOS is PIE-only, loads images above 4 GiB and forbids low mappings; nothing may depend on a 32-bit round trip (section 3) |
 | Weakening | `src/port/CMakeLists.txt` | `ld.lld -r` then `llvm-objcopy --weaken` on ELF | `ld -r` works on Mach-O; `--weaken` on Mach-O is **[verify]**. Fallback: `tools/weaken`, a small Mach-O symbol-table patcher that sets `N_WEAK_DEF` on every defined symbol of the merged object |
 | Interposition | `-fsemantic-interposition` | ELF-only flag; stops clang inlining calls to functions the port replaces | Mach-O has no equivalent flag. Compile `src/ps2` with `-fno-inline-functions -fno-inline-small-functions` (or `-fno-inline`) on macOS and add a build check that disassembles `dc_ps2.o` for direct calls into replaced symbols |
 | Link flags | `-fuse-ld=lld -Wl,--gc-sections -Wl,--defsym=…` | GNU-style | `-Wl,-dead_strip`; `--defsym` aliases become `-Wl,-alias,_from,_to` (ld64) or `ld64.lld` equivalents; `--error-limit` dropped |
@@ -66,33 +66,43 @@ alternative that may happen to work through the same loader.
 
 The game casts pointers to `int` in places (`docs/PC.md`, "Keeping the PS2
 build matching"). On Linux the executable is non-PIE, so globals sit below
-4 GiB and round-trip; arenas are mapped below 2 GiB. On arm64 macOS the image
-is always above 4 GiB. The arenas can still be mapped low (section 2), so the
-work is to find every truncated pointer that points into the image or the
-stack and move it, in port code, into low memory or widen it:
+4 GiB and round-trip, and the arenas are mapped below 2 GiB.
 
-1. **Audit tool.** `scripts/port/truncations.py`: runs clang (`libclang` is in
-   the dev image) over `src/ps2` with the port's flags and lists every cast of
-   a pointer type to a 32-bit integer, with the expression's root (global,
-   local, arena-derived, parameter). Output committed as
-   `docs/port/truncations.md` so the list is reviewable.
-2. **Runtime guard.** A debug-only check in the port's arena and replacement
-   units: `PortAssertLow(ptr)` where a truncated pointer is produced for data
-   the port owns, so a high pointer fails loudly on any platform.
-3. **Per-site fixes**, all in `src/port`: globals that the game truncates
-   (large tables and buffers that end up as `int`) get a strong port
-   definition whose storage is carved from the low arena at start-up, or the
-   function that truncates them is already a replacement and is widened.
-   Known cases: `BtEventData = (s32) arena` (arena, fine), `header_buff`
-   (already port-owned), `EPARTS_*` records, the script VM's `funcdata`
-   (`dataio.md`, section 2.4), the title units' `(int)` arithmetic. The audit
-   decides the rest.
-4. **Stack addresses** truncated and read back are bugs on every platform;
-   the audit lists them and they are fixed by widening in the replacement
-   unit.
+On arm64 macOS neither is possible. XNU's Mach-O loader requires every native
+arm64 executable to have a 4 GiB hard `__PAGEZERO` (`bsd/kern/mach_loader.c`,
+`enforce_hard_pagezero`, checked from macOS 13 through 15 and `main`): a
+binary linked with a smaller `-pagezero_size` is refused at exec, and the
+process's address map starts at 4 GiB, so no `mmap`, hinted or fixed, can
+ever return a low address. A low-memory arena therefore cannot exist on
+arm64 macOS. The rule is keyed on `CPU_TYPE_ARM64`; an x86-64 build run under
+Rosetta 2 only needs a 4 KiB page zero.
 
-No memory mapping of PS2 address ranges is introduced; the low arena is a host
-allocator choice already made on Linux.
+So the port stops relying on 32-bit round trips altogether:
+
+1. **Audit tool.** `scripts/port/truncations.py` runs libclang over `src/ps2`
+   and `src/port` with the port's compile flags and lists every cast of a
+   pointer to a 32-bit integer, classified as a **round trip** (cast back to
+   a pointer, stored in an `int` field or global later read as a pointer,
+   or subtracted against another truncated pointer) or **low bits only**
+   (alignment masks, modulo, hashing), with the enclosing function and
+   whether that function is already a port replacement. Output committed as
+   `docs/port/truncations.md`.
+2. **Proof on Linux.** The arenas can be forced above 4 GiB on Linux
+   (`platform/memory`'s high path), which reproduces the arm64 macOS
+   condition exactly; the test suite and the real-data boot run that way.
+3. **Per-site fixes**, all in `src/port`: every round-trip site in a port
+   replacement unit or on the boot path is widened to keep a real pointer;
+   round-trip sites that remain in retail functions are listed with the
+   replacement each needs, and replaced one by one like any hardware
+   dependence. Known cases: `BtEventData = (s32) arena`, the `EPARTS_*`
+   records, the script VM's `funcdata` (`dataio.md`, section 2.4), the title
+   units' `(int)` arithmetic.
+4. **Fallback.** Until the retail list is empty, an x86-64 build under
+   Rosetta 2 is the way to run on Apple Silicon; the build keeps an
+   `x86_64` variant of the macOS preset for it, with `-pagezero_size 0x1000`
+   and the Linux-style low arena.
+
+No memory mapping of PS2 address ranges is introduced on any platform.
 
 ## 4. Work packages
 
@@ -128,9 +138,9 @@ allocator choice already made on Linux.
   `input.cpp`, `audio.cpp`, `window.cpp`: audit for POSIX or Linux calls,
   `SDL_GetWindowSizeInPixels` on Retina (already used), the Metal-backed
   window flags SDL3 needs for Vulkan on macOS.
-- `dataset.cpp` arenas: a `LowMemoryMap(bytes)` in `platform/memory.{hpp,cpp}`
-  with the Linux (`MAP_32BIT`) and macOS (hinted map under 4 GiB, retried
-  across the low range, verified) implementations and a common zeroing call.
+- `dataset.cpp` arenas: `platform/memory.{hpp,cpp}` with the Linux low
+  (`MAP_32BIT`) path, a high path (macOS, and forced on Linux for the proof
+  in section 3) and a common zeroing call.
 - Renderer: instance creation enables portability enumeration when the
   extension exists; device selection accepts a 1.3 device when every feature
   the renderer uses is present (explicit `VkPhysicalDeviceVulkan13Features`
