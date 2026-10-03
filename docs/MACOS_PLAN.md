@@ -134,10 +134,12 @@ So the port stops relying on 32-bit round trips altogether:
    dependence. Known cases: `BtEventData = (s32) arena`, the `EPARTS_*`
    records, the script VM's `funcdata` (`dataio.md`, section 2.4), the title
    units' `(int)` arithmetic.
-4. **Fallback.** Until the retail list is empty, an x86-64 build under
-   Rosetta 2 is the way to run on Apple Silicon; the build keeps an
-   `x86_64` variant of the macOS preset for it, with `-pagezero_size 0x1000`
-   and the Linux-style low arena.
+4. **Fallback (unnecessary).** An x86-64 build under Rosetta 2, with
+   `-pagezero_size 0x1000` and the Linux-style low arena, was the way to run
+   on Apple Silicon until the retail list was empty. It is: the audit lists
+   no round trip that can run, Linux links PIE and maps its arenas wherever
+   `mmap` puts them, and the low arena, `-pagezero_size` and the option for
+   it are gone.
 
 No memory mapping of PS2 address ranges is introduced on any platform.
 

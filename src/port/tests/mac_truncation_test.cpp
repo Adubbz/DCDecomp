@@ -44,7 +44,6 @@ DC_TEST(mac_truncation_menu_alignment_keeps_high_addresses) {
 }
 
 DC_TEST(mac_truncation_texture_buffer_in_high_memory) {
-    ArenaMemorySetHigh(true);
     ArenaMemory memory = ArenaMemoryMap(1 << 20);
     auto       *buffer = reinterpret_cast<u_long128 *>(memory.base + 16);
     TexManager.SetBuffer(buffer, 1000);

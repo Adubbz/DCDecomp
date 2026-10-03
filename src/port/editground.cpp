@@ -90,9 +90,10 @@ CFrame *PreviewFrame(CMapParts *parts, s32 truncated) {
     }
 
     for (int k = 3; k >= 0; k--) {
-        CFrame *frame = parts->frame[k];
+        CFrame        *frame = parts->frame[k];
+        std::uintptr_t bits = reinterpret_cast<std::uintptr_t>(frame) & 0xFFFFFFFFu;
 
-        if (frame != NULL && static_cast<s32>(reinterpret_cast<std::uintptr_t>(frame)) == truncated) {
+        if (frame != NULL && bits == static_cast<u32>(truncated)) {
             return frame;
         }
     }

@@ -9,8 +9,6 @@
 #include "platform/memory.hpp"
 #include "test.hpp"
 
-// The high arenas are macOS's; forcing them here runs that path on Linux.
-
 namespace {
 
 template <class F>
@@ -44,48 +42,25 @@ void CheckLayout(const ArenaMemory &memory, std::size_t bytes, std::size_t lead)
 
 } // namespace
 
-DC_TEST(mac_arena_memory_low_on_linux) {
-#ifdef __linux__
-    DC_CHECK(SignalOf([] {
-                 ArenaMemorySetHigh(false);
-                 if (!ArenaMemoryIsLow()) {
-                     std::abort();
-                 }
-                 for (std::size_t bytes : {std::size_t{0}, std::size_t{100}, std::size_t{96} << 20}) {
-                     ArenaMemory memory = ArenaMemoryMap(bytes, 0x180000);
-                     if (!IsLowAddress(memory.map, memory.map_size)) {
-                         std::abort();
-                     }
-                     CheckLayout(memory, bytes, 0x180000);
-                     ArenaMemoryUnmap(memory);
-                 }
-             }) == 0);
-#endif
-}
-
-DC_TEST(mac_arena_memory_high_when_forced) {
-    ArenaMemorySetHigh(true);
-    DC_CHECK(!ArenaMemoryIsLow());
+DC_TEST(mac_arena_memory_maps_above_4gib) {
     for (std::size_t bytes : {std::size_t{0}, std::size_t{100}, std::size_t{96} << 20}) {
         ArenaMemory memory = ArenaMemoryMap(bytes, 0x180000);
         DC_CHECK(Above4GiB(memory.map));
+        DC_CHECK(IsAbove4GiB(memory.base));
         CheckLayout(memory, bytes, 0x180000);
         ArenaMemoryUnmap(memory);
     }
 }
 
 DC_TEST(mac_arena_memory_guard_page_faults) {
-    for (bool high : {false, true}) {
-        ArenaMemorySetHigh(high);
-        ArenaMemory memory = ArenaMemoryMap(4096 + 64);
-        DC_CHECK(SignalOf([&] { memory.base[memory.capacity - 1] = 1; }) == 0);
-        DC_CHECK(Faulted(SignalOf([&] { const_cast<unsigned char *>(ArenaMemoryGuard(memory))[0] = 1; })));
-        ArenaMemoryZero(memory);
-        DC_CHECK(Faulted(SignalOf([&] { memory.base[memory.capacity] = 1; })));
-        ArenaMemoryZeroByRemap(memory);
-        DC_CHECK(Faulted(SignalOf([&] { memory.base[memory.capacity] = 1; })));
-        ArenaMemoryUnmap(memory);
-    }
+    ArenaMemory memory = ArenaMemoryMap(4096 + 64);
+    DC_CHECK(SignalOf([&] { memory.base[memory.capacity - 1] = 1; }) == 0);
+    DC_CHECK(Faulted(SignalOf([&] { const_cast<unsigned char *>(ArenaMemoryGuard(memory))[0] = 1; })));
+    ArenaMemoryZero(memory);
+    DC_CHECK(Faulted(SignalOf([&] { memory.base[memory.capacity] = 1; })));
+    ArenaMemoryZeroByRemap(memory);
+    DC_CHECK(Faulted(SignalOf([&] { memory.base[memory.capacity] = 1; })));
+    ArenaMemoryUnmap(memory);
 }
 
 DC_TEST(mac_arena_memory_zeroes_in_place) {
@@ -105,17 +80,4 @@ DC_TEST(mac_arena_memory_zeroes_in_place) {
         DC_CHECK(memory.base[0] == 7);
         ArenaMemoryUnmap(memory);
     }
-}
-
-DC_TEST(mac_arena_memory_assert_low) {
-    [[maybe_unused]] auto *high = reinterpret_cast<const void *>(std::uintptr_t{0x7f0000000000});
-    ArenaMemorySetHigh(true);
-    DC_CHECK(SignalOf([&] { PortAssertLow(high); }) == 0);
-#if defined(__linux__) && !defined(NDEBUG)
-    ArenaMemorySetHigh(false);
-    unsigned char *low = ArenaMemoryMap(64).base;
-    DC_CHECK(SignalOf([&] { PortAssertLow(low, 64); }) == 0);
-    DC_CHECK(SignalOf([&] { PortAssertLow(high); }) == SIGABRT);
-    DC_CHECK(SignalOf([&] { PortAssertLow(reinterpret_cast<const void *>(kLowMemoryLimit - 16), 32); }) == SIGABRT);
-#endif
 }

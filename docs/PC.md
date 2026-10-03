@@ -44,7 +44,6 @@ build/pc/darkcloud --data data --save save
 | `--save DIR` | memory cards, `config.ini`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable); created on first use |
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
 | `--offscreen` | `--headless` without a Vulkan surface: frames are drawn to an image only (what `--headless` does by itself when the loader has no `VK_EXT_headless_surface`) |
-| `--high-arenas` | map the arenas above 4 GiB, as macOS must (also `DC_HIGH_ARENAS=1`); shows the game's pointer round trips through `int` on Linux |
 | `--frames N` | stop after N frames of the game's main loop |
 | `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
 | `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
@@ -402,13 +401,53 @@ device prefix stripped (the debug dump `edit.cpp` writes to `host0:`), and
 `CDataAlloc2<1>::Alloc/Alloc64/Align64` and the carving in
 `InitializeDataBuffer`, `BufferAllClear`, `SetDataBuffer` and
 `SetPacketReadBuffer` (`dataset.cpp`, `dataalloc2_1.cpp`) give each arena its
-own block below 2 GiB on Linux (the game casts arena pointers to `int`;
-`src/port/platform/memory.hpp`, and `docs/port/truncations.md` for macOS, where nothing can be
-mapped there) sized at four
-times the quadwords retail asked for (`kArenaHeadroom`, `src/port/arena.hpp`),
-because the game sizes allocations with the host's larger `sizeof`s. A guard
-page follows each block, and an overflow aborts naming the arena instead of
-retail's endless loop.
+own block, an ordinary anonymous mapping wherever the system puts it
+(`src/port/platform/memory.hpp`), sized at four times the quadwords retail
+asked for (`kArenaHeadroom`, `src/port/arena.hpp`), because the game sizes
+allocations with the host's larger `sizeof`s. A guard page follows each
+block, and an overflow aborts naming the arena instead of retail's endless
+loop. A debug build stops when no block lies above 4 GiB, so a mapping that
+drifted low cannot hide a pointer the game truncates (below).
+
+## Pointers and 32-bit integers
+
+The game was written for a 32-bit ABI and casts pointers to `int` and back.
+`darkcloud` is position-independent (`-pie -z separate-code`) and its arenas
+lie above 4 GiB, as on arm64 macOS, whose low 4 GiB are a hard page zero, so
+such a round trip faults where it happens instead of working by luck.
+`scripts/port/truncations.py` finds every cast of a pointer to a narrower
+integer with libclang, follows the value to where it becomes a pointer
+again, and says whether the function holding it runs in the linked
+executable; `docs/port/truncations.md` is its output. CI runs it with
+`--check`, which fails while the file is stale or lists a round trip that
+can run.
+
+Each retail function holding such a round trip is replaced by a copy of its
+body with the cast widened (a `uintptr_t` for an address formed from an
+integer, the pointer itself where retail kept it in an `int`) and nothing
+else changed:
+
+| Function | Unit | Change |
+|---|---|---|
+| `DunMoveChara`, `BtCheckDamageProc` | `dun/movechara.cpp` | addresses of `NowDngMap`'s parts and of the active item counters on a `uintptr_t` |
+| `CDungeonMap::BuildCharaSpecialParts`, `SetCharaDoor` | `dungeonmap.cpp` | the key door's cell on a `uintptr_t` |
+| `BtGetTreasureboxBig_Init`/`_Loop`, `BtGetTreasureboxSmall_Init`/`_Loop`, `BtGetGateKey_Init`/`_Loop`, `BtEscape_Init`/`_Loop` | `btitem.cpp` | the files read between the two halves kept as pointers, not in `itemOpenItemMds`, `itemOpenItemImg` and `escape_chr` |
+| `_ITEM_USE_WINDOW`, `BtMiniItemSelect_Loop` | `btsysscript.cpp`, `btitem.cpp` | the script slot the choice goes to kept as a pointer (`btitem_port.hpp`) and written through the host's `RS_STACKDATA`, whose value is at byte 8 |
+| `BtSystemScriptLoad`, `BtSystemScriptRun` | `btsysscript.cpp` | the event script kept as a pointer, not in `BtEventData` |
+| `EditInit`, `InitWorkBuffer` | `editloop_init.cpp` | arena starts rounded on the whole pointer |
+| `CommandWATER_SHAKE` | `editmapscript.cpp` | the wave slot on a `uintptr_t` |
+| `CEditGround::DrawPartsCursor` | `editground.cpp` | the preview frame `LoadObjectParts` keeps in an `s32` matched against the part's own frames |
+| `FishingExchangeKey` | `shop.cpp` | the attachment slots on a `uintptr_t` |
+| `EnterWeaponModel`, `WeaponModelBuildFunc`, `DngWeaponEquipModelBuild` | `menu_misc.cpp` | the weapons' files in a table of pointers; retail's `int` table read back as `u_int *` at a 4-byte stride |
+
+Records read from the disc with pointer-sized fields are decoded into host
+records rather than used in place: `.pts` part definitions
+(`eparts_port.cpp`, for `LoadPTS` in `editloop_parts.cpp` and `GetFuncPoint`
+in `edit_in_parts.cpp`; `EdInitToEPInfo`, `editloop3.cpp`, lays its own out
+past the host header) and the event scripts' function records and stacks
+(`runscript.cpp`). The wind a title scene stores in `CCharacter::wind`, an
+`int`, is recovered by `CCharacter::ClothStep` with `PortImagePointer`, which
+widens it against the image's own address.
 
 ## What is still a stub
 
@@ -462,16 +501,6 @@ executable's symbols).
   dead in the port (its users are the port's copies, with their own
   statics), and what the writes reach is another dead title static or
   padding, but the bytes are written.
-- **File records read with host structs.** Data the game reads straight
-  from the disc into structures with pointers is laid out with 4-byte
-  pointers. The town stops on the first: `LoadPTS` (`editloop.cpp`) copies
-  a `.pts` record into `EPARTS_INFO_HEADER` and walks its `func` table,
-  whose offsets and 0xC0-byte `EPARTS_FUNC_DATA` stride are the PS2's, so
-  `EdInitEventPoint` reads a count of 1572864 functions from a wild
-  pointer and faults. The dungeon stops on the second: the event script
-  VM (`runscript.cpp`) reads the STB file's `funcdata` table (16-byte
-  records, a 4-byte name pointer) with the host's 24-byte struct, and
-  `CRunScript::exe` faults printing a function name from it.
 
 ## How far the game runs
 
@@ -481,11 +510,11 @@ screen, draws the language select (English highlighted) and exits 0 with
 that frame in the screenshot. Scripted (above), it plays the attract movie,
 the title screen and its menu, and START opens the opening book. Through the
 developer menu, the opening's scenes play, the dungeon loader lists the
-seven dungeons and floor 1 of the first starts (its name card fades in)
-before the event script faults on its first frame; the town faults while
-`EditInit` loads its parts (both under "Known gaps"). No stub is reached on
-the way. `integration_real_data_*` (skipped unless `DC_DATA` names the
-data) run the first two routes.
+seven dungeons, floor 1 of the first starts through its name card and Toan
+walks it until the Mayor's event script takes over, and the town `e01`
+(Norune) loads its parts and is walked. No stub is reached on the way. The
+`integration_real_data_*` cases (skipped unless `DC_DATA` names the data)
+run the title, the loader, the town and the dungeon routes.
 
 ## The title overlay's own class declarations
 
@@ -714,9 +743,8 @@ Clang also needs a few flags to accept code MWCC accepts:
 - `-Wno-register`: the `register` keyword.
 - `-Wno-return-mismatch`: a bare `return;` in a non-void function.
 
-The executable is linked without PIE so its code and data sit below 4 GiB.
-Pointers the game casts to 32-bit integers therefore survive the round trip
-for globals, though not for the heap or stack.
+The casts themselves compile; where one's value comes back as a pointer,
+the function is the port's ("Pointers and 32-bit integers").
 
 ## Checking the PS2 build
 
