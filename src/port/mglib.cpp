@@ -14,6 +14,7 @@
 #include "dataset.hpp"
 #include "draw3d.hpp"
 #include "frame.hpp"
+#include "gameloop.hpp"
 #include "mathutil.hpp"
 #include "platform/clock.hpp"
 #include "rect.hpp"
@@ -60,6 +61,15 @@ constexpr const char *kShadowTargetName = "shadow volumes";
 
 Draw3DTex0Resolver   g_tex0_resolver = nullptr;
 Draw3DHandleResolver g_handle_resolver = nullptr;
+
+// A camera that moves further or turns more than this between ticks has cut, and is not
+// interpolated across.
+constexpr float kCameraCutDistance = 200.0f;
+constexpr float kCameraCutCosine = 0.7071f;
+
+bool          g_cut_next_tick = true;
+bool          g_have_tick_view = false;
+sceVu0FMATRIX g_tick_view;
 
 // The logical frame's rect of a GS sprite whose corners are 12.4 window offsets on the field.
 gfx::LogicalRect FieldRect(int x, int y, int width, int height) {
@@ -151,7 +161,29 @@ void Blit(const ResolvedRect &src, const ResolvedRect &dst, gfx::Filter filter) 
     }
 }
 
+// The view against the last one the previous tick drew with.
+void CheckCameraCut(sceVu0FMATRIX view) {
+    if (!gfx::Recording() || !g_have_tick_view) {
+        return;
+    }
+    float before[16];
+    float after[16];
+    if (!gfx::InvertAffineTransform(&g_tick_view[0][0], before) || !gfx::InvertAffineTransform(&view[0][0], after)) {
+        return;
+    }
+    float dx = after[12] - before[12];
+    float dy = after[13] - before[13];
+    float dz = after[14] - before[14];
+    float forward = before[8] * after[8] + before[9] * after[9] + before[10] * after[10];
+    float lengths = std::sqrt((before[8] * before[8] + before[9] * before[9] + before[10] * before[10]) *
+                              (after[8] * after[8] + after[9] * after[9] + after[10] * after[10]));
+    if (std::sqrt(dx * dx + dy * dy + dz * dz) > kCameraCutDistance || forward < kCameraCutCosine * lengths) {
+        gfx::CutCameraInterpolation();
+    }
+}
+
 void SetViewMatrix(sceVu0FMATRIX view) {
+    CheckCameraCut(view);
     sceVu0CopyMatrix(mgRenderInfo.view, view);
     mgRenderInfo.position[0] = view[3][0];
     mgRenderInfo.position[1] = view[3][1];
@@ -459,9 +491,19 @@ void MGInitVSyncCallBack(int (*callback)(int)) {
     ClockSetTickCallback(callback);
 }
 
+void MGPortCutInterpolation() {
+    g_cut_next_tick = true;
+}
+
+// A tick records its drawing as a display list; MGEndFrame renders it. A frame someone opened
+// with gfx::BeginFrame is drawn into as it is.
 void MGBeginFrame() {
     if (!gfx::InFrame()) {
-        gfx::BeginFrame();
+        gfx::BeginRecording();
+        if (g_cut_next_tick) {
+            gfx::CutInterpolation();
+            g_cut_next_tick = false;
+        }
     }
     gfx::SetRenderTarget(gfx::kMainTarget);
     g_shadow_target = gfx::kNullTexture;
@@ -519,7 +561,15 @@ void MGEndFrame() {
     }
 
     gfx::SetRenderTarget(gfx::kMainTarget);
-    gfx::EndFrame();
+    gfx::DisplayListRef list;
+    if (gfx::Recording()) {
+        list = gfx::EndRecording();
+        GameRenderTick(list);
+        sceVu0CopyMatrix(g_tick_view, mgRenderInfo.view_scaled);
+        g_have_tick_view = true;
+    } else {
+        gfx::EndFrame();
+    }
 
     for (int i = 0; i < 16; i++) {
         if (!g_pick_pending[i]) {
@@ -539,10 +589,11 @@ void MGEndFrame() {
         ClockPump();
     }
     if (mgWaitVSync || ClockTickCount() == g_old_vcount) {
-        ClockWaitNextTick();
+        ClockWaitNextTick(GamePresentBetweenTicks);
         ClockPump();
     }
     g_old_vcount = static_cast<int>(ClockTickCount());
+    GamePresentTickEnd();
 
     DBuffID = !DBuffID;
 }

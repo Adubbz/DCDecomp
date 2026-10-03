@@ -19,6 +19,8 @@ struct ConfigKeyBinding {
 struct Config {
     double                        tick_rate = 50.0;
     ConfigPresentMode             present_mode = ConfigPresentMode::Fifo;
+    bool                          interpolation = true;
+    double                        max_fps = 0.0;
     int                           window_width = 1280;
     int                           window_height = 960;
     bool                          fullscreen = false;

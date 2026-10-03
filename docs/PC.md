@@ -49,10 +49,12 @@ build/pc/darkcloud --data data --save save
 | `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
 | `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
 | `--width W`, `--height H` | window size in pixels, over `config.ini` |
+| `--display-per-tick N` | headless test aid: render N interpolated display frames per tick (offscreen, not presented) before presenting the tick's canonical image |
 
 Environment: `DC_DATA` and `DC_SAVE` (above), `DC_INPUT` (above), `DC_AUDIO=off` (no audio
 device), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
-release build; a debug build always asks for it), and SDL's own variables.
+release build; a debug build always asks for it), `DC_PRESENT_STATS=1` (print
+draws per tick and render times at exit), and SDL's own variables.
 
 Exit statuses (`src/port/exitcodes.hpp`): 0 when the window was closed or
 `--frames` ran out, 1 when the window, the renderer or the screenshot failed,
@@ -69,8 +71,10 @@ values are reported and ignored):
 [game]
 tick_rate = 50          ; logic ticks (the game's VSyncs) per second
 [video]
-present_mode = fifo     ; fifo, mailbox or immediate (immediate presents as mailbox)
+present_mode = fifo     ; fifo, mailbox or immediate (each falls back to the next safer one)
 vsync = true            ; shorthand: true is fifo, false immediate
+interpolation = on      ; off: present each tick's image once, as rendered
+max_fps = 0             ; display frames per second at most; 0: as the present mode allows
 width = 1280
 height = 960
 fullscreen = false
@@ -197,11 +201,51 @@ with the hardware taken out, line for line otherwise:
 - The transitions are `GameApplyLoopResult` (what each mode's loop result
   does) and `GameFollowMapJump` (`NextMapNo` into the next mode), exported for
   the tests.
+- Each pass of the loop is one logic tick, recorded and rendered as described
+  in "Ticks and display frames" below.
 - `--frames` counts frames of this loop (one per `MGEndFrame` it calls);
   `RunGame` returns `kExitOk` at the top of the next frame once the budget
   is spent or a stop was requested, outside any frame, so the last frame can
   be read back. Presents a mode makes itself (`EditLoop`'s fades) and the
   loading screen's are not counted.
+
+### Ticks and display frames
+
+The game logic runs at the fixed tick rate; the window is presented at its own
+rate, with motion interpolated between ticks (`src/port/gfx/README.md`,
+"Display lists"):
+
+1. `MGBeginFrame` starts recording the tick's display list: what the game draws,
+   copies and uploads is appended to the list rather than executed.
+2. `MGEndFrame` seals it and `GameRenderTick` (`gameloop.cpp`) renders it once,
+   in full, as the tick's canonical image. That image is what the next tick's
+   `MGGetFBuffBackTex` / `kPreviousFrame` samples and what frame copies and
+   `mgPickZBuff` read, and every copy, blit, texture or palette update in the
+   list (frame grabs into `frame_image` and `water`, texture animation,
+   `MGMoveImage`, `MGStretchMoveImage`) runs there, once per tick. The
+   previous-frame effects (the title's trail, water, depth of field) are
+   therefore tick-exact whatever the display rate.
+3. `MGEndFrame` then waits for the next tick as before (`mgWaitVSync`, the
+   count, the callbacks and every spin on the clock are unchanged), and while
+   it waits `GamePresentBetweenTicks` renders display frames from the last two
+   lists at alpha = the elapsed fraction of the tick and presents them, as fast
+   as `present_mode` and `max_fps` allow. A display frame replays the newest
+   list's drawing only, into its own image, with each `CFrame`'s model matrix
+   (`frame_draw.cpp` tags its draws with the frame's address; a visual drawn
+   outside one with its record) and the camera interpolated between the two
+   ticks. A tick that did not wait, or presented nothing, presents its
+   canonical image.
+
+What a display frame does not interpolate: 2D (the HUD is tick-exact), 3D
+sprites (2D quads with depth), skinned poses, objects that moved more than
+`kDraw3DTeleportDistance` (200 units) in a tick, a camera that moved more than
+200 units or turned more than 45 degrees, and the first tick of every mode
+(`RunGame` cuts there). `interpolation = off` presents each canonical image once,
+which is the PS2's picture at the tick rate. Headless runs (unbounded clock)
+present one canonical image per tick, so screenshots are those images.
+
+The loading screen still presents from the idle hook as immediate frames; once
+it has, display frames stop until the next tick's canonical render.
 
 Overlays are not re-initialised: `TITLE.BIN` and `DUN.BIN` are linked in
 once, where retail reloaded the overlay's data, zeroed its `.bss` and re-ran
@@ -242,7 +286,9 @@ replacement units.
   window alive and the pads fresh whatever the loading screen does.
   `sceGsSyncV` returns the parity of the tick, as the interlaced field
   alternated: `CGamePad::Init` and `main` spin until it reads 1. The tick
-  rate is a setting (50 Hz by default); presentation runs at it.
+  rate is a setting (50 Hz by default); presentation is not tied to it (below).
+  `ClockWaitNextTick(hook)` runs a hook over and over while it waits, with the
+  elapsed fraction of the tick; `MGEndFrame` presents display frames through it.
 - **Config** (`platform/config`) and **paths** (`platform/paths`): above.
 - **Audio output** (`platform/audio`): an SDL3 float stereo stream that pulls
   frames from a render callback on SDL's audio thread; `DC_AUDIO=off` or no
@@ -270,8 +316,9 @@ share small internal headers:
   space and reverse-Z (`MGPortLogicalX/Y`, `MGPortDepth`); TBP0 0 and 0xFFF
   stand for the frame and the previous frame. The VSync group (`MGInit`,
   `MGInitVSyncCallBack`, `MGGetVSyncCount`, `MGBeginFrame`, `MGEndFrame`,
-  `MGFlipWaitVSync`) sits on the clock; `MGEndFrame` presents and keeps
-  retail's "do not wait twice" rule. Pick-Z reads the depth buffer.
+  `MGFlipWaitVSync`) sits on the clock; `MGBeginFrame` starts recording a
+  tick, `MGEndFrame` renders it, presents between ticks and keeps retail's
+  "do not wait twice" rule. Pick-Z reads the canonical render's depth buffer.
   `MGSetRenderInfo` keeps retail's matrices; the field squeeze is undone
   where the game's rects reach the renderer.
 - **`texture_port.hpp`** (`texture.cpp`, `texture_port.cpp`,

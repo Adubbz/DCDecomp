@@ -49,12 +49,14 @@ struct Options {
     const char  *input = nullptr;
     int          width = 0;
     int          height = 0;
+    int          display_per_tick = 0;
 };
 
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
                  "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
                  "          [--input FILE] [--width W] [--height H] [--offscreen] [--high-arenas]\n"
+                 "          [--display-per-tick N]\n"
                  "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
                  "                     beside the executable)\n"
                  "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
@@ -67,7 +69,8 @@ struct Options {
                  "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
                  "  --input FILE       drive pad 1 from a script (default: DC_INPUT); see docs/PC.md\n"
                  "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n"
-                 "  --high-arenas      map the arenas above 4 GiB, as macOS must (DC_HIGH_ARENAS=1)\n",
+                 "  --high-arenas      map the arenas above 4 GiB, as macOS must (DC_HIGH_ARENAS=1)\n"
+                 "  --display-per-tick N  headless: also render N interpolated display frames per tick\n",
                  program);
     std::exit(kExitUsage);
 }
@@ -107,6 +110,8 @@ Options ParseOptions(int argc, const char **argv) {
             options.width = static_cast<int>(number());
         } else if (arg == "--height") {
             options.height = static_cast<int>(number());
+        } else if (arg == "--display-per-tick") {
+            options.display_per_tick = static_cast<int>(number());
         } else {
             Usage(argv[0]);
         }
@@ -186,8 +191,36 @@ void ReportShaderProgress(uint32_t done, uint32_t total) {
 }
 
 gfx::PresentMode PresentMode(ConfigPresentMode mode) {
-    // The renderer has no IMMEDIATE path; MAILBOX is the other mode that does not wait for vblank.
-    return mode == ConfigPresentMode::Fifo ? gfx::PresentMode::Fifo : gfx::PresentMode::Mailbox;
+    switch (mode) {
+        case ConfigPresentMode::Mailbox:
+            return gfx::PresentMode::Mailbox;
+        case ConfigPresentMode::Immediate:
+            return gfx::PresentMode::Immediate;
+        default:
+            return gfx::PresentMode::Fifo;
+    }
+}
+
+// DC_PRESENT_STATS=1: what the ticks drew and what rendering them cost.
+void ReportPresentStats() {
+    const char *setting = std::getenv("DC_PRESENT_STATS");
+    if (setting == nullptr || *setting == '\0' || *setting == '0') {
+        return;
+    }
+    GamePresentStats stats = GamePresentStatistics();
+    if (stats.ticks == 0) {
+        return;
+    }
+    double ticks = static_cast<double>(stats.ticks);
+    std::fprintf(stderr,
+                 "present: %llu ticks, per tick %.1f mesh draws (%.1f keyed), %.1f 2D draws, %.1f stateful, "
+                 "at most %llu draws; canonical %.2f ms per tick; %llu display frames, %.2f ms each\n",
+                 static_cast<unsigned long long>(stats.ticks), static_cast<double>(stats.mesh_draws) / ticks,
+                 static_cast<double>(stats.keyed_mesh_draws) / ticks, static_cast<double>(stats.draws_2d) / ticks,
+                 static_cast<double>(stats.stateful) / ticks, static_cast<unsigned long long>(stats.max_draws),
+                 stats.canonical_seconds * 1000.0 / ticks, static_cast<unsigned long long>(stats.display_frames),
+                 stats.display_frames ? stats.display_seconds * 1000.0 / static_cast<double>(stats.display_frames)
+                                      : 0.0);
 }
 
 int Screenshot(const char *path) {
@@ -239,11 +272,15 @@ int main(int argc, const char **argv, const char **envp) {
     ClockSetUnbounded(options.headless);
     ClockAddPumpHook(PumpHost);
     GameSetFrameBudget(options.frames);
+    GameSetPresentSettings({.interpolation = config.interpolation,
+                            .max_fps = config.max_fps,
+                            .display_per_tick = options.display_per_tick});
 
     int status = RunGame(argc, const_cast<char **>(argv));
     if (status == kExitOk && options.screenshot != nullptr) {
         status = Screenshot(options.screenshot);
     }
+    ReportPresentStats();
 
     ClockRemovePumpHook(PumpHost);
     AudioOutputStop();

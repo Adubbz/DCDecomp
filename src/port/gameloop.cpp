@@ -1,6 +1,8 @@
 #include "gameloop.hpp"
 
+#include <algorithm>
 #include <cstring>
+#include <thread>
 
 #include "battle_globals.hpp"
 #include "btsysscript.hpp"
@@ -15,6 +17,7 @@
 #include "mainselect.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
+#include "mglib_port.hpp"
 #include "nowload.hpp"
 #include "platform/clock.hpp"
 #include "savedata.hpp"
@@ -46,6 +49,29 @@ constexpr int kWarmUpTicks = 60;
 
 // The TEXA vudata.cpp's My_DrawEnv loads at the start of every mode, through My_dma_start0.
 constexpr sceGsTexa kDrawEnvTexa = {0x80, 0, 1, 0, 0x80, 0};
+
+GamePresentSettings g_present;
+gfx::DisplayListRef g_list;
+gfx::DisplayListRef g_previous_list;
+bool                g_tick_shown = true;
+GamePresentStats    g_stats;
+
+using PresentClock = std::chrono::steady_clock;
+PresentClock::time_point g_last_present;
+
+double SecondsSince(PresentClock::time_point start) {
+    return std::chrono::duration<double>(PresentClock::now() - start).count();
+}
+
+bool DisplayFrame(float alpha, bool present) {
+    PresentClock::time_point start = PresentClock::now();
+    bool                     shown = gfx::RenderList(*g_list, alpha, {.previous = g_previous_list.get(), .present = present});
+    if (shown) {
+        g_stats.display_frames++;
+        g_stats.display_seconds += SecondsSince(start);
+    }
+    return shown;
+}
 
 std::int64_t g_frame_budget = -1;
 std::int64_t g_frames;
@@ -347,6 +373,76 @@ void SetEnv(sceVif1Packet *packet) {
     MGSetWindowRect();
 }
 
+void GameSetPresentSettings(const GamePresentSettings &settings) {
+    g_present = settings;
+}
+
+void GameRenderTick(gfx::DisplayListRef list) {
+    PresentClock::time_point start = PresentClock::now();
+    gfx::RenderList(*list, 1.0f, {.canonical = true});
+    g_stats.canonical_seconds += SecondsSince(start);
+    g_stats.ticks++;
+    gfx::DisplayListStats counts = gfx::ListStats(*list);
+    g_stats.mesh_draws += counts.mesh_draws;
+    g_stats.keyed_mesh_draws += counts.keyed_mesh_draws;
+    g_stats.draws_2d += counts.draws_2d;
+    g_stats.stateful += counts.stateful;
+    g_stats.max_draws = std::max<std::uint64_t>(g_stats.max_draws, counts.mesh_draws + counts.draws_2d);
+    g_previous_list = std::move(g_list);
+    g_list = std::move(list);
+    g_tick_shown = false;
+}
+
+bool GamePresentBetweenTicks(double fraction, std::chrono::steady_clock::time_point next_tick) {
+    if (!g_list) {
+        return false;
+    }
+    if (!g_present.interpolation) {
+        if (!g_tick_shown) {
+            gfx::PresentCanonical();
+            g_tick_shown = true;
+        }
+        return false;
+    }
+    if (g_present.max_fps > 0.0) {
+        auto due = g_last_present + std::chrono::duration_cast<PresentClock::duration>(
+                                        std::chrono::duration<double>(1.0 / g_present.max_fps));
+        if (PresentClock::now() < due) {
+            if (due >= next_tick && g_tick_shown) {
+                return false;
+            }
+            std::this_thread::sleep_until(std::min(due, next_tick));
+            return true;
+        }
+    }
+    // The loading screen presenting from the pump, or a window that cannot show anything, ends the
+    // tick's display frames.
+    if (!DisplayFrame(static_cast<float>(fraction), true)) {
+        return false;
+    }
+    g_last_present = PresentClock::now();
+    g_tick_shown = true;
+    return true;
+}
+
+void GamePresentTickEnd() {
+    if (g_tick_shown || !g_list) {
+        return;
+    }
+    if (ClockUnbounded()) {
+        for (int frame = 0; frame < g_present.display_per_tick; frame++) {
+            DisplayFrame(static_cast<float>(frame) / static_cast<float>(g_present.display_per_tick), false);
+        }
+    }
+    gfx::PresentCanonical();
+    g_last_present = PresentClock::now();
+    g_tick_shown = true;
+}
+
+GamePresentStats GamePresentStatistics() {
+    return g_stats;
+}
+
 int RunGame(int argc, char **argv) {
     // mwInit is not called: the host has run every static constructor. init_all's IOP boot, CD
     // and file-system resets, DevInit's DMA reset and the DMA channel handles have no host
@@ -436,6 +532,7 @@ int RunGame(int argc, char **argv) {
         MGInitVSyncCallBack(PlayTimeCount);
         LoadDrawEnv();
         ClockSyncV();
+        MGPortCutInterpolation();
         *reinterpret_cast<s32 *>(reinterpret_cast<char *>(SaveData) + kSaveMapNoOffset) = MapNo;
 
         int result;

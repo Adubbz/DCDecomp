@@ -1,6 +1,9 @@
 #pragma once
 
+#include <chrono>
 #include <cstdint>
+
+#include "gfx/gfx.hpp"
 
 // The game's main(): start-up, then one mode after another. The window, renderer, input and clock
 // must already be initialised; the tick callback is the game's to install, the idle hook and the
@@ -30,3 +33,41 @@ void GameFollowMapJump();
 // developer menu's) is judged by the mode it ran in. Title's result 1 also starts a new game and
 // its result 2 reinitialises sound.
 void GameApplyLoopResult(int loop_mode, int result);
+
+// ---- Presentation ----------------------------------------------------------------------------
+//
+// Each tick (MGBeginFrame to MGEndFrame) is recorded as a display list. MGEndFrame hands it to
+// GameRenderTick, which renders it once as the canonical image the next tick's effects sample;
+// then, while MGEndFrame waits for the next tick, GamePresentBetweenTicks presents display frames
+// interpolated between the last two lists at the elapsed fraction of the tick, and
+// GamePresentTickEnd presents the canonical image if nothing was presented during the tick.
+
+struct GamePresentSettings {
+    // Off presents each tick's canonical image once, as the PS2 showed a field per VSync.
+    bool interpolation = true;
+    // Display frames per second at most; 0 leaves the pace to the present mode.
+    double max_fps = 0.0;
+    // Unbounded clock only (headless tests): display renders made per tick, at alphas k / n, before
+    // the canonical image is presented.
+    int display_per_tick = 0;
+};
+
+void GameSetPresentSettings(const GamePresentSettings &settings);
+
+void GameRenderTick(gfx::DisplayListRef list);
+bool GamePresentBetweenTicks(double fraction, std::chrono::steady_clock::time_point next_tick);
+void GamePresentTickEnd();
+
+struct GamePresentStats {
+    std::uint64_t ticks;
+    std::uint64_t display_frames;
+    double        canonical_seconds;
+    double        display_seconds;
+    std::uint64_t mesh_draws;
+    std::uint64_t keyed_mesh_draws;
+    std::uint64_t draws_2d;
+    std::uint64_t stateful;
+    std::uint64_t max_draws;
+};
+
+GamePresentStats GamePresentStatistics();
