@@ -34,9 +34,11 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
 - **Logical space** is the game's 640x480, y down. `Draw2D` vertices, `DrawState::scissor_rect`,
   `Clear` rects, `ReadDepth` rects and copy rects on `kMainTarget`/`kPreviousFrame` are in it.
 - On the **main target** (window pixel size) logical space is scaled by
-  `min(W / 640, H / 480)` and centred with whole-pixel offsets (letterbox or pillarbox).
-  Coordinates outside 0..640 x 0..480 reach into the bars; nothing clips to the 4:3 area unless a
-  scissor says so. `GetLogicalMapping(target)` returns `pixel = logical * scale + offset`.
+  `min(W / 640, H / 480)` and centred with whole-pixel offsets, so the 640x480 frame always fits
+  the window. Coordinates outside 0..640 x 0..480 reach past the frame; nothing clips to the 4:3
+  area unless a scissor says so. `GetLogicalMapping(target)` returns
+  `pixel = logical * scale + offset`. What the window shows past the frame depends on the frame
+  layout ("Aspect").
 - A **render target** is `logical_width x logical_height` scaled by the render scale (pixels per
   logical texel; `config.render_scale`, 0 = `round(window height / 480)`, at least 1), offset 0.
   `SetRenderScale` recreates every render target, blitting its contents over.
@@ -58,6 +60,41 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
   the device cannot attach the former), reverse-Z: cleared to 0 (far), tests are GEQUAL/GREATER,
   so the game's ZTST values map one to one. A `Vertex2D::z` is the same depth (1 near), so 3D sprites can test
   against meshes when the projection agrees. `ReadDepth` returns these units.
+
+## Aspect
+
+`RendererConfig::layout` (`SetFrameLayout` outside a frame) is a `FrameLayout`: the aspect mode and
+`ui_scale`. The logical frame is centred in the window in both modes.
+
+- **`AspectMode::Fill`** (`[video] aspect = auto`). The window past the frame is the game's too:
+  - Meshes draw through the target's mapping, so the frame's 480 rows keep their place and a wider
+    window shows more of the world at the sides at retail's vertical field of view (a narrower one
+    keeps the frame's width and shows more above and below). `VisibleLogicalRect(target)` is the
+    logical rect the target's pixels cover; the game's culls test against it.
+  - **The full-frame rule.** Along each axis on which the target shows past its frame (both on the
+    main target and the targets mapped like it, x on a frame target), a scissor or clear rect, and
+    every axis-aligned rectangle of a `Quads` or four-vertex strip `Draw2D` whose texture is none, an
+    image of the frame (`kPreviousFrame`, a frame target, a target sharing the main depth) or
+    another image that shows past its frame, is carried to the target's edge on every side where it
+    reaches the frame's edge from inside (its span crosses or ends on the edge, starting inside).
+    The rectangle itself is drawn as given; flanking quads cover the rest, with texture coordinates
+    continued (so an image of the frame shows its own sides) and colour, fog and depth held at the
+    edge. Fades, however tiled, full-frame fills and bands, the previous-frame feedback and frame
+    grabs drawn back therefore reach the window's edges; HUD pieces (textured from ordinary
+    textures) and anything wholly outside the frame (the FPS counter in a bar) do not grow.
+    A copy or blit between two images that show past their frames, whose rects cover both frames
+    along an axis, copies them edge to edge along it.
+  - **Frame targets** (`CreateRenderTarget(..., frame_target = true)`; the game's `frame_*` grabs)
+    are the main target's pixel width with their logical width laid over its logical frame, and
+    rows at the main target's scale, so a grab of the frame keeps its sides. Other render targets
+    keep their logical size at the render scale.
+- **`AspectMode::Letterbox`** (`aspect = 4:3`). Nothing is carried past the frame and frame targets
+  are ordinary render targets: the letterboxed output, byte for byte.
+- **`ui_scale`** (default 1) scales 2D that tests no depth, writes none and samples no image of the
+  frame about the main target's centre (`GetUiMapping`); 2D with depth (3D sprites) and images of
+  the frame stay on the logical mapping, among the meshes. It does not know which 2D the game
+  placed from a 3D projection (lock-on corners, name tags): at a scale other than 1 those move with
+  the HUD.
 
 ## Colour and alpha units
 
