@@ -18,7 +18,7 @@ struct ConfigKeyBinding {
 
 struct Config {
     double                        tick_rate = 50.0;
-    bool                          debug_mode = true;
+    bool                          debug_mode = false;
     ConfigPresentMode             present_mode = ConfigPresentMode::Fifo;
     bool                          interpolation = true;
     double                        max_fps = 0.0;

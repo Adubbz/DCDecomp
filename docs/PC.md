@@ -73,6 +73,7 @@ values are reported and ignored):
 ```ini
 [game]
 tick_rate = 50          ; logic ticks (the game's VSyncs) per second
+debug_mode = false      ; true: start with DebugMode on, in the developer menu
 [video]
 present_mode = fifo     ; fifo, mailbox or immediate (each falls back to the next safer one)
 vsync = true            ; shorthand: true is fifo, false immediate
@@ -226,9 +227,9 @@ directory (and so one pipeline cache) under the build directory.
 PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
 the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
 (`MenuLoop`, `src/ps2/main.cpp`), instead of the language select, and leaves
-pad 2 unlocked. The port starts with `DebugMode` on: `[game] debug_mode = off`
-in `config.ini` gives retail's start at the language select, where the pad 2
-hold still turns it on. Up and down (pad 1) pick a row, left and right change its
+pad 2 unlocked. The port starts at the language select as retail does;
+`[game] debug_mode = on` in `config.ini` starts with `DebugMode` on, in the
+developer menu. Up and down (pad 1) pick a row, left and right change its
 number, circle or triangle enters it:
 
 | Row | Goes to |
