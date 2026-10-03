@@ -11,9 +11,9 @@ constexpr int kArenaHeadroom = 4;
 
 // A zeroed, 64-byte aligned block of at least `bytes`, with `lead` usable
 // bytes before it, kept for `owner` and handed back to it while it fits.
-// The memory sits below 2 GiB (platform/memory.hpp), where the game's int
-// casts of its pointers still round-trip, and an unmapped page follows it so
-// a run past the end faults at once.
+// On Linux the memory sits below 2 GiB (platform/memory.hpp), where the game's
+// int casts of its pointers still round-trip; an unmapped page follows it so a
+// run past the end faults at once.
 unsigned char *ArenaBlock(const void *owner, std::size_t bytes, std::size_t lead = 0);
 
 // Zeroes every block, as retail's clear of the whole GlobalDataBuffer does.
@@ -23,17 +23,18 @@ void ArenaClearAll();
 
 [[noreturn]] void PortHighPointer(const void *pointer, std::size_t bytes, const char *file, int line);
 
-// For memory the port hands to code that truncates its address to 32 bits: a pointer
-// above kLowMemoryLimit stops the process where it was produced, on every platform,
-// rather than where the truncated value is used. Debug builds only; nothing is checked
-// under DC_LOW_MEMORY=any.
+// For memory the port hands to retail code that truncates its address to 32 bits:
+// while the arenas are low, a pointer above kLowMemoryLimit (the stack, the heap, a
+// PIE image) stops a debug build where it was produced rather than where the
+// truncated value is used. With high arenas every such site is broken by design and
+// nothing is checked.
 #ifdef NDEBUG
 #define PortAssertLow(pointer, ...) ((void) 0)
 #else
 #define PortAssertLow(pointer, ...) PortCheckLow((pointer), __FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
 
 inline void PortCheckLow(const void *pointer, const char *file, int line, std::size_t bytes = 1) {
-    if (!IsLowAddress(pointer, bytes) && LowMemoryEnforced()) {
+    if (ArenaMemoryIsLow() && !IsLowAddress(pointer, bytes)) {
         PortHighPointer(pointer, bytes, file, line);
     }
 }

@@ -19,7 +19,7 @@ constexpr std::size_t kReadBufferLead = 0x180000;
 
 struct Block {
     const void *owner;
-    LowBlock    memory;
+    ArenaMemory memory;
 };
 
 std::vector<Block> g_blocks;
@@ -28,9 +28,7 @@ std::vector<Block> g_blocks;
 std::vector<Block> g_retired;
 
 Block MapBlock(const void *owner, std::size_t bytes, std::size_t lead) {
-    Block block{owner, LowMemoryMap(bytes, lead)};
-    PortAssertLow(block.memory.map, block.memory.map_size);
-    return block;
+    return {owner, ArenaMemoryMap(bytes, lead)};
 }
 
 void Carve(CDataAlloc2<1> *arena, int quads) {
@@ -63,7 +61,7 @@ unsigned char *ArenaBlock(const void *owner, std::size_t bytes, std::size_t lead
         if (block.memory.capacity >= bytes && block.memory.lead >= lead) {
             return block.memory.base;
         }
-        LowMemoryZero(block.memory);
+        ArenaMemoryZero(block.memory);
         g_retired.push_back(block);
         block = MapBlock(owner, bytes, lead);
         return block.memory.base;
@@ -74,7 +72,7 @@ unsigned char *ArenaBlock(const void *owner, std::size_t bytes, std::size_t lead
 
 void ArenaClearAll() {
     for (const Block &block : g_blocks) {
-        LowMemoryZero(block.memory);
+        ArenaMemoryZero(block.memory);
     }
 }
 

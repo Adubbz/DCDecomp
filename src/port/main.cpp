@@ -22,6 +22,7 @@
 #include "platform/clock.hpp"
 #include "platform/config.hpp"
 #include "platform/input.hpp"
+#include "platform/memory.hpp"
 #include "platform/paths.hpp"
 #include "platform/window.hpp"
 #include "snd.hpp"
@@ -39,6 +40,7 @@ namespace {
 
 struct Options {
     bool         headless = false;
+    bool         high_arenas = false;
     std::int64_t frames = -1;
     const char  *screenshot = nullptr;
     int          width = 0;
@@ -48,7 +50,7 @@ struct Options {
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
                  "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
-                 "          [--width W] [--height H]\n"
+                 "          [--width W] [--height H] [--high-arenas]\n"
                  "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
                  "                     beside the executable)\n"
                  "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
@@ -57,7 +59,8 @@ struct Options {
                  "                     no audio device, the game clock unbounded\n"
                  "  --frames N         stop after N frames of the game's main loop\n"
                  "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
-                 "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n",
+                 "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n"
+                 "  --high-arenas      map the arenas above 4 GiB, as macOS must (DC_HIGH_ARENAS=1)\n",
                  program);
     std::exit(kExitUsage);
 }
@@ -82,6 +85,8 @@ Options ParseOptions(int argc, const char **argv) {
         };
         if (arg == "--headless") {
             options.headless = true;
+        } else if (arg == "--high-arenas") {
+            options.high_arenas = true;
         } else if (arg == "--frames") {
             options.frames = number();
         } else if (arg == "--screenshot") {
@@ -172,6 +177,9 @@ int Screenshot(const char *path) {
 int main(int argc, const char **argv, const char **envp) {
     argc = PathsConsumeArgs(argc, argv);
     Options options = ParseOptions(argc, argv);
+    if (options.high_arenas) {
+        ArenaMemorySetHigh(true);
+    }
     RequireData();
 
     ConfigLoad();
