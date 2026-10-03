@@ -11,6 +11,11 @@ enum class ConfigPresentMode {
     Immediate,
 };
 
+enum class ConfigAspect {
+    Auto,
+    FourThree,
+};
+
 struct ConfigKeyBinding {
     std::string              action;
     std::vector<std::string> keys;
@@ -25,6 +30,8 @@ struct Config {
     int                           window_width = 1280;
     int                           window_height = 960;
     bool                          fullscreen = false;
+    ConfigAspect                  aspect = ConfigAspect::Auto;
+    float                         ui_scale = 1.0f;
     bool                          show_fps = true;
     float                         master_volume = 1.0f;
     std::vector<ConfigKeyBinding> key_bindings;

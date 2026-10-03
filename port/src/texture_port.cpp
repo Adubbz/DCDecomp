@@ -361,7 +361,7 @@ unsigned PortRegisterNamedTarget(std::string_view name, unsigned width, unsigned
     entry.height = height;
     entry.has_alpha = has_alpha;
     if (RendererUp()) {
-        gfx::NamedRenderTarget(name, width, height, has_alpha);
+        gfx::NamedRenderTarget(name, width, height, has_alpha, false, MGPortFrameTarget(name));
     }
     return key;
 }

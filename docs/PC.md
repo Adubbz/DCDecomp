@@ -86,6 +86,8 @@ max_fps = 0             ; display frames per second at most; 0: as the present m
 width = 1280
 height = 960
 fullscreen = false
+aspect = auto           ; auto: the world fills the window, 2D in the centred 4:3 frame; 4:3: letterboxed
+ui_scale = 1.0          ; 0.25 to 4: the HUD scaled about the window's centre
 show_fps = true         ; the FPS counter at the window's top-left corner (headless: --show-fps)
 [audio]
 master_volume = 1.0     ; 0 to 1
@@ -485,10 +487,53 @@ replacement units.
 two frames in flight, dynamic rendering, synchronization2, a bindless texture
 array, every pipeline created at start-up against the on-disk pipeline
 cache, reverse-Z D32 depth with stencil, an immediate 2D API in the game's 640x480 logical
-space (letterboxed on the window) and a mesh API in 3D, named render targets,
+space (centred in the window) and a mesh API in 3D, named render targets,
 copies, blits, depth readback and screenshots. `port/src/gfx/README.md` is its
 contract: spaces, colour and alpha units, how the GS blend equation maps to
 Vulkan blending and where it does not.
+
+### Window aspect
+
+The logical 640x480 frame is centred in the window at `min(W / 640, H / 480)`
+pixels per unit, so the HUD keeps its place relative to the frame at any window
+shape. With `[video] aspect = auto` the rest of the window is not bars:
+
+- **3D.** `Draw3DEyeToClip` (`mglib.cpp`) maps the game's projection, logical
+  `(320 + 800 x / z, 240 + 800 y / z)` (`MGSetRenderInfo`'s scale over the
+  frame's 240 half-rows), through the target's logical mapping. The frame's rows
+  fill the window's height, so the vertical field of view is retail's
+  (2 atan(240 / 800), 33.4 degrees) and the horizontal one is
+  2 atan(240 W / H / 800): 16:9 shows 107 logical units more on each side. A
+  window narrower than 4:3 keeps the frame's width (retail's horizontal field of
+  view) and shows more above and below, so the HUD always fits.
+- **Culls.** `frame_draw.cpp`'s screen-bound test and `MGClipVertex` (so
+  `MGClipBox`) take their half extents from what the current target shows
+  (`Draw3DVisibleExtent`, from `gfx::VisibleLogicalRect`) instead of 320 by 240:
+  a model past the 4:3 edge is drawn at 16:9 and dropped at 4:3. The GS guard
+  band (2048 units about the centre) is far outside any window's extent and is
+  unchanged.
+- **2D** stays in logical space. Full-frame 2D (fades, the screen filter's
+  `MGFillBox`, the previous-frame feedback, frame grabs drawn back; the loading
+  screen clears the whole window) reaches the window's edges by the rule in
+  `port/src/gfx/README.md`, "Aspect": an untextured or frame-image rectangle that
+  reaches an edge of the frame from inside is carried to the window's edge;
+  textured HUD pieces and 4:3 pictures (the floor select's backdrop) are not.
+  `[video] ui_scale` scales the depthless 2D about the window's centre.
+- **Frame grabs** (`frame_image`, `frame_buff` and the other `frame_*`
+  placeholders, `MGPortFrameTarget`) are as wide as the window, so what they
+  hold and draw back includes the sides; the canonical and display images are
+  the window's size. The game's other 640xN targets (`water`, `blender`,
+  `shadow_buf`) keep their size at the render scale.
+- **Game logic** is unchanged: `MGRotTransPers*` answer in retail's GS and
+  logical coordinates, which land on the meshes through the same mapping (the
+  dungeon's lock-on corners, the town's edit cursor and name tags).
+
+`aspect = 4:3` letterboxes everything as before, byte for byte. Known
+differences at other aspects: the water samples its 640-wide frame copy, so
+water seen past the 4:3 edge repeats the copy's edge column; game code that
+drops 2D it projects outside 0..640 (effects, name tags) still does; at a
+`ui_scale` other than 1 the 2D the game places from 3D projections moves with
+the HUD.
 
 The game's drawing reaches it through replacement units, in four groups that
 share small internal headers:

@@ -187,6 +187,13 @@ setting, tests at 16:9, 21:9 and portrait sizes checking that a mesh at the
 frame's edge is visible at 16:9 and culled at 4:3, and that HUD pixels stay
 put.
 
+Status: done. `[video] aspect = auto | 4:3` and `ui_scale`; the projection,
+the screen-bound cull and `MGClipVertex` follow the window; full-frame 2D and
+frame grabs cover it (`docs/PC.md`, "Window aspect"; `port/src/gfx/README.md`,
+"Aspect"); `aspect_*_test.cpp`. A window narrower than 4:3 keeps retail's
+horizontal field of view instead of the vertical, so the logical frame always
+fits.
+
 **B.3.3 64-bit cleanliness (Part A).** Driven by the audit; replacement of
 every round-trip site; PIE link; high arenas; CI job in PIE/high-arena
 configuration; documentation.

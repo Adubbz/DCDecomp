@@ -467,6 +467,7 @@ bool ResizeOffscreen() {
         DestroyMainTargets();
         CreateMainTargets();
         RecreateSharedTargets();
+        RecreateRenderTargets();
     }
     return true;
 }
@@ -479,6 +480,7 @@ void SyncMainTargets() {
         DestroyMainTargets();
         CreateMainTargets();
         RecreateSharedTargets();
+        RecreateRenderTargets();
     }
 }
 
@@ -766,6 +768,7 @@ void RendererInit(SDL_Window *window, const RendererConfig &config) {
     g.window = window;
     g.config = config;
     g.offscreen = config.offscreen;
+    g.layout = config.layout;
     CreateInstance();
     if (!g.offscreen && !SDL_Vulkan_CreateSurface(window, g.instance, nullptr, &g.surface)) {
         Fatal("SDL_Vulkan_CreateSurface: %s", SDL_GetError());
@@ -1092,6 +1095,23 @@ bool HeadlessSurfaceAvailable() { return InstanceHasExtension(VK_EXT_HEADLESS_SU
 uint32_t ValidationMessageCount() { return g.validation_messages; }
 
 float RenderScale() { return g.render_scale; }
+
+void SetFrameLayout(const FrameLayout &layout) {
+    if (g.in_frame || g.list != nullptr) {
+        Error("SetFrameLayout inside a frame");
+        return;
+    }
+    if (!(layout.ui_scale > 0.0f) || !std::isfinite(layout.ui_scale)) {
+        Error("SetFrameLayout: ui_scale %g", static_cast<double>(layout.ui_scale));
+        return;
+    }
+    g.layout = layout;
+    if (g.device != VK_NULL_HANDLE) {
+        RecreateRenderTargets();
+    }
+}
+
+FrameLayout CurrentFrameLayout() { return g.layout; }
 
 void SetRenderScale(float scale) {
     if (scale <= 0.0f || scale == g.render_scale || g.in_frame || g.list != nullptr) {

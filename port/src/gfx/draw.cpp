@@ -162,10 +162,21 @@ VkCompareOp DepthOp(DepthTest test) {
     }
 }
 
+// A span reaches an edge of the logical frame from inside it: what lies wholly in a bar (the host's
+// overlay) is not carried anywhere.
+bool ReachesLow(float low, float high, float edge) { return low <= edge && high > edge; }
+
+bool ReachesHigh(float low, float high, float edge) { return high >= edge && low < edge; }
+
+// A scissor or clear rect on the current target.
+LogicalRect ExtendClearRect(const LogicalRect &rect, const LogicalMapping &mapping) {
+    return ExtendRect(rect, ExtentAxes(g.target), LogicalFrame(g.target), mapping);
+}
+
 // Resolves the binding and the state into push constants and binds the pipeline and dynamic
-// state. False when the draw must be dropped.
+// state. ui places the draw by the target's UI mapping. False when the draw must be dropped.
 bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureBinding &binding,
-             const DrawState &state, PushConstants &push) {
+             const DrawState &state, PushConstants &push, bool ui = false) {
     if (!g.in_frame) {
         return false;
     }
@@ -240,7 +251,7 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
         vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, g.bound.pipeline);
     }
 
-    const LogicalMapping &mapping = target.mapping;
+    const LogicalMapping mapping = ui && g.target == kMainTarget ? UiMapping(target.mapping) : target.mapping;
     push.xform[0] = 2.0f * mapping.scale_x / static_cast<float>(mapping.pixel_width);
     push.xform[1] = 2.0f * mapping.scale_y / static_cast<float>(mapping.pixel_height);
     push.xform[2] = 2.0f * mapping.offset_x / static_cast<float>(mapping.pixel_width) - 1.0f;
@@ -327,7 +338,7 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
         g.bound.topology = static_cast<int>(topology);
         vkCmdSetPrimitiveTopology(cmd, topology);
     }
-    VkRect2D scissor = state.scissor ? PixelRect(mapping, state.scissor_rect)
+    VkRect2D scissor = state.scissor ? PixelRect(mapping, ExtendClearRect(state.scissor_rect, mapping))
                                      : VkRect2D{
                                            {0,                   0                   },
                                            {mapping.pixel_width, mapping.pixel_height}
@@ -356,9 +367,10 @@ void BindConstants(const MeshConstants &constants) {
                             &span.constants_set, 1, &offset);
 }
 
-// Pixel rectangle of a logical one on an image, for copies and blits.
-bool ResolveCopyRect(TextureHandle handle, const Rect &rect, Image *&image, Texture *&texture,
-                     VkOffset3D offsets[2]) {
+// Pixel rectangle of a logical one on an image, for copies and blits; along the axes in extend it
+// runs edge to edge.
+bool ResolveCopyRect(TextureHandle handle, const Rect &rect, uint32_t extend, Image *&image,
+                     Texture *&texture, VkOffset3D offsets[2]) {
     texture = nullptr;
     LogicalMapping mapping;
     if (handle == kMainTarget || handle == kPreviousFrame) {
@@ -385,8 +397,160 @@ bool ResolveCopyRect(TextureHandle handle, const Rect &rect, Image *&image, Text
     };
     offsets[0] = {x(rect.x), y(rect.y), 0};
     offsets[1] = {x(rect.x + rect.w), y(rect.y + rect.h), 1};
+    // A mirrored rect stays mirrored.
+    if (extend & kAxisX) {
+        bool mirrored = rect.w < 0;
+        offsets[mirrored ? 1 : 0].x = 0;
+        offsets[mirrored ? 0 : 1].x = static_cast<int32_t>(image->width);
+    }
+    if (extend & kAxisY) {
+        bool mirrored = rect.h < 0;
+        offsets[mirrored ? 1 : 0].y = 0;
+        offsets[mirrored ? 0 : 1].y = static_cast<int32_t>(image->height);
+    }
     return offsets[0].x != offsets[1].x && offsets[0].y != offsets[1].y;
 }
+
+bool Covers(int32_t start, int32_t length, float frame) {
+    int32_t low = std::min(start, start + length);
+    int32_t high = std::max(start, start + length);
+    return low <= 0 && static_cast<float>(high) >= frame;
+}
+
+// Axes along which a copy runs edge to edge: both images show past their logical frames there and
+// both rects cover them.
+uint32_t CopyAxes(TextureHandle src, const Rect &src_rect, TextureHandle dst, const Rect &dst_rect) {
+    uint32_t    axes = ExtentAxes(src) & ExtentAxes(dst);
+    LogicalRect src_frame = LogicalFrame(src);
+    LogicalRect dst_frame = LogicalFrame(dst);
+    if (!Covers(src_rect.x, src_rect.w, src_frame.w) || !Covers(dst_rect.x, dst_rect.w, dst_frame.w)) {
+        axes &= ~kAxisX;
+    }
+    if (!Covers(src_rect.y, src_rect.h, src_frame.h) || !Covers(dst_rect.y, dst_rect.h, dst_frame.h)) {
+        axes &= ~kAxisY;
+    }
+    return axes;
+}
+
+struct Corners {
+    float           x[2];
+    float           y[2];
+    const Vertex2D *at[2][2]; // [right][bottom]
+};
+
+// The quad's corners when its four vertices are those of an axis-aligned rectangle.
+bool AxisAligned(const Vertex2D *quad, Corners &corners) {
+    corners.x[0] = std::min({quad[0].x, quad[1].x, quad[2].x, quad[3].x});
+    corners.x[1] = std::max({quad[0].x, quad[1].x, quad[2].x, quad[3].x});
+    corners.y[0] = std::min({quad[0].y, quad[1].y, quad[2].y, quad[3].y});
+    corners.y[1] = std::max({quad[0].y, quad[1].y, quad[2].y, quad[3].y});
+    if (!(corners.x[1] > corners.x[0]) || !(corners.y[1] > corners.y[0])) {
+        return false;
+    }
+    uint32_t seen = 0;
+    for (int i = 0; i < 4; i++) {
+        bool on_x = quad[i].x == corners.x[0] || quad[i].x == corners.x[1];
+        bool on_y = quad[i].y == corners.y[0] || quad[i].y == corners.y[1];
+        if (!on_x || !on_y) {
+            return false;
+        }
+        int right = quad[i].x == corners.x[1] ? 1 : 0;
+        int bottom = quad[i].y == corners.y[1] ? 1 : 0;
+        corners.at[right][bottom] = &quad[i];
+        seen |= 1u << (right + 2 * bottom);
+    }
+    return seen == 0xF;
+}
+
+float Bilerp(float a, float b, float c, float d, float tx, float ty) {
+    return (a * (1.0f - tx) + b * tx) * (1.0f - ty) + (c * (1.0f - tx) + d * tx) * ty;
+}
+
+// The quad's attributes at (x, y): texture coordinates continue past its edges, colour, fog and
+// depth stop at them.
+Vertex2D Continue(const Corners &q, float x, float y) {
+    float           tx = (x - q.x[0]) / (q.x[1] - q.x[0]);
+    float           ty = (y - q.y[0]) / (q.y[1] - q.y[0]);
+    float           cx = std::clamp(tx, 0.0f, 1.0f);
+    float           cy = std::clamp(ty, 0.0f, 1.0f);
+    const Vertex2D &a = *q.at[0][0];
+    const Vertex2D &b = *q.at[1][0];
+    const Vertex2D &c = *q.at[0][1];
+    const Vertex2D &d = *q.at[1][1];
+    Vertex2D        out = {};
+    out.x = x;
+    out.y = y;
+    out.u = Bilerp(a.u, b.u, c.u, d.u, tx, ty);
+    out.v = Bilerp(a.v, b.v, c.v, d.v, tx, ty);
+    out.z = Bilerp(a.z, b.z, c.z, d.z, cx, cy);
+    for (int i = 0; i < 4; i++) {
+        out.color[i] = static_cast<uint8_t>(
+            std::lround(Bilerp(a.color[i], b.color[i], c.color[i], d.color[i], cx, cy)));
+    }
+    out.fog = static_cast<uint8_t>(std::lround(Bilerp(a.fog, b.fog, c.fog, d.fog, cx, cy)));
+    return out;
+}
+
+// The quads that carry each of the draw's rectangles past every edge of the logical frame it
+// reaches, along the axes in axes, out to the target's edge, as Quads: retail's screen edge was the
+// frame's, so whatever reached it (a fade, however it is tiled, a band, a frame grab drawn back)
+// reaches the window's. The rectangles themselves are left to the draw, so what it rasterises
+// inside the frame does not change.
+std::vector<Vertex2D> FrameFlanks(Primitive primitive, std::span<const Vertex2D> vertices, uint32_t axes,
+                                  const LogicalRect &frame, const LogicalMapping &mapping) {
+    std::vector<Vertex2D> flanks;
+    if (primitive != Primitive::Quads && !(primitive == Primitive::TriangleStrip && vertices.size() == 4)) {
+        return flanks;
+    }
+    LogicalRect bounds = TargetBounds(mapping);
+    float       left = bounds.x;
+    float       right = bounds.x + bounds.w;
+    float       top = bounds.y;
+    float       bottom = bounds.y + bounds.h;
+    for (size_t first = 0; first + 4 <= vertices.size(); first += 4) {
+        Corners q;
+        if (!AxisAligned(&vertices[first], q)) {
+            continue;
+        }
+        bool  x = (axes & kAxisX) != 0;
+        bool  y = (axes & kAxisY) != 0;
+        float xs[4] = {std::min(left, q.x[0]), q.x[0], q.x[1], std::max(right, q.x[1])};
+        float ys[4] = {std::min(top, q.y[0]), q.y[0], q.y[1], std::max(bottom, q.y[1])};
+        int   first_column = x && ReachesLow(q.x[0], q.x[1], frame.x) ? 0 : 1;
+        int   last_column = x && ReachesHigh(q.x[0], q.x[1], frame.x + frame.w) ? 2 : 1;
+        int   first_row = y && ReachesLow(q.y[0], q.y[1], frame.y) ? 0 : 1;
+        int   last_row = y && ReachesHigh(q.y[0], q.y[1], frame.y + frame.h) ? 2 : 1;
+        for (int row = first_row; row <= last_row; row++) {
+            for (int column = first_column; column <= last_column; column++) {
+                if ((row == 1 && column == 1) || xs[column] == xs[column + 1] || ys[row] == ys[row + 1]) {
+                    continue;
+                }
+                flanks.push_back(Continue(q, xs[column], ys[row]));
+                flanks.push_back(Continue(q, xs[column + 1], ys[row]));
+                flanks.push_back(Continue(q, xs[column + 1], ys[row + 1]));
+                flanks.push_back(Continue(q, xs[column], ys[row + 1]));
+            }
+        }
+    }
+    return flanks;
+}
+
+// Whether 2D samples an image of the frame, which lies in the target's logical mapping.
+bool SamplesFrame(const TextureBinding &binding) {
+    if (binding.texture == kPreviousFrame) {
+        return true;
+    }
+    const Texture *texture = LookupTexture(binding.texture);
+    return texture != nullptr && (texture->shares_main_depth || texture->frame);
+}
+
+// Axes along which a 2D draw's texture continues past the logical frame: all of them untextured.
+uint32_t TextureAxes(const TextureBinding &binding) {
+    return binding.texture == kNullTexture ? kAxisX | kAxisY : ExtentAxes(binding.texture);
+}
+
+void DrawPrepared(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
+                  const DrawState &state, bool ui);
 
 VkCommandBuffer CopyCommands() {
     if (g.in_frame) {
@@ -480,6 +644,80 @@ LogicalMapping MainMapping(uint32_t width, uint32_t height) {
                           height};
 }
 
+LogicalMapping UiMapping(const LogicalMapping &mapping) {
+    float scale = g.layout.ui_scale;
+    if (scale == 1.0f) {
+        return mapping;
+    }
+    float centre_x = kLogicalWidth * 0.5f * mapping.scale_x + mapping.offset_x;
+    float centre_y = kLogicalHeight * 0.5f * mapping.scale_y + mapping.offset_y;
+    float scale_x = mapping.scale_x * scale;
+    float scale_y = mapping.scale_y * scale;
+    return LogicalMapping{scale_x,
+                          scale_y,
+                          std::round(centre_x - kLogicalWidth * 0.5f * scale_x),
+                          std::round(centre_y - kLogicalHeight * 0.5f * scale_y),
+                          mapping.pixel_width,
+                          mapping.pixel_height};
+}
+
+bool FillsWindow() { return g.layout.aspect == AspectMode::Fill; }
+
+LogicalRect TargetBounds(const LogicalMapping &mapping) {
+    float left = -mapping.offset_x / mapping.scale_x;
+    float top = -mapping.offset_y / mapping.scale_y;
+    return {left, top, static_cast<float>(mapping.pixel_width) / mapping.scale_x,
+            static_cast<float>(mapping.pixel_height) / mapping.scale_y};
+}
+
+uint32_t ExtentAxes(TextureHandle handle) {
+    if (!FillsWindow()) {
+        return 0;
+    }
+    if (handle == kMainTarget || handle == kPreviousFrame) {
+        return kAxisX | kAxisY;
+    }
+    const Texture *texture = LookupTexture(handle);
+    if (texture == nullptr || !texture->render_target) {
+        return 0;
+    }
+    if (texture->shares_main_depth) {
+        return kAxisX | kAxisY;
+    }
+    return texture->frame ? kAxisX : 0;
+}
+
+LogicalRect LogicalFrame(TextureHandle handle) {
+    const Texture *texture = handle == kMainTarget ? nullptr : LookupTexture(handle);
+    if (texture == nullptr) {
+        return {0.0f, 0.0f, kLogicalWidth, kLogicalHeight};
+    }
+    return {0.0f, 0.0f, static_cast<float>(texture->logical_width),
+            static_cast<float>(texture->logical_height)};
+}
+
+LogicalRect ExtendRect(LogicalRect rect, uint32_t axes, const LogicalRect &frame,
+                       const LogicalMapping &mapping) {
+    LogicalRect bounds = TargetBounds(mapping);
+    float       left = rect.x;
+    float       right = rect.x + rect.w;
+    float       top = rect.y;
+    float       bottom = rect.y + rect.h;
+    if (axes & kAxisX) {
+        float low = left;
+        float high = right;
+        left = ReachesLow(low, high, frame.x) ? std::min(left, bounds.x) : left;
+        right = ReachesHigh(low, high, frame.x + frame.w) ? std::max(right, bounds.x + bounds.w) : right;
+    }
+    if (axes & kAxisY) {
+        float low = top;
+        float high = bottom;
+        top = ReachesLow(low, high, frame.y) ? std::min(top, bounds.y) : top;
+        bottom = ReachesHigh(low, high, frame.y + frame.h) ? std::max(bottom, bounds.y + bounds.h) : bottom;
+    }
+    return {left, top, right - left, bottom - top};
+}
+
 void EndRendering() {
     if (g.rendering) {
         vkCmdEndRendering(DrawCommands());
@@ -543,6 +781,20 @@ LogicalMapping GetLogicalMapping(TextureHandle handle) {
     return TextureMapping(*texture);
 }
 
+LogicalMapping GetUiMapping(TextureHandle handle) {
+    LogicalMapping mapping = GetLogicalMapping(handle);
+    return handle == kMainTarget ? UiMapping(mapping) : mapping;
+}
+
+LogicalRect VisibleLogicalRect(TextureHandle handle) {
+    LogicalRect frame = LogicalFrame(handle);
+    uint32_t    axes = ExtentAxes(handle);
+    if (axes == 0) {
+        return frame;
+    }
+    return ExtendRect(frame, axes, frame, GetLogicalMapping(handle));
+}
+
 void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
             const DrawState &state) {
     if (vertices.empty()) {
@@ -553,6 +805,27 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
             Draw2DEntry{primitive, std::vector<Vertex2D>(vertices.begin(), vertices.end()), binding, state});
         return;
     }
+    // Depth places a draw among the meshes, and an image of the frame lies where the frame does.
+    bool ui = state.depth_test == DepthTest::Always && !state.depth_write && !SamplesFrame(binding);
+    DrawPrepared(primitive, vertices, binding, state, ui);
+    if (uint32_t axes = ExtentAxes(g.target) & TextureAxes(binding); axes != 0 && g.in_frame) {
+        LogicalMapping mapping = GetLogicalMapping(g.target);
+        if (ui && g.target == kMainTarget) {
+            mapping = UiMapping(mapping);
+        }
+        LogicalRect           frame = LogicalFrame(g.target);
+        std::vector<Vertex2D> flanks = FrameFlanks(primitive, vertices, axes, frame, mapping);
+        if (!flanks.empty()) {
+            DrawPrepared(Primitive::Quads, flanks, binding, state, ui);
+        }
+    }
+}
+
+namespace detail {
+namespace {
+
+void DrawPrepared(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
+                  const DrawState &state, bool ui) {
     bool lines = primitive == Primitive::Lines || primitive == Primitive::LineStrip;
     // VK_KHR_portability_subset may lack fans (Metal has none); the same triangles go as a list.
     bool                fan_as_list = primitive == Primitive::TriangleFan && !g.triangle_fans;
@@ -574,7 +847,7 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
             break;
     }
     PushConstants push;
-    if (!Prepare(lines ? kFamily2DLines : kFamily2DTriangles, topology, binding, state, push)) {
+    if (!Prepare(lines ? kFamily2DLines : kFamily2DTriangles, topology, binding, state, push, ui)) {
         return;
     }
     VkCommandBuffer cmd = DrawCommands();
@@ -623,6 +896,9 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
     vkCmdBindIndexBuffer(cmd, indices.buffer, indices.offset, VK_INDEX_TYPE_UINT32);
     vkCmdDrawIndexed(cmd, quads * 6, 1, 0, 0, 0);
 }
+
+} // namespace
+} // namespace detail
 
 void DrawMesh(MeshHandle handle, uint32_t first_index, uint32_t index_count, const MeshConstants &constants,
               const TextureBinding &binding, const DrawState &state, const MeshTransform *transform) {
@@ -701,7 +977,7 @@ void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float dep
     Target target;
     EnsureRendering(target);
     VkClearRect clear = {};
-    clear.rect = rect ? PixelRect(target.mapping, *rect)
+    clear.rect = rect ? PixelRect(target.mapping, ExtendClearRect(*rect, target.mapping))
                       : VkRect2D{
                             {0,                          0                          },
                             {target.mapping.pixel_width, target.mapping.pixel_height}
@@ -744,7 +1020,7 @@ void ClearStencil(uint8_t value, const LogicalRect *rect) {
     Target target;
     EnsureRendering(target);
     VkClearRect clear = {};
-    clear.rect = rect ? PixelRect(target.mapping, *rect)
+    clear.rect = rect ? PixelRect(target.mapping, ExtendClearRect(*rect, target.mapping))
                       : VkRect2D{
                             {0,                          0                          },
                             {target.mapping.pixel_width, target.mapping.pixel_height}
@@ -767,9 +1043,10 @@ bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t ds
     VkOffset3D src_offsets[2];
     VkOffset3D dst_offsets[2];
     Rect       dst_rect = {dst_x, dst_y, src_rect.w, src_rect.h};
+    uint32_t   extend = CopyAxes(src, src_rect, dst, dst_rect);
     if (src_rect.w <= 0 || src_rect.h <= 0 ||
-        !ResolveCopyRect(src, src_rect, src_image, src_texture, src_offsets) ||
-        !ResolveCopyRect(dst, dst_rect, dst_image, dst_texture, dst_offsets)) {
+        !ResolveCopyRect(src, src_rect, extend, src_image, src_texture, src_offsets) ||
+        !ResolveCopyRect(dst, dst_rect, extend, dst_image, dst_texture, dst_offsets)) {
         return false;
     }
     if (src_image->format != dst_image->format) {
@@ -804,8 +1081,9 @@ bool BlitTexture(TextureHandle src, Rect src_rect, TextureHandle dst, Rect dst_r
     Texture   *dst_texture;
     VkOffset3D src_offsets[2];
     VkOffset3D dst_offsets[2];
-    if (!ResolveCopyRect(src, src_rect, src_image, src_texture, src_offsets) ||
-        !ResolveCopyRect(dst, dst_rect, dst_image, dst_texture, dst_offsets)) {
+    uint32_t   extend = CopyAxes(src, src_rect, dst, dst_rect);
+    if (!ResolveCopyRect(src, src_rect, extend, src_image, src_texture, src_offsets) ||
+        !ResolveCopyRect(dst, dst_rect, extend, dst_image, dst_texture, dst_offsets)) {
         return false;
     }
     if (src_image->format != dst_image->format) {

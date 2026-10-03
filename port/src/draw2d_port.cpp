@@ -53,7 +53,7 @@ bool Resolve(u_long tex0, u_long tex1, gfx::DrawState &state, Texture &texture) 
     if (texture.binding.texture == gfx::kMainTarget) {
         gfx::TextureHandle snapshot =
             gfx::NamedRenderTarget(kFrameSnapshot, static_cast<uint32_t>(gfx::kLogicalWidth),
-                                   static_cast<uint32_t>(gfx::kLogicalHeight), true);
+                                   static_cast<uint32_t>(gfx::kLogicalHeight), true, false, true);
         if (snapshot == gfx::kNullTexture || !gfx::SnapshotFrame(snapshot)) {
             return false;
         }

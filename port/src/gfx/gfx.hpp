@@ -24,6 +24,21 @@ inline constexpr float kLogicalHeight = 480.0f;
 
 inline constexpr uint32_t kDepthQueryCount = 16;
 
+// How the logical frame meets a window of another shape (README, "Aspect").
+enum class AspectMode : uint8_t {
+    // The logical frame keeps its place, centred and letterboxed, but 3D, the 2D that covers the
+    // frame and the frame targets fill the window: a wider window shows more world at the sides.
+    Fill,
+    // Everything in the letterboxed 4:3 frame.
+    Letterbox,
+};
+
+struct FrameLayout {
+    AspectMode aspect = AspectMode::Fill;
+    // 2D that tests no depth, scaled about the main target's centre.
+    float ui_scale = 1.0f;
+};
+
 enum class PresentMode : uint8_t {
     Fifo,
     Mailbox,
@@ -35,7 +50,8 @@ struct RendererConfig {
     PresentMode           present_mode = PresentMode::Fifo;
     std::filesystem::path pipeline_cache = "save/pipeline_cache.bin";
     // Pixels per logical texel of render targets; 0 derives it from the window height at init.
-    float render_scale = 0.0f;
+    float       render_scale = 0.0f;
+    FrameLayout layout;
 #ifdef NDEBUG
     bool validation = false;
 #else
@@ -91,6 +107,9 @@ double PipelineCompileSeconds();
 float  RenderScale();
 // Recreates every render target at the new scale, carrying its contents over.
 void SetRenderScale(float scale);
+// Outside a frame; frame targets are recreated for the new aspect, carrying their logical frame over.
+void        SetFrameLayout(const FrameLayout &layout);
+FrameLayout CurrentFrameLayout();
 
 // ---- Textures --------------------------------------------------------------------------------
 
@@ -127,6 +146,7 @@ struct TextureInfo {
     bool          has_alpha;
     bool          render_target;
     bool          shares_main_depth;
+    bool          frame_target;
 };
 
 // Returns kNullTexture, with a message, for a size the device cannot hold. Contents start zeroed.
@@ -141,13 +161,18 @@ TextureHandle CreatePalette();
 // size and mapped like it (640x480 logical, letterboxed), whatever size is asked for, follows the
 // main target through resizes (contents lost, like the main target's) and ignores the render
 // scale. A Clear of depth or stencil on it clears the main target's.
+//
+// A frame target holds copies of the frame (the game's frame grabs). With AspectMode::Fill it is
+// the main target's pixel width and maps its logical width onto the main target's logical frame,
+// so the frame's sides past the logical frame are kept; rows keep the render target's scale.
+// With AspectMode::Letterbox it is an ordinary render target.
 TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha,
-                                 bool share_main_depth = false);
+                                 bool share_main_depth = false, bool frame_target = false);
 // The render target registered under name (the game's "#name#w#h#bpp" placeholders), created on
-// first use and recreated if asked for at another size, alpha or depth sharing. Destroying it
-// drops the name.
+// first use and recreated if asked for at another size, alpha, depth sharing or frame shape.
+// Destroying it drops the name.
 TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
-                                bool has_alpha, bool share_main_depth = false);
+                                bool has_alpha, bool share_main_depth = false, bool frame_target = false);
 TextureHandle FindNamedRenderTarget(std::string_view name);
 void          DestroyTexture(TextureHandle texture);
 // Pixels are tightly packed rows of row_length texels (0: w), RGBA8 as bytes r,g,b,a, or one
@@ -411,7 +436,16 @@ struct LogicalMapping {
 
 void           SetRenderTarget(TextureHandle target);
 TextureHandle  CurrentRenderTarget();
+// Where the target's logical space lands: meshes, clears, copies, depth reads, and 2D that tests
+// depth or samples an image of the frame.
 LogicalMapping GetLogicalMapping(TextureHandle target);
+// Where the rest of 2D lands: on the main target the logical mapping scaled by ui_scale about the
+// target's centre, elsewhere the logical mapping.
+LogicalMapping GetUiMapping(TextureHandle target);
+// The logical rect the target's pixels show: its logical frame, or with AspectMode::Fill on the main
+// target (and the targets mapped like it) all of the target, past the frame on its wider axis, and
+// on a frame target the main target's horizontal extent.
+LogicalRect VisibleLogicalRect(TextureHandle target);
 // Clears the current target within rect (logical; null: all of it). color is GS bytes.
 void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float depth,
            const LogicalRect *rect = nullptr);

@@ -129,6 +129,37 @@ uint32_t ScaledSize(uint32_t logical, float scale) {
     return std::max(1u, static_cast<uint32_t>(std::ceil(static_cast<float>(logical) * scale)));
 }
 
+// What a render target's image measures now: the main target's for one sharing its depth, the main
+// target's width and the main frame's scale in rows for a frame target filling the window, its
+// logical size at the render scale otherwise.
+void TargetPixelSize(const Texture &texture, uint32_t &width, uint32_t &height) {
+    const Image &main = g.main_color[0];
+    if (texture.shares_main_depth) {
+        width = main.width;
+        height = main.height;
+    } else if (FrameShaped(texture)) {
+        width = main.width;
+        height = ScaledSize(texture.logical_height, MainMapping(main.width, main.height).scale_y);
+    } else {
+        width = ScaledSize(texture.logical_width, g.render_scale);
+        height = ScaledSize(texture.logical_height, g.render_scale);
+    }
+}
+
+// The pixel rect a mapping puts a logical rect on, for blits.
+void MappedOffsets(const LogicalMapping &mapping, float w, float h, VkOffset3D offsets[2]) {
+    auto x = [&](float value) {
+        return std::clamp(static_cast<int32_t>(std::lround(value * mapping.scale_x + mapping.offset_x)), 0,
+                          static_cast<int32_t>(mapping.pixel_width));
+    };
+    auto y = [&](float value) {
+        return std::clamp(static_cast<int32_t>(std::lround(value * mapping.scale_y + mapping.offset_y)), 0,
+                          static_cast<int32_t>(mapping.pixel_height));
+    };
+    offsets[0] = {x(0.0f), y(0.0f), 0};
+    offsets[1] = {x(w), y(h), 1};
+}
+
 } // namespace
 
 bool IsDepthFormat(VkFormat format) {
@@ -136,9 +167,23 @@ bool IsDepthFormat(VkFormat format) {
            format == VK_FORMAT_D32_SFLOAT;
 }
 
+bool FrameShaped(const Texture &texture) { return texture.frame && FillsWindow(); }
+
 LogicalMapping TextureMapping(const Texture &texture) {
     if (texture.shares_main_depth) {
         return MainMapping(texture.image.width, texture.image.height);
+    }
+    if (FrameShaped(texture)) {
+        // The logical width lies over the main target's logical frame, whose sides it keeps.
+        LogicalMapping main = MainMapping(g.main_color[0].width, g.main_color[0].height);
+        float          rows =
+            static_cast<float>(texture.image.height) / static_cast<float>(texture.logical_height);
+        return LogicalMapping{main.scale_x * kLogicalWidth / static_cast<float>(texture.logical_width),
+                              rows,
+                              main.offset_x,
+                              0.0f,
+                              texture.image.width,
+                              texture.image.height};
     }
     return LogicalMapping{static_cast<float>(texture.image.width) / static_cast<float>(texture.logical_width),
                           static_cast<float>(texture.image.height) /
@@ -339,35 +384,55 @@ void RecreateRenderTargets() {
             if (!texture.live || !texture.render_target || texture.shares_main_depth) {
                 continue;
             }
-            uint32_t width = ScaledSize(texture.logical_width, g.render_scale);
-            uint32_t height = ScaledSize(texture.logical_height, g.render_scale);
+            uint32_t width;
+            uint32_t height;
+            TargetPixelSize(texture, width, height);
             if (!CheckSize(width, height)) {
                 width = texture.image.width;
                 height = texture.image.height;
             }
-            Image image = CreateTargetImage(width, height);
-            Image depth = CreateTargetDepth(width, height);
-            Transition(cmd, texture.image, TransferSrc());
-            Transition(cmd, image, TransferDst());
-            VkImageBlit region = {};
-            region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-            region.srcOffsets[1] = {static_cast<int32_t>(texture.image.width),
-                                    static_cast<int32_t>(texture.image.height), 1};
-            region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-            region.dstOffsets[1] = {static_cast<int32_t>(width), static_cast<int32_t>(height), 1};
-            vkCmdBlitImage(cmd, texture.image.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image.image,
-                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_LINEAR);
-            ToRest(cmd, image);
-            ClearDepth(cmd, depth);
+            Texture resized = texture;
+            resized.image.width = width;
+            resized.image.height = height;
+            LogicalMapping before = TextureMapping(texture);
+            LogicalMapping after = TextureMapping(resized);
+            bool           same_size = width == texture.image.width && height == texture.image.height;
+            if (same_size && before.offset_x == after.offset_x && before.offset_y == after.offset_y) {
+                continue;
+            }
             Image old_image = texture.image;
             Image old_depth = texture.depth;
+            texture.image = CreateTargetImage(width, height);
+            texture.depth = CreateTargetDepth(width, height);
+            // What lies outside the logical frame on either side is the frame's, not this image's.
+            VkOffset3D from[2];
+            VkOffset3D to[2];
+            float      w = static_cast<float>(texture.logical_width);
+            float      h = static_cast<float>(texture.logical_height);
+            MappedOffsets(before, w, h, from);
+            MappedOffsets(after, w, h, to);
+            ClearImage(cmd, texture.image,
+                       VkClearColorValue{
+                           {0.0f, 0.0f, 0.0f, 1.0f}
+            });
+            Transition(cmd, old_image, TransferSrc());
+            Transition(cmd, texture.image, TransferDst());
+            VkImageBlit region = {};
+            region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
+            region.srcOffsets[0] = from[0];
+            region.srcOffsets[1] = from[1];
+            region.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
+            region.dstOffsets[0] = to[0];
+            region.dstOffsets[1] = to[1];
+            vkCmdBlitImage(cmd, old_image.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, texture.image.image,
+                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_LINEAR);
+            ToRest(cmd, texture.image);
+            ClearDepth(cmd, texture.depth);
             DeferDestroy([old_image, old_depth]() mutable {
                 DestroyImage(old_image);
                 DestroyImage(old_depth);
             });
-            texture.image = image;
-            texture.depth = depth;
-            WriteTextureDescriptor(slot, image.view);
+            WriteTextureDescriptor(slot, texture.image.view);
         }
     });
 }
@@ -480,13 +545,22 @@ TextureHandle CreateTexture(const TextureDesc &desc) {
 TextureHandle CreatePalette() { return CreateTexture(TextureDesc{256, 1, TextureFormat::Rgba8, 1, true}); }
 
 TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha,
-                                 bool share_main_depth) {
+                                 bool share_main_depth, bool frame_target) {
     if (share_main_depth) {
         logical_width = static_cast<uint32_t>(kLogicalWidth);
         logical_height = static_cast<uint32_t>(kLogicalHeight);
+        frame_target = false;
     }
-    uint32_t width = share_main_depth ? g.main_color[0].width : ScaledSize(logical_width, g.render_scale);
-    uint32_t height = share_main_depth ? g.main_color[0].height : ScaledSize(logical_height, g.render_scale);
+    Texture shape;
+    shape.shares_main_depth = share_main_depth;
+    shape.frame = frame_target;
+    shape.logical_width = logical_width;
+    shape.logical_height = logical_height;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    if (logical_width != 0 && logical_height != 0) {
+        TargetPixelSize(shape, width, height);
+    }
     if (logical_width == 0 || logical_height == 0 || !CheckSize(width, height)) {
         return kNullTexture;
     }
@@ -501,6 +575,7 @@ TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height
     texture.desc = TextureDesc{logical_width, logical_height, TextureFormat::Rgba8, 1, has_alpha};
     texture.render_target = true;
     texture.shares_main_depth = share_main_depth;
+    texture.frame = frame_target;
     texture.logical_width = logical_width;
     texture.logical_height = logical_height;
     texture.last_draw_use = 0;
@@ -519,18 +594,21 @@ TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height
 }
 
 TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
-                                bool has_alpha, bool share_main_depth) {
+                                bool has_alpha, bool share_main_depth, bool frame_target) {
     TextureHandle existing = FindNamedRenderTarget(name);
     if (existing != kNullTexture) {
         const Texture &texture = *LookupTexture(existing);
         bool           same_size = share_main_depth || (texture.logical_width == logical_width &&
                                               texture.logical_height == logical_height);
-        if (same_size && texture.desc.has_alpha == has_alpha && texture.shares_main_depth == share_main_depth) {
+        bool           same_shape = texture.shares_main_depth == share_main_depth &&
+                          (share_main_depth || texture.frame == frame_target);
+        if (same_size && same_shape && texture.desc.has_alpha == has_alpha) {
             return existing;
         }
         DestroyTexture(existing);
     }
-    TextureHandle created = CreateRenderTarget(logical_width, logical_height, has_alpha, share_main_depth);
+    TextureHandle created =
+        CreateRenderTarget(logical_width, logical_height, has_alpha, share_main_depth, frame_target);
     if (created != kNullTexture) {
         g.named_targets.emplace(std::string(name), created);
     }
@@ -628,6 +706,7 @@ std::optional<TextureInfo> GetTextureInfo(TextureHandle handle) {
                            1,
                            true,
                            true,
+                           false,
                            false};
     }
     Texture *texture = LookupTexture(handle);
@@ -636,7 +715,8 @@ std::optional<TextureInfo> GetTextureInfo(TextureHandle handle) {
     }
     return TextureInfo{texture->logical_width, texture->logical_height, texture->image.width,
                        texture->image.height, texture->desc.format, texture->desc.mip_levels,
-                       texture->desc.has_alpha, texture->render_target, texture->shares_main_depth};
+                       texture->desc.has_alpha, texture->render_target, texture->shares_main_depth,
+                       texture->frame};
 }
 
 void ConvertPs2Alpha(uint32_t *rgba, size_t count) {

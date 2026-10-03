@@ -283,6 +283,9 @@ int main(int argc, const char **argv, const char **envp) {
     renderer.pipeline_cache = PathsSaveRoot() / "pipeline_cache.bin";
     renderer.progress = ReportShaderProgress;
     renderer.offscreen = offscreen;
+    renderer.layout.aspect =
+        config.aspect == ConfigAspect::Auto ? gfx::AspectMode::Fill : gfx::AspectMode::Letterbox;
+    renderer.layout.ui_scale = config.ui_scale;
     gfx::RendererInit(WindowHandle(), renderer);
 
     audio::DefaultMixer().SetMasterGain(config.master_volume);
