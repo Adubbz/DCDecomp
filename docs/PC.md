@@ -344,9 +344,10 @@ CPU: in the opening's first scene (about 2,100 mesh draws and 100 2D draws per
 tick, all of them keyed), a release build spends 1.6 ms interpolating and 1.8 ms
 replaying a list, and lavapipe about 150 ms rasterising it at 1280x960. The
 canonical render is the frame the port drew before, and the only one that pays
-for copies and readbacks. `darkcloud --headless --display-per-tick 4` leaves
-every screenshot of the title, the attract movie and the opening byte for byte
-the same.
+for copies and readbacks. The first dungeon's floor B1 draws about 265 mesh and 145 2D
+draws a tick (at most 666). `darkcloud --headless --display-per-tick 4` leaves
+every screenshot of the title, the attract movie, the opening and that floor
+byte for byte the same.
 
 Overlays are not re-initialised: `TITLE.BIN` and `DUN.BIN` are linked in
 once, where retail reloaded the overlay's data, zeroed its `.bss` and re-ran
