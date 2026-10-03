@@ -52,3 +52,26 @@ DC_TEST(platform_input_script_rejects_bad_lines) {
     DC_CHECK(!InputScriptParse("-1 cross\n", script, error));
     DC_CHECK(InputScriptParse("10 cross\n5 pad2 circle\n", script, error));
 }
+
+DC_TEST(platform_input_script_takes_keys_and_the_mouse) {
+    InputResetBindings();
+    InputScript script;
+    std::string error;
+    const char *text = "0 key:w key:D mouse1 mouse:5,-5\n10 key:Return key:left_shift\n12 mouse2 cross\n";
+    DC_CHECK(InputScriptParse(text, script, error));
+    InputPadState walk = InputScriptStateAt(script, 0, 0);
+    DC_CHECK(walk.buttons == kInputCross);
+    DC_CHECK(walk.stick_dpad == (kInputUp | kInputRight));
+    DC_CHECK(walk.left_x > 128 + 49 && walk.left_y < 128 - 50 && walk.left_x != 255);
+    DC_CHECK(walk.right_x > 128 + 49 && walk.right_y > 128 + 49);
+    InputPadState start = InputScriptStateAt(script, 0, 10);
+    DC_CHECK(start.buttons == kInputStart && start.left_x == 128 && start.right_x == 128);
+    DC_CHECK(InputScriptStateAt(script, 0, 12).buttons == (kInputR1 | kInputCross));
+
+    DC_CHECK(!InputScriptParse("0 pad2 key:w\n", script, error));
+    DC_CHECK(error == "line 1: keys and the mouse drive pad 1 only");
+    DC_CHECK(!InputScriptParse("0 key:nosuchkey\n", script, error));
+    DC_CHECK(error == "line 1: unknown key \"nosuchkey\"");
+    DC_CHECK(!InputScriptParse("0 mouse:5\n", script, error));
+    DC_CHECK(!InputScriptParse("0 mouse9\n", script, error));
+}

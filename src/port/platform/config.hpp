@@ -24,6 +24,10 @@ struct Config {
     bool                          fullscreen = false;
     float                         master_volume = 1.0f;
     std::vector<ConfigKeyBinding> key_bindings;
+    float                         mouse_sensitivity = 0.1f;
+    bool                          mouse_invert_y = false;
+    bool                          mouse_capture = true;
+    std::vector<std::string>      mouse_release_keys = {"Escape"};
 };
 
 const Config &ConfigGet();
