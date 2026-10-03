@@ -118,6 +118,17 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
     if (name == "video.present_mode") {
         return ParsePresentMode(value, config.present_mode);
     }
+    if (name == "video.interpolation") {
+        return ParseBool(value, config.interpolation);
+    }
+    if (name == "video.max_fps") {
+        double fps = 0.0;
+        if (!ParseNumber(value, fps) || !(fps >= 0.0) || !std::isfinite(fps)) {
+            return false;
+        }
+        config.max_fps = fps;
+        return true;
+    }
     if (name == "video.vsync") {
         bool vsync = true;
         if (!ParseBool(value, vsync)) {

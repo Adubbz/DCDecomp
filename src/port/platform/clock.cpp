@@ -167,6 +167,26 @@ void ClockWaitNextTick() {
     SleepUntil(Deadline(g_clock.count + 1));
 }
 
+double ClockTickFraction() {
+    if (g_clock.unbounded) {
+        return 1.0;
+    }
+    EnsureAnchored();
+    std::chrono::duration<double> elapsed = SteadyClock::now() - Deadline(g_clock.count);
+    return std::clamp(elapsed.count() * g_clock.hertz, 0.0, std::nextafter(1.0, 0.0));
+}
+
+void ClockWaitNextTick(ClockWaitHook hook) {
+    if (g_clock.unbounded) {
+        return;
+    }
+    EnsureAnchored();
+    SteadyClock::time_point deadline = Deadline(g_clock.count + 1);
+    while (hook != nullptr && SteadyClock::now() < deadline && hook(ClockTickFraction(), deadline)) {
+    }
+    SleepUntil(deadline);
+}
+
 std::int64_t ClockSyncV() {
     ClockWaitNextTick();
     return ClockPump();

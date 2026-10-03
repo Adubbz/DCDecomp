@@ -4,6 +4,7 @@
 #include <cstring>
 
 #include "context.hpp"
+#include "displaylist.hpp"
 
 namespace gfx {
 
@@ -296,7 +297,7 @@ Texture *LookupTexture(TextureHandle handle) {
         return nullptr;
     }
     Texture &texture = g.textures[slot];
-    if (!texture.live || texture.generation != handle >> kSlotBits) {
+    if (!texture.live || texture.generation != handle >> kSlotBits || (texture.doomed && !g.replaying)) {
         return nullptr;
     }
     return &texture;
@@ -308,7 +309,7 @@ Mesh *LookupMesh(MeshHandle handle) {
         return nullptr;
     }
     Mesh &mesh = g.meshes[slot];
-    if (!mesh.live || mesh.generation != handle >> kSlotBits) {
+    if (!mesh.live || mesh.generation != handle >> kSlotBits || (mesh.doomed && !g.replaying)) {
         return nullptr;
     }
     return &mesh;
@@ -316,10 +317,10 @@ Mesh *LookupMesh(MeshHandle handle) {
 
 Image *ColorImageOf(TextureHandle handle) {
     if (handle == kMainTarget) {
-        return &CurrentMainColor();
+        return &MainColorTarget();
     }
     if (handle == kPreviousFrame) {
-        return &PreviousMainColor();
+        return &PreviousFrameImage();
     }
     Texture *texture = LookupTexture(handle);
     return texture ? &texture->image : nullptr;
@@ -389,6 +390,55 @@ void RecreateSharedTargets() {
             texture.image = image;
             WriteTextureDescriptor(slot, image.view);
         }
+    });
+}
+
+void DestroyDoomedTexture(TextureHandle handle) {
+    uint32_t slot = handle & kSlotMask;
+    if (slot < kFirstUserSlot || slot >= g.textures.size()) {
+        return;
+    }
+    Texture &texture = g.textures[slot];
+    if (!texture.live || texture.generation != handle >> kSlotBits) {
+        return;
+    }
+    if (g.target == handle) {
+        if (g.in_frame) {
+            EndRendering();
+            ReleaseTarget();
+        }
+        g.target = kMainTarget;
+    }
+    Image image = texture.image;
+    Image depth = texture.depth;
+    texture.live = false;
+    texture.doomed = false;
+    texture.image = {};
+    texture.depth = {};
+    DeferDestroy([slot, image, depth]() mutable {
+        WriteTextureDescriptor(slot, g.textures[0].image.view);
+        DestroyImage(image);
+        DestroyImage(depth);
+        g.free_texture_slots.push_back(slot);
+    });
+}
+
+void DestroyDoomedMesh(MeshHandle handle) {
+    uint32_t slot = handle & kSlotMask;
+    if (slot == 0 || slot >= g.meshes.size()) {
+        return;
+    }
+    Mesh &mesh = g.meshes[slot];
+    if (!mesh.live || mesh.generation != handle >> kSlotBits) {
+        return;
+    }
+    Buffer buffer = mesh.buffer;
+    mesh.live = false;
+    mesh.doomed = false;
+    mesh.buffer = {};
+    DeferDestroy([slot, buffer]() mutable {
+        DestroyBuffer(buffer);
+        g.free_mesh_slots.push_back(slot);
     });
 }
 
@@ -498,21 +548,18 @@ void DestroyTexture(TextureHandle handle) {
         return;
     }
     std::erase_if(g.named_targets, [handle](const auto &entry) { return entry.second == handle; });
+    if (RecordingCalls()) {
+        if (g.record_target == handle) {
+            SetRenderTarget(kMainTarget);
+        }
+        texture->doomed = true;
+        RecordDoomedTexture(handle);
+        return;
+    }
     if (g.target == handle) {
         SetRenderTarget(kMainTarget);
     }
-    uint32_t slot = handle & kSlotMask;
-    Image    image = texture->image;
-    Image    depth = texture->depth;
-    texture->live = false;
-    texture->image = {};
-    texture->depth = {};
-    DeferDestroy([slot, image, depth]() mutable {
-        WriteTextureDescriptor(slot, g.textures[0].image.view);
-        DestroyImage(image);
-        DestroyImage(depth);
-        g.free_texture_slots.push_back(slot);
-    });
+    DestroyDoomedTexture(handle);
 }
 
 bool UpdateTexture(TextureHandle handle, uint32_t mip, uint32_t x, uint32_t y, uint32_t w, uint32_t h,
@@ -533,6 +580,15 @@ bool UpdateTexture(TextureHandle handle, uint32_t mip, uint32_t x, uint32_t y, u
     uint32_t texel = TexelSize(texture->desc.format);
     uint32_t stride = (row_length ? row_length : w) * texel;
     uint32_t row = w * texel;
+    if (RecordingCalls()) {
+        UpdateTextureEntry entry{handle, mip, x, y, w, h, std::vector<uint8_t>(static_cast<size_t>(row) * h)};
+        for (uint32_t i = 0; i < h; i++) {
+            std::memcpy(entry.pixels.data() + static_cast<size_t>(i) * row,
+                        static_cast<const uint8_t *>(pixels) + static_cast<size_t>(i) * stride, row);
+        }
+        RecordEntry(std::move(entry));
+        return true;
+    }
 
     TransientSpan staging = AllocateTransient(static_cast<VkDeviceSize>(row) * h, 16);
     for (uint32_t i = 0; i < h; i++) {
@@ -630,9 +686,14 @@ bool UpdateMeshVertices(MeshHandle handle, uint32_t first, std::span<const Verte
         Error("UpdateMeshVertices: bad mesh %#x or range", handle);
         return false;
     }
-    if (!vertices.empty()) {
-        UploadToBuffer(*mesh, first * sizeof(Vertex3D), vertices.data(), vertices.size_bytes());
+    if (vertices.empty()) {
+        return true;
     }
+    if (RecordingCalls()) {
+        RecordEntry(UpdateMeshEntry{handle, first, std::vector<Vertex3D>(vertices.begin(), vertices.end())});
+        return true;
+    }
+    UploadToBuffer(*mesh, first * sizeof(Vertex3D), vertices.data(), vertices.size_bytes());
     return true;
 }
 
@@ -641,14 +702,12 @@ void DestroyMesh(MeshHandle handle) {
     if (mesh == nullptr) {
         return;
     }
-    uint32_t slot = handle & kSlotMask;
-    Buffer   buffer = mesh->buffer;
-    mesh->live = false;
-    mesh->buffer = {};
-    DeferDestroy([slot, buffer]() mutable {
-        DestroyBuffer(buffer);
-        g.free_mesh_slots.push_back(slot);
-    });
+    if (RecordingCalls()) {
+        mesh->doomed = true;
+        RecordDoomedMesh(handle);
+        return;
+    }
+    DestroyDoomedMesh(handle);
 }
 
 } // namespace gfx

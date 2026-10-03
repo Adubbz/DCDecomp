@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <cstdint>
 
 // The game's logic clock: the port's stand-in for the PS2's VSync interrupt.
@@ -29,6 +30,10 @@
 
 using ClockTickCallback = int (*)(int);
 using ClockIdleHook = void (*)();
+// Called over and over while ClockWaitNextTick waits, with the elapsed fraction of the current tick
+// (0 at its start, below 1) and the time the next one is due; it does one piece of work (presents
+// a display frame) and returns true while it has more to do before that time.
+using ClockWaitHook = bool (*)(double fraction, std::chrono::steady_clock::time_point next_tick);
 
 void ClockSetTickRate(double hertz);
 
@@ -61,6 +66,13 @@ void ClockRemovePumpHook(ClockIdleHook hook);
 std::int64_t ClockPump();
 
 void ClockWaitNextTick();
+
+// The same wait, running hook until it is done or the next tick is due. Unbounded, it returns at
+// once without calling it.
+void ClockWaitNextTick(ClockWaitHook hook);
+
+// Elapsed fraction of the current tick, in [0, 1); 1 when unbounded.
+double ClockTickFraction();
 
 // What `sceGsSyncV` and the end of a frame do: wait for the next tick, then pump.
 std::int64_t ClockSyncV();

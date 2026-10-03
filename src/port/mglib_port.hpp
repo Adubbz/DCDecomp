@@ -47,3 +47,8 @@ float MGPortTargetRowScale(gfx::TextureHandle target);
 // units put it, depth is MGPortDepth's of the GS Z MGRotTransPers gives. 3D sprites and long-tail
 // geometry multiply their model matrix onto it.
 void MGPortWorldToClip(float clip[4][4]);
+
+// ---- Display lists ---------------------------------------------------------------------------
+
+// The next tick MGBeginFrame records is not interpolated from the one before (a mode's first).
+void MGPortCutInterpolation();

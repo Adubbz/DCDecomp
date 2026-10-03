@@ -92,6 +92,15 @@ unsigned int g_cursor[64];
 
 } // namespace
 
+Draw3DIdentityScope::Draw3DIdentityScope(const void *object, float teleport_distance)
+    : key_(gfx::CurrentInterpKey()), no_interpolation_(gfx::CurrentNoInterpolation()) {
+    gfx::SetInterpKey(reinterpret_cast<uintptr_t>(object), false, teleport_distance);
+}
+
+Draw3DIdentityScope::~Draw3DIdentityScope() {
+    gfx::SetInterpKey(key_, no_interpolation_);
+}
+
 // Retail's culling, attributes and hierarchy walk, with the GS registers SetGsReg3 sent becoming
 // the current register shadows the visual's draw reads. The screen-bound test runs on an
 // unsqueezed view, so its vertical limits are the frame's full half-height (retail's quarter on
@@ -284,7 +293,10 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         }
         attr.remake_pending = 0;
 
-        visual->DrawVu1(packet, matrix, info, VU1_PROGRAM_UNKNOWN6, 0, 0, 0);
+        {
+            Draw3DIdentityScope identity(this, kDraw3DTeleportDistance);
+            visual->DrawVu1(packet, matrix, info, VU1_PROGRAM_UNKNOWN6, 0, 0, 0);
+        }
 
         if (attr.use_color || attr.ambient_boost) {
             sceVu0CopyMatrix(info->light_direction, light);

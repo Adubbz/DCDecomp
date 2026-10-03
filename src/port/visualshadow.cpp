@@ -178,6 +178,10 @@ struct Projection {
     float drop_to_eye[4][4];
     float eye_to_clip[4][4];
     Vec3  local_light;
+    // The volumes are built in this tick's eye space; for the display list they ride on the model
+    // and the camera as if fixed to the model: eye_to_clip * view * model * (view * model)^-1.
+    gfx::MeshTransform transform;
+    bool               has_transform;
 };
 
 Projection Project(const RenderInfo &info, float (*matrix)[4]) {
@@ -187,6 +191,12 @@ Projection Project(const RenderInfo &info, float (*matrix)[4]) {
     Draw3DMul(drop, info.shadow, matrix);
     Draw3DMul(projection.drop_to_eye, info.view_scaled, drop);
     Draw3DEyeToClip(info, projection.eye_to_clip);
+    projection.transform = gfx::IdentityMeshTransform();
+    gfx::MeshTransform &transform = projection.transform;
+    std::memcpy(transform.projection, projection.eye_to_clip, sizeof(transform.projection));
+    std::memcpy(transform.view, info.view_scaled, sizeof(transform.view));
+    std::memcpy(transform.model, matrix, sizeof(transform.model));
+    projection.has_transform = gfx::InvertAffineTransform(&projection.model_to_eye[0][0], transform.local);
     Vec3 light = {info.light_direction[0][0], info.light_direction[1][0], info.light_direction[2][0]};
     projection.local_light = {Dot({matrix[0][0], matrix[0][1], matrix[0][2]}, light),
                               Dot({matrix[1][0], matrix[1][1], matrix[1][2]}, light),
@@ -231,7 +241,8 @@ void DrawCount(const std::vector<gfx::Vertex3D> &faces, const Projection &projec
     for (uint32_t i = 0; i < indices.size(); i++) {
         indices[i] = i;
     }
-    gfx::DrawMeshImmediate(faces, indices, constants, {}, state);
+    gfx::DrawMeshImmediate(faces, indices, constants, {}, state,
+                           projection.has_transform ? &projection.transform : nullptr);
 }
 
 void DrawVolume(const Volume &volume, const Projection &projection, const RenderInfo &info) {

@@ -63,7 +63,28 @@ void Draw3DEyeToClip(const RenderInfo &info, float clip[4][4]);
 
 // mvp, normal matrix, lights, ambient and fog of one draw, as the VU1 header carried them. On
 // shadow passes 1 and 2 the planar projection info.shadow sits between the model and the view.
-void Draw3DSceneConstants(gfx::MeshConstants &constants, const RenderInfo &info, const float model[4][4]);
+// transform, when given, receives the factors of mvp for the display list's interpolation.
+void Draw3DSceneConstants(gfx::MeshConstants &constants, const RenderInfo &info, const float model[4][4],
+                          gfx::MeshTransform *transform = nullptr);
+
+// World units an object may move in one tick and still be interpolated; further is a teleport.
+inline constexpr float kDraw3DTeleportDistance = 200.0f;
+
+// Identity of the mesh draws a CFrame makes, for interpolating them between ticks: set around the
+// frame's visual draw, restored after.
+class Draw3DIdentityScope {
+public:
+    Draw3DIdentityScope(const void *object, float teleport_distance);
+    ~Draw3DIdentityScope();
+
+    Draw3DIdentityScope(const Draw3DIdentityScope &) = delete;
+    Draw3DIdentityScope &operator=(const Draw3DIdentityScope &) = delete;
+
+private:
+    gfx::InterpKey key_;
+    bool           no_interpolation_;
+};
+
 // What SetMaterial uploaded: diffuse (alpha in w), ambient and specular.
 void Draw3DMaterial(gfx::MeshConstants &constants, const RenderInfo &info, const float *diffuse,
                     const float *ambient, const float *specular);

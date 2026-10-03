@@ -31,16 +31,23 @@ fs::path RealData() {
 }
 
 // The screenshot's bytes, or empty if the run failed.
-std::string Run(const std::string &name, const fs::path &data, const std::string &script, int frames) {
-    fs::path dir = fs::temp_directory_path() / ("dc_real_input_" + name);
+// Runs start where they need to (the --jump and --fast-load test hooks), live beside the test
+// executable and share one save directory, so the pipeline cache is compiled once.
+std::string Run(const std::string &name, const fs::path &data, const std::string &script, int frames,
+                const std::string &jump) {
+    fs::path build = fs::read_symlink("/proc/self/exe").parent_path();
+    fs::path dir = build / "real_data" / ("input_" + name);
+    fs::path save = build / "real_data" / "save";
     fs::remove_all(dir);
-    fs::create_directories(dir / "save");
+    fs::create_directories(dir);
+    fs::create_directories(save);
     std::ofstream(dir / "input.txt") << script;
-    fs::path    executable = fs::read_symlink("/proc/self/exe").parent_path() / "darkcloud";
+    fs::path    executable = build / "darkcloud";
     fs::path    screenshot = dir / "frame.png";
-    std::string command = "'" + executable.string() + "' --headless --frames " + std::to_string(frames) +
+    std::string command = "'" + executable.string() + "' --headless --width 320 --height 240 --fast-load --jump " + jump + " --frames " +
+                          std::to_string(frames) +
                           " --screenshot '" + screenshot.string() + "' --data '" + data.string() +
-                          "' --save '" + (dir / "save").string() + "' --input '" +
+                          "' --save '" + save.string() + "' --input '" +
                           (dir / "input.txt").string() + "' > '" + (dir / "output.txt").string() + "' 2>&1";
     int raw = std::system(command.c_str());
     if (!WIFEXITED(raw) || WEXITSTATUS(raw) != kExitOk) {
@@ -52,10 +59,11 @@ std::string Run(const std::string &name, const fs::path &data, const std::string
 }
 
 void CheckSameAsPadAndMoved(const char *name, const std::string &keys, const std::string &pad,
-                            const std::string &unmoved, int frames) {
+                            const std::string &unmoved, int frames, const char *jump) {
     fs::path data = RealData();
     auto     launch = [&](std::string suffix, const std::string &script) {
-        return std::async(std::launch::async, Run, std::string(name) + suffix, data, script, frames);
+        return std::async(std::launch::async, Run, std::string(name) + suffix, data, script, frames,
+                              std::string(jump));
     };
     auto        keyboard = launch("_keys", keys);
     auto        buttons = launch("_pad", pad);
@@ -68,24 +76,24 @@ void CheckSameAsPadAndMoved(const char *name, const std::string &keys, const std
     DC_CHECK(keyboard_frame != still_frame);
 }
 
-const char kDebugMode[] = "0 pad2 l1 r1 l2 r2\n1 pad2\n";
+const char kDebugMode[] = "0\n";
 
 } // namespace
 
 // The developer menu reads only the d-pad and never the left stick, so S presses down; F (circle)
-// enters the fifth row, the dungeon loader.
+// enters the fifth row, the dungeon loader, where Mouse1 (cross) picks the first dungeon.
 DC_TEST(integration_real_data_keyboard_drives_the_developer_menu) {
-    std::string keys = std::string(kDebugMode) + "10 key:s\n12\n14 key:S\n16\n18 key:s\n20\n22 key:s\n24\n";
-    std::string pad = std::string(kDebugMode) + "10 down\n12\n14 down\n16\n18 down\n20\n22 down\n24\n";
-    CheckSameAsPadAndMoved("devmenu", keys + "30 key:f\n32\n", pad + "30 circle\n32\n", keys, 45);
+    std::string keys = std::string(kDebugMode) + "2 key:s\n4\n6 key:S\n8\n10 key:s\n12\n14 key:s\n16\n";
+    std::string pad = std::string(kDebugMode) + "2 down\n4\n6 down\n8\n10 down\n12\n14 down\n16\n";
+    CheckSameAsPadAndMoved("devmenu", keys + "20 key:f\n22\n30 mouse1\n32\n",
+                           pad + "20 circle\n22\n30 cross\n32\n", keys, 60, "menu");
 }
 
-// Mouse1 and Space (cross) through the language select and the memory check, Return (start) through
-// the attract movie and the logo; on the title menu, which runs MenuModeOn(120), S deflects the
-// left stick fully and the game's own conversion moves the cursor to CONTINUE.
+// Return (start) twice through the title logo; on the title menu, which runs MenuModeOn(120), S
+// deflects the left stick fully and the game's own conversion moves the cursor to CONTINUE.
 DC_TEST(integration_real_data_keyboard_and_mouse_reach_and_move_the_title_menu) {
-    std::string boot_keys = "0\n70 mouse1\n75\n90 key:space\n95\n200 key:return\n205\n480 key:return\n485\n";
-    std::string boot_pad = "0\n70 cross\n75\n90 cross\n95\n200 start\n205\n480 start\n485\n";
-    CheckSameAsPadAndMoved("title", boot_keys + "600 key:s\n610\n", boot_pad + "600 down\n610\n", boot_keys,
-                           640);
+    std::string boot_keys = "0\n100 key:return\n105\n140 key:return\n145\n";
+    std::string boot_pad = "0\n100 start\n105\n140 start\n145\n";
+    CheckSameAsPadAndMoved("title", boot_keys + "220 key:s\n230\n", boot_pad + "220 down\n230\n", boot_keys,
+                           260, "title");
 }

@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <filesystem>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <span>
 #include <string_view>
@@ -25,6 +27,8 @@ inline constexpr uint32_t kDepthQueryCount = 16;
 enum class PresentMode : uint8_t {
     Fifo,
     Mailbox,
+    // Falls back to Mailbox, then Fifo, where the surface lacks it.
+    Immediate,
 };
 
 struct RendererConfig {
@@ -76,6 +80,7 @@ void RendererResize();
 // False when no frame can be drawn (minimised window); draws until EndFrame are then dropped.
 bool BeginFrame();
 void EndFrame();
+// Inside BeginFrame/EndFrame or BeginRecording/EndRecording.
 bool InFrame();
 // Validation-layer messages seen so far (validation and performance types, warning or worse).
 uint32_t ValidationMessageCount();
@@ -94,7 +99,8 @@ using TextureHandle = uint32_t;
 inline constexpr TextureHandle kNullTexture = 0;
 // The frame being drawn. A render target and a copy source or destination, never sampled.
 inline constexpr TextureHandle kMainTarget = 1;
-// The last frame EndFrame presented. Sampled like a texture in logical 640x480 space.
+// The frame before this one: the last canonical render of a display list, or the last frame
+// EndFrame finished. Sampled like a texture in logical 640x480 space.
 inline constexpr TextureHandle kPreviousFrame = 2;
 
 enum class TextureFormat : uint8_t {
@@ -355,13 +361,32 @@ struct MeshConstants {
     uint32_t pad[2] = {};
 };
 
+// How a mesh draw's mvp was made: projection * view * middle * model * local, column-major. Recorded
+// with the draw so a display frame can interpolate the model and the view (the camera) between two
+// ticks and rebuild mvp; normal_matrix follows the model's rotation. Draws without one replay
+// their recorded constants.
+struct MeshTransform {
+    float projection[16]; // eye to clip
+    float view[16];       // world to eye
+    float middle[16];     // world to world after the model (a planar shadow projection), else identity
+    float model[16];      // object to world
+    float local[16];      // fixed, applied before the model, else identity
+};
+
+MeshTransform IdentityMeshTransform();
+// The inverse of an affine column-major matrix (bottom row 0 0 0 1); false when it is not one or
+// is singular.
+bool InvertAffineTransform(const float matrix[16], float inverse[16]);
+
 void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &texture,
             const DrawState &state);
 void DrawMesh(MeshHandle mesh, uint32_t first_index, uint32_t index_count, const MeshConstants &constants,
-              const TextureBinding &texture, const DrawState &state);
+              const TextureBinding &texture, const DrawState &state,
+              const MeshTransform *transform = nullptr);
 // A triangle list that lives for this frame only (cloth, water, anything rebuilt per frame).
 void DrawMeshImmediate(std::span<const Vertex3D> vertices, std::span<const uint32_t> indices,
-                       const MeshConstants &constants, const TextureBinding &texture, const DrawState &state);
+                       const MeshConstants &constants, const TextureBinding &texture, const DrawState &state,
+                       const MeshTransform *transform = nullptr);
 
 // ---- Targets, copies, blits ------------------------------------------------------------------
 
@@ -410,5 +435,63 @@ bool ReadbackFrame(std::vector<uint8_t> &rgba, uint32_t &width, uint32_t &height
 bool ReadbackTexture(TextureHandle texture, std::vector<uint8_t> &pixels, uint32_t &width, uint32_t &height);
 // An RGB PNG from RGBA8 rows, stored uncompressed.
 bool WritePng(const std::filesystem::path &path, const uint8_t *rgba, uint32_t width, uint32_t height);
+
+// ---- Display lists ---------------------------------------------------------------------------
+
+// What one logic tick drew. Between BeginRecording and EndRecording the drawing calls (Draw2D,
+// DrawMesh, DrawMeshImmediate, Clear, ClearStencil, SetRenderTarget) and the stateful ones
+// (CopyTexture, BlitTexture, SnapshotFrame, UpdateTexture, UpdatePalette, UpdateMeshVertices,
+// ReadDepth) are appended to the list instead of executed; their arguments are validated and
+// copied, so the calls return what they would have. Creating textures, meshes and render targets
+// happens at once; destroying one is held back until the last list that may draw it is released.
+struct DisplayList;
+using DisplayListRef = std::shared_ptr<const DisplayList>;
+
+// Identity of the object the following mesh draws belong to, so a display frame can match each one
+// with the same object's draw in the previous tick (the n-th draw with a key matches the n-th with
+// it). 0 is none. no_interpolation draws them at this tick's transform, as does a model whose
+// translation moved more than teleport_distance since the previous tick (a teleport).
+using InterpKey = uint64_t;
+void      SetInterpKey(InterpKey key, bool no_interpolation = false, float teleport_distance = INFINITY);
+InterpKey CurrentInterpKey();
+bool      CurrentNoInterpolation();
+
+// Not inside a frame BeginFrame opened.
+void           BeginRecording();
+DisplayListRef EndRecording();
+bool           Recording();
+// The list being recorded is not interpolated from its predecessor (a mode's first tick, a cut).
+void CutInterpolation();
+// Its camera (MeshTransform::view) is not; the objects still are.
+void CutCameraInterpolation();
+
+struct RenderOptions {
+    // Run the stateful entries and render into the tick's colour image, which then becomes what
+    // kPreviousFrame, SnapshotFrame of kMainTarget and the depth queries see. alpha is ignored.
+    // Otherwise only the drawing entries run, into the display image (the window's size), with
+    // kMainTarget meaning that image and kPreviousFrame the image the tick's canonical render saw.
+    bool canonical = false;
+    // The tick before, for interpolation; display renders at alpha < 1 only.
+    const DisplayList *previous = nullptr;
+    // Display renders: present the result.
+    bool present = false;
+};
+
+// False when nothing was rendered: the list belongs to another renderer, a frame is open, or a
+// display render was asked for when the newest main image is not a canonical render (the loading
+// screen presented since) or the window cannot present.
+bool RenderList(const DisplayList &list, float alpha, const RenderOptions &options);
+// Presents the last canonical render as it is (interpolation off, headless runs).
+bool PresentCanonical();
+
+struct DisplayListStats {
+    uint32_t draws_2d;
+    uint32_t mesh_draws;
+    uint32_t keyed_mesh_draws;
+    uint32_t stateful;
+    uint32_t cameras;
+};
+
+DisplayListStats ListStats(const DisplayList &list);
 
 } // namespace gfx

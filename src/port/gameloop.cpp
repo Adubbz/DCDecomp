@@ -1,6 +1,10 @@
 #include "gameloop.hpp"
 
+#include <algorithm>
+#include <charconv>
 #include <cstring>
+#include <string_view>
+#include <thread>
 
 #include "battle_globals.hpp"
 #include "btsysscript.hpp"
@@ -15,6 +19,7 @@
 #include "mainselect.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
+#include "mglib_port.hpp"
 #include "nowload.hpp"
 #include "platform/clock.hpp"
 #include "savedata.hpp"
@@ -46,6 +51,39 @@ constexpr int kWarmUpTicks = 60;
 
 // The TEXA vudata.cpp's My_DrawEnv loads at the start of every mode, through My_dma_start0.
 constexpr sceGsTexa kDrawEnvTexa = {0x80, 0, 1, 0, 0x80, 0};
+
+GamePresentSettings g_present;
+gfx::DisplayListRef g_list;
+gfx::DisplayListRef g_previous_list;
+bool                g_tick_shown = true;
+GamePresentStats    g_stats;
+
+using PresentClock = std::chrono::steady_clock;
+PresentClock::time_point g_last_present;
+
+double SecondsSince(PresentClock::time_point start) {
+    return std::chrono::duration<double>(PresentClock::now() - start).count();
+}
+
+bool DisplayFrame(float alpha, bool present) {
+    PresentClock::time_point start = PresentClock::now();
+    gfx::RenderOptions       options = {.previous = g_previous_list.get(), .present = present};
+    bool                     shown = gfx::RenderList(*g_list, alpha, options);
+    if (shown) {
+        g_stats.display_frames++;
+        g_stats.display_seconds += SecondsSince(start);
+    }
+    return shown;
+}
+
+struct Jump {
+    bool set = false;
+    int  mode = GAME_MODE_MENU;
+    int  map = 0;
+};
+
+Jump g_jump;
+bool g_fast_load;
 
 std::int64_t g_frame_budget = -1;
 std::int64_t g_frames;
@@ -182,6 +220,46 @@ int ModeLoop(bool &skip_title) {
 void LoadDrawEnv() {
     sceGsTexa texa = kDrawEnvTexa;
     MGSetGsTEXA(&texa);
+}
+
+// What the developer menu's choice (and the dungeon loader's) leaves behind.
+void ApplyJump() {
+    OldMapNo = -1;
+    NextMapNo = -1;
+    GamePad.AutoRepeatOff();
+    switch (g_jump.mode) {
+        case GAME_MODE_EDIT:
+            main_select_menu_no = g_jump.map;
+            MapNo = g_jump.map;
+            if (g_jump.map != 99) {
+                LocalMapNo = g_jump.map;
+            }
+            mode = GAME_MODE_EDIT;
+            break;
+        case GAME_MODE_DUNGEON:
+            selectMapNo = g_jump.map;
+            main_select_menu_no = g_jump.map;
+            MapJump(g_jump.map + 200, -1);
+            MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
+            GameFollowMapJump();
+            break;
+        case GAME_MODE_TITLE:
+            MapJump(800, -1);
+            GameFollowMapJump();
+            break;
+        case GAME_MODE_RUSH_MOVIE:
+            MapJump(801, -1);
+            GameFollowMapJump();
+            break;
+        case GAME_MODE_OPENING:
+            MapJump(400, -1);
+            GameFollowMapJump();
+            break;
+        default:
+            mode = GAME_MODE_MENU;
+            break;
+    }
+    NextMapNo = -1;
 }
 
 bool FrameBoundaryStop() {
@@ -321,6 +399,49 @@ void GameApplyLoopResult(int loop_mode, int result) {
     }
 }
 
+bool GameSetJump(const char *spec) {
+    std::string_view text = spec;
+    std::string_view name = text.substr(0, text.find(':'));
+    std::string_view number = name.size() < text.size() ? text.substr(name.size() + 1) : std::string_view();
+    Jump             jump;
+    jump.set = true;
+    if (!number.empty()) {
+        auto [end, error] = std::from_chars(number.data(), number.data() + number.size(), jump.map);
+        if (error != std::errc{} || end != number.data() + number.size() || jump.map < 0) {
+            return false;
+        }
+    }
+    bool numbered = name == "edit" || name == "dungeon";
+    if (!numbered && !number.empty()) {
+        return false;
+    }
+    if (name == "edit") {
+        jump.mode = GAME_MODE_EDIT;
+    } else if (name == "dungeon" && jump.map <= 6) {
+        jump.mode = GAME_MODE_DUNGEON;
+    } else if (name == "title") {
+        jump.mode = GAME_MODE_TITLE;
+    } else if (name == "rush") {
+        jump.mode = GAME_MODE_RUSH_MOVIE;
+    } else if (name == "opening") {
+        jump.mode = GAME_MODE_OPENING;
+    } else if (name == "menu") {
+        jump.mode = GAME_MODE_MENU;
+    } else {
+        return false;
+    }
+    g_jump = jump;
+    return true;
+}
+
+void GameSetFastLoad(bool fast) {
+    g_fast_load = fast;
+}
+
+bool GameFastLoad() {
+    return g_fast_load;
+}
+
 void GameSetFrameBudget(std::int64_t frames) {
     g_frame_budget = frames;
 }
@@ -345,6 +466,76 @@ void SetEnv(sceVif1Packet *packet) {
     MGSetGsZBUF(nullptr);
     MGSetGsALPHA(nullptr);
     MGSetWindowRect();
+}
+
+void GameSetPresentSettings(const GamePresentSettings &settings) {
+    g_present = settings;
+}
+
+void GameRenderTick(gfx::DisplayListRef list) {
+    PresentClock::time_point start = PresentClock::now();
+    gfx::RenderList(*list, 1.0f, {.canonical = true});
+    g_stats.canonical_seconds += SecondsSince(start);
+    g_stats.ticks++;
+    gfx::DisplayListStats counts = gfx::ListStats(*list);
+    g_stats.mesh_draws += counts.mesh_draws;
+    g_stats.keyed_mesh_draws += counts.keyed_mesh_draws;
+    g_stats.draws_2d += counts.draws_2d;
+    g_stats.stateful += counts.stateful;
+    g_stats.max_draws = std::max<std::uint64_t>(g_stats.max_draws, counts.mesh_draws + counts.draws_2d);
+    g_previous_list = std::move(g_list);
+    g_list = std::move(list);
+    g_tick_shown = false;
+}
+
+bool GamePresentBetweenTicks(double fraction, std::chrono::steady_clock::time_point next_tick) {
+    if (!g_list) {
+        return false;
+    }
+    if (!g_present.interpolation) {
+        if (!g_tick_shown) {
+            gfx::PresentCanonical();
+            g_tick_shown = true;
+        }
+        return false;
+    }
+    if (g_present.max_fps > 0.0) {
+        auto due = g_last_present + std::chrono::duration_cast<PresentClock::duration>(
+                                        std::chrono::duration<double>(1.0 / g_present.max_fps));
+        if (PresentClock::now() < due) {
+            if (due >= next_tick && g_tick_shown) {
+                return false;
+            }
+            std::this_thread::sleep_until(std::min(due, next_tick));
+            return true;
+        }
+    }
+    // The loading screen presenting from the pump, or a window that cannot show anything, ends the
+    // tick's display frames.
+    if (!DisplayFrame(static_cast<float>(fraction), true)) {
+        return false;
+    }
+    g_last_present = PresentClock::now();
+    g_tick_shown = true;
+    return true;
+}
+
+void GamePresentTickEnd() {
+    if (g_tick_shown || !g_list) {
+        return;
+    }
+    if (ClockUnbounded()) {
+        for (int frame = 0; frame < g_present.display_per_tick; frame++) {
+            DisplayFrame(static_cast<float>(frame) / static_cast<float>(g_present.display_per_tick), false);
+        }
+    }
+    gfx::PresentCanonical();
+    g_last_present = PresentClock::now();
+    g_tick_shown = true;
+}
+
+GamePresentStats GamePresentStatistics() {
+    return g_stats;
 }
 
 int RunGame(int argc, char **argv) {
@@ -374,7 +565,10 @@ int RunGame(int argc, char **argv) {
     g_save_data.Initialize();
     GlobalNameInit();
 
-    for (int tick = 0; tick < kWarmUpTicks; ++tick) {
+    if (g_jump.set) {
+        DebugMode = 1;
+    }
+    for (int tick = 0; tick < kWarmUpTicks && !g_jump.set; ++tick) {
         ClockSyncV();
         GamePad.UpDate();
         // Holding the four shoulder buttons on pad 2 through the first second turns on debug mode.
@@ -386,6 +580,9 @@ int RunGame(int argc, char **argv) {
         MapNo = -1;
         mode = GAME_MODE_LANGUAGE;
         GamePad.KeyLock2(1);
+    }
+    if (g_jump.set) {
+        ApplyJump();
     }
 
     int  title_ran = 0;
@@ -436,6 +633,7 @@ int RunGame(int argc, char **argv) {
         MGInitVSyncCallBack(PlayTimeCount);
         LoadDrawEnv();
         ClockSyncV();
+        MGPortCutInterpolation();
         *reinterpret_cast<s32 *>(reinterpret_cast<char *>(SaveData) + kSaveMapNoOffset) = MapNo;
 
         int result;

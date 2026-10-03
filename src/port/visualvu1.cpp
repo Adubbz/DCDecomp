@@ -172,7 +172,13 @@ void Draw3DDrawVisual(const Draw3DVisual &visual, const float model[4][4], const
     bool fog = info.fog_enabled != 0 && info.shadow_pass == 0;
 
     gfx::MeshConstants constants = {};
-    Draw3DSceneConstants(constants, info, model);
+    gfx::MeshTransform transform;
+    Draw3DSceneConstants(constants, info, model, &transform);
+    // A visual drawn outside a CFrame is known by its record, unless the record lasts one tick.
+    bool unkeyed = gfx::CurrentInterpKey() == 0 && !visual.immediate;
+    if (unkeyed) {
+        gfx::SetInterpKey(reinterpret_cast<uintptr_t>(&visual));
+    }
     if (projected) {
         constants.flags = gfx::kMeshShadow;
     } else {
@@ -222,10 +228,14 @@ void Draw3DDrawVisual(const Draw3DVisual &visual, const float model[4][4], const
         if (visual.immediate) {
             gfx::DrawMeshImmediate(visual.vertices,
                                    std::span<const uint32_t>(visual.indices).subspan(strip.first_index, strip.index_count),
-                                   constants, binding, state);
+                                   constants, binding, state, &transform);
         } else {
-            gfx::DrawMesh(visual.mesh, strip.first_index, strip.index_count, constants, binding, state);
+            gfx::DrawMesh(visual.mesh, strip.first_index, strip.index_count, constants, binding, state,
+                          &transform);
         }
+    }
+    if (unkeyed) {
+        gfx::SetInterpKey(0);
     }
 
     if (projected) {

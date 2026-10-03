@@ -133,8 +133,10 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, R
 
     const Draw3DVisual *visual = Draw3DFindVisual(block);
     if (visual != nullptr && !visual->indices.empty()) {
-        gfx::MeshConstants constants = {};
-        Draw3DSceneConstants(constants, *info, local_to_world);
+        Draw3DIdentityScope identity(water, kDraw3DTeleportDistance);
+        gfx::MeshConstants  constants = {};
+        gfx::MeshTransform  transform;
+        Draw3DSceneConstants(constants, *info, local_to_world, &transform);
         constants.flags = gfx::kMeshVertexColor;
         for (float &value : constants.diffuse) {
             value = 1.0f;
@@ -148,7 +150,7 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, R
             binding.wrap_u = gfx::Wrap::Clamp;
             binding.wrap_v = gfx::Wrap::Clamp;
         }
-        gfx::DrawMeshImmediate(visual->vertices, visual->indices, constants, binding, state);
+        gfx::DrawMeshImmediate(visual->vertices, visual->indices, constants, binding, state, &transform);
     }
 
     MGPortCurrent().test = mgPixelTest;
