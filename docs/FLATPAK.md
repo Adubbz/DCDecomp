@@ -68,13 +68,6 @@ org.themoonpeople.Chronicle` removes both. The usual options still apply:
 ## Controls
 
 Keyboard, mouse and gamepads as in `docs/PC.md`, "Keyboard and mouse".
-Gamepads need Flatpak 1.15.6 or later, which knows `--device=input`; older
-Flatpak (Ubuntu 24.04 ships 1.14) ignores it and the game sees only the
-keyboard and mouse unless given every device:
-
-```sh
-flatpak override --user --device=all org.themoonpeople.Chronicle
-```
 
 ## Permissions
 
@@ -85,12 +78,11 @@ flatpak override --user --device=all org.themoonpeople.Chronicle
 | `--share=ipc` | X11 shared memory, without which fallback-x11 is slow or broken |
 | `--device=dri` | the GPU, for Vulkan |
 | `--socket=pulseaudio` | sound, through PipeWire's or PulseAudio's PulseAudio socket |
-| `--device=input` | gamepads (`/dev/input`); Flathub's current replacement for `--device=all` |
+| `--device=all` | gamepads: `/dev/input`, and `/dev/hidraw*` for those SDL reads through HIDAPI `--device=input` covers only `/dev/input` |
 
 There is no network and no filesystem access. The disc reaches the game
 through the file-chooser portal, which every Flatpak may call without a
-`--talk-name`. Flathub would also want `--require-version=1.16.0` for
-`--device=input`; it is left out so the bundle still installs on Flatpak 1.14.
+`--talk-name`.
 
 ## Building
 
@@ -115,8 +107,7 @@ flatpak build-bundle repo chronicle.flatpak org.themoonpeople.Chronicle
 you.) Run from the repository root; `build-dir/`, `repo/`, `.flatpak-builder/`
 and `chronicle.flatpak` are ignored by git. `flatpak-builder --user --install
 build-dir port/flatpak/org.themoonpeople.Chronicle.yml` installs the build
-directly instead of through a bundle. Building `--device=input` into the
-metadata takes flatpak-builder on Flatpak 1.15.6 or later.
+directly instead of through a bundle.
 
 The manifest (`port/flatpak/org.themoonpeople.Chronicle.yml`) builds:
 
@@ -125,7 +116,7 @@ The manifest (`port/flatpak/org.themoonpeople.Chronicle.yml`) builds:
   device, but the port compiles against the 1.4 headers.
 - **glslang 15.1.0**, for the build only: the SDK's glslang 14.3 has no
   `--target-env vulkan1.4`.
-- **SDL3 3.2.24**, which the runtime lacks, with its Wayland, X11, PipeWire,
+- **SDL3 3.4.16**, which the runtime lacks, with its Wayland, X11, PipeWire,
   PulseAudio and D-Bus (portal) backends loaded from the runtime.
 - **The port**, `PLATFORM=PC`, Release, with clang 20 from the
   `org.freedesktop.Sdk.Extension.llvm20` extension (the SDK's own compiler is
