@@ -9,9 +9,9 @@ to build and run it and what is known about the platform.
 The `macos` job in `.github/workflows/pc.yml` is the first real macOS build.
 The build files, `tools/weaken`, the interposition check and the Mach-O
 link model are tested on Linux (below); the Mesa build, the final Apple link
-and every run on macOS are not. One fact blocks running the game natively
-on arm64 at all until the pointer work of `docs/MACOS_PLAN.md` section 3 is
-finished: see "The 4 GiB page zero".
+and every run on macOS are not. Native arm64 maps nothing below 4 GiB ("The
+4 GiB page zero"); the game no longer needs it to, which Linux shows by
+running PIE with its arenas above 4 GiB.
 
 ## Building
 
@@ -123,7 +123,7 @@ surface-less mode (`docs/MACOS_PLAN.md`, 4.2); a windowed run uses
 | Merge `src/ps2` | `ld.lld -r` | Apple's `ld -r -keep_private_externs` (`ld64.lld` prints "Option `-r' is not yet implemented" in LLVM 20) |
 | Weaken | `llvm-objcopy --weaken` | the same (it sets `N_WEAK_DEF` on Mach-O), or `tools/weaken` with `-DDC_MACHO_WEAKEN=tool`; both write identical bytes |
 | Keep calls replaceable | `-fPIC -fsemantic-interposition` | `-Xclang -fsemantic-interposition -fno-inline-functions` |
-| Final link | `-fuse-ld=lld -no-pie --gc-sections --defsym` | Apple's `ld`, `-dead_strip`, `-alias`, PIE |
+| Final link | `-fuse-ld=lld -pie --gc-sections --defsym` | Apple's `ld`, `-dead_strip`, `-alias`, PIE |
 | `EditGaijiTbl` | `src/port/linknames.cpp` on both (below) | |
 | FP contraction | `-ffp-contract=off` on both (a no-op on x86-64) | |
 
@@ -183,18 +183,13 @@ if (vm_map_has_hard_pagezero(map, 0x100000000) == FALSE) { ... return LOAD_BADMA
 raises `min_offset`, so with a legal binary no `mmap`, hinted or fixed, can
 return an address below 4 GiB. `-pagezero_size 0x1000` produces a binary
 the kernel will not run (and on 16 KiB pages it is not even a page; `ld64.lld`
-rounds it to 0). The game's 32-bit pointer casts therefore cannot be kept
-working by placement on native arm64; every round-trip truncation must leave
-retail code first (`docs/MACOS_PLAN.md`, section 3).
+rounds it to 0).
 
-`DC_MACOS_PAGEZERO_SIZE` is the CMake option for the `-pagezero_size`
-passed to `darkcloud` and `darkcloud_tests`. It is empty, so `ld` keeps its
-4 GiB default, when building for arm64, and `0x1000` for an x86_64 build:
-the hard rule is keyed on `CPU_TYPE_ARM64`, and x86_64 executables, which
-run under Rosetta 2, only need a 0x1000 page zero. An x86_64 build under
-Rosetta (Homebrew in `/usr/local`, `-DCMAKE_OSX_ARCHITECTURES=x86_64`, and
-an x86_64 Mesa) is therefore the fallback for running before section 3 is
-done; it has no preset and is not in CI.
+The game does not need low memory: every cast of a pointer to a 32-bit
+integer whose value comes back as a pointer is widened in `src/port`
+(`docs/port/truncations.md`), the arenas are ordinary mappings and the Linux
+executable is PIE too, so `ld` keeps its default page zero and no x86_64
+build under Rosetta 2 is needed.
 
 ## What CI verifies
 

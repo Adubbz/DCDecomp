@@ -19,11 +19,6 @@ bool Aligned64(const void *pointer) {
     return (reinterpret_cast<std::uintptr_t>(pointer) & 63) == 0;
 }
 
-// High arenas (macOS, DC_HIGH_ARENAS=1) promise nothing about the address.
-bool Below2GiB(const void *pointer) {
-    return !ArenaMemoryIsLow() || reinterpret_cast<std::uintptr_t>(pointer) < 0x80000000u;
-}
-
 // Runs body in a child process and returns the signal that ended it, or 0.
 template <class F>
 int SignalOf(F body) {
@@ -44,7 +39,6 @@ DC_TEST(platform_arena_carves_with_headroom) {
     InitializeDataBuffer();
     SetDataBuffer(&VisualData, 1000);
     DC_CHECK(Aligned64(VisualData.base));
-    DC_CHECK(Below2GiB(VisualData.base));
     DC_CHECK(VisualData.limit == 4000);
     DC_CHECK(VisualData.used == 0);
 
@@ -104,7 +98,7 @@ DC_TEST(platform_arena_mode_buffers) {
     DC_CHECK(ActiveData0.base != ActiveData1.base);
     DC_CHECK(WorkBuffer == &workbuffer);
     DC_CHECK(workbuffer.limit == 4096 * 4);
-    DC_CHECK(Aligned64(read_buffer) && Below2GiB(read_buffer));
+    DC_CHECK(Aligned64(read_buffer));
     read_buffer[100000 * 4 * 4 - 1] = 1;
 
     InitializeDataBuffer();
@@ -116,7 +110,7 @@ DC_TEST(platform_arena_mode_buffers) {
     std::memset(menu, 1, 0x3A2E0 * 16);
 
     u_char *global = GlobalDataBuffer.Alloc64(10);
-    DC_CHECK(Aligned64(global) && Below2GiB(global));
+    DC_CHECK(Aligned64(global));
     GlobalDataBuffer.Alloc(1);
     DC_CHECK(Aligned64(GlobalDataBuffer.Alloc64(1)));
 

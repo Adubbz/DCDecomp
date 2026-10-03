@@ -28,9 +28,21 @@ std::vector<Block> g_blocks;
 std::vector<Block> g_retired;
 
 Block MapBlock(const void *owner, std::size_t bytes, std::size_t lead) {
-    Block block{owner, ArenaMemoryMap(bytes, lead)};
-    PortAssertLow(block.memory.map, block.memory.map_size);
-    return block;
+    return {owner, ArenaMemoryMap(bytes, lead)};
+}
+
+// Every 32-bit truncation the game makes of an arena pointer is widened; one left behind only shows
+// when the pointer has bits above 32, so a debug build refuses to run where none would.
+void CheckSomeBlockHigh() {
+#ifndef NDEBUG
+    for (const Block &block : g_blocks) {
+        if (IsAbove4GiB(block.memory.base)) {
+            return;
+        }
+    }
+    std::fprintf(stderr, "arena: none lies above 4 GiB, where a truncated pointer would show\n");
+    std::abort();
+#endif
 }
 
 void Carve(CDataAlloc2<1> *arena, int quads) {
@@ -66,9 +78,11 @@ unsigned char *ArenaBlock(const void *owner, std::size_t bytes, std::size_t lead
         ArenaMemoryZero(block.memory);
         g_retired.push_back(block);
         block = MapBlock(owner, bytes, lead);
+        CheckSomeBlockHigh();
         return block.memory.base;
     }
     g_blocks.push_back(MapBlock(owner, bytes, lead));
+    CheckSomeBlockHigh();
     return g_blocks.back().memory.base;
 }
 
@@ -76,12 +90,6 @@ void ArenaClearAll() {
     for (const Block &block : g_blocks) {
         ArenaMemoryZero(block.memory);
     }
-}
-
-void PortHighPointer(const void *pointer, std::size_t bytes, const char *file, int line) {
-    std::fprintf(stderr, "%s:%d: %p (%zu bytes) is above 2 GiB, where the game's int casts lose it\n", file, line,
-                 pointer, bytes);
-    std::abort();
 }
 
 void *PortImagePointer(std::int32_t truncated) {

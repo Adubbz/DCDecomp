@@ -19,6 +19,8 @@ set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# darkcloud is position-independent (DC_LINK_OPTIONS below).
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # The LLVM tools are looked up beside the compiler first: Homebrew's llvm is
 # keg-only and apt.llvm.org's unversioned names live in /usr/lib/llvm-N/bin.
@@ -40,14 +42,6 @@ if(APPLE)
     find_program(LD_RELOCATABLE NAMES ld PATHS /usr/bin NO_DEFAULT_PATH REQUIRED)
     set(DC_MACHO_WEAKEN objcopy CACHE STRING "What weakens the merged Mach-O object: objcopy or tool")
     set_property(CACHE DC_MACHO_WEAKEN PROPERTY STRINGS objcopy tool)
-    if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64"
-            OR (NOT CMAKE_OSX_ARCHITECTURES AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"))
-        set(pagezero_default 0x1000)
-    else()
-        set(pagezero_default "")
-    endif()
-    set(DC_MACOS_PAGEZERO_SIZE "${pagezero_default}" CACHE STRING
-        "-pagezero_size for darkcloud; empty keeps ld's 4 GiB, which XNU requires of arm64 (docs/MACOS.md)")
 else()
     find_program(LD_RELOCATABLE NAMES ld.lld HINTS ${LLVM_TOOL_HINTS} REQUIRED)
 endif()
@@ -221,9 +215,9 @@ if(DC_INTERPOSITION_CHECK)
 endif()
 
 # Shared by the game and its tests: the port's objects, the weakened game and
-# the link flags they need. On Linux the executable is linked without PIE so
-# its code and data sit below 4 GiB, where the game's 32-bit pointer casts
-# still round-trip; arm64 macOS has no such layout (docs/MACOS.md).
+# the link flags they need. The executable is position-independent on every
+# platform: the game's casts of pointers to 32-bit integers are all widened in
+# src/port (docs/port/truncations.md), so nothing has to sit below 4 GiB.
 # ItemPutListTbl12_bytes is a second name for the table, as the PS2 build gives
 # it through object_fixups.json; draw_rect and WorkBuffer__2 are second names
 # the same way. src/port/linknames.cpp defines the names that are not aliases,
@@ -231,11 +225,8 @@ endif()
 if(APPLE)
     set(DC_LINK_OPTIONS -Wl,-dead_strip -Wl,-alias,_ItemPutListTbl12,_ItemPutListTbl12_bytes
         -Wl,-alias,_draw_rect_store,_draw_rect -Wl,-alias,_WorkBuffer,_WorkBuffer__2)
-    if(DC_MACOS_PAGEZERO_SIZE)
-        list(APPEND DC_LINK_OPTIONS -Wl,-pagezero_size,${DC_MACOS_PAGEZERO_SIZE})
-    endif()
 else()
-    set(DC_LINK_OPTIONS -fuse-ld=lld -no-pie -Wl,--gc-sections -Wl,--error-limit=0
+    set(DC_LINK_OPTIONS -fuse-ld=lld -pie -Wl,-z,separate-code -Wl,--gc-sections -Wl,--error-limit=0
         -Wl,--defsym=ItemPutListTbl12_bytes=ItemPutListTbl12 -Wl,--defsym=draw_rect=draw_rect_store
         -Wl,--defsym=WorkBuffer__2=WorkBuffer)
 endif()

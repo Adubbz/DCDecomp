@@ -124,6 +124,18 @@ bool ReadScreenshot(const fs::path &path, Image &image) {
     return true;
 }
 
+// The developer menu's routes leave the save alone; the pipeline cache one leaves is the next's.
+fs::path SharedCache() { return fs::temp_directory_path() / "dc_real_pipeline_cache.bin"; }
+
+void KeepCache(const Run &run) {
+    std::error_code ignored;
+    fs::copy_file(run.screenshot.parent_path() / "save" / "pipeline_cache.bin", SharedCache(),
+                  fs::copy_options::overwrite_existing, ignored);
+}
+
+constexpr const char *kDeveloperMenu = "0 pad2 l1 r1 l2 r2\n1 pad2\n";
+constexpr const char *kSmallWindow = "--width 320 --height 240";
+
 } // namespace
 
 // Straight into the title (the --jump test hook), Start twice on the logo: the title menu.
@@ -144,6 +156,38 @@ DC_TEST(integration_real_data_developer_menu_opens_the_dungeon_loader) {
                                "0\n2 down\n4\n6 down\n8\n10 down\n12\n14 down\n16\n20 circle\n22\n", 35,
                                "--jump menu --fast-load");
     DC_CHECK(run.status == kExitOk);
+    DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
+    DC_CHECK(fs::file_size(run.screenshot) > 0);
+}
+
+// The developer menu's second row: Norune (e01). Its parts are .pts definitions decoded into host
+// records, and the town runs with the executable and its arenas above 4 GiB.
+DC_TEST(integration_real_data_town_e01) {
+    fs::path data = RealData();
+    Run      run = RunScripted("town", data,
+                               std::string(kDeveloperMenu) + "10 down\n12\n20 circle\n22\n100 0 128 128 128\n140\n",
+                               200, kSmallWindow, SharedCache());
+    KeepCache(run);
+    DC_CHECK(run.status == kExitOk);
+    DC_CHECK(run.output.find("SND_INF= bgm1.txt") != std::string::npos);
+    DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
+    DC_CHECK(fs::file_size(run.screenshot) > 0);
+}
+
+// The dungeon loader's first dungeon, floor 1 through its card, then walking and an attack: the
+// floor's map build, DunMoveChara's collision walk over NowDngMap and the floor's event script.
+DC_TEST(integration_real_data_dungeon_play) {
+    fs::path data = RealData();
+    Run      run = RunScripted("dungeon", data,
+                               std::string(kDeveloperMenu) +
+                                   "10 down\n12\n14 down\n16\n18 down\n20\n22 down\n24\n30 circle\n32\n"
+                                   "40 circle\n42\n100 cross\n102\n250 128 0 128 128\n420 cross\n"
+                                   "424 128 0 128 128\n520 128 128 0 128\n560\n",
+                               600, kSmallWindow, SharedCache());
+    KeepCache(run);
+    DC_CHECK(run.status == kExitOk);
+    DC_CHECK(run.output.find("map build success!!") != std::string::npos);
+    DC_CHECK(run.output.find("SND_INF= bgm5.txt") != std::string::npos);
     DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
     DC_CHECK(fs::file_size(run.screenshot) > 0);
 }
