@@ -2,6 +2,7 @@
 
 #include <cstdio>
 
+#include "btitem_port.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
@@ -18,6 +19,14 @@
 namespace {
 
 char *g_event_data = nullptr;
+
+int GetStackInt(RS_STACKDATA *argument) {
+    if (argument->type == RS_FLOAT) {
+        return (int) argument->f;
+    }
+
+    return argument->i;
+}
 
 } // namespace
 
@@ -45,4 +54,31 @@ void BtSystemScriptLoad(int floor) {
 
 int BtSystemScriptRun(int event, CDataAlloc2<1> *arena) {
     return EdEventInit(event, arena, g_event_data);
+}
+
+// Retail stores the slot's address in BtEventInfo.item_select_result, an s32, for
+// BtMiniItemSelect_Loop to write the choice through; the s32 now only says that a slot is pending.
+int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int argument_count) {
+    if (stack->type != RS_PTR) {
+        return 0;
+    }
+
+    PortItemSelectResult = stack->p;
+    BtEventInfo.item_select_result = stack->p != NULL;
+    stack++;
+    int i;
+
+    for (i = 0; i < argument_count - 1; i++) {
+        BtEventInfo.item_select_list[i] = GetStackInt(stack++);
+    }
+
+    BtEventInfo.item_select_filtered = false;
+
+    if (argument_count > 1) {
+        BtEventInfo.item_select_filtered = true;
+    }
+
+    BtEventInfo.item_select_list[i] = -1;
+    BtEventInfo.request = BT_REQUEST_ITEM_WINDOW;
+    return 1;
 }
