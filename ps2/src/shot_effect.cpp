@@ -27,14 +27,6 @@ int GetWeaponElementAttr(int element);
  * @address 0x1ABC40
  * @size 0xCC
  */
-#include "character.hpp"
-
-/* Draft declarations for this file. CSHOT_EFFECT's unnamed block holds the eight effect models 0x11C0 bytes into the object. */
-struct CSHOT_EFFECT_MODELS {
-    u8         unk_0000[0x11C0];
-    CCharacter chara[8]; /**< Model that each projectile-effect slot draws and animates. */
-};
-
 void CSHOT::draw() {
     for (int shot = 0; shot < 12; shot++) {
         if (used[shot] != 0) {
@@ -103,15 +95,15 @@ void CSHOT_EFFECT::Draw() {
 
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] != 0) {
-            CCharacter   *chara = &((CSHOT_EFFECT_MODELS *) this)->chara[slot];
+            CCharacter   *model = &chara[slot];
             sceVu0FVECTOR position;
             sceVu0FVECTOR jittered;
 
-            chara->Step();
+            model->Step();
 
             if (!(random_rate[slot] < 0.0f)) {
                 // Drawing temporarily offsets the model by a random amount on each axis.
-                chara->GetPosition(position);
+                model->GetPosition(position);
                 float spread = random_rate[slot];
                 jittered[0] = position[0] + 2.0f * (spread * (float) rand()) / 2147483648.0f - spread;
                 spread = random_rate[slot];
@@ -119,13 +111,13 @@ void CSHOT_EFFECT::Draw() {
                 spread = random_rate[slot];
                 jittered[2] = position[2] + 2.0f * (spread * (float) rand()) / 2147483648.0f - spread;
                 jittered[3] = 1.0f;
-                chara->SetPosition(jittered);
+                model->SetPosition(jittered);
             }
 
-            chara->Draw();
+            model->Draw();
 
             if (!(random_rate[slot] < 0.0f)) {
-                chara->SetPosition(position);
+                model->SetPosition(position);
             }
         }
     }
@@ -306,9 +298,8 @@ void CSHOT_EFFECT::EndEffect() {
             int motion = effect_data->motion[phase[slot]];
 
             if (motion != -1) {
-                CSHOT_EFFECT_MODELS *models = (CSHOT_EFFECT_MODELS *) this;
-                models->chara[slot].motion_type.state.time = (float) models->chara[slot].motion_type.motion_info[motion].start;
-                models->chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
+                chara[slot].motion_type.state.time = (float) chara[slot].motion_type.motion_info[motion].start;
+                chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
             }
         }
     }
