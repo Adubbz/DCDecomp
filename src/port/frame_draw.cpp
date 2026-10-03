@@ -104,7 +104,7 @@ Draw3DIdentityScope::~Draw3DIdentityScope() {
 // Retail's culling, attributes and hierarchy walk, with the GS registers SetGsReg3 sent becoming
 // the current register shadows the visual's draw reads. The screen-bound test runs on an
 // unsqueezed view, so its vertical limits are the frame's full half-height (retail's quarter on
-// the squeezed field).
+// the squeezed field), and its limits are what the target shows: past a 4:3 window, the sides.
 int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     sceVu0FMATRIX matrix;
     sceVu0FMATRIX screen_matrix;
@@ -204,9 +204,10 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
 
         float near_z = info->near[2];
         float far_z = info->frame_far_z;
-        float guard = attr.remake_pending ? 2.0f : 1.0f;
-        float half_width = guard * 320.0f * inv_scale;
-        float half_height = guard * SCREEN_HALF_HEIGHT_F * inv_scale;
+        float        guard = attr.remake_pending ? 2.0f : 1.0f;
+        Draw3DExtent extent = Draw3DVisibleExtent();
+        float        half_width = guard * extent.half_width * inv_scale;
+        float        half_height = guard * extent.half_height * inv_scale;
         float depth = 0.96f * (2048.0f * inv_scale);
 
         visible = false;

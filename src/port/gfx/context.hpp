@@ -92,6 +92,7 @@ struct Texture {
     Image       depth; // render targets that keep their own only
     bool        render_target = false;
     bool        shares_main_depth = false;
+    bool        frame = false;
     uint32_t    logical_width = 0;
     uint32_t    logical_height = 0;
     // The frame serial in which the draw command buffer last touched the image.
@@ -214,6 +215,12 @@ enum PushFlags : uint32_t {
     kPushLinear = 1u << 7,
 };
 
+// Axes along which an image shows past its logical frame.
+enum ExtentAxis : uint32_t {
+    kAxisX = 1u << 0,
+    kAxisY = 1u << 1,
+};
+
 enum PipelineFamily : uint32_t {
     kFamily2DTriangles,
     kFamily2DLines,
@@ -262,6 +269,7 @@ struct Context {
     Image                main_depth;
     uint32_t             main_current = 0;
     float                render_scale = 1.0f;
+    FrameLayout          layout;
 
     VkSampler                    samplers[kSamplerCount] = {};
     VkDescriptorSetLayout        texture_set_layout = VK_NULL_HANDLE;
@@ -354,10 +362,13 @@ Image   *ColorImageOf(TextureHandle handle);
 // buffer when the draw command buffer has not touched them this frame, so no rendering is broken.
 VkCommandBuffer CommandsForWrite(uint64_t &last_draw_use);
 uint32_t        SamplerIndex(Filter filter, Wrap wrap_u, Wrap wrap_v);
-void            RecreateRenderTargets();
+// Every render target not at the size the render scale, the main target and the layout give it
+// now, with its logical frame carried over.
+void RecreateRenderTargets();
 // The targets that share the main depth buffer, at the main target's new size (contents lost).
 void           RecreateSharedTargets();
 LogicalMapping TextureMapping(const Texture &texture);
+bool           FrameShaped(const Texture &texture);
 // What DestroyTexture and DestroyMesh do once no list may draw the resource any more.
 void DestroyDoomedTexture(TextureHandle handle);
 void DestroyDoomedMesh(MeshHandle handle);
@@ -380,6 +391,17 @@ void           EndRendering();
 void           ResetDrawState();
 void           ReleaseTarget();
 LogicalMapping MainMapping(uint32_t width, uint32_t height);
+LogicalMapping UiMapping(const LogicalMapping &mapping);
+bool           FillsWindow();
+// ExtentAxis bits; none with AspectMode::Letterbox.
+uint32_t    ExtentAxes(TextureHandle handle);
+LogicalRect LogicalFrame(TextureHandle handle);
+// The whole of the mapping's pixels in its logical units.
+LogicalRect TargetBounds(const LogicalMapping &mapping);
+// rect with every edge that reaches frame's along an axis in axes moved out to the mapping's pixel
+// bounds.
+LogicalRect ExtendRect(LogicalRect rect, uint32_t axes, const LogicalRect &frame,
+                       const LogicalMapping &mapping);
 
 // readback.cpp
 void RecordDepthQueries(VkCommandBuffer cmd);

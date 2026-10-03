@@ -207,6 +207,7 @@ DC_TEST(gfx_fog_2d) {
 
 DC_TEST(gfx_letterbox) {
     GfxFixture          fixture(800, 480);
+    gfx::SetFrameLayout({gfx::AspectMode::Letterbox});
     gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
     DC_CHECK(mapping.pixel_width == 800 && mapping.pixel_height == 480);
     DC_CHECK_NEAR(mapping.scale_x, 1.0f, 1e-6f);
@@ -239,6 +240,7 @@ DC_TEST(gfx_letterbox) {
 
 DC_TEST(gfx_resize) {
     GfxFixture fixture(640, 480);
+    gfx::SetFrameLayout({gfx::AspectMode::Letterbox});
     fixture.Frame(kBlack, [] {});
     DC_CHECK(fixture.width == 640 && fixture.height == 480);
 

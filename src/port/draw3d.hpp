@@ -57,6 +57,16 @@ Draw3DShadowProgram Draw3DCurrentShadowProgram();
 // 4x4 matrices are column-major [column][row], as sceVu0FMATRIX.
 void Draw3DMul(float out[4][4], const float a[4][4], const float b[4][4]);
 
+// Half the extent of what the current render target shows, about the frame's centre, in logical
+// frame units (480 rows): the logical frame's (320 by SCREEN_HALF_HEIGHT_F), or more where the
+// target shows past the frame (gfx::VisibleLogicalRect). Culls test against it.
+struct Draw3DExtent {
+    float half_width;
+    float half_height;
+};
+
+Draw3DExtent Draw3DVisibleExtent();
+
 // Eye space (what view_scaled produces: x right, y down, z forward) to clip space of the current
 // render target.
 void Draw3DEyeToClip(const RenderInfo &info, float clip[4][4]);

@@ -128,15 +128,24 @@ void BlitWithin(gfx::TextureHandle texture, gfx::Rect src, gfx::Rect dst, gfx::F
     static gfx::TextureHandle scratch = gfx::kNullTexture;
     static uint32_t           scratch_width = 0;
     static uint32_t           scratch_height = 0;
+    static bool               scratch_frame = false;
     uint32_t                  width = static_cast<uint32_t>(std::abs(src.w));
     uint32_t                  height = static_cast<uint32_t>(std::abs(src.h));
-    if (scratch == gfx::kNullTexture || scratch_width < width || scratch_height < height) {
+    // A move of the frame's whole width carries the sides past the logical frame through a frame
+    // target of its own.
+    std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(texture);
+
+    bool frame = info && (info->frame_target || info->shares_main_depth || texture == gfx::kMainTarget);
+    frame = frame && width >= info->width;
+    if (scratch == gfx::kNullTexture || scratch_width < width || scratch_height < height ||
+        scratch_frame != frame) {
         if (scratch != gfx::kNullTexture) {
             gfx::DestroyTexture(scratch);
         }
         scratch_width = std::max(width, scratch_width);
         scratch_height = std::max(height, scratch_height);
-        scratch = gfx::CreateRenderTarget(scratch_width, scratch_height, true);
+        scratch_frame = frame;
+        scratch = gfx::CreateRenderTarget(scratch_width, scratch_height, true, false, frame);
     }
     gfx::Rect middle = {0, 0, static_cast<int32_t>(width), static_cast<int32_t>(height)};
     gfx::BlitTexture(texture, src, scratch, middle, gfx::Filter::Nearest);
@@ -278,6 +287,24 @@ bool Draw3DShadowTargetActive() {
 
 Draw3DShadowProgram Draw3DCurrentShadowProgram() {
     return g_shadow_program;
+}
+
+Draw3DExtent Draw3DVisibleExtent() {
+    gfx::TextureHandle              target = gfx::CurrentRenderTarget();
+    std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(target);
+    gfx::LogicalRect                visible = gfx::VisibleLogicalRect(target);
+    float                           width = info ? static_cast<float>(info->width) : gfx::kLogicalWidth;
+    float                           height = info ? static_cast<float>(info->height) : gfx::kLogicalHeight;
+    float                           wider = std::max({0.0f, -visible.x, visible.x + visible.w - width});
+    float                           taller = std::max({0.0f, -visible.y, visible.y + visible.h - height});
+    return {gfx::kLogicalWidth * 0.5f + wider, SCREEN_HALF_HEIGHT_F + taller / MGPortTargetRowScale(target)};
+}
+
+bool MGPortFrameTarget(std::string_view name) {
+    while (name.starts_with('#')) {
+        name.remove_prefix(1);
+    }
+    return name.starts_with("frame_");
 }
 
 void Draw3DMul(float out[4][4], const float a[4][4], const float b[4][4]) {
@@ -833,12 +860,14 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
     return visible;
 }
 
-// view_screen keeps retail's GS field units, so the guard band stays a quarter of the frame high.
+// view_screen keeps retail's GS field units, so the vertical bound is half the frame's half-height;
+// both bounds are what the current target shows, which past a 4:3 window is wider than retail's.
 int MGClipVertex(float *position) {
     sceVu0FVECTOR point;
     int           outside = 0;
-    float         half_width = 320.0f;
-    float         half_height = SCREEN_QUARTER_HEIGHT_F;
+    Draw3DExtent  extent = Draw3DVisibleExtent();
+    float         half_width = extent.half_width;
+    float         half_height = extent.half_height * kFieldSqueeze;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_screen, position);
     if (0.0f == point[3]) {
@@ -955,7 +984,11 @@ static void StretchColour24(gfx::TextureHandle src, gfx::Rect src_rect, gfx::Tex
         width = info->width;
         height = info->height;
     }
-    gfx::TextureHandle colour = gfx::NamedRenderTarget("stretch source PSMCT24", width, height, false);
+    std::optional<gfx::TextureInfo> source = gfx::GetTextureInfo(src);
+    bool                            frame = src == gfx::kMainTarget;
+    frame = frame || (source && (source->frame_target || source->shares_main_depth));
+    gfx::TextureHandle colour =
+        gfx::NamedRenderTarget("stretch source PSMCT24", width, height, false, false, frame);
     if (colour == gfx::kNullTexture) {
         return;
     }

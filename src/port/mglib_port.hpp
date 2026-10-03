@@ -2,6 +2,8 @@
 
 #include <libgraph.h>
 
+#include <string_view>
+
 #include "gfx/gfx.hpp"
 
 // What the 2D and 3D replacement units share with mglib.cpp: the draw state the game's current
@@ -47,6 +49,10 @@ float MGPortTargetRowScale(gfx::TextureHandle target);
 // units put it, depth is MGPortDepth's of the GS Z MGRotTransPers gives. 3D sprites and long-tail
 // geometry multiply their model matrix onto it.
 void MGPortWorldToClip(float clip[4][4]);
+
+// Whether a texture name the game registers is one of its frame grabs ("frame_image",
+// "frame_buff" and their kin), which gfx keeps at the window's aspect (gfx::CreateRenderTarget).
+bool MGPortFrameTarget(std::string_view name);
 
 // ---- Display lists ---------------------------------------------------------------------------
 

@@ -148,6 +148,25 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
     if (name == "video.fullscreen") {
         return ParseBool(value, config.fullscreen);
     }
+    if (name == "video.aspect") {
+        std::string aspect = Lower(value);
+        if (aspect == "auto") {
+            config.aspect = ConfigAspect::Auto;
+        } else if (aspect == "4:3") {
+            config.aspect = ConfigAspect::FourThree;
+        } else {
+            return false;
+        }
+        return true;
+    }
+    if (name == "video.ui_scale") {
+        float scale = 0.0f;
+        if (!ParseNumber(value, scale) || !(scale >= 0.25f && scale <= 4.0f)) {
+            return false;
+        }
+        config.ui_scale = scale;
+        return true;
+    }
     if (name == "audio.master_volume") {
         float volume = 0.0f;
         if (!ParseNumber(value, volume) || !std::isfinite(volume)) {
