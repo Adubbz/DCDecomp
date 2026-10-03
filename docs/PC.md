@@ -49,6 +49,8 @@ build/pc/darkcloud --data data --save save
 | `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
 | `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
 | `--width W`, `--height H` | window size in pixels, over `config.ini` |
+| `--jump MODE[:MAP]` | test hook: start in a mode (see "Test hooks"); also `DC_JUMP` |
+| `--fast-load` | test hook: loading-screen holds and fades of a few ticks; also `DC_FAST_LOAD=1` |
 | `--display-per-tick N` | headless test aid: render N interpolated display frames per tick (offscreen, not presented) before presenting the tick's canonical image |
 
 Environment: `DC_DATA` and `DC_SAVE` (above), `DC_INPUT` (above), `DC_AUDIO=off` (no audio
@@ -197,6 +199,26 @@ needs a later line that releases it:
 ```
 
 reaches the title menu at frame 560.
+
+### Test hooks
+
+For tests and debugging only; nothing the game does depends on them.
+
+- `--jump MODE[:MAP]` (or `DC_JUMP`) sets `DebugMode`, skips the 60-tick warm-up
+  and the developer menu, and starts `RunGame` in the mode with the globals the
+  developer menu (and for a dungeon, the dungeon loader) would have left:
+  `edit:<map>` (the game's `MapNo`: 0-4 the five towns, 11 and up the sub maps,
+  99 the interior), `dungeon:<n>` (dungeon n, 0-6, as `MapJump(200 + n)`, at its
+  floor select), `title`, `rush` (the attract movie), `opening`, or `menu` (the
+  developer menu itself). A bad value exits with status 2.
+- `--fast-load` (or `DC_FAST_LOAD=1`) cuts the loading screen's start delay to
+  one tick, its fades to two or four ticks and its holds (PAL 120, 183 and 83
+  ticks) to two. The modes' own fades are untouched.
+
+`darkcloud --headless --jump dungeon:0 --fast-load --frames 60` shows the first
+dungeon's floor select after about five seconds on lavapipe. The
+`integration_real_data_*` cases jump, run at 320x240 and share one save
+directory (and so one pipeline cache) under the build directory.
 
 ### Developer menu
 

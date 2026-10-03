@@ -50,13 +50,15 @@ struct Options {
     int          width = 0;
     int          height = 0;
     int          display_per_tick = 0;
+    const char  *jump = nullptr;
+    bool         fast_load = false;
 };
 
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
                  "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
                  "          [--input FILE] [--width W] [--height H] [--offscreen] [--high-arenas]\n"
-                 "          [--display-per-tick N]\n"
+                 "          [--display-per-tick N] [--jump MODE[:MAP]] [--fast-load]\n"
                  "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
                  "                     beside the executable)\n"
                  "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
@@ -70,7 +72,11 @@ struct Options {
                  "  --input FILE       drive pad 1 from a script (default: DC_INPUT); see docs/PC.md\n"
                  "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n"
                  "  --high-arenas      map the arenas above 4 GiB, as macOS must (DC_HIGH_ARENAS=1)\n"
-                 "  --display-per-tick N  headless: also render N interpolated display frames per tick\n",
+                 "  --display-per-tick N  headless: also render N interpolated display frames per tick\n"
+                 "test hooks:\n"
+                 "  --jump MODE[:MAP]  start in edit:<map>, dungeon:<0-6>, title, rush, opening or menu,\n"
+                 "                     skipping the warm-up (DC_JUMP); see docs/PC.md\n"
+                 "  --fast-load        loading-screen holds and fades of a few ticks (DC_FAST_LOAD=1)\n",
                  program);
     std::exit(kExitUsage);
 }
@@ -110,6 +116,10 @@ Options ParseOptions(int argc, const char **argv) {
             options.width = static_cast<int>(number());
         } else if (arg == "--height") {
             options.height = static_cast<int>(number());
+        } else if (arg == "--jump") {
+            options.jump = value();
+        } else if (arg == "--fast-load") {
+            options.fast_load = true;
         } else if (arg == "--display-per-tick") {
             options.display_per_tick = static_cast<int>(number());
         } else {
@@ -242,6 +252,15 @@ int main(int argc, const char **argv, const char **envp) {
     if (options.high_arenas) {
         ArenaMemorySetHigh(true);
     }
+    if (options.jump == nullptr) {
+        options.jump = std::getenv("DC_JUMP");
+    }
+    if (options.jump != nullptr && *options.jump != '\0' && !GameSetJump(options.jump)) {
+        std::fprintf(stderr, "bad --jump: %s\n", options.jump);
+        std::exit(kExitUsage);
+    }
+    const char *fast_load = std::getenv("DC_FAST_LOAD");
+    GameSetFastLoad(options.fast_load || (fast_load != nullptr && *fast_load != '\0' && *fast_load != '0'));
     RequireData();
     LoadInputScript(options.input);
 

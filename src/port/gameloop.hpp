@@ -17,6 +17,16 @@ void GameSetFrameBudget(std::int64_t frames);
 
 std::int64_t GameFrameCount();
 
+// Test hooks. GameSetJump takes "edit[:<map no>]" (the game's MapNo: 0-4 the towns, 11 and up
+// the sub maps, 99 the interior), "dungeon[:<n>]" (dungeon n, 0-6, map 200 + n, at its floor
+// select), "title", "rush", "opening" or "menu"; false for anything else. RunGame then sets
+// DebugMode, skips the warm-up and starts in that mode, set up as the developer menu (and, for a
+// dungeon, its loader) would have. GameSetFastLoad cuts the loading screen's holds and fades to a
+// few ticks.
+bool GameSetJump(const char *spec);
+void GameSetFastLoad(bool fast);
+bool GameFastLoad();
+
 // Honoured at the next frame boundary of the main loop.
 void GameRequestStop();
 

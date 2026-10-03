@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "dataread.hpp"
+#include "gameloop.hpp"
 #include "gfx/gfx.hpp"
 #include "mainselect.hpp"
 #include "mglib.hpp"
@@ -192,9 +193,9 @@ void init_now_loading(int title_number) {
     }
 
     map_title_no = title_number;
-    nl_start_cnt = 20;
+    nl_start_cnt = GameFastLoad() ? 1 : 20;
     col_cnt = 0.0f;
-    col_add = 1.0f;
+    col_add = GameFastLoad() ? 64.0f : 1.0f;
     count = 0;
     logo_count = 0;
     end_flag = 0;
@@ -203,6 +204,15 @@ void init_now_loading(int title_number) {
     ClockSetTickCallback(VSyncCallBack_Load);
     ClockSetIdleHook(PresentLoadingFrame);
 }
+
+namespace {
+
+// --fast-load, a test hook: the holds take two ticks.
+int Hold(int ticks) {
+    return GameFastLoad() ? 2 : ticks;
+}
+
+} // namespace
 
 int VSyncCallBack_Load(int field) {
     if (end_flag) {
@@ -233,13 +243,13 @@ int VSyncCallBack_Load(int field) {
 
             if (col_cnt > 128.0f) {
                 // The logo holds keep their NTSC duration at 50 fields a second.
-                count = 183;
+                count = Hold(183);
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }
 
             if (col_cnt < 0.0f) {
-                count = 83;
+                count = Hold(83);
                 col_cnt = 0.0f;
                 col_add *= -1.0f;
 
@@ -263,7 +273,7 @@ int VSyncCallBack_Load(int field) {
             }
 
             if (col_cnt > 128.0f) {
-                count = 120;
+                count = Hold(120);
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }

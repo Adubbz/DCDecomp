@@ -1,7 +1,9 @@
 #include "gameloop.hpp"
 
 #include <algorithm>
+#include <charconv>
 #include <cstring>
+#include <string_view>
 #include <thread>
 
 #include "battle_globals.hpp"
@@ -73,6 +75,15 @@ bool DisplayFrame(float alpha, bool present) {
     }
     return shown;
 }
+
+struct Jump {
+    bool set = false;
+    int  mode = GAME_MODE_MENU;
+    int  map = 0;
+};
+
+Jump g_jump;
+bool g_fast_load;
 
 std::int64_t g_frame_budget = -1;
 std::int64_t g_frames;
@@ -209,6 +220,46 @@ int ModeLoop(bool &skip_title) {
 void LoadDrawEnv() {
     sceGsTexa texa = kDrawEnvTexa;
     MGSetGsTEXA(&texa);
+}
+
+// What the developer menu's choice (and the dungeon loader's) leaves behind.
+void ApplyJump() {
+    OldMapNo = -1;
+    NextMapNo = -1;
+    GamePad.AutoRepeatOff();
+    switch (g_jump.mode) {
+        case GAME_MODE_EDIT:
+            main_select_menu_no = g_jump.map;
+            MapNo = g_jump.map;
+            if (g_jump.map != 99) {
+                LocalMapNo = g_jump.map;
+            }
+            mode = GAME_MODE_EDIT;
+            break;
+        case GAME_MODE_DUNGEON:
+            selectMapNo = g_jump.map;
+            main_select_menu_no = g_jump.map;
+            MapJump(g_jump.map + 200, -1);
+            MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
+            GameFollowMapJump();
+            break;
+        case GAME_MODE_TITLE:
+            MapJump(800, -1);
+            GameFollowMapJump();
+            break;
+        case GAME_MODE_RUSH_MOVIE:
+            MapJump(801, -1);
+            GameFollowMapJump();
+            break;
+        case GAME_MODE_OPENING:
+            MapJump(400, -1);
+            GameFollowMapJump();
+            break;
+        default:
+            mode = GAME_MODE_MENU;
+            break;
+    }
+    NextMapNo = -1;
 }
 
 bool FrameBoundaryStop() {
@@ -348,6 +399,49 @@ void GameApplyLoopResult(int loop_mode, int result) {
     }
 }
 
+bool GameSetJump(const char *spec) {
+    std::string_view text = spec;
+    std::string_view name = text.substr(0, text.find(':'));
+    std::string_view number = name.size() < text.size() ? text.substr(name.size() + 1) : std::string_view();
+    Jump             jump;
+    jump.set = true;
+    if (!number.empty()) {
+        auto [end, error] = std::from_chars(number.data(), number.data() + number.size(), jump.map);
+        if (error != std::errc{} || end != number.data() + number.size() || jump.map < 0) {
+            return false;
+        }
+    }
+    bool numbered = name == "edit" || name == "dungeon";
+    if (!numbered && !number.empty()) {
+        return false;
+    }
+    if (name == "edit") {
+        jump.mode = GAME_MODE_EDIT;
+    } else if (name == "dungeon" && jump.map <= 6) {
+        jump.mode = GAME_MODE_DUNGEON;
+    } else if (name == "title") {
+        jump.mode = GAME_MODE_TITLE;
+    } else if (name == "rush") {
+        jump.mode = GAME_MODE_RUSH_MOVIE;
+    } else if (name == "opening") {
+        jump.mode = GAME_MODE_OPENING;
+    } else if (name == "menu") {
+        jump.mode = GAME_MODE_MENU;
+    } else {
+        return false;
+    }
+    g_jump = jump;
+    return true;
+}
+
+void GameSetFastLoad(bool fast) {
+    g_fast_load = fast;
+}
+
+bool GameFastLoad() {
+    return g_fast_load;
+}
+
 void GameSetFrameBudget(std::int64_t frames) {
     g_frame_budget = frames;
 }
@@ -471,7 +565,10 @@ int RunGame(int argc, char **argv) {
     g_save_data.Initialize();
     GlobalNameInit();
 
-    for (int tick = 0; tick < kWarmUpTicks; ++tick) {
+    if (g_jump.set) {
+        DebugMode = 1;
+    }
+    for (int tick = 0; tick < kWarmUpTicks && !g_jump.set; ++tick) {
         ClockSyncV();
         GamePad.UpDate();
         // Holding the four shoulder buttons on pad 2 through the first second turns on debug mode.
@@ -483,6 +580,9 @@ int RunGame(int argc, char **argv) {
         MapNo = -1;
         mode = GAME_MODE_LANGUAGE;
         GamePad.KeyLock2(1);
+    }
+    if (g_jump.set) {
+        ApplyJump();
     }
 
     int  title_ran = 0;

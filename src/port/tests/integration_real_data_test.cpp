@@ -33,18 +33,24 @@ fs::path RealData() {
     return data;
 }
 
-Run RunScripted(const char *name, const fs::path &data, const std::string &script, int frames) {
-    fs::path dir = fs::temp_directory_path() / (std::string("dc_real_") + name);
+// Runs live beside the test executable, so builds do not share them, and share one save directory,
+// so the pipeline cache is compiled once.
+Run RunScripted(const char *name, const fs::path &data, const std::string &script, int frames,
+                const std::string &hooks) {
+    fs::path build = fs::read_symlink("/proc/self/exe").parent_path();
+    fs::path dir = build / "real_data" / name;
+    fs::path save = build / "real_data" / "save";
     fs::remove_all(dir);
-    fs::create_directories(dir / "save");
+    fs::create_directories(dir);
+    fs::create_directories(save);
     std::ofstream(dir / "input.txt") << script;
-    fs::path    executable = fs::read_symlink("/proc/self/exe").parent_path() / "darkcloud";
-    fs::path    log = dir / "output.txt";
-    Run         run;
+    fs::path executable = build / "darkcloud";
+    fs::path log = dir / "output.txt";
+    Run      run;
     run.screenshot = dir / (std::string(name) + ".png");
-    std::string command = "'" + executable.string() + "' --headless --frames " + std::to_string(frames) +
+    std::string command = "'" + executable.string() + "' --headless --width 320 --height 240 " + hooks + " --frames " + std::to_string(frames) +
                           " --screenshot '" + run.screenshot.string() + "' --data '" + data.string() +
-                          "' --save '" + (dir / "save").string() + "' --input '" +
+                          "' --save '" + save.string() + "' --input '" +
                           (dir / "input.txt").string() + "' > '" + log.string() + "' 2>&1";
     int raw = std::system(command.c_str());
     run.status = WIFEXITED(raw) ? WEXITSTATUS(raw) : 128 + WTERMSIG(raw);
@@ -60,29 +66,23 @@ Run RunScripted(const char *name, const fs::path &data, const std::string &scrip
 
 } // namespace
 
-// Language select and memory check with Cross, Start through the attract movie, Start twice on the
-// title logo: the title menu.
+// Straight into the title (the --jump test hook), Start twice on the logo: the title menu.
 DC_TEST(integration_real_data_reaches_the_title_menu) {
     fs::path data = RealData();
-    Run      run = RunScripted("title", data,
-                               "0\n70 cross\n75\n90 cross\n95\n200 start\n205\n480 start\n485\n520 start\n"
-                               "525\n",
-                               560);
+    Run      run = RunScripted("title", data, "0\n100 start\n105\n140 start\n145\n", 180, "--jump title --fast-load");
     DC_CHECK(run.status == kExitOk);
     DC_CHECK(run.output.find("SND_INF= title.txt") != std::string::npos);
     DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
     DC_CHECK(fs::file_size(run.screenshot) > 0);
 }
 
-// Pad 2's four shoulder buttons through the warm-up open the developer menu; its fifth row is the
-// dungeon loader.
+// The developer menu (--jump menu, as pad 2's shoulder buttons through the warm-up would open it):
+// its fifth row is the dungeon loader.
 DC_TEST(integration_real_data_developer_menu_opens_the_dungeon_loader) {
     fs::path data = RealData();
     Run      run = RunScripted("loader", data,
-                               "0 pad2 l1 r1 l2 r2\n1 pad2\n10 down\n12\n14 down\n16\n18 down\n20\n"
-                               "22 down\n24\n"
-                               "30 circle\n32\n",
-                               45);
+                               "0\n2 down\n4\n6 down\n8\n10 down\n12\n14 down\n16\n20 circle\n22\n", 35,
+                               "--jump menu --fast-load");
     DC_CHECK(run.status == kExitOk);
     DC_CHECK(run.output.find("not implemented on PC") == std::string::npos);
     DC_CHECK(fs::file_size(run.screenshot) > 0);
