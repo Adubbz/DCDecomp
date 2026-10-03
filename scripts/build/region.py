@@ -8,7 +8,7 @@ NTSC 1.02 is the default. `DCDECOMP_REGION=PAL` selects the July 12, 2001 PAL
 prototype. Everything the two releases do not share -- the disc, what was
 extracted from it, the split configuration and linker script, the split
 itself, the build tree and the retail section layout -- sits under a directory
-named for the release (`rom/ntsc`, `config/ntsc`, `asm/ntsc`, `build/ntsc`)
+named for the release (`rom/ntsc`, `ps2/config/ntsc`, `ps2/asm/ntsc`, `ps2/build/ntsc`)
 and is looked up here, so no other script names a release.
 """
 
@@ -95,7 +95,7 @@ def paths(name):
     """Where the named release's files live, for a script that reads both."""
     directory = name.lower()
     rom = f"rom/{directory}"
-    config = f"config/{directory}"
+    config = f"ps2/config/{directory}"
     return {
         # The directory every region-specific tree names the release by.
         "dir": directory,
@@ -107,9 +107,9 @@ def paths(name):
         # The split configuration, the linker script and the split itself.
         "config": config,
         "lcf": f"{config}/SCUS_971.11.lcf",
-        "asm": f"asm/{directory}",
+        "asm": f"ps2/asm/{directory}",
         # The CMake binary directory, and the disc image mastered into it.
-        "build": f"build/{directory}",
+        "build": f"ps2/build/{directory}",
         "built_iso": f"Dark Cloud ({name} Build).iso",
     }
 

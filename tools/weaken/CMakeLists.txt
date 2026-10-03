@@ -1,7 +1,7 @@
 # weaken marks a Mach-O object's definitions weak, the macOS fallback for llvm-objcopy --weaken
-# (src/port/CMakeLists.txt). Built and tested on every host so the Linux build keeps it honest; the
+# (port/CMakeLists.txt). Built and tested on every host so the Linux build keeps it honest; the
 # fixtures are compiled for arm64-apple-macos14 by the host's clang, which needs no SDK for them.
-# The LLVM tool paths come from src/port/CMakeLists.txt.
+# The LLVM tool paths come from port/CMakeLists.txt.
 add_executable(weaken ${CMAKE_CURRENT_SOURCE_DIR}/weaken.cpp)
 set_target_properties(weaken PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 target_compile_options(weaken PRIVATE -Wall -Wextra)

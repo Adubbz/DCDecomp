@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Give every unit's objdiff target the data the unit defines.
 
-    objdiff_data.py [--build-dir build/ntsc] [--lcf <linker script>]
+    objdiff_data.py [--build-dir ps2/build/ntsc] [--lcf <linker script>]
 
 objdiff counts a unit's data from its target object alone, and splat's
 reference for a unit is its code plus the constants splat migrates into it --

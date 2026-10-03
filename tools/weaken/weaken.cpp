@@ -1,5 +1,5 @@
 // Marks every defined external symbol of a 64-bit Mach-O object weak (N_WEAK_DEF), in place. The port's
-// src/ps2 half is merged into one object whose definitions must all yield to src/port's (docs/PC.md); on
+// ps2/src half is merged into one object whose definitions must all yield to port/src's (docs/PC.md); on
 // Mach-O this is the fallback for llvm-objcopy --weaken. Only n_desc bytes change, so nothing else in the
 // object can be disturbed.
 

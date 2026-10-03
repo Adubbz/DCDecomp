@@ -2,8 +2,8 @@
 """Generate the declaration context m2c decompiles against.
 
     m2ctx.py                     whole project -> ctx.c at the repo root
-    m2ctx.py -o build/ntsc/ctx.c ...somewhere else; this is what the build runs
-    m2ctx.py src/ps2/savedata.cpp    one translation unit instead of the project
+    m2ctx.py -o ps2/build/ntsc/ctx.c ...somewhere else; this is what the build runs
+    m2ctx.py ps2/src/savedata.cpp    one translation unit instead of the project
 
 Whole-project mode writes ctx.cpp, every header folded into one C++ file, and
 ctx.c, that same content re-emitted as C by clang. m2c parses context as C;
@@ -32,14 +32,14 @@ import clang.cindex as ci
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.abspath(os.path.join(script_dir, "..", ".."))
-include_dir = os.path.join(root_dir, "include", "ps2")
+include_dir = os.path.join(root_dir, "ps2", "include")
 
 # Project-specific. -ffreestanding keeps the host's system headers out of a
 # context describing a PlayStation 2 binary; M2CTX is the escape hatch for
 # anything a header needs to say differently here.
 CPP_FLAGS = [
-    "-Iinclude/ps2",
-    "-Isrc",
+    "-Ips2/include",
+    "-Ips2/src",
     "-D_LANGUAGE_C",
     "-DF3DEX_GBI_2",
     "-D_MIPS_SZLONG=32",
@@ -320,7 +320,7 @@ def usable(cur, root):
         return False
 
     loc = cur.location.file
-    # clang reports each path as it was written, which under `-Iinclude/ps2` is
+    # clang reports each path as it was written, which under `-Ips2/include` is
     # relative to the working directory -- resolve before comparing. Builtins
     # have no file at all, and are what this mainly filters out.
     if loc is None or not os.path.abspath(str(loc)).startswith(root):

@@ -9,13 +9,13 @@ update its status here and move the architectural facts into `docs/PC.md`.
 ## 1. Goals and hard rules
 
 - **C++26, SDL3, Vulkan 1.4, clang 20 or newer, lld.** The port lives in
-  `src/port` and `include/port`. `src/ps2` and `include/ps2` are the PAL
+  `port/src` and `port/include`. `ps2/src` and `ps2/include` are the PAL
   game as the PS2 build compiles it and are never edited for the port beyond
   the rules in `docs/PC.md`.
 - **Weak-linkage replacement is the only mechanism.** Any function in
-  `src/ps2` that depends on PS2 hardware (GS, VU0, VU1, VIF, GIF, DMA, SPU2,
+  `ps2/src` that depends on PS2 hardware (GS, VU0, VU1, VIF, GIF, DMA, SPU2,
   IOP, scratchpad, timers, memory card, CD) is replaced by a strong
-  definition in `src/port` written from scratch. A `static` function cannot
+  definition in `port/src` written from scratch. A `static` function cannot
   be replaced, so its non-static callers are replaced instead.
 - **No emulation of the PS2.** No GS register interpreter, no VU1
   interpreter, no VIF or GIF packet decoder, no DMA chain walker, no SPU2
@@ -77,7 +77,7 @@ summarised in section 3. Key facts:
 The full survey notes are in the session scratchpad; the parts each phase
 needs are restated in its section. Cross-cutting facts:
 
-**Entry and frame flow (`src/ps2/main.cpp:436-1044`).** `init_all` (IOP
+**Entry and frame flow (`ps2/src/main.cpp:436-1044`).** `init_all` (IOP
 boot, `InitCDFile`, `DevInit`, `MGInit`, `BufferAllClear`, `InitReadBG`),
 pad init, 60 warm-up frames, then a mode loop: `LoadOverlay`,
 `MGSetRenderInfo(800,10,65535)`, VU1 program upload, `init_now_loading`,
@@ -102,7 +102,7 @@ editloop.cpp:1222-1533). `EditLoop` calls `MGEndFrame`/`MGBeginFrame` itself
 for fades (nested presents must work).
 
 **Resolution.** PAL field buffers are 640x240, display 640x480;
-`SCREEN_HEIGHT` 480, `SCREEN_HALF_HEIGHT` 240 (`include/ps2/common.h`).
+`SCREEN_HEIGHT` 480, `SCREEN_HALF_HEIGHT` 240 (`ps2/include/common.h`).
 GS 12.4 coordinates with origin X 1728, Y `GS_Y_OFFSET` 0x7880; 2D rects
 are `X=(x<<4)+27648`, `Y=(y<<3)+GS_Y_OFFSET` (Y halved into the field).
 `MGSetViewMatrix_sub` squeezes Y by 0.5 for the field; `MGRotTransPers2D`
@@ -123,10 +123,10 @@ hang on buffers above 32 MB.
 ### 4.1 Layout
 
 ```
-src/port/
+port/src/
   CMakeLists.txt          port build (+ tools, tests, shaders)
   main.cpp                main(): CLI/config, platform init, runs the game's main loop
-  gameloop.cpp            replacement of src/ps2/main.cpp's main() body as a function
+  gameloop.cpp            replacement of ps2/src/main.cpp's main() body as a function
   platform/               host side; no game headers in interfaces
     window.{hpp,cpp}      SDL3 window, events, resize
     input.{hpp,cpp}       SDL3 gamepad/keyboard -> DualShock-shaped state, rumble
@@ -143,21 +143,21 @@ src/port/
     shaders/*.vert|frag   GLSL 4.6, compiled to SPIR-V by glslang at build time
   sce/                    SDK implementations with a host equivalent (libvu0, libpad, libmc, eekernel)
   stubs/                  PS2_UNIMPLEMENTED stubs; shrinks as phases land
-  <unit>.cpp              replacements for src/ps2/<unit>.cpp (dataread, mglib, texture, ...)
+  <unit>.cpp              replacements for ps2/src/<unit>.cpp (dataread, mglib, texture, ...)
   title/<unit>.cpp, dun/<unit>.cpp   replacements for the overlay units
   audio/                  HD/BD/SQ player: vag.cpp, hdbank.cpp, sequencer.cpp, synth.cpp
   tests/                  darkcloud_tests (unit tests, headless render tests)
-include/port/
+port/include/
   port.h, stubs/          as today
   platform/, gfx/, audio/ public headers of the above (only if a header must be shared)
 tools/dcdata/             data extraction tool (C++26, std::filesystem)
 ```
 
 Rules: `platform/`, `gfx/` and `audio/` never include a game header. The
-replacement units (`src/port/<unit>.cpp`) are the only place game types and
+replacement units (`port/src/<unit>.cpp`) are the only place game types and
 port services meet.
 
-### 4.2 Renderer (`src/port/gfx`)
+### 4.2 Renderer (`port/src/gfx`)
 
 Vulkan 1.4 core features only (dynamic rendering, synchronization2, timeline
 semaphores, descriptor indexing for a bindless texture array, push
@@ -193,7 +193,7 @@ constants). One graphics+present queue. Frames in flight: 2.
     `BlitTexture(src, rect, dst, rect, filter)`, `SnapshotFrame(dst)`,
     `SetRenderTarget(handle | main)`.
   - `ReadDepth(x, y)` queued, result available next frame (pick-Z).
-- **Shaders.** GLSL 4.6 under `src/port/gfx/shaders`, compiled with
+- **Shaders.** GLSL 4.6 under `port/src/gfx/shaders`, compiled with
   glslang at build time into SPIR-V headers. One 2D vertex/fragment pair,
   one 3D pair with specialization constants for lit/vertex-colour/fog/
   textured/palette, a blit pair. GS semantics implemented in the fragment
@@ -238,7 +238,7 @@ record to `<data-dir>/<lowercased path>` with `std::filesystem`. It also
 accepts a directory already holding `DATA.DAT` and `DATA.HD2`. It verifies
 sizes, prints a manifest and is idempotent.
 
-`src/port/dataread.cpp` replaces `InitCDFile`, `LoadFile`, `LoadFile2`,
+`port/src/dataread.cpp` replaces `InitCDFile`, `LoadFile`, `LoadFile2`,
 `LoadFileBG`, `ReadBG`, `ReadBGSync`, `BreakReadBG`, `StartReadBG`,
 `InitReadBG`, `GetReadBGFile`, `WriteFile`: a case-folded index of `data/`
 built once with `recursive_directory_iterator`; `LoadFile2` strips any
@@ -277,9 +277,9 @@ under `save/host0/`. Missing files return 0 as retail does.
 
 ### 4.6 Rendering replacement units
 
-Replaced on top of `src/port/gfx`:
+Replaced on top of `port/src/gfx`:
 
-- `mglib.cpp`: every `MG*` function in `include/ps2/mglib.hpp` plus the
+- `mglib.cpp`: every `MG*` function in `ps2/include/mglib.hpp` plus the
   VSync group. `MGSetRenderInfo`/`MGSetViewMatrix` build real projection
   and view matrices (perspective from scale 800, near 10, far 65535,
   window aspect) in `mgRenderInfo` and in port-side state; the field
@@ -312,13 +312,13 @@ Replaced on top of `src/port/gfx`:
   grab, cursors, LoaderLoop), `title/*` (titleloop, opening, rushmovi,
   op_a..op_d, sprite, dispfade, scfader).
 
-### 4.7 Audio (`src/port/audio`)
+### 4.7 Audio (`port/src/audio`)
 
 A from-scratch player for the game's banks: VAG/SPU ADPCM decoder, HD bank
 parser (programs, splits, sample sets, envelopes), SQ sequence reader,
 a MIDI-like sequencer driving a polyphonic synth (pitch from note and
 sample rate, ADSR, pan, volume, reverb approximated), mixed at 48 kHz into
-the SDL3 audio stream. `CSound` (`src/ps2/sound.cpp`, ~35 non-static
+the SDL3 audio stream. `CSound` (`ps2/src/sound.cpp`, ~35 non-static
 methods) plus `TransHdBd`, `set_spu`, `ezMidiInit`, `ezMidi`,
 `ezTransToIOP` are the replacement seam; the HS messages the game sends
 (F9 volume/pan, FD key-on/off) map to synth calls.
@@ -332,9 +332,9 @@ work in their own git worktree branch; the orchestrator merges.
 
 ### Wave 1 (parallel, independent)
 
-**P0+P3 Renderer core and build foundation** (`src/port/CMakeLists.txt`,
-`src/port/gfx/*`, `src/port/platform/window.*`, `src/port/main.cpp` only
-for the CLI, `src/port/tests/`). Deliver the full `gfx` API of 4.2 with a
+**P0+P3 Renderer core and build foundation** (`port/CMakeLists.txt`,
+`port/src/gfx/*`, `port/src/platform/window.*`, `port/src/main.cpp` only
+for the CLI, `port/src/tests/`). Deliver the full `gfx` API of 4.2 with a
 sample headless test that draws textured 2D quads, a lit 3D mesh, a copy,
 a blit and a depth readback on lavapipe and checks pixels. Shader build
 step with glslang. Pipeline precompilation with on-disk cache. Resize.
@@ -342,7 +342,7 @@ Acceptance: `darkcloud --headless --frames 3 --screenshot out.png` works on
 lavapipe; tests pass; `gfx/` has no game headers.
 **Status: landed.** gfx Vulkan 1.4 renderer, shader build, pipeline cache, headless tests.
 
-**P1 Data** (`tools/dcdata`, `src/port/dataread.cpp`, `platform/paths.*`,
+**P1 Data** (`tools/dcdata`, `port/src/dataread.cpp`, `platform/paths.*`,
 tests). Deliver the extractor (ISO 9660 + HD2/DAT), the `dataread`
 replacement, pack-file tests with synthetic data, and a documented
 `data/` layout. No disc image is available in this environment: build the
@@ -359,14 +359,14 @@ runtime no-ops, with tests for libmc (round-trip a save image through the
 state machine), the clock and the arenas.
 **Status: landed.** Input, clock, config, libpad/libmc/eekernel/sifrpc, arenas, runtime no-ops.
 
-**P8 Audio** (`src/port/audio/*`, `platform/audio.*`, `src/port/sound.cpp`,
-`src/port/gameutil.cpp` EZMIDI seam). Deliver VAG decoding, HD/BD/SQ
+**P8 Audio** (`port/src/audio/*`, `platform/audio.*`, `port/src/sound.cpp`,
+`port/src/gameutil.cpp` EZMIDI seam). Deliver VAG decoding, HD/BD/SQ
 parsing, sequencer, synth, SDL3 output, and `CSound` on top. Tests with
 synthetic banks and sequences (generate a VAG from a sine, an HD with one
 program, an SQ with a few notes; check the mix).
 **Status: landed.** VAG, HD/BD/SQ, sequencer, synth and mixer, SDL3 output, `CSound` on top.
 
-**P5a CPU math replacements** (`src/port/mathutil.cpp`, `frame.cpp`
+**P5a CPU math replacements** (`port/src/mathutil.cpp`, `frame.cpp`
 helpers, `collisionmdt.cpp`, `gameutil.cpp` `MotionProc2`,
 `chararead.cpp`, `cloth.cpp` `CCloth::Step`, `water.cpp`
 `pretest`/`Trans_AddCell`, `visualvu1.cpp` `InverseLength`,
@@ -374,7 +374,7 @@ helpers, `collisionmdt.cpp`, `gameutil.cpp` `MotionProc2`,
 `MGRotTransPers3DSprite`/`MGCalcColor` math, `bound.cpp`). These are the
 `#ifndef PORT` assembly functions: reimplement each from the retail
 disassembly's semantics (the surrounding C++ and the VU0 instruction
-sequences in `src/ps2`), keep the exact lane behaviour the game relies on
+sequences in `ps2/src`), keep the exact lane behaviour the game relies on
 (which components are written, w handling), with tests against hand
 computed values. Where a function emits VU1 data (the shadow CLIP builder)
 produce the same CPU-side clipped triangle list the renderer unit will
@@ -383,7 +383,7 @@ consume, as plain arrays.
 
 ### Wave 2 (after P0+P3 merges)
 
-**P4+P5b 3D path** (`src/port/mglib.cpp` draw/state/matrices,
+**P4+P5b 3D path** (`port/src/mglib.cpp` draw/state/matrices,
 `visualvu1.cpp`, `visualshadow.cpp`, `cloth.cpp`, `water.cpp`,
 `frame.cpp` `CFrameVu1::DrawVu1`). Meshes from MDT, draw submission with
 the VU1 program semantics as shader constants, shadows (planar projection,
@@ -392,14 +392,14 @@ rebuild per frame, pick-Z. Tests: build a mesh from a synthetic MDT and
 render it headless; shadow composite.
 **Status: landed.** MG library, meshes from MDT, `DrawVu1`, shadows, cloth, water, pick-Z.
 
-**P6 Textures** (`src/port/texture.cpp`, `textureanime.cpp`,
+**P6 Textures** (`port/src/texture.cpp`, `textureanime.cpp`,
 `nowload.cpp` drawing side). TIM2 decode (RGB16/24/32, IDTEX8, IDTEX4),
 IMG packs, placeholder render targets, `ReloadTexture` no-op, fixed
 textures, Z-buffer background, texture animation on `CopyTexture`. Tests:
 decode synthetic TIM2 of each type and compare pixels.
 **Status: landed.** TIM2 decode, texture registry, placeholders, texture animation, loading screen.
 
-**P7a 2D core** (`src/port/snd.cpp` sprites and `LensFlare`,
+**P7a 2D core** (`port/src/snd.cpp` sprites and `LensFlare`,
 `gameutil.cpp` sprite batch and `SetClut`, `clsmes.cpp`,
 `spritetable.cpp`, `dispctrl.cpp`, `menu_draw.cpp` packet sites,
 `title/dispfade.cpp`, `title/scfader.cpp`, `editloop3.cpp` fades). Tests:
@@ -418,7 +418,7 @@ render a sprite table headless and check pixels.
 `edit.cpp`, `edit_in.cpp`, `editloop.cpp` draw functions).
 **Status: landed.** Title scenes, opening, rush movie, title loop and the editor's draw functions; no stub is reachable from `main`.
 
-**P10 Integration** (`src/port/main.cpp`, `gameloop.cpp`, `docs/PC.md`,
+**P10 Integration** (`port/src/main.cpp`, `gameloop.cpp`, `docs/PC.md`,
 CI). The game's main loop runs through the title path headless with the
 extracted data when present; without data the run reaches the first
 `LoadFile` and reports the missing `data/` clearly. Every remaining
@@ -428,16 +428,16 @@ extracted data when present; without data the run reaches the first
 ## 6. Verification
 
 - `darkcloud_tests` (a plain `main` with assert-style checks or a tiny
-  framework in `src/port/tests`) runs under `ctest`. Every phase adds
+  framework in `port/src/tests`) runs under `ctest`. Every phase adds
   tests; synthetic fixtures are built in code, never checked in as blobs
   unless tiny.
 - Headless rendering on lavapipe: `SDL_VIDEO_DRIVER=offscreen` and
   `VK_EXT_headless_surface`, Vulkan 1.4.321 loader and 1.4.318 lavapipe are
   installed in this environment (`vulkaninfo --summary`).
-- The PS2 build is untouched: nothing in `src/ps2` or `include/ps2`
+- The PS2 build is untouched: nothing in `ps2/src` or `ps2/include`
   changes in this work. If a phase cannot proceed without such a change,
   it stops and reports instead.
-- `-Wall` clean in `src/port`; `clang-format` per `.clang-format`.
+- `-Wall` clean in `port/src`; `clang-format` per `.clang-format`.
 
 ## 7. Risks and decisions already taken
 

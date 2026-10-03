@@ -15,7 +15,7 @@ scored against retail with `quicktu.py`, and the toggle that helps most is
 kept. Only the constants of a function that is still wrong are tried, so a unit
 whose functions already match costs one compile.
 
-For the constant axis it updates `config/<region>/expression_node_overrides.json` using
+For the constant axis it updates `ps2/config/<region>/expression_node_overrides.json` using
 the exact live MWCC identities. The argument-read axis retains its existing
 pragma output because those reads are not necessarily constant nodes.
 """

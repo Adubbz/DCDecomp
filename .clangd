@@ -1,15 +1,15 @@
 If:
-  PathMatch: (src/ps2|include/ps2)/.*
+  PathMatch: (ps2/src|ps2/include)/.*
 CompileFlags:
   Add: [-xc++, -std=c++98, --target=mipsel-unknown-elf, -nostdinc, -nostdinc++, -Wno-deprecated-writable-strings,
-        -I../include/ps2, -I../include/ps2/std, -I../include/ps2/sce, -I../../include/ps2, -I../../include/ps2/std, -I../../include/ps2/sce,
-        -I../../../include/ps2, -I../../../include/ps2/std, -I../../../include/ps2/sce]
+        -I../ps2/include, -I../ps2/include/std, -I../ps2/include/sce, -I../../ps2/include, -I../../ps2/include/std, -I../../ps2/include/sce,
+        -I../../../ps2/include, -I../../../ps2/include/std, -I../../../ps2/include/sce]
 Diagnostics:
   UnusedIncludes: None
 Documentation:
   CommentFormat: Doxygen
 ---
 If:
-  PathMatch: src/port/.*
+  PathMatch: port/src/.*
 CompileFlags:
-  CompilationDatabase: build/pc
+  CompilationDatabase: port/build/pc

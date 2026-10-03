@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import region  # noqa: E402
 
 CONFIG = Path(region.CONFIG)
-SRC = Path("src/ps2")
+SRC = Path("ps2/src")
 # Where splat writes the release's reference assembly.
 ASM = region.ASM
 
@@ -173,7 +173,7 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
                 data_only.setdefault(match.group(2), (match.group(1), image))
     # A library object with data and no code -- newlib's impure.c -- is a
     # `.data` subsegment with no code sibling. splat writes it on its own under
-    # asm/data, and it links as a whole-unit object like any other asm unit.
+    # ps2/asm/data, and it links as a whole-unit object like any other asm unit.
     standalone = {}
     for unit, (kind, image) in data_only.items():
         if unit not in classified and unit.startswith("lib/"):
@@ -1019,7 +1019,7 @@ def main():
         return 0
 
     # Before anything is removed: clear_generated() takes out the whole of the
-    # previous split, and a run that cannot reach splat would leave no asm/ at
+    # previous split, and a run that cannot reach splat would leave no ps2/asm/ at
     # all to build against until the next successful one.
     try:
         import splat  # noqa: F401
@@ -1050,7 +1050,7 @@ def main():
 
     # The images run at the same time. Each one already needs a process of its
     # own for the globals above, and they write disjoint files -- an image owns
-    # its own subtree of asm/ and its own build/splat names -- so the split
+    # its own subtree of ps2/asm/ and its own build/splat names -- so the split
     # costs the largest image rather than the sum of the three. Their output is
     # held back and printed per image, or three progress lines would interleave.
     print(f"disassemble: splitting {', '.join(image for image, _c in configs)} "

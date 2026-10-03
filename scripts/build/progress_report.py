@@ -13,7 +13,7 @@ REGIONS = ("NTSC", "PAL")
 
 
 def load_region(region):
-    path = ROOT / ("objdiff.json" if region == "NTSC" else "build/pal/objdiff.json")
+    path = ROOT / ("objdiff.json" if region == "NTSC" else "ps2/build/pal/objdiff.json")
     config = json.loads(path.read_text(encoding="utf-8"))
     for unit in config["units"]:
         for key in ("target_path", "base_path"):

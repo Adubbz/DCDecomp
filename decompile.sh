@@ -12,7 +12,7 @@
 # method reads as GamePad.Down(0x40) rather than by its mangled name.
 #
 # Symbols are the mangled names diff.sh takes; look one up with
-# `grep <name> config/*/*.symbols.txt`.
+# `grep <name> ps2/config/*/*.symbols.txt`.
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -42,7 +42,7 @@ set -- ${remaining[@]+"${remaining[@]}"}
 # REGION=PAL decompiles the PAL prototype's copy of the function.
 REGION=${REGION:-NTSC}
 export DCDECOMP_REGION=$REGION
-CTX=build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/ctx.c
+CTX=ps2/build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/ctx.c
 M2C=(python3 tools/m2c/m2c.py --target mipsee-mwcc-c++)
 
 run() {
@@ -56,7 +56,7 @@ run() {
             echo "$0: $symbol is not in the ${section[0]} reference index" >&2
         else
             echo "$0: $symbol is in no reference index -- check the spelling with" >&2
-            echo "$0: grep $symbol config/*/*.symbols.txt" >&2
+            echo "$0: grep $symbol ps2/config/*/*.symbols.txt" >&2
         fi
         exit 1
     }

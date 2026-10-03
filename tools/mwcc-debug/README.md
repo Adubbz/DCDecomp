@@ -10,7 +10,7 @@ priority list, colours, and interference edges.
 unqualified name (`AddDrink`, not the mangled symbol). Omit it to capture every
 function in the file. Without `--` flags the retail flags are used.
 
-    python3 tools/mwcc-debug/capture.py src/ps2/dngstatusdata.cpp AddDrink -o /tmp/cap
+    python3 tools/mwcc-debug/capture.py ps2/src/dngstatusdata.cpp AddDrink -o /tmp/cap
 
 The output directory holds, per captured function:
 

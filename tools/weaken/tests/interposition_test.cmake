@@ -1,5 +1,5 @@
 # ctest driver for interposition_check.py: a "port" object replaces Add, and "game" objects call it the
-# way the port's build compiles src/ps2 (through the linker) and the ways that bypass a replacement (an
+# way the port's build compiles ps2/src (through the linker) and the ways that bypass a replacement (an
 # ELF .L$local alias, a relocation against Add's own section, a Mach-O branch to a local label).
 #
 # -DPYTHON= -DCHECK= -DWEAKEN= -DCXX= -DNM= -DOBJDUMP= -DOBJCOPY= -DWORK=

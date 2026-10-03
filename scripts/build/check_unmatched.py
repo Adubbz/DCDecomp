@@ -9,7 +9,7 @@ drafts and nothing more: the object is thrown away, and mwccgap is bypassed,
 since it cannot pair a marker with a gap that the compiled draft has filled.
 
     check_unmatched.py                every source
-    check_unmatched.py src/ps2/snd.cpp    those sources
+    check_unmatched.py ps2/src/snd.cpp    those sources
     check_unmatched.py --jobs 8       how many compiles at once
     check_unmatched.py --quiet        only the count
 
@@ -29,10 +29,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MW = Path(os.environ.get("MW_DIR", "tools/compilers/mw/2.3.3"))
-LIB_INCLUDES = os.environ.get("LIB_INCLUDE_DIRS", "include/ps2/std;include/ps2/sce")
+LIB_INCLUDES = os.environ.get("LIB_INCLUDE_DIRS", "ps2/include/std;ps2/include/sce")
 FLAGS = [
     "-O2", "-c", "-Cpp_exceptions", "off", "-RTTI", "off", "-strings", "readonly",
-    "-pragma", "divbyzerocheck on", "-i", "include/ps2", "-define", "NON_MATCHING",
+    "-pragma", "divbyzerocheck on", "-i", "ps2/include", "-define", "NON_MATCHING",
 ]
 GUARD = re.compile(r"^#ifdef\s+NON_MATCHING\s*$", re.M)
 
@@ -40,7 +40,7 @@ GUARD = re.compile(r"^#ifdef\s+NON_MATCHING\s*$", re.M)
 def sources() -> list[Path]:
     return sorted(
         path.relative_to(ROOT)
-        for path in (ROOT / "src" / "ps2").rglob("*")
+        for path in (ROOT / "ps2" / "src").rglob("*")
         if path.suffix in {".c", ".cpp"} and "lib/" not in str(path.relative_to(ROOT))
     )
 

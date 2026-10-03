@@ -137,7 +137,7 @@ require_iso() {
     fi
 }
 
-# Something to split asm/ from. The private repository's copies of the three
+# Something to split ps2/asm/ from. The private repository's copies of the three
 # binaries splat reads stand in for the disc for everything short of
 # mastering one.
 require_rom() {

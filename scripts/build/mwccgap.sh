@@ -12,7 +12,7 @@
 # unit link at retail's addresses -- mwcc emits a unit's functions as one
 # contiguous .text, so a hole in the middle cannot be filled from an outside .s.
 #
-# A marker names its file's directory outright -- `asm/pal/nonmatchings/<unit>`
+# A marker names its file's directory outright -- `ps2/asm/pal/nonmatchings/<unit>`
 # -- so the prefix below is the source root and nothing has to be looked up.
 # scripts/build/mwccgap_region.py hands mwccgap the source as the release in
 # DCDECOMP_REGION compiles it, so a marker under `#ifdef PAL` is the PAL
@@ -35,7 +35,7 @@
 # and resets none of it, and it reads memory nothing ever wrote; retail compiled
 # a whole program at once and this build compiles one unit at a time, so that
 # state is empty here where retail's was not. Expression constants are keyed by
-# their live MWCC identity in `config/<region>/expression_node_overrides.json`; the few
+# their live MWCC identity in `ps2/config/<region>/expression_node_overrides.json`; the few
 # remaining non-expression globals use source pragmas. The shim applies both;
 # see re/ai/compiler/leaked_state.md.
 set -e
@@ -64,7 +64,7 @@ fi
 : "${MIPS_TOOL_PREFIX:=mips-ps2-decompals-}"
 # mwcc's <> search list: the library headers, and only those, so a library is
 # spelled `#include <libvu0.h>` while the game's own headers come through -i.
-: "${LIB_INCLUDE_DIRS:=include/ps2/std;include/ps2/sce}"
+: "${LIB_INCLUDE_DIRS:=ps2/include/std;ps2/include/sce}"
 
 # mwccgap's second pass compiles a temporary whose name says nothing about the
 # unit, so the source is named through the environment for the parts of the
@@ -84,7 +84,7 @@ python3 scripts/build/mwccgap_region.py "$src" "$obj" \
     --asm-dir-prefix "${ASM_DIR:-.}" \
     -lang "$lang" \
     "$@" \
-    --as-flags -g -mno-pdr -non_shared -G0 -Iinclude/ps2 < /dev/null
+    --as-flags -g -mno-pdr -non_shared -G0 -Ips2/include < /dev/null
 
 # MWCC writes its dependency map to `<stem>.d` in the working directory. The
 # first of mwccgap's two compiles reads the real source, so that pass leaves

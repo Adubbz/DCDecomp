@@ -11,7 +11,7 @@ the last two places where the port still bends to the PlayStation 2's shape:
    interpolated between ticks.
 
 Both keep the port's rules (`docs/PC_PORT_PLAN.md`, section 1): no edits
-under `src/ps2`, replacement only through strong definitions in `src/port`, no
+under `ps2/src`, replacement only through strong definitions in `port/src`, no
 PS2 emulation. `docs/MACOS_PLAN.md` section 3 explains why item 1 is required
 on arm64 macOS; it is the right shape on every platform.
 
@@ -19,9 +19,9 @@ on arm64 macOS; it is the right shape on every platform.
 
 ### A.1 Where the 32-bit dependence lives
 
-- **Link layout.** `src/port/CMakeLists.txt` links `-no-pie` so `.data` and
+- **Link layout.** `port/CMakeLists.txt` links `-no-pie` so `.data` and
   `.bss` sit below 4 GiB.
-- **Arenas.** `src/port/dataset.cpp` maps every arena with `MAP_32BIT`.
+- **Arenas.** `port/src/dataset.cpp` maps every arena with `MAP_32BIT`.
 - **Game code.** Retail casts pointers to `int`/`s32`/`u_int` in roughly
   seventy units. Most are alignment masks and offsets that only use the low
   bits; a minority round-trip: the integer is cast back to a pointer, stored
@@ -53,7 +53,7 @@ on arm64 macOS; it is the right shape on every platform.
    already replaces is widened in place (`uintptr_t` for alignment,
    real pointers for stored addresses). A round trip inside a retail function
    is fixed by replacing that function: the retail body is copied into the
-   unit's `src/port/<unit>.cpp`, the cast widened, and nothing else changed;
+   unit's `port/src/<unit>.cpp`, the cast widened, and nothing else changed;
    static helpers it needs are copied too, as the long-tail phases did.
    File-format records with pointer fields get a port-side host struct
    filled from the on-disc layout by the replacement loader, and every reader
@@ -170,7 +170,7 @@ present
 
 ### B.3 Work packages (Opus agents, after the macOS portability branch lands)
 
-**B.3.1 Display lists and interpolation (`src/port/gfx`, `mglib.cpp`,
+**B.3.1 Display lists and interpolation (`port/src/gfx`, `mglib.cpp`,
 `frame_draw.cpp`, `visualvu1.cpp`, `platform/clock.cpp`, `main.cpp`,
 `gameloop.cpp`).** The recording layer, identity on mesh records, the
 canonical render, replay with interpolation, the main loop restructure,

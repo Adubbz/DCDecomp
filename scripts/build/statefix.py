@@ -10,9 +10,9 @@ Retail compiled every unit of a program in one invocation; this build compiles
 one unit per invocation, so that state is empty where retail's was not.
 
 Expression constants are selected from
-`config/<region>/expression_node_overrides.json`, and every argument read --
+`ps2/config/<region>/expression_node_overrides.json`, and every argument read --
 whatever kind of expression it reads -- from
-`config/<region>/argument_read_overrides.json`, keyed by the function being
+`ps2/config/<region>/argument_read_overrides.json`, keyed by the function being
 compiled and the read's position within it. Other compiler state that cannot yet
 be identified structurally remains stated in source:
 
@@ -841,7 +841,7 @@ def drive(arguments, executable=None, verify=False, quiet=False):
         f.write('\n'.join(commands) + '\n')
         path = f.name
     environment = dict(os.environ, MWCIncludes=os.environ.get(
-        'MWCIncludes', 'include/ps2/std;include/ps2/sce'))
+        'MWCIncludes', 'ps2/include/std;ps2/include/sce'))
     if verify:
         environment['STATEFIX_VERIFY'] = '1'
     if quiet:

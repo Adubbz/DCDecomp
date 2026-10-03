@@ -1,10 +1,10 @@
 """Retail's bytes, read from the disc's own files by address.
 
-The reference assembly splat writes under asm/ is retail's bytes too, but only
+The reference assembly splat writes under ps2/asm/ is retail's bytes too, but only
 as text and only once the split has run. The build reads what it needs to know
 about retail -- a constant's bytes, the instruction a literal load sits in --
 from the images themselves, so compiling the game's code needs nothing under
-asm/.
+ps2/asm/.
 
     read(image, address, size) -> bytes
 

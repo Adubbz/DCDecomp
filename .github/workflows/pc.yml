@@ -45,7 +45,7 @@ jobs:
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxss-dev libxfixes-dev \
             libxkbcommon-dev libxcb1-dev libx11-xcb-dev libwayland-dev wayland-protocols \
             libegl1-mesa-dev libasound2-dev libpulse-dev libudev-dev libdbus-1-dev
-          # llvm-objcopy and ld.lld under their plain names, as src/port/CMakeLists.txt looks them up.
+          # llvm-objcopy and ld.lld under their plain names, as port/CMakeLists.txt looks them up.
           echo "/usr/lib/llvm-20/bin" >> "$GITHUB_PATH"
 
       - name: Restore SDL3 and Vulkan
@@ -73,16 +73,16 @@ jobs:
 
       - name: Configure
         run: |
-          cmake -S . -B build/pc -G Ninja -DPLATFORM=PC -DCMAKE_BUILD_TYPE=Debug \
+          cmake -S . -B port/build/pc -G Ninja -DPLATFORM=PC -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_CXX_COMPILER=clang++-20 -DCMAKE_PREFIX_PATH="$DEPS"
 
       - name: Build
-        run: cmake --build build/pc
+        run: cmake --build port/build/pc
 
       # darkcloud is PIE and its arenas lie above 4 GiB (a debug build checks), so a pointer the game
       # truncates to 32 bits faults here. The real-data cases skip without DC_DATA.
       - name: Test
-        working-directory: build/pc
+        working-directory: port/build/pc
         run: |
           llvm-readobj --file-headers darkcloud | grep -q 'Type: SharedObject'
           env -u DC_DATA ctest --output-on-failure -j4
@@ -91,7 +91,7 @@ jobs:
         run: |
           python3 -m venv "$RUNNER_TEMP/clang"
           "$RUNNER_TEMP/clang/bin/pip" install 'clang==20.1.*'
-          "$RUNNER_TEMP/clang/bin/python" scripts/port/truncations.py --build build/pc --check
+          "$RUNNER_TEMP/clang/bin/python" scripts/port/truncations.py --build port/build/pc --check
 
   macos:
     name: Build and test (macOS arm64)
@@ -162,7 +162,7 @@ jobs:
           echo x > run/data/unrelated/file.bin
           set +e
           VK_DRIVER_FILES="$KOSMICKRISP_ICD" VK_ICD_FILENAMES="$KOSMICKRISP_ICD" DC_AUDIO=off \
-            build/macos-arm64/darkcloud --headless --frames 3 --screenshot artifacts/shot-headless.png \
+            port/build/macos-arm64/darkcloud --headless --frames 3 --screenshot artifacts/shot-headless.png \
             --data run/data --save run/save > artifacts/darkcloud-headless.txt 2>&1
           status=$?
           cat artifacts/darkcloud-headless.txt
@@ -174,7 +174,7 @@ jobs:
         run: |
           set +e
           VK_DRIVER_FILES="$KOSMICKRISP_ICD" VK_ICD_FILENAMES="$KOSMICKRISP_ICD" DC_AUDIO=off \
-            build/macos-arm64/darkcloud --frames 3 --screenshot artifacts/shot-window.png \
+            port/build/macos-arm64/darkcloud --frames 3 --screenshot artifacts/shot-window.png \
             --data run/data --save run/save > artifacts/darkcloud-window.txt 2>&1
           status=$?
           cat artifacts/darkcloud-window.txt

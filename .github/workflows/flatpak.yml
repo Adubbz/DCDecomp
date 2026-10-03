@@ -1,4 +1,4 @@
-# The Flatpak (docs/FLATPAK.md): builds flatpak/org.themoonpeople.Chronicle.yml in Flathub's
+# The Flatpak (docs/FLATPAK.md): builds port/flatpak/org.themoonpeople.Chronicle.yml in Flathub's
 # freedesktop 24.08 image, which fetches the runtime, the SDK and the llvm20 extension from Flathub,
 # and uploads chronicle.flatpak.
 #
@@ -25,7 +25,7 @@ jobs:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
       options: --privileged
     env:
-      MANIFEST: flatpak/ci.yml
+      MANIFEST: port/flatpak/ci.yml
     steps:
       - uses: actions/checkout@v4
 
@@ -37,7 +37,7 @@ jobs:
             /# chronicle-source:/ {
               print
               print "      - type: git"
-              print "        path: .."
+              print "        path: ../.."
               print "        commit: " commit
               print "        disable-submodules: true"
               skip = 1
@@ -45,7 +45,7 @@ jobs:
             }
             /# chronicle-source-end/ { skip = 0 }
             !skip { print }
-          ' flatpak/org.themoonpeople.Chronicle.yml > "$MANIFEST"
+          ' port/flatpak/org.themoonpeople.Chronicle.yml > "$MANIFEST"
           sed -n '/name: chronicle$/,$p' "$MANIFEST"
 
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
@@ -53,7 +53,7 @@ jobs:
           manifest-path: ${{ env.MANIFEST }}
           bundle: chronicle.flatpak
           artifact-name: chronicle-x86_64.flatpak
-          cache-key: flatpak-builder-${{ hashFiles('flatpak/org.themoonpeople.Chronicle.yml') }}
+          cache-key: flatpak-builder-${{ hashFiles('port/flatpak/org.themoonpeople.Chronicle.yml') }}
 
       - name: Start darkcloud without data
         run: |

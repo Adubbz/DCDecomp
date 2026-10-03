@@ -11,7 +11,7 @@ rom/
 # The split. 70MB of the context, mounted in by build.sh for the same reason
 # rom/ is: it is generated, it has to survive between runs, and a re-split has
 # to land in the tree rather than in a copy that goes away with the container.
-asm/
+ps2/asm/
 
 # A checkout of the private repository: retail binaries. What the build needs
 # of it is copied into rom/, which is mounted.
@@ -22,11 +22,13 @@ asm/
 # the build.
 re/
 
-# Generated. Copying build/ in is not just wasteful but wrong: its
+# Generated. Copying the build trees in is not just wasteful but wrong: their
 # CMakeCache.txt records whichever source path last configured it (a host
 # path, or /workspaces/dcdecomp from the devcontainer), which makes the
 # configure inside the container fail or reuse stale paths.
 build/
+ps2/build/
+port/build/
 ref/
 **/__pycache__/
 ctx.c

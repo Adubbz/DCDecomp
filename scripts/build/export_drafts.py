@@ -24,7 +24,7 @@ Ghidra's half comes from `re/ai/<unit>/ghidra-decompilation.md`, which
 `scripts/ghidra/export_decompilation.sh` when a unit is new or its boundaries
 have moved. m2c reads a copy of the dump prepared by `scripts/diff/m2c_prep.py`
 -- jump tables named the way it recognises them, `$gp` displacements resolved
-to their symbols -- and needs `build/ntsc/ctx.c`, which is generated if missing. Its
+to their symbols -- and needs `ps2/build/ntsc/ctx.c`, which is generated if missing. Its
 output then goes through `scripts/diff/m2c_calls.py`, which writes each call
 the way the source had it rather than by its mangled name.
 """

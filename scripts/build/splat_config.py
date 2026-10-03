@@ -393,6 +393,7 @@ def carry_yaml(carry, image, text, problems):
         "base_path": base,
         "target_path": target.target_path(image),
         "asm_path": target.info["asm"],
+        "src_path": "ps2/src",
         "build_path": f"{build}/splat/{image}",
         "ld_script_path": f"{build}/splat/{image}.ld",
         "symbol_addrs_path": f"[{config}/{image}.symbols.txt]",
@@ -737,7 +738,7 @@ class Statics:
 def carry_fixups(carry, fixups, problems):
     def image_of(source):
         for image in ("title", "dun"):
-            if source.startswith(f"src/ps2/{image}/"):
+            if source.startswith(f"ps2/src/{image}/"):
                 return image
         return "main"
 

@@ -7,7 +7,7 @@
 # are gitignored here: retail-derived data this repository must not carry.
 #
 #   rom/{ntsc,pal}/extracted/iso/{SCUS_971.11,TITLE.BIN,DUN.BIN}
-#                          what splat splits asm/ from for each release, so
+#                          what splat splits ps2/asm/ from for each release, so
 #                          no disc image is needed to build or report progress
 #
 # Every file it tracks, bar its README, is copied to the same path here, and

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Work out what the link takes, in what order, and what objdiff compares.
 
-    layout.py --link-order <dir> [--build-dir build/ntsc] [--main-tail obj...]
+    layout.py --link-order <dir> [--build-dir ps2/build/ntsc] [--main-tail obj...]
               [--tail <image>=<obj>...]
     layout.py --objdiff objdiff.json
     layout.py --provenance <file>
@@ -38,7 +38,7 @@ import region  # noqa: E402
 
 SECTIONS = ("main", "title", "dun")
 
-SRC_DIR = "src/ps2"
+SRC_DIR = "ps2/src"
 # Where splat files a function's own assembly: still supplied by a marker
 # under the first, decompiled under the second.
 ASM_DIRS = (f"{region.ASM}/nonmatchings", f"{region.ASM}/matchings")
@@ -73,10 +73,10 @@ OBJDIFF = {
     "build_target": False,
     "build_base": True,
     "watch_patterns": [
-        "src/**/*.{c,cpp,h,hpp,s,inc,lcf}",
-        "include/**/*.{h,hpp,s,inc,lcf}",
-        "asm/**/*.s",
-        "config/*/*.{yaml,txt}",
+        "ps2/src/**/*.{c,cpp,h,hpp,s,inc,lcf}",
+        "ps2/include/**/*.{h,hpp,s,inc,lcf}",
+        "ps2/asm/**/*.s",
+        "ps2/config/*/*.{yaml,txt}",
     ],
     # What each function is expected to be, so objdiff can show the three
     # apart. A perfect function's bytes are retail's; a fuzzy one is the same
@@ -106,8 +106,8 @@ OBJDIFF = {
 # overlays are called out because they are separate images; everything else
 # objdiff is shown falls through to `game`.
 CATEGORY_DIRS = (
-    ("src/ps2/title/", "title"),
-    ("src/ps2/dun/", "dun"),
+    ("ps2/src/title/", "title"),
+    ("ps2/src/dun/", "dun"),
 )
 
 
@@ -121,7 +121,7 @@ def category_of(source):
 
 def included_in_objdiff(source):
     """Return whether objdiff should expose this translation unit."""
-    return not source.startswith("src/ps2/lib/")
+    return not source.startswith("ps2/src/lib/")
 
 
 # Which image an address belongs to. The overlays share a range with each

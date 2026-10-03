@@ -4,8 +4,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/build/ntsc/generated/asm"
+                "${workspaceFolder}/ps2/include",
+                "${workspaceFolder}/ps2/build/ntsc/generated/asm"
             ],
             "defines": [],
             "cStandard": "c99",
@@ -14,9 +14,9 @@
             "intelliSenseMode": "linux-clang-x86",
             "browse": {
                 "path": [
-                    "${workspaceFolder}/include",
-                    "${workspaceFolder}/src",
-                    "${workspaceFolder}/build/ntsc/generated/asm"
+                    "${workspaceFolder}/ps2/include",
+                    "${workspaceFolder}/ps2/src",
+                    "${workspaceFolder}/ps2/build/ntsc/generated/asm"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }

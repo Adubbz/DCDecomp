@@ -5,7 +5,7 @@
 
 MWCC numbers an invented name from a counter the whole translation unit shares,
 so an edit that allocates one more front-end node renames every constant after
-it. `config/<region>/object_fixups.json` names the constants that start each run the
+it. `ps2/config/<region>/object_fixups.json` names the constants that start each run the
 linker script places, and those names go stale; the build then stops with
 "a numbered constant in `sections` is not exported".
 
@@ -19,7 +19,7 @@ config records and writes the new names in.
 Its entries count symbols, including named symbols, rather than bytes.
 
     scripts/build/cmake.sh objdiff        # with the entries emptied
-    scripts/build/rekey_sections.py src/ps2/editloop3.cpp
+    scripts/build/rekey_sections.py ps2/src/editloop3.cpp
     scripts/build/cmake.sh objdiff        # with the names filled in
 
 A re-keyable entry is one whose name matches `rekey_sections` in the unit's

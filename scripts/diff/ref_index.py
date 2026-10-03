@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Look up a retail symbol in the reference index.
 
-The splat configuration under ``config/<region>/`` carries retail's own symbol table,
+The splat configuration under ``ps2/config/<region>/`` carries retail's own symbol table,
 and splat files each function's assembly under the translation unit it belongs
 to. Together those say where every symbol lives and which file holds it, which
 makes them the project's symbol table for the retail side. They are preferred
@@ -61,8 +61,8 @@ class Entry:
     def is_function(self):
         """Whether this row is one function or a whole data section.
 
-        splat files text a function at a time under asm/nonmatchings and
-        asm/matchings, and dumps every other section whole under asm/data --
+        splat files text a function at a time under ps2/asm/nonmatchings and
+        ps2/asm/matchings, and dumps every other section whole under ps2/asm/data --
         so the path says which of the two a row is, and nothing else has to
         guess.
         """

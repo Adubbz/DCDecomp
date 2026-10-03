@@ -62,7 +62,7 @@ that kind `0x33` is the only kind whose own `+5` can be read without a defining
 write. Parents can explicitly derive their byte from a stale `0x33` child; that
 is contamination, not an uninitialised read of the parent field.
 
-`config/ntsc/expression_node_overrides.json` makes the decision reproducible. A node
+`ps2/config/ntsc/expression_node_overrides.json` makes the decision reproducible. A node
 is keyed by the current translation-unit name, the current function's mangled
 name, binary32/binary64 type, exact IEEE bits, and its one-based occurrence
 among equal constants in that function. All fields are read from MWCC memory at
@@ -70,7 +70,7 @@ among equal constants in that function. All fields are read from MWCC memory at
 The JSON groups entries by translation unit and then function to avoid repeating
 those two components for each constant.
 
-`config/<region>/argument_read_overrides.json` keys the five reads themselves:
+`ps2/config/<region>/argument_read_overrides.json` keys the five reads themselves:
 translation unit, the function MWCC holds at `0x00555EC0` (the code generator's
 own name at `0x004356B0` runs one function behind), and the read's one-based
 position within that function, with the node kind as a staleness check. It

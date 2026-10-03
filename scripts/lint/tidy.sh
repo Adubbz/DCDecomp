@@ -3,7 +3,7 @@
 #
 #   scripts/lint/tidy.sh [--fix] [file.cpp ...]
 #
-# With no files, every unit under src/ps2 is checked. The plugin's own source is
+# With no files, every unit under ps2/src is checked. The plugin's own source is
 # checked as well, against tools/tidy-module/.clang-tidy. Each unit is checked twice,
 # as NTSC and as PAL (-DPAL), since both releases compile from the same
 # sources. The dcdecomp-* checks are a clang-tidy plugin built from
@@ -32,8 +32,8 @@ if [ "$(clang-tidy --load="$plugin" --list-checks -checks='-*,dcdecomp-*' 2>/dev
 fi
 
 # The flags .clangd gives the editor: C++98 for a 32-bit MIPS target, with the
-# SDK and standard headers from include/ps2/ rather than the host's.
-flags="-xc++ -std=c++98 -Wno-deprecated-writable-strings -nostdinc -nostdinc++ --target=mipsel-unknown-elf -Iinclude/ps2 -Iinclude/ps2/std -Iinclude/ps2/sce"
+# SDK and standard headers from ps2/include/ rather than the host's.
+flags="-xc++ -std=c++98 -Wno-deprecated-writable-strings -nostdinc -nostdinc++ --target=mipsel-unknown-elf -Ips2/include -Ips2/include/std -Ips2/include/sce"
 
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
@@ -56,7 +56,7 @@ if [ "${1:-}" = "--fix" ]; then
     shift
 fi
 if [ $# -eq 0 ]; then
-    set -- $(find src/ps2 -name '*.cpp' ! -name 'tmp*' | sort)
+    set -- $(find ps2/src -name '*.cpp' ! -name 'tmp*' | sort)
 fi
 
 for f in "$@"; do

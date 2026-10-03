@@ -1,0 +1,135 @@
+#pragma once
+
+#include <bit>
+#include <cfloat>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+
+// The VU0 macro-mode operations the game's inline assembly is built from, as the replacements in
+// port/src share them. A matrix is four column vectors: m[i] is column i, as in sce/libvu0.cpp.
+
+namespace vu0 {
+
+inline void Copy(float out[4], const float in[4]) {
+    std::memcpy(out, in, sizeof(float) * 4);
+}
+
+// The accumulator chain vmulax/vmadday/vmaddaz/vmaddw, in its order of additions, on all four lanes.
+inline void Apply(float out[4], const float m[4][4], const float v[4]) {
+    float r[4];
+    for (int i = 0; i < 4; i++) {
+        r[i] = m[0][i] * v[0];
+        r[i] = r[i] + m[1][i] * v[1];
+        r[i] = r[i] + m[2][i] * v[2];
+        r[i] = r[i] + m[3][i] * v[3];
+    }
+    Copy(out, r);
+}
+
+// vmax and vmini order floats by their bits as sign and magnitude, so -0 sorts below +0.
+inline std::uint32_t OrderKey(float value) {
+    std::uint32_t bits = std::bit_cast<std::uint32_t>(value);
+    return (bits & 0x80000000u) != 0 ? ~bits : bits | 0x80000000u;
+}
+
+inline float Max(float a, float b) {
+    return OrderKey(a) >= OrderKey(b) ? a : b;
+}
+
+inline float Min(float a, float b) {
+    return OrderKey(a) <= OrderKey(b) ? a : b;
+}
+
+inline void Max(float out[4], const float a[4], const float b[4]) {
+    for (int i = 0; i < 4; i++) {
+        out[i] = Max(a[i], b[i]);
+    }
+}
+
+inline void Min(float out[4], const float a[4], const float b[4]) {
+    for (int i = 0; i < 4; i++) {
+        out[i] = Min(a[i], b[i]);
+    }
+}
+
+// The unit has no infinities: an overflow saturates at the largest finite value.
+inline float Saturate(float value) {
+    if (std::isinf(value)) {
+        return std::copysign(FLT_MAX, value);
+    }
+    return value;
+}
+
+// vdiv: a zero (or denormal, which the unit flushes) divisor gives the largest value, signed by
+// both operands, where the host would give an infinity or a NaN.
+inline float Div(float numerator, float denominator) {
+    if (std::fabs(denominator) < FLT_MIN) {
+        return std::signbit(numerator) != std::signbit(denominator) ? -FLT_MAX : FLT_MAX;
+    }
+    return Saturate(numerator / denominator);
+}
+
+inline float Sqrt(float value) {
+    return std::sqrt(std::fabs(value));
+}
+
+// vrsqrt: numerator / sqrt(|value|).
+inline float Rsqrt(float numerator, float value) {
+    return Div(numerator, Sqrt(value));
+}
+
+inline float Mul(float a, float b) {
+    return Saturate(a * b);
+}
+
+// The squared length every length routine builds with vmr32 and two vadd.x: (x*x + y*y) + z*z.
+inline float LengthSquared(const float v[4]) {
+    float x = v[0] * v[0];
+    float y = v[1] * v[1];
+    float z = v[2] * v[2];
+    return z + (x + y);
+}
+
+// vftoi0/vftoi4/vftoi12/vftoi15: truncate toward zero and saturate.
+inline std::int32_t Ftoi(float value, float scale) {
+    float scaled = std::trunc(value * scale);
+    if (std::isnan(scaled)) {
+        return 0;
+    }
+    if (scaled <= -2147483648.0f) {
+        return INT32_MIN;
+    }
+    if (scaled >= 2147483648.0f) {
+        return INT32_MAX;
+    }
+    return static_cast<std::int32_t>(scaled);
+}
+
+constexpr int kStickyZero = 0x40;
+constexpr int kStickySign = 0x80;
+
+// The sticky status bits one result lane leaves: zero after the unit's flush of denormals, sign
+// from the sign bit.
+inline int StatusFlags(float result) {
+    int flags = 0;
+    if (std::fabs(result) < FLT_MIN) {
+        flags |= kStickyZero;
+    }
+    if (std::signbit(result)) {
+        flags |= kStickySign;
+    }
+    return flags;
+}
+
+// vopmula then vopmsub: the outer product a x b on xyz.
+inline void Cross(float out[3], const float a[4], const float b[4]) {
+    float r[3] = {
+        a[1] * b[2] - b[1] * a[2],
+        a[2] * b[0] - b[2] * a[0],
+        a[0] * b[1] - b[0] * a[1],
+    };
+    std::memcpy(out, r, sizeof(r));
+}
+
+} // namespace vu0

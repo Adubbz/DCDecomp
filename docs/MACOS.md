@@ -22,12 +22,15 @@ Homebrew in its standard prefix `/opt/homebrew`. KosmicKrisp needs macOS 26
 ```sh
 brew install llvm lld cmake ninja python glslang sdl3 vulkan-headers vulkan-loader vulkan-tools
 scripts/host/mesa-macos.sh                 # KosmicKrisp and lavapipe, into ~/.local/mesa/<tag>
-cmake --preset macos-arm64                 # build/macos-arm64, Debug
-cmake --build --preset macos-arm64
+./build.sh macos                           # port/build/macos-arm64, Debug
 ctest --preset macos-arm64                 # with VK_DRIVER_FILES set, below
 ```
 
-`macos-arm64-release` is the Release variant (`build/macos-arm64-release`).
+`CLEAN=1` discards `port/build/macos-arm64` first; `JOBS=N` sets the number of
+parallel build jobs. The script configures and builds the `macos-arm64`
+preset natively, without a container or disc image.
+
+`macos-arm64-release` is the Release variant (`port/build/macos-arm64-release`).
 The presets (`CMakePresets.json`) set:
 
 - `CMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++`. Apple's clang is
@@ -53,9 +56,9 @@ The presets (`CMakePresets.json`) set:
 `lld` is only for `dcdata`, whose CMakeLists links with `-fuse-ld=lld`
 (`ld64.lld` on macOS). Python 3 runs the interposition check.
 
-The Linux presets are `linux-x64` (`build/pc`, Debug, `clang++-20`, the same
+The Linux presets are `linux-x64` (`port/build/pc`, Debug, `clang++-20`, the same
 directory and settings as the command line in `docs/PC.md`, which keeps
-working) and `linux-x64-release` (`build/pc-release`).
+working) and `linux-x64-release` (`port/build/pc-release`).
 
 ### Mesa
 
@@ -93,7 +96,7 @@ script records the commit it built in `PREFIX/.dcdecomp-mesa`.
 
 ```sh
 export VK_DRIVER_FILES=<the KosmicKrisp line>     # or lavapipe
-build/macos-arm64/darkcloud --data data --save save
+port/build/macos-arm64/darkcloud --data data --save save
 ```
 
 Options, environment and exit statuses are those of `docs/PC.md`.
@@ -115,19 +118,19 @@ surface-less mode (`docs/MACOS_PLAN.md`, 4.2); a windowed run uses
 
 ## How the macOS build differs
 
-`src/port/CMakeLists.txt` keeps the mechanism of `docs/PC.md` ("How
-`src/port` takes precedence") and changes the tools:
+`port/CMakeLists.txt` keeps the mechanism of `docs/PC.md` ("How
+`port/src` takes precedence") and changes the tools:
 
 | Step | Linux | macOS |
 |---|---|---|
-| Merge `src/ps2` | `ld.lld -r` | Apple's `ld -r -keep_private_externs` (`ld64.lld` prints "Option `-r' is not yet implemented" in LLVM 20) |
+| Merge `ps2/src` | `ld.lld -r` | Apple's `ld -r -keep_private_externs` (`ld64.lld` prints "Option `-r' is not yet implemented" in LLVM 20) |
 | Weaken | `llvm-objcopy --weaken` | the same (it sets `N_WEAK_DEF` on Mach-O), or `tools/weaken` with `-DDC_MACHO_WEAKEN=tool`; both write identical bytes |
 | Keep calls replaceable | `-fPIC -fsemantic-interposition` | `-Xclang -fsemantic-interposition -fno-inline-functions` |
 | Final link | `-fuse-ld=lld -pie --gc-sections --defsym` | Apple's `ld`, `-dead_strip`, `-alias`, PIE |
-| `EditGaijiTbl` | `src/port/linknames.cpp` on both (below) | |
+| `EditGaijiTbl` | `port/src/linknames.cpp` on both (below) | |
 | FP contraction | `-ffp-contract=off` on both (a no-op on x86-64) | |
 
-Duplicate strong definitions among `src/ps2`'s objects are an error on both
+Duplicate strong definitions among `ps2/src`'s objects are an error on both
 platforms; none exist, and Apple's `ld -r` has no
 `--allow-multiple-definition`.
 
@@ -141,7 +144,7 @@ with `--target=arm64-apple-macos14`).
 
 **`ps2_interposition_check`** is part of every build on both platforms. It
 disassembles `dc_ps2.o` and fails when a call or tail call from a
-non-replaced function to a function `src/port` defines strongly was bound
+non-replaced function to a function `port/src` defines strongly was bound
 inside the object (an ELF `.Lname$local` alias, a relocation against the
 callee's own section, a Mach-O branch to a local label) rather than through
 a relocation against the name, and when any definition in `dc_ps2.o` is
@@ -186,7 +189,7 @@ the kernel will not run (and on 16 KiB pages it is not even a page; `ld64.lld`
 rounds it to 0).
 
 The game does not need low memory: every cast of a pointer to a 32-bit
-integer whose value comes back as a pointer is widened in `src/port`
+integer whose value comes back as a pointer is widened in `port/src`
 (`docs/port/truncations.md`), the arenas are ordinary mappings and the Linux
 executable is PIE too, so `ld` keeps its default page zero and no x86_64
 build under Rosetta 2 is needed.

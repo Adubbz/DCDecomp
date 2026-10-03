@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Lay a unit's data out the way MWLD will and compare it with retail's addresses.
 
-    datacheck.py <unit>            e.g. datacheck.py shop      (src/ps2/shop.cpp)
-    datacheck.py <unit> --build    rebuild build/<region>/src/<unit>.cpp.o first (takes .build.lock)
+    datacheck.py <unit>            e.g. datacheck.py shop      (ps2/src/shop.cpp)
+    datacheck.py <unit> --build    rebuild ps2/build/<region>/ps2/src/<unit>.cpp.o first (takes .build.lock)
     datacheck.py <unit> --init     also disassemble the object's .init beside retail's __sinit
     datacheck.py <unit> --bytes    also compare .data/.sdata contents word by word with the dump
 
@@ -197,9 +197,9 @@ def main():
     ap.add_argument("--init", action="store_true")
     ap.add_argument("--bytes", action="store_true")
     args = ap.parse_args()
-    obj = ROOT / region.BUILD / "src" / "ps2" / f"{args.unit}.cpp.o"
+    obj = ROOT / region.BUILD / "ps2" / "src" / f"{args.unit}.cpp.o"
     if args.build:
-        subprocess.run(["flock", ".build.lock", "ninja", "-C", region.BUILD, f"src/ps2/{args.unit}.cpp.o"],
+        subprocess.run(["flock", ".build.lock", "ninja", "-C", region.BUILD, f"ps2/src/{args.unit}.cpp.o"],
                        cwd=ROOT, check=True)
     if not obj.exists():
         sys.exit(f"{obj} does not exist; pass --build")

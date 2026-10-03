@@ -7,7 +7,7 @@
 #   BUILD_DIR=other scripts/build/cmake.sh elf
 #   JOBS=8 scripts/build/cmake.sh elf        run 8 jobs rather than one per CPU
 #
-# Each release builds in a directory of its own, build/ntsc or build/pal.
+# Each release builds in a directory of its own, ps2/build/ntsc or ps2/build/pal.
 #
 # It brings the build files up to date, builds `setup`, then builds what was
 # asked for.
@@ -24,7 +24,7 @@ set -eu
 cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 
 # One build of the tree at a time. The split rewrites thousands of files under
-# asm/ over several seconds, and objdiff's GUI watches asm/ and starts a build
+# ps2/asm/ over several seconds, and objdiff's GUI watches ps2/asm/ and starts a build
 # of its own (scripts/build/build_objdiff.sh) the moment they change; a unit
 # compiled against a half-written split links into an image that is wrong
 # throughout. Everything that builds takes this lock, so such a build waits
@@ -43,7 +43,7 @@ fi
 
 REGION=${REGION:-NTSC}
 export DCDECOMP_REGION=$REGION
-BUILD_DIR=${BUILD_DIR:-build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')}
+BUILD_DIR=${BUILD_DIR:-ps2/build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')}
 
 # Whether the existing cache was generated for this source directory. A cache
 # that is absent or unreadable is not stale -- there is simply nothing to
@@ -123,9 +123,9 @@ build_if_stale() {
 regenerate
 
 had_asm=1
-[ -d "asm/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/nonmatchings" ] || had_asm=0
+[ -d "ps2/asm/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/nonmatchings" ] || had_asm=0
 
-# asm/<region> is split rather than committed, from the binaries under
+# ps2/asm/<region> is split rather than committed, from the binaries under
 # rom/<region>/extracted: the disc's once it has been extracted, or the private
 # repository's copies.
 build_if_stale setup

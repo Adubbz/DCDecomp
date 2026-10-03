@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Build the game in the container, then boot it in PCSX2. One command, from a
-# clean checkout to the title screen.
+# Build and launch the selected platform, defaulting to PS2 in PCSX2.
 #
-#   run.sh
-#   REGION=PAL run.sh       the July 12, 2001 PAL prototype instead
+#   ./run.sh
+#   REGION=PAL ./run.sh ps2       the July 12, 2001 PAL prototype instead
+#   ./run.sh linux-x64           build and launch the Linux port
+#   ./run.sh macos               build and launch the macOS port
 #
 # The first run builds the image and extracts and disassembles the disc; later
 # runs are incremental, since the tree is mounted rather than copied in. PCSX2
@@ -11,6 +12,29 @@
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+usage() {
+    echo "Usage: ./run.sh [ps2|linux-x64|macos] [game arguments]"
+    echo "Defaults to ps2. Game arguments are forwarded to native builds."
+}
+
+platform=${1:-ps2}
+case "$platform" in
+    ps2)
+        [ "$#" -le 1 ] || { usage >&2; exit 2; }
+        ;;
+    linux-x64|macos)
+        shift
+        ./build.sh "$platform"
+        case "$platform" in
+            linux-x64) exec port/build/pc/darkcloud "$@" ;;
+            macos) exec port/build/macos-arm64/darkcloud "$@" ;;
+        esac
+        ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown platform: $platform" >&2; usage >&2; exit 2 ;;
+esac
+
 . scripts/host/container.sh
 
 # PCSX2 is the reason this one is host-only: it needs a display, so there is
@@ -22,7 +46,7 @@ ensure_image dcdecomp_dev dev
 report_parallelism
 
 REGION=${REGION:-NTSC}
-ISO="build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/Dark Cloud ($REGION Build).iso"
+ISO="ps2/build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/Dark Cloud ($REGION Build).iso"
 
 # -t keeps the colours and progress line, skipped when this script's own output
 # is redirected.

@@ -14,7 +14,7 @@ each read takes instead -- under whatever pragmas, overrides or residue the
 source compiles with now -- keyed by the function being compiled and the read's
 position within that function, whatever kind of expression it reads.
 
-`--write` stores the unit's reads in `config/<region>/argument_read_overrides.json`,
+`--write` stores the unit's reads in `ps2/config/<region>/argument_read_overrides.json`,
 which makes the unit read-keyed: statefix then gives each listed read its byte
 and every other read 0. Once a unit is recorded, remove its
 `#pragma argument_flag`, `argument_flag_ones` and `argument_flag_free` lines,
@@ -275,8 +275,8 @@ def main():
     unit = os.path.basename(args.source)
 
     if args.search:
-        image = args.image or ('title' if args.source.startswith('src/ps2/title/')
-                               else 'dun' if args.source.startswith('src/ps2/dun/')
+        image = args.image or ('title' if args.source.startswith('ps2/src/title/')
+                               else 'dun' if args.source.startswith('ps2/src/dun/')
                                else 'main')
         text = open(os.path.join(REPO, args.body or args.source)).read()
         table = search(args.source, text, unit, args.search, image,

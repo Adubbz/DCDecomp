@@ -9,16 +9,18 @@ to and records the phases; this document describes what is built.
 ## Building and running
 
 ```sh
-cmake -S . -B build/pc -G Ninja -DPLATFORM=PC -DCMAKE_CXX_COMPILER=clang++-20
-ninja -C build/pc
-(cd build/pc && ctest --output-on-failure -j4)
-(cd build/pc && DC_DATA=$PWD/../../data ctest -R integration_real_data)
+./build.sh linux-x64
+(cd port/build/pc && ctest --output-on-failure -j4)
+(cd port/build/pc && DC_DATA=$PWD/../../../data ctest -R integration_real_data)
 ```
+
+The build runs natively using the Debug `linux-x64` preset. `CLEAN=1`
+discards `port/build/pc` first; `JOBS=N` sets the number of parallel build jobs.
 
 The `integration_real_data_*` cases run `darkcloud` on the extracted data
 and are skipped unless `DC_DATA` names it.
 
-`cmake --preset linux-x64` (and `linux-x64-release`, in `build/pc-release`)
+`cmake --preset linux-x64` (and `linux-x64-release`, in `port/build/pc-release`)
 with `cmake --build --preset` and `ctest --preset` of the same name does the
 same.
 
@@ -26,7 +28,7 @@ It needs clang 20 with lld and the LLVM binary tools (`llvm-objcopy`,
 `llvm-nm`, `llvm-objdump`, `llvm-readobj`, `llvm-lipo`), Python 3, CMake 3.28, Ninja,
 `glslangValidator`, SDL3 (3.2) and the Vulkan 1.4 headers and loader, and at
 run time a device with Vulkan 1.3 or later, `dualSrcBlend` and `shaderClipDistance`
-(any desktop driver; Mesa's lavapipe in CI; `src/port/gfx/README.md`, "Device", has the whole list). `.github/workflows/pc.yml` is a
+(any desktop driver; Mesa's lavapipe in CI; `port/src/gfx/README.md`, "Device", has the whole list). `.github/workflows/pc.yml` is a
 complete recipe on Ubuntu 24.04.
 
 The game's files come from the disc (see "Game data"). Without them a
@@ -34,8 +36,8 @@ windowed start asks for the disc image and extracts it; `dcdata` does the
 same from a shell:
 
 ```sh
-build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
-build/pc/darkcloud --data data --save save
+port/build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
+port/build/pc/darkcloud --data data --save save
 ```
 
 `darkcloud` takes:
@@ -61,7 +63,7 @@ release build; a debug build always asks for it), `DC_PRESENT_STATS=1` (print
 draws per tick and render times at exit, and what the FPS counter said last
 when it is on), and SDL's own variables.
 
-Exit statuses (`src/port/exitcodes.hpp`): 0 when the window was closed or
+Exit statuses (`port/src/exitcodes.hpp`): 0 when the window was closed or
 `--frames` ran out, 1 when the window, the renderer or the screenshot failed,
 2 for bad arguments, 3 when the data directory is missing or holds no file
 and no disc was given at the first-run prompt (one line names it and the
@@ -69,7 +71,7 @@ and no disc was given at the first-run prompt (one line names it and the
 own message: `LoadFile` prints `File open error "<path>"`). A `PS2_UNIMPLEMENTED`
 stub aborts (SIGABRT) so a debugger or a core dump stops at it.
 
-`<save>/config.ini` (`src/port/platform/config.cpp`; unknown keys and bad
+`<save>/config.ini` (`port/src/platform/config.cpp`; unknown keys and bad
 values are reported and ignored):
 
 ```ini
@@ -101,10 +103,10 @@ fps_toggle = F3         ; the FPS counter on and off
 ### Keyboard and mouse
 
 The keyboard and the mouse drive pad 1 next to the first gamepad
-(`src/port/platform/input.cpp`, `mouse.cpp`); a second gamepad is pad 2.
+(`port/src/platform/input.cpp`, `mouse.cpp`); a second gamepad is pad 2.
 The defaults, and what the game does with each button (PAL, English: the
 dungeon's `PadInput_OK` is cross and `PadInput_NO` circle,
-`src/ps2/dun/gameloop.cpp:1666`):
+`ps2/src/dun/gameloop.cpp:1666`):
 
 | Input | Pad | What the game does with it |
 |---|---|---|
@@ -167,7 +169,7 @@ Each key-down of a toggle's key counts once, however briefly it is held.
   also press the d-pad exactly when the game did not read pad 1's left
   stick (`CGamePad::GetLX`/`GetLY`, also called by `GetLXf`, `AllOn` and
   `UpDate`'s menu mode) between its last two pad reads.
-  `src/port/gamepad.cpp` replaces `pad_button_read` and `GetLX`/`GetLY`
+  `port/src/gamepad.cpp` replaces `pad_button_read` and `GetLX`/`GetLY`
   with retail's bodies plus the notes the host needs. Menus with
   `MenuModeOn(120)` (the title, the language select, the save screens, the
   dungeon and town menus) read the stick, so the game's own conversion
@@ -176,7 +178,7 @@ Each key-down of a toggle's key counts once, however briefly it is held.
 
 ### Scripted input
 
-`--input FILE` (`src/port/platform/input_script.cpp`) replaces the pads with
+`--input FILE` (`port/src/platform/input_script.cpp`) replaces the pads with
 a script, through `InputSetOverride`. Each line is
 
 ```
@@ -240,7 +242,7 @@ directory (and so one pipeline cache) under the build directory.
 
 PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
 the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
-(`MenuLoop`, `src/ps2/main.cpp`), instead of the language select, and leaves
+(`MenuLoop`, `ps2/src/main.cpp`), instead of the language select, and leaves
 pad 2 unlocked. The port starts at the language select as retail does. Three
 things start it in the developer menu: the pad 2 hold, the debug key
 (`` ` ``, `[input] debug_toggle`) held or pressed while the game starts (the
@@ -249,17 +251,17 @@ things start it in the developer menu: the pad 2 hold, the debug key
 `debug mode on: the developer menu` when it does.
 
 After start-up, retail PAL flips `DebugMode` after every frame of the main
-loop where pad 2 holds L1+R1+L2+R2 and R3 is pressed (`src/ps2/main.cpp:963`);
+loop where pad 2 holds L1+R1+L2+R2 and R3 is pressed (`ps2/src/main.cpp:963`);
 the port does the same, and a press of the debug key flips it there too,
 printing `debug mode on` or `debug mode off`. Neither moves the game anywhere:
 `DebugMode` is a flag the modes read. What it does once set:
 
-- The town (`EditLoop`, `src/ps2/editloop.cpp:2041`) and the dungeon
-  (`GameLoop`, `src/ps2/dun/gameloop.cpp:2087`) leave on Select held with
+- The town (`EditLoop`, `ps2/src/editloop.cpp:2041`) and the dungeon
+  (`GameLoop`, `ps2/src/dun/gameloop.cpp:2087`) leave on Select held with
   Start (in the town after a fade); their loop results send the game to
   `GAME_MODE_MENU` (`GameApplyLoopResult`: the town's result 1, any dungeon
   result), and the top of `main`'s loop runs the developer menu there only
-  while `DebugMode` is set (otherwise the attract movie, `src/ps2/main.cpp:571`).
+  while `DebugMode` is set (otherwise the attract movie, `ps2/src/main.cpp:571`).
   This is the one way back to the developer menu after start-up. The
   interior (`EditInLoop`) leaves the same way to the title, not the menu.
 - In the town L3 shows the editor's debug overlay and R3 opens its debug
@@ -304,7 +306,7 @@ from the keyboard.
 
 ## Start-up and the main loop
 
-`src/port/main.cpp` is the executable's `main`. In order: `PathsConsumeArgs`
+`port/src/main.cpp` is the executable's `main`. In order: `PathsConsumeArgs`
 takes `--data`/`--save` out of argv; the other options are parsed; the data
 directory is checked; `ConfigLoad` reads `config.ini`; `WindowInit` opens the
 window (size and fullscreen from the config, offscreen when headless);
@@ -319,7 +321,7 @@ samples input; then `RunGame`. After it returns: the screenshot, then
 `main.cpp` also forwards the names MWCC gives the calls in retail `main`
 (below).
 
-`RunGame` (`src/port/gameloop.cpp`) is retail `main` (`src/ps2/main.cpp`)
+`RunGame` (`port/src/gameloop.cpp`) is retail `main` (`ps2/src/main.cpp`)
 with the hardware taken out, line for line otherwise:
 
 - `init_all` is reduced to `InitCDFile`, `MGInit`, `InitMemoryFile`,
@@ -355,7 +357,7 @@ with the hardware taken out, line for line otherwise:
 ### Ticks and display frames
 
 The game logic runs at the fixed tick rate; the window is presented at its own
-rate, with motion interpolated between ticks (`src/port/gfx/README.md`,
+rate, with motion interpolated between ticks (`port/src/gfx/README.md`,
 "Display lists"):
 
 1. `MGBeginFrame` starts recording the tick's display list: what the game draws,
@@ -394,7 +396,7 @@ it has, display frames stop until the next tick's canonical render.
 
 With `[video] show_fps` (on by default; `fps_toggle`, F3, flips it at any
 time), every presented frame carries one line at the window's top-left
-corner, in the port's own 5x7 font (`src/port/platform/overlay.cpp`, white
+corner, in the port's own 5x7 font (`port/src/platform/overlay.cpp`, white
 on a translucent black backdrop, on whole pixels: one per logical unit,
 rounded):
 
@@ -438,7 +440,7 @@ that mode's `case`: the developer menu sets `mode` itself and returns 1.
 
 ## Platform
 
-`src/port/platform`, `src/port/gfx` and `src/port/audio` are the host side.
+`port/src/platform`, `port/src/gfx` and `port/src/audio` are the host side.
 They build as `dc_host` without `port.h` or the game's include paths, so no
 game header or SDK type reaches them. Game types meet them only in the
 replacement units.
@@ -479,12 +481,12 @@ replacement units.
 
 ## Rendering
 
-`src/port/gfx` is a Vulkan 1.3+ renderer: one graphics queue that presents,
+`port/src/gfx` is a Vulkan 1.3+ renderer: one graphics queue that presents,
 two frames in flight, dynamic rendering, synchronization2, a bindless texture
 array, every pipeline created at start-up against the on-disk pipeline
 cache, reverse-Z D32 depth with stencil, an immediate 2D API in the game's 640x480 logical
 space (letterboxed on the window) and a mesh API in 3D, named render targets,
-copies, blits, depth readback and screenshots. `src/port/gfx/README.md` is its
+copies, blits, depth readback and screenshots. `port/src/gfx/README.md` is its
 contract: spaces, colour and alpha units, how the GS blend equation maps to
 Vulkan blending and where it does not.
 
@@ -536,10 +538,10 @@ share small internal headers:
 
 ## Audio
 
-All music and effects are sequenced. `src/port/audio` decodes VAG ADPCM,
+All music and effects are sequenced. `port/src/audio` decodes VAG ADPCM,
 parses HD banks and SQ sequences, and runs a sixteen-port MIDI player into a
 48-voice synth with envelopes and an approximated reverb (`audio::Mixer`).
-`src/port/sound.cpp` replaces `CSound` (bank and sequence transfers, play,
+`port/src/sound.cpp` replaces `CSound` (bank and sequence transfers, play,
 stop, fades, volumes, effect messages) on that mixer, and
 `gameutil_midi.cpp` answers the EZMIDI RPC commands for anything that still
 sends them. `main` starts the output; `CSound::Init` starts it too if it is
@@ -611,8 +613,8 @@ device prefix stripped (the debug dump `edit.cpp` writes to `host0:`), and
 `InitializeDataBuffer`, `BufferAllClear`, `SetDataBuffer` and
 `SetPacketReadBuffer` (`dataset.cpp`, `dataalloc2_1.cpp`) give each arena its
 own block, an ordinary anonymous mapping wherever the system puts it
-(`src/port/platform/memory.hpp`), sized at four times the quadwords retail
-asked for (`kArenaHeadroom`, `src/port/arena.hpp`), because the game sizes
+(`port/src/platform/memory.hpp`), sized at four times the quadwords retail
+asked for (`kArenaHeadroom`, `port/src/arena.hpp`), because the game sizes
 allocations with the host's larger `sizeof`s. A guard page follows each
 block, and an overflow aborts naming the arena instead of retail's endless
 loop. A debug build stops when no block lies above 4 GiB, so a mapping that
@@ -660,18 +662,18 @@ widens it against the image's own address.
 
 ## What is still a stub
 
-`src/port/stubs/sce/` holds the only stubs left: libdma, libgraph (all but
-`sceGsSyncV`, which is `src/port/sce/libgraph.cpp`) and libpkt. Each calls
-`PS2_UNIMPLEMENTED()` (`include/port/port.h`), which prints the function,
+`port/src/stubs/sce/` holds the only stubs left: libdma, libgraph (all but
+`sceGsSyncV`, which is `port/src/sce/libgraph.cpp`) and libpkt. Each calls
+`PS2_UNIMPLEMENTED()` (`port/include/port.h`), which prints the function,
 file and line and aborts. They stay stubs by design: the port does not
 emulate DMA chains, VIF/GIF packets or the GS, so a call that reaches one
 is a drawing path no replacement unit covers yet.
 
-Everything else from the SDK is implemented in `src/port/sce/`: libvu0 in
+Everything else from the SDK is implemented in `port/src/sce/`: libvu0 in
 C++ (static constructors call it before `main`), libpad, libmc, sifdev,
 eekernel (`FlushCache` and friends do nothing, `Exit` exits), libcdvd's
 `sceCdInit`/`sceCdMmode` and sifrpc's IOP boot and module loads (no-ops).
-The Metrowerks runtime calls are in `src/port/runtime.cpp`: `mwInit` and
+The Metrowerks runtime calls are in `port/src/runtime.cpp`: `mwInit` and
 `LoadOverlay` do nothing, `mwLoadOverlay` succeeds, `__assert` prints and
 exits with status 4, `exit__2` exits.
 
@@ -679,13 +681,13 @@ None of the 39 stubbed functions is linked into `darkcloud`, and neither is
 `Ps2Unimplemented` itself: `--gc-sections` keeps only what `main` reaches,
 and no function it reaches calls a stub. `darkcloud_tests` still links some
 through the units the tests call directly. To check after a change,
-disassemble `build/pc/darkcloud` (`llvm-objdump -d`), collect the functions
+disassemble `port/build/pc/darkcloud` (`llvm-objdump -d`), collect the functions
 with a `call` to a stub's address and map them to their source with
 `llvm-addr2line`; static helpers inlined into a caller show under that
 caller.
 
-At the last count the final link held 249 `src/ps2` definitions displaced
-by a strong one in `src/port` and 3,912 that survive as the game's own
+At the last count the final link held 249 `ps2/src` definitions displaced
+by a strong one in `port/src` and 3,912 that survive as the game's own
 (`nm` of `dc_ps2.o`'s weak definitions against the port's objects and the
 executable's symbols).
 
@@ -695,7 +697,7 @@ executable's symbols).
   `MakeFukidashi`'s mask) is not emulated. TEX1 LOD (L, K) is ignored in
   favour of standard trilinear filtering. The GS blends that need a factor
   above 1 or a destination scaled past 1 are approximated
-  (`src/port/gfx/README.md`, "Blending" and "Not done here").
+  (`port/src/gfx/README.md`, "Blending" and "Not done here").
 - **Overlay re-initialisation.** Retail reloads `TITLE.BIN` or `DUN.BIN` and
   re-runs its constructors on every switch; the port links both once and
   runs nothing again but the title objects it lays out with host classes
@@ -727,7 +729,7 @@ run the title, the loader, the town and the dungeon routes.
 
 ## The title overlay's own class declarations
 
-The title units (`src/ps2/title/*.cpp`) declare other units' classes
+The title units (`ps2/src/title/*.cpp`) declare other units' classes
 themselves, with only the members they touch named and the PS2 extents
 padded out, and the PS2 link binds them to the main executable's code. On
 the host the main executable's code uses the real classes, with 8-byte
@@ -754,7 +756,7 @@ one: op_a's `OP_GroundMap`, `OP_BuildingMap`, `OP_BuildingMap2`,
 `OP_NornMapObj2[87]`, op_c's `Water`, rushmovi's `Water__2` and `CFire__4`.
 Every function that indexes or sizes them is the port's, compiled against
 the real headers: the long-tail copies of op_a, op_b, op_c, opening and
-rushmovi, `src/port/title/title.cpp` (all of title.cpp's scene set-ups and
+rushmovi, `port/src/title/title.cpp` (all of title.cpp's scene set-ups and
 draws), `opening_mds.cpp` (`OPAnalyz`, `OPMdsLoad` and the definition
 reader's state) and op_d's `OpD_InitProcess`, `OpD_InitProcess2` and
 `OpD_DrawProcess`, which reach op_d's statics through names its stub header
@@ -764,7 +766,7 @@ the linked symbols' sizes.
 
 The title units' static constructors still run after the port's, over the
 port's objects, at the PS2 strides and through op_a's inline `CMap`
-constructor. `LoadOverlay` (`src/port/runtime.cpp`) therefore does what
+constructor. `LoadOverlay` (`port/src/runtime.cpp`) therefore does what
 retail's overlay loader did when a mode needs TITLE.BIN and DUN.BIN (or
 nothing) was loaded before: `TitleOverlayConstruct` zeroes those objects and
 constructs them again (and initialises the maps, as op_a's constructor did).
@@ -773,58 +775,58 @@ constructs them again (and initialises the maps, as op_a's constructor did).
 
 The root `CMakeLists.txt` only picks the platform:
 
-- `src/ps2` is the game's code, exactly as the PS2 build compiles it, and
-  nothing else. Port accommodations never live in `src/ps2` or `include/ps2`;
+- `ps2/src` is the game's code, exactly as the PS2 build compiles it, and
+  nothing else. Port accommodations never live in `ps2/src` or `ps2/include`;
   the one exception is the `#ifndef PORT` around functions written in
   assembly (below).
-  `src/ps2/CMakeLists.txt` (with `src/ps2/cmake/`) is the PS2 build.
-- `src/port` is code only the port compiles. `src/port/CMakeLists.txt` is the
+  `ps2/CMakeLists.txt` (with `ps2/cmake/`) is the PS2 build.
+- `port/src` is code only the port compiles. `port/CMakeLists.txt` is the
   port's build. `main.cpp` and `gameloop.cpp` start the game;
   `platform/`, `gfx/` and `audio/` are the host side; `sce/` implements the
   SDK; `stubs/sce/` holds the stubs left; `<unit>.cpp` (and `dun/`) replace
-  functions of `src/ps2/<unit>.cpp`, sometimes split as `<unit>_math.cpp`,
+  functions of `ps2/src/<unit>.cpp`, sometimes split as `<unit>_math.cpp`,
   `<unit>_draw.cpp` or `<unit>_port.cpp`; `linknames.cpp` supplies link-time
   names (below); `tests/` is `darkcloud_tests`, one ctest case per
   `DC_TEST` (`DC_SKIP` ends a case as skipped, exit status 77).
 - `tools/dcdata` is the data extraction tool.
-- `include/ps2` holds the game's headers and, under `include/ps2/sce` and
-  `include/ps2/std`, the SDK and standard headers MWCC compiles against. Both
+- `ps2/include` holds the game's headers and, under `ps2/include/sce` and
+  `ps2/include/std`, the SDK and standard headers MWCC compiles against. Both
   builds use them.
-- `include/port` holds headers only the port uses: `port.h`, included ahead
+- `port/include` holds headers only the port uses: `port.h`, included ahead
   of every unit it compiles, and `stubs/` (below).
 
-## How `src/port` takes precedence
+## How `port/src` takes precedence
 
-`src/port/CMakeLists.txt` builds the two halves like this:
+`port/CMakeLists.txt` builds the two halves like this:
 
-1. Every unit in `src/ps2` is compiled as it is, with `PORT` defined.
-2. The objects are merged into one relocatable object, `build/pc/dc_ps2.o`,
+1. Every unit in `ps2/src` is compiled as it is, with `PORT` defined.
+2. The objects are merged into one relocatable object, `port/build/pc/dc_ps2.o`,
    and `llvm-objcopy --weaken` makes every definition in it weak. Two units
    defining the same strong name fail the merge. References
    stay strong, so a missing function is still a link error.
-3. The units in `src/port` are compiled and linked with it. Their definitions
-   are strong, so any function or variable `src/port` defines replaces the
-   `src/ps2` one. `--gc-sections` then drops the `src/ps2` body.
+3. The units in `port/src` are compiled and linked with it. Their definitions
+   are strong, so any function or variable `port/src` defines replaces the
+   `ps2/src` one. `--gc-sections` then drops the `ps2/src` body.
 
-`src/ps2` units are compiled with `-fPIC -fsemantic-interposition`. That stops
-clang from inlining or folding a call to a function `src/port` may replace, so
-calls inside a `src/ps2` unit reach the replacement too. `ps2_interposition_check`
+`ps2/src` units are compiled with `-fPIC -fsemantic-interposition`. That stops
+clang from inlining or folding a call to a function `port/src` may replace, so
+calls inside a `ps2/src` unit reach the replacement too. `ps2_interposition_check`
 (`tools/weaken/interposition_check.py`, part of every build) disassembles
 `dc_ps2.o` and fails if a call to a replaced function was bound inside it or
 a definition in it is still strong. macOS does the same with other tools
 (`docs/MACOS.md`).
 
-To replace a function, define it with the same signature in `src/port`. By
-convention it goes in the file that mirrors its unit: `src/port/mglib.cpp`
-holds the replacements for `src/ps2/mglib.cpp`. A `static` function cannot be
-replaced this way; it keeps the body `src/ps2` gives it.
+To replace a function, define it with the same signature in `port/src`. By
+convention it goes in the file that mirrors its unit: `port/src/mglib.cpp`
+holds the replacements for `ps2/src/mglib.cpp`. A `static` function cannot be
+replaced this way; it keeps the body `ps2/src` gives it.
 
 
 ## Per-unit adjustments
 
-`include/port/stubs/<unit>.hpp`, if it exists, is included ahead of
-`src/ps2/<unit>.cpp`, after `port.h`, and nothing else. Only the port's build
-sees `include/port`; the PS2 build compiles nothing differently. It declares
+`port/include/stubs/<unit>.hpp`, if it exists, is included ahead of
+`ps2/src/<unit>.cpp`, after `port.h`, and nothing else. Only the port's build
+sees `port/include`; the PS2 build compiles nothing differently. It declares
 what the port defines in place of code `PORT` leaves out, and supplies or
 renames what the unit takes from MWCC or from the PS2 link alone:
 
@@ -832,7 +834,7 @@ renames what the unit takes from MWCC or from the PS2 link alone:
   and `water` get declarations of their `static` assembly functions, which
   the port defines.
 - `battlemenu` and `editground` pass each temporary `CRect_i_` as an lvalue
-  (`Ps2Lvalue`, `include/port/port.h`): MWCC binds a temporary to the non-const
+  (`Ps2Lvalue`, `port/include/port.h`): MWCC binds a temporary to the non-const
   references of `DrawMenuColorGradation` and `CEditGround::CheckPartsRect`.
 - `main` gets an overload of `LoadFileMenuData` for a `const char *`: one call
   names its file with a comma expression ending in a string literal.
@@ -858,10 +860,10 @@ renames what the unit takes from MWCC or from the PS2 link alone:
 
 `main.cpp` calls other units through the names MWCC gives them
 (`init_all__Fv`) and calls the overlays' entry points through their retail
-addresses (`func_01DAC1C0`). `src/port/main.cpp` forwards each one to the real
+addresses (`func_01DAC1C0`). `port/src/main.cpp` forwards each one to the real
 function.
 
-The PS2 link binds some names through `config/pal/object_fixups.json` and the
+The PS2 link binds some names through `ps2/config/pal/object_fixups.json` and the
 linker script rather than through the source. The port reproduces each:
 
 - **Per-object renames**, by `#define` in the unit's header: the opening
@@ -869,7 +871,7 @@ linker script rather than through the source. The port reproduces each:
   `FaceChangeC`, op_d's `FaceChangeD` and rushmovi's `FaceChangeMovie`, the
   names their neighbours call them by; the dungeon's `MainDraw` and
   `MoveChara` become `DunMainDraw` and `DunMoveChara`, apart from editloop's
-  (`src/port/dun/gameloop.cpp` replaces `DunMainDraw`); edit_in's `Chara`,
+  (`port/src/dun/gameloop.cpp` replaces `DunMainDraw`); edit_in's `Chara`,
   `MainCamera`, `NowCamera`, `TalkCamera`, `NowTime`, `TexAnimeData`,
   `camera_dist_mode`, `door_open_cnt`, `fix_chara_pos`, `fix_chara_rot`,
   `goto_menu`, `goto_return_menu`, `key_counter` and `loop_counter`, which it
@@ -882,9 +884,9 @@ linker script rather than through the source. The port reproduces each:
   `MGFillBox`, `MGMoveImage`, `MGStretchMoveImage`, `MoveImageTest` and the
   `set2DSprite` overloads, plus op_c's `CWater::DrawVu1` and main's
   `MAP_NPC_MODEL::operator=`: weak definitions and forwarders in
-  `src/port/linknames.cpp`.
+  `port/src/linknames.cpp`.
 - **Aliases**, by `--defsym` (ld64's `-alias` on macOS) in
-  `src/port/CMakeLists.txt`: `ItemPutListTbl12_bytes` = `ItemPutListTbl12`,
+  `port/CMakeLists.txt`: `ItemPutListTbl12_bytes` = `ItemPutListTbl12`,
   `draw_rect` = `draw_rect_store` and `WorkBuffer__2` = `WorkBuffer`.
   `EditGaijiTbl` is `GaijiDataTbl + 0x601C` on the PS2 link. The linker
   script places it inside `EditPartsData`, but the codes `clsmes.cpp`
@@ -900,7 +902,7 @@ title overlay's own class declarations".
 
 ## Game headers
 
-`include/port/port.h` adjusts two game headers for the host, from outside:
+`port/include/port.h` adjusts two game headers for the host, from outside:
 
 - `types.h` defines the PS2's `size_t` and `NULL`. `port.h` includes it with
   `size_t` renamed and `NULL` saved, so the host's stay in force, and
@@ -911,7 +913,7 @@ title overlay's own class declarations".
 
 ## Keeping the PS2 build matching
 
-Edits to `src/ps2` or `include/ps2` that help clang must leave both PS2 builds
+Edits to `ps2/src` or `ps2/include` that help clang must leave both PS2 builds
 byte-identical. They are corrections that are standard C++ either way, never
 code for the port:
 
@@ -923,10 +925,10 @@ code for the port:
   defined.
 - **`#ifndef PORT` around assembly functions**, the one exception: clang
   cannot parse them. It replaces blank lines, so no line number moves. The
-  generic `CDataAlloc<Kind, Size>::Align64()` in `include/ps2/dataalloc.hpp`
+  generic `CDataAlloc<Kind, Size>::Align64()` in `ps2/include/dataalloc.hpp`
   is guarded too; nothing instantiates it, since both arenas specialise it.
 
-Retail's own mistakes stay in `src/ps2`, because the match reproduces them:
+Retail's own mistakes stay in `ps2/src`, because the match reproduces them:
 locals read before anything sets them (`SaveToMc`'s `status`, `main`'s
 `idle_result` and six more), non-void functions that fall off the end,
 format strings that do not fit their arguments. Initialising any of the
@@ -939,7 +941,7 @@ instead:
 - `-fno-strict-aliasing` and `-fwrapv`: the type punning and wraparound the
   code assumes.
 
-`src/ps2` is compiled with `-Wall`. The warnings left on are the porting
+`ps2/src` is compiled with `-Wall`. The warnings left on are the porting
 work: uninitialised reads, missing returns, format strings, copies over
 objects with a vtable and the like. Those that only describe how MWCC-era
 code is spelled -- string literals as `char *`, MWCC's pragmas, 32-bit pointer
@@ -957,18 +959,18 @@ the function is the port's ("Pointers and 32-bit integers").
 
 ## Checking the PS2 build
 
-An edit to `src/ps2` or `include/ps2` made for the port is checked by building
+An edit to `ps2/src` or `ps2/include` made for the port is checked by building
 both regions (`scripts/build/cmake.sh build`, and again with `REGION=PAL`),
 which verifies every image byte for byte.
 
 ## Game data
 
 The game reads its files from a plain directory, not from the disc.
-`build/pc/dcdata` (`tools/dcdata`) makes it:
+`port/build/pc/dcdata` (`tools/dcdata`) makes it:
 
 ```sh
-build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
-build/pc/dcdata list "rom/Dark Cloud (PAL).iso"
+port/build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
+port/build/pc/dcdata list "rom/Dark Cloud (PAL).iso"
 ```
 
 The source is a disc image, read through its ISO 9660 tree, or a directory
@@ -984,7 +986,7 @@ The layout of `data/` is the archive's own: `dun/pack/maindat.pac`,
 `commenu/a_eng/savetex.pak`, `sound/bgm/...` and so on. Lookups fold case,
 as the game's `strcasecmp` does, so the case on disk does not matter.
 
-`src/port/platform/paths.cpp` finds the data directory from `--data <dir>`,
+`port/src/platform/paths.cpp` finds the data directory from `--data <dir>`,
 then `DC_DATA`, then `data/` in the working directory, then `data/` beside
 the executable, and failing all of those `$XDG_DATA_HOME/chronicle/data`
 (`~/.local/share/chronicle/data` when `XDG_DATA_HOME` is unset or relative),
@@ -995,7 +997,7 @@ self-contained, and otherwise to `$XDG_DATA_HOME/chronicle/save`. It is
 created when first used.
 
 When the data directory is missing or holds no file and the run is not
-headless, `FirstRunIfNoData` (`src/port/platform/firstrun.cpp`) opens the
+headless, `FirstRunIfNoData` (`port/src/platform/firstrun.cpp`) opens the
 window and asks for the disc: a disc image through SDL's file dialog (the
 file-chooser portal under Flatpak, zenity elsewhere), or a folder holding
 `DATA.DAT` and `DATA.HD2`. It extracts with `dcdata`'s core on a worker
@@ -1015,9 +1017,9 @@ game looks for and does not find behave as on the disc: `LoadFile2` returns
 
 ## Packaging
 
-`cmake --install build/pc --prefix <dir>` installs `darkcloud` and `dcdata`
+`cmake --install port/build/pc --prefix <dir>` installs `darkcloud` and `dcdata`
 to `<dir>/bin`; an installed copy finds its data and saves under
 `$XDG_DATA_HOME/chronicle` (above). The Linux release is a Flatpak,
-`org.themoonpeople.Chronicle`, built from `flatpak/` by
+`org.themoonpeople.Chronicle`, built from `port/flatpak/` by
 `.github/workflows/flatpak.yml`; `docs/FLATPAK.md` covers building,
 installing, the first start and where the data and saves live.

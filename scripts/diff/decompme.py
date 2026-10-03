@@ -28,8 +28,8 @@ PLATFORM = "ps2"
 # The C++ amalgamation, not the C rendering: decomp.me compiles the context
 # with mwcc rather than parsing it, so it wants the project's own language.
 # ctx.c is the one m2c reads; see scripts/diff/m2ctx.py.
-CTX = "build/ntsc/ctx.cpp"
-FLAGS = "build/ntsc/compiler_flags.txt"
+CTX = "ps2/build/ntsc/ctx.cpp"
+FLAGS = "ps2/build/ntsc/compiler_flags.txt"
 
 # mwcc infers the language from the file extension, and decomp.me names the
 # scratch's source after the platform rather than after this project, so the

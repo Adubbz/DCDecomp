@@ -15,7 +15,7 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 GHIDRA=${GHIDRA_HOME:-$HOME/Applications/ghidra}
 PROJECT_DIR=${DC_GHIDRA_PROJECT_DIR:-$HOME/development/re/Dark Cloud/ghidra}
 PROJECT=${DC_GHIDRA_PROJECT:-Dark Cloud}
-MANIFEST=$PWD/config/ntsc/ghidra_annotations.json
+MANIFEST=$PWD/ps2/config/ntsc/ghidra_annotations.json
 OUTPUT=$PWD/re/ai
 TIMEOUT=${DC_DECOMPILE_TIMEOUT:-120}
 

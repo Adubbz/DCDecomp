@@ -30,7 +30,7 @@ RUN apt-get update \
 
 
 # Install build requirements. clang, lld and llvm build the PC port
-# (src/port/CMakeLists.txt), against SDL3 for the window and input and Vulkan
+# (port/CMakeLists.txt), against SDL3 for the window and input and Vulkan
 # for rendering. gdb is one of them too: scripts/build/statefix.py
 # drives the compiler under it to put back the state MWCC carries and never
 # resets, which the build compiles every unit through. It has to be the full
@@ -67,7 +67,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 # libclang is what turns the C++ headers into the C context m2c needs
 # (scripts/diff/m2ctx.py). The wheel bundles LLVM's own shared library, so
 # no clang or gcc has to be installed alongside it. It lives in the base stage
-# rather than dev because the build stage generates build/ctx.c too.
+# rather than dev because the build stage generates ps2/build/ntsc/ctx.c too.
 # splat is the disassembler. Its MIPS support -- spimdisasm and rabbitizer,
 # which do the actual decoding -- is an extra rather than a hard dependency,
 # so it has to be asked for by name or splat imports and then fails at runtime.
@@ -124,7 +124,7 @@ COPY . .
 
 # Build everything, through the same cmake.sh the entry points use. `ctx` is
 # named because this builds `elf`, not the default target it hangs off. rom/
-# has to be mounted in; mounting asm/ and build/ too keeps the split and the
+# has to be mounted in; mounting ps2/asm/ and ps2/build/ too keeps the split and the
 # objects between runs.
 CMD scripts/build/cmake.sh elf ctx \
     && scripts/build/verify_built.sh

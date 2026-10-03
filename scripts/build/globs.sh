@@ -19,9 +19,9 @@ out=$dir/globbed.txt
 # during a build and must not trigger a reconfigure.
 listing=$(
     {
-        find src -type f \( -name '*.cpp' -o -name '*.c' \) ! -name 'tmp*'
-        find include/ps2 -maxdepth 1 -type f \( -name '*.hpp' -o -name '*.h' \)
-        find include/ps2/std include/ps2/sce -maxdepth 1 -type f
+        find ps2/src -type f \( -name '*.cpp' -o -name '*.c' \) ! -name 'tmp*'
+        find ps2/include -maxdepth 1 -type f \( -name '*.hpp' -o -name '*.h' \)
+        find ps2/include/std ps2/include/sce -maxdepth 1 -type f
     } | LC_ALL=C sort
 )
 if [ ! -f "$out" ] || [ "$(cat "$out")" != "$listing" ]; then

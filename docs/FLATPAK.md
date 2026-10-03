@@ -98,18 +98,18 @@ through the file-chooser portal, which every Flatpak may call without a
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install --user flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 \
     org.freedesktop.Sdk.Extension.llvm20//24.08
-flatpak-builder --repo=repo build-dir flatpak/org.themoonpeople.Chronicle.yml
+flatpak-builder --repo=repo build-dir port/flatpak/org.themoonpeople.Chronicle.yml
 flatpak build-bundle repo chronicle.flatpak org.themoonpeople.Chronicle
 ```
 
 (`flatpak-builder --install-deps-from=flathub ...` installs the three for
 you.) Run from the repository root; `build-dir/`, `repo/`, `.flatpak-builder/`
 and `chronicle.flatpak` are ignored by git. `flatpak-builder --user --install
-build-dir flatpak/org.themoonpeople.Chronicle.yml` installs the build
+build-dir port/flatpak/org.themoonpeople.Chronicle.yml` installs the build
 directly instead of through a bundle. Building `--device=input` into the
 metadata takes flatpak-builder on Flatpak 1.15.6 or later.
 
-The manifest (`flatpak/org.themoonpeople.Chronicle.yml`) builds:
+The manifest (`port/flatpak/org.themoonpeople.Chronicle.yml`) builds:
 
 - **Vulkan-Headers 1.4.321**, for the build only: the runtime's loader is
   1.3.290, which is enough at run time since the renderer takes a Vulkan 1.3

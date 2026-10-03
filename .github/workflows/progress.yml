@@ -5,13 +5,13 @@
 # "pal_report" for the PAL prototype, shown as the versions ntsc and pal. One
 # job per release builds its report from scratch on every push.
 #
-# asm/ is not committed, so the job splits it with splat first. It needs no
+# ps2/asm/ is not committed, so the job splits it with splat first. It needs no
 # disc for that: the private repository carries the three binaries for each
 # region, laid out as they sit in this tree. It is checked out with a
 # read-only deploy key -- the
 # PRIVATE_REPO_SSH_KEY secret -- and copied in by the same
 # scripts/host/overlay_private.sh a developer runs. Only report.json leaves
-# the runner. In particular neither the checkout nor asm/ is ever cached: a
+# the runner. In particular neither the checkout nor ps2/asm/ is ever cached: a
 # pull request from a fork can restore the default branch's caches.
 #
 # The private repository is named only by the PRIVATE_REPOSITORY Actions
@@ -77,7 +77,7 @@ jobs:
 
       - name: Build the toolchain image
         if: env.HAS_PRIVATE == 'true'
-        # .dockerignore keeps rom/ and asm/ out of the image; they are
+        # .dockerignore keeps rom/ and ps2/asm/ out of the image; they are
         # mounted below with the rest of the tree.
         # The Dockerfile is the only description of this toolchain, so CI uses
         # it rather than a second copy of the same steps that could drift.

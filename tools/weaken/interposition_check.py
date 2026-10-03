@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Fails when src/ps2 code calls a function src/port replaces without going through the linker.
+"""Fails when ps2/src code calls a function port/src replaces without going through the linker.
 
-A replacement only takes effect where the call in the merged src/ps2 object is a relocation against the
+A replacement only takes effect where the call in the merged ps2/src object is a relocation against the
 replaced symbol's own name. A call the compiler or assembler bound inside the object (ELF's .Lname$local
 aliases with -fno-semantic-interposition, a relocation against a function's own section, a branch the
 Mach-O assembler resolved to a local label) still reaches the retail body after the link. Calls the
@@ -150,7 +150,7 @@ def main():
     if problems:
         for problem in problems:
             print(f"interposition check: {problem}", file=sys.stderr)
-        print(f"interposition check: {len(problems)} problem(s); src/port's replacements would not be reached "
+        print(f"interposition check: {len(problems)} problem(s); port/src's replacements would not be reached "
               f"from these call sites", file=sys.stderr)
         return 1
     print(f"interposition check: {calls} direct calls in {args.ps2_object.name}, {len(replaced)} replaced "

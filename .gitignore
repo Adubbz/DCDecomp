@@ -1,9 +1,13 @@
 # Build files
 /build/
+/ps2/build/*
+/port/build/*
+!/ps2/build/.gitkeep
+!/port/build/.gitkeep
 
 # Reference assembly, split from the disc by splat and never committed: one
-# tree per release, asm/ntsc and asm/pal.
-/asm/
+# tree per release, ps2/asm/ntsc and ps2/asm/pal.
+/ps2/asm/
 
 # A checkout of the private repository; see scripts/host/overlay_private.sh.
 /.private/

@@ -32,8 +32,8 @@ def build() -> tuple[bool, str]:
 
 
 def snapshot() -> tuple[dict[tuple[str, str], str], dict[str, int]]:
-    declared = verify.declarations(str(ROOT / "src" / "ps2"))
-    asm = verify.markers(str(ROOT / "src" / "ps2"))
+    declared = verify.declarations(str(ROOT / "ps2" / "src"))
+    asm = verify.markers(str(ROOT / "ps2" / "src"))
     verdicts = {}
     data = {}
     for section in verify.SECTIONS:

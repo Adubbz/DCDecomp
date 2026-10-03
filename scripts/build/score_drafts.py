@@ -37,7 +37,7 @@ def compile_drafts(source: Path, temporary: Path, obj: Path) -> str:
     ]
     result = subprocess.run(
         command, cwd=ROOT, capture_output=True, text=True,
-        env={**os.environ, "MWCIncludes": "include/ps2/std;include/ps2/sce",
+        env={**os.environ, "MWCIncludes": "ps2/include/std;ps2/include/sce",
              "STATEFIX_SOURCE": str(relative_source)},
     )
     output = (result.stdout + result.stderr).replace("\r", "")
@@ -86,7 +86,7 @@ def main() -> int:
     rows = []
     failed = 0
 
-    for source in sorted((ROOT / "src" / "ps2").rglob("*")):
+    for source in sorted((ROOT / "ps2" / "src").rglob("*")):
         if source.suffix not in (".cpp", ".c"):
             continue
         if args.sources and source.relative_to(ROOT) not in args.sources:
@@ -96,8 +96,8 @@ def main() -> int:
         if not guards:
             continue
         relative_source = str(source.relative_to(ROOT))
-        image = "dun" if relative_source.startswith("src/ps2/dun/") else (
-            "title" if relative_source.startswith("src/ps2/title/") else "main")
+        image = "dun" if relative_source.startswith("ps2/src/dun/") else (
+            "title" if relative_source.startswith("ps2/src/title/") else "main")
         with tempfile.TemporaryDirectory(prefix="draft_score_", dir=source.parent) as work:
             temporary = Path(work) / source.name
             obj = Path(work) / (source.stem + ".o")

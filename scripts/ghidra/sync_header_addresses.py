@@ -8,7 +8,7 @@ not safe to apply. Header blocks written from a disassembler's rounded-up
 function view carry the padding to the next sixteen-byte boundary, so most of
 them disagree by four, eight or twelve bytes and their prose never arrives.
 
-The symbol tables under `config/ntsc/` are generated from the retail ELF and are
+The symbol tables under `ps2/config/ntsc/` are generated from the retail ELF and are
 what the build itself uses, so they decide. Run this after writing new
 documentation, or after a re-split moves a function.
 """
@@ -32,7 +32,7 @@ def retail_functions() -> dict[str, tuple[int, int]]:
     functions: dict[str, tuple[int, int]] = {}
     ambiguous: set[str] = set()
     for image in ("main", "title", "dun"):
-        path = ROOT / "config" / "ntsc" / f"{image}.symbols.txt"
+        path = ROOT / "ps2" / "config" / "ntsc" / f"{image}.symbols.txt"
         if not path.is_file():
             continue
         for line in path.read_text().splitlines():
@@ -92,7 +92,7 @@ def main() -> None:
     total = 0
     # A file-scope static cannot be declared in a header, so the unit that
     # defines it documents it in place; those blocks are read the same way.
-    sources = sorted((ROOT / "include" / "ps2").rglob("*")) + sorted((ROOT / "src" / "ps2").rglob("*"))
+    sources = sorted((ROOT / "ps2" / "include").rglob("*")) + sorted((ROOT / "ps2" / "src").rglob("*"))
     for path in sources:
         if not path.is_file() or path.suffix not in {".h", ".hpp", ".c", ".cpp"}:
             continue

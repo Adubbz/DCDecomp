@@ -3,7 +3,7 @@
 This plan brings the PC port (`docs/PC.md`, `docs/PC_PORT_PLAN.md`) to macOS on
 arm64, rendering through KosmicKrisp, Mesa's Vulkan driver on top of Metal.
 Nothing here changes the port's rules: C++26, SDL3, native Vulkan, weak-linkage
-replacement, no PS2 emulation, no edits under `src/ps2`.
+replacement, no PS2 emulation, no edits under `ps2/src`.
 
 ## 1. What KosmicKrisp is, and what must be checked
 
@@ -86,17 +86,17 @@ alternative that may happen to work through the same loader.
 
 | Area | File | Linux assumption | macOS answer |
 |---|---|---|---|
-| Arenas | `src/port/dataset.cpp` | `mmap(MAP_32BIT)` keeps arenas below 2 GiB so the game's `(int)` pointer casts survive; `madvise(MADV_DONTNEED)` zeroes | No `MAP_32BIT`. ~~Shrink `__PAGEZERO` (`-Wl,-pagezero_size,0x1000`) and map with a hint address~~: **not possible on arm64**. XNU refuses to exec a 64-bit arm64 image whose page zero is under 4 GiB (`mach_loader.c`, macOS 13 to 26), so nothing maps below 4 GiB; see `docs/MACOS.md`, "The 4 GiB page zero". Only an x86_64 build under Rosetta can (`DC_MACOS_PAGEZERO_SIZE`, default `0x1000` there) |
-| Executable path | `src/port/platform/paths.cpp` | `/proc/self/exe` | `_NSGetExecutablePath` + `realpath` |
-| Executable layout | `src/port/CMakeLists.txt` | `-no-pie` keeps `.data`/`.bss` below 4 GiB | arm64 macOS is PIE-only, loads images above 4 GiB and forbids low mappings; nothing may depend on a 32-bit round trip (section 3) |
-| Weakening | `src/port/CMakeLists.txt` | `ld.lld -r` then `llvm-objcopy --weaken` on ELF | Apple's `ld -r` (`ld64.lld` has no `-r`); `llvm-objcopy --weaken` on Mach-O **[verified]** with LLVM 20 on an arm64 object (sets `N_WEAK_DEF`, leaves references alone). `tools/weaken` writes the same bytes and is selectable with `DC_MACHO_WEAKEN=tool` |
+| Arenas | `port/src/dataset.cpp` | `mmap(MAP_32BIT)` keeps arenas below 2 GiB so the game's `(int)` pointer casts survive; `madvise(MADV_DONTNEED)` zeroes | No `MAP_32BIT`. ~~Shrink `__PAGEZERO` (`-Wl,-pagezero_size,0x1000`) and map with a hint address~~: **not possible on arm64**. XNU refuses to exec a 64-bit arm64 image whose page zero is under 4 GiB (`mach_loader.c`, macOS 13 to 26), so nothing maps below 4 GiB; see `docs/MACOS.md`, "The 4 GiB page zero". Only an x86_64 build under Rosetta can (`DC_MACOS_PAGEZERO_SIZE`, default `0x1000` there) |
+| Executable path | `port/src/platform/paths.cpp` | `/proc/self/exe` | `_NSGetExecutablePath` + `realpath` |
+| Executable layout | `port/CMakeLists.txt` | `-no-pie` keeps `.data`/`.bss` below 4 GiB | arm64 macOS is PIE-only, loads images above 4 GiB and forbids low mappings; nothing may depend on a 32-bit round trip (section 3) |
+| Weakening | `port/CMakeLists.txt` | `ld.lld -r` then `llvm-objcopy --weaken` on ELF | Apple's `ld -r` (`ld64.lld` has no `-r`); `llvm-objcopy --weaken` on Mach-O **[verified]** with LLVM 20 on an arm64 object (sets `N_WEAK_DEF`, leaves references alone). `tools/weaken` writes the same bytes and is selectable with `DC_MACHO_WEAKEN=tool` |
 | Interposition | `-fsemantic-interposition` | ELF-only flag; stops clang inlining calls to functions the port replaces | The driver drops it for Mach-O, but `-Xclang -fsemantic-interposition` works there (Mach-O definitions are not `dso_local`); `-fno-inline-functions` alone is not enough, IPO still folds or deletes calls. Both are used, and `ps2_interposition_check` disassembles `dc_ps2.o` on every build, Linux included |
 | Link flags | `-fuse-ld=lld -Wl,--gc-sections -Wl,--defsym=…` | GNU-style | `-Wl,-dead_strip`; `--defsym` aliases become `-Wl,-alias,_from,_to`; `EditGaijiTbl` (an offset, which `-alias` cannot express) is a port-side table in `linknames.cpp` on both platforms; `--error-limit` dropped |
 | Toolchain | clang 20 from apt | | Homebrew `llvm` (20+) and `lld`; Apple clang is not current enough for C++26 |
 | Shader build | `glslangValidator` from apt | | Homebrew `glslang` |
 | Dependencies | SDL3 and Vulkan from `/usr/local` | | Homebrew `sdl3`, `vulkan-headers`, `vulkan-loader`, `vulkan-validationlayers`; Mesa built from source for KosmicKrisp and lavapipe |
-| Floating point | x86-64 SSE, no FMA contraction by default | | arm64 clang contracts `a*b+c` into FMA by default; `src/ps2` must be compiled with `-ffp-contract=off` so game math matches the x86-64 build bit for bit |
-| `strings.h` | `include/port/port.h` | glibc | present on macOS; keep |
+| Floating point | x86-64 SSE, no FMA contraction by default | | arm64 clang contracts `a*b+c` into FMA by default; `ps2/src` must be compiled with `-ffp-contract=off` so game math matches the x86-64 build bit for bit |
+| `strings.h` | `port/include/port.h` | glibc | present on macOS; keep |
 | CI | `.github/workflows/pc.yml` Ubuntu | | a `macos-26` (Apple Silicon) job: KosmicKrisp needs Metal 4, which `macos-15` lacks |
 
 ## 3. The 32-bit pointer problem on arm64 macOS
@@ -116,8 +116,8 @@ Rosetta 2 only needs a 4 KiB page zero.
 
 So the port stops relying on 32-bit round trips altogether:
 
-1. **Audit tool.** `scripts/port/truncations.py` runs libclang over `src/ps2`
-   and `src/port` with the port's compile flags and lists every cast of a
+1. **Audit tool.** `scripts/port/truncations.py` runs libclang over `ps2/src`
+   and `port/src` with the port's compile flags and lists every cast of a
    pointer to a 32-bit integer, classified as a **round trip** (cast back to
    a pointer, stored in an `int` field or global later read as a pointer,
    or subtracted against another truncated pointer) or **low bits only**
@@ -127,7 +127,7 @@ So the port stops relying on 32-bit round trips altogether:
 2. **Proof on Linux.** The arenas can be forced above 4 GiB on Linux
    (`platform/memory`'s high path), which reproduces the arm64 macOS
    condition exactly; the test suite and the real-data boot run that way.
-3. **Per-site fixes**, all in `src/port`: every round-trip site in a port
+3. **Per-site fixes**, all in `port/src`: every round-trip site in a port
    replacement unit or on the boot path is widened to keep a real pointer;
    round-trip sites that remain in retail functions are listed with the
    replacement each needs, and replaced one by one like any hardware
@@ -152,11 +152,11 @@ No memory mapping of PS2 address ranges is introduced on any platform.
   Mesa build needs **[verified]**: the executable does not link Metal, so it
   targets 14.0, the oldest macOS with Homebrew bottles; KosmicKrisp needs 26
   at run time; Homebrew prefix for SDL3, Vulkan and glslang).
-- `src/port/CMakeLists.txt` split per platform: the merge-and-weaken step
+- `port/CMakeLists.txt` split per platform: the merge-and-weaken step
   (`ld -r` + `llvm-objcopy --weaken` or `tools/weaken`), link flags
   (`-dead_strip`, `-alias` for `ItemPutListTbl12_bytes`, `draw_rect`,
   `WorkBuffer__2`, `EditGaijiTbl`), `-pagezero_size`, no `-no-pie`, the
-  interposition substitute, `-ffp-contract=off` for `src/ps2`.
+  interposition substitute, `-ffp-contract=off` for `ps2/src`.
 - `tools/weaken` (C++26, std only): reads a Mach-O object, sets `N_WEAK_DEF`
   on every defined external symbol, writes it back; with a unit test on a
   tiny object produced in the test. Built only when needed, but kept

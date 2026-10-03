@@ -14,7 +14,7 @@ unlinked object has none, and what is left -- the opcodes and the registers --
 is exactly what the flag decides.
 
 `--ones` is passed to statefix as an ephemeral node-index override. Persistent
-decisions live in `config/<region>/expression_node_overrides.json` and are keyed by the
+decisions live in `ps2/config/<region>/expression_node_overrides.json` and are keyed by the
 exact live MWCC identity rather than by a translation-unit-wide index.
 """
 
@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import region  # noqa: E402
 PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
 FLAGS = ['-O2', '-c', '-Cpp_exceptions', 'off', '-RTTI', 'off',
-         '-strings', 'readonly', '-pragma', 'divbyzerocheck on', '-i', 'include/ps2']
+         '-strings', 'readonly', '-pragma', 'divbyzerocheck on', '-i', 'ps2/include']
 if region.NAME == region.PAL:
     FLAGS.append('-DPAL')
 OVERLAY_BASE = region.OVERLAY_ORIGIN

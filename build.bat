@@ -1,5 +1,5 @@
 @echo off
-rem Build everything in the container and leave the results in build\.
+rem Build everything in the container and leave the results in ps2\build\.
 
 cd %~dp0
 
@@ -26,7 +26,7 @@ exit /b 1
 :build
 rem rom\ is mounted rather than copied in, to keep the 1.7GB ISO out of the
 rem build context. The reference assembly is checked in, so nothing else has to
-rem survive between runs. build\ receives the executable and the overlays.
+rem survive between runs. ps2\build\ receives the executable and the overlays.
 %BUILDER% build -t dcdecomp_build --target build . || exit /b 1
-if not exist build mkdir build
-%BUILDER% run --rm -v .\rom:/dcdecomp/rom -v .\build:/output dcdecomp_build
+if not exist ps2\build mkdir ps2\build
+%BUILDER% run --rm -v .\rom:/dcdecomp/rom -v .\ps2\build:/dcdecomp/ps2/build dcdecomp_build

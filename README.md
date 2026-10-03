@@ -21,14 +21,32 @@ This project produces 100% matching text and data sections for the main executab
 
 `run.sh` builds the disc image and boots it in PCSX2.
 
-`build.sh` builds only the game.
+`./build.sh` builds only the game for PS2; `./build.sh ps2` is equivalent.
+Use `REGION=PAL ./build.sh ps2` for the PAL prototype.
 
 ## The PC port
+
+`./build.sh linux-x64` builds the native Linux port in `port/build/pc`;
+`./build.sh macos` builds the Apple Silicon port in `port/build/macos-arm64`.
+`./run.sh linux-x64` or `./run.sh macos` builds and launches the native game;
+game arguments follow the platform (for example, `./run.sh linux-x64 --data data`).
+Run these on the corresponding host with the dependencies below installed.
+Both use Debug CMake presets. `CLEAN=1` discards the selected build directory,
+and `JOBS=N` controls parallelism on every platform.
 
 `PLATFORM=PC` builds the game's code as a native Linux and macOS program on SDL3 and Vulkan
 (`docs/PC.md`, `docs/MACOS.md`). On Linux it is packaged as a Flatpak, built by CI as
 `chronicle.flatpak`; `docs/FLATPAK.md` covers installing it. It needs your own PAL disc: the first
 start asks for the disc image and extracts the game's files from it.
+
+## Repository layout
+
+- `ps2/src`, `ps2/include`: matching game sources and headers.
+- `ps2/config`, `ps2/asm`: per-region split configuration and generated reference assembly.
+- `ps2/CMakeLists.txt`, `ps2/cmake`: PS2 build rules.
+- `port/src`, `port/include`: native replacements and platform support.
+- `port/CMakeLists.txt`, `port/flatpak`: native build rules and Linux packaging.
+- `scripts`, `tools`, `rom`, `build`: shared tooling, disc inputs, and build outputs.
 
 ## Diffing
 

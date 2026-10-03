@@ -13,15 +13,15 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 . scripts/host/container.sh
 
 # Under the lock scripts/build/cmake.sh takes, so a save that lands while a
-# split is rewriting asm/ waits for the split rather than compiling against it.
+# split is rewriting ps2/asm/ waits for the split rather than compiling against it.
 # The GUI reads the root objdiff.json, which is the NTSC build's.
 REBUILD='
     exec flock .build.lock sh -c "
-        cache=build/ntsc/CMakeCache.txt
+        cache=ps2/build/ntsc/CMakeCache.txt
         home=\$(sed -n \"s/^CMAKE_HOME_DIRECTORY:INTERNAL=//p\" \"\$cache\" 2>/dev/null | head -1)
-        if [ -f build/ntsc/build.ninja ] && [ \"\$home\" = \"\$(pwd)\" ]; then
-            scripts/build/globs.sh build/ntsc
-            exec cmake --build build/ntsc --target objdiff
+        if [ -f ps2/build/ntsc/build.ninja ] && [ \"\$home\" = \"\$(pwd)\" ]; then
+            scripts/build/globs.sh ps2/build/ntsc
+            exec cmake --build ps2/build/ntsc --target objdiff
         fi
         REGION=NTSC DCDECOMP_BUILD_LOCKED=1 exec scripts/build/cmake.sh objdiff
     "
