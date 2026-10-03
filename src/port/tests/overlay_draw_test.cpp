@@ -58,16 +58,17 @@ int CheckText(const Image &image, std::string_view text, int x, int y, int pixel
         const uint8_t *rows = OverlayGlyph(text[i]);
         for (int row = 0; row < kOverlayGlyphHeight; row++) {
             for (int column = 0; column < kOverlayAdvance; column++) {
-                bool lit = rows != nullptr && column < kOverlayGlyphWidth && (rows[row] & (0x10 >> column)) != 0;
-                int  px = x + (static_cast<int>(i) * kOverlayAdvance + column) * pixel;
-                int  py = y + row * pixel;
+                bool lit = rows != nullptr && column < kOverlayGlyphWidth;
+                lit = lit && (rows[row] & (0x10 >> column)) != 0;
+                int px = x + (static_cast<int>(i) * kOverlayAdvance + column) * pixel;
+                int py = y + row * pixel;
                 for (int dy = 0; dy < pixel; dy++) {
                     for (int dx = 0; dx < pixel; dx++) {
                         std::array<uint8_t, 3> got = image.At(px + dx, py + dy);
                         if (!Near(got, lit ? std::array<int, 3>{0xFF, 0xFF, 0xFF} : backdrop)) {
                             if (wrong++ < 5) {
-                                std::fprintf(stderr, "'%c' at %d,%d: %d,%d,%d\n", text[i], px + dx, py + dy, got[0],
-                                             got[1], got[2]);
+                                std::fprintf(stderr, "'%c' at %d,%d: %d,%d,%d\n", text[i], px + dx, py + dy,
+                                             got[0], got[1], got[2]);
                             }
                         }
                     }
@@ -83,7 +84,8 @@ void CheckOverlaid(GfxFixture &fixture, std::string_view text, int pixel) {
     DC_CHECK(gfx::ReadbackFrame(shown.pixels, shown.width, shown.height));
     DC_CHECK(shown.width == fixture.width && shown.height == fixture.height);
     int corner = kOverlayPadding * pixel;
-    DC_CHECK(CheckText(shown, text, corner + kOverlayPadding * pixel, corner + kOverlayPadding * pixel, pixel) == 0);
+    int text_corner = corner + kOverlayPadding * pixel;
+    DC_CHECK(CheckText(shown, text, text_corner, text_corner, pixel) == 0);
     // The backdrop covers the scene's square at the corner; beyond it, the scene as drawn.
     DC_CHECK(Near(shown.At(corner, corner), {kSky[0] / 4, kSky[1] / 4, kSky[2] / 4}));
     DC_CHECK(Near(shown.At(corner - 1, corner - 1), {0x80, 0x80, 0x80}));
@@ -130,7 +132,8 @@ void DrawsTheCounter(int window_width, int window_height, int pixel) {
     DC_CHECK(gfx::RenderList(*scene, 0.5f, {.present = true}));
     Image plain;
     DC_CHECK(gfx::ReadbackFrame(plain.pixels, plain.width, plain.height));
-    DC_CHECK(Near(plain.At(kOverlayPadding * pixel * 2, kOverlayPadding * pixel * 2), {kSky[0], kSky[1], kSky[2]}));
+    int text_corner = kOverlayPadding * pixel * 2;
+    DC_CHECK(Near(plain.At(text_corner, text_corner), {kSky[0], kSky[1], kSky[2]}));
 }
 
 } // namespace

@@ -77,8 +77,8 @@ void OverlayDrawText(std::string_view text, const gfx::LogicalMapping &mapping, 
         return;
     }
     // Quads on whole target pixels, given in the logical space Draw2D maps back onto them.
-    auto quad = [&](std::vector<gfx::Vertex2D> &out, int left, int top, int right, int bottom, std::uint8_t grey,
-                    std::uint8_t alpha) {
+    auto quad = [&](std::vector<gfx::Vertex2D> &out, int left, int top, int right, int bottom,
+                    std::uint8_t grey, std::uint8_t alpha) {
         float x0 = (static_cast<float>(left) - mapping.offset_x) / mapping.scale_x;
         float x1 = (static_cast<float>(right) - mapping.offset_x) / mapping.scale_x;
         float y0 = (static_cast<float>(top) - mapping.offset_y) / mapping.scale_y;
@@ -110,8 +110,8 @@ void OverlayDrawText(std::string_view text, const gfx::LogicalMapping &mapping, 
                     while (end < kOverlayGlyphWidth && (rows[row] & (0x10 >> end)) != 0) {
                         end++;
                     }
-                    quad(glyphs, pen + column * pixel, top + row * pixel, pen + end * pixel, top + (row + 1) * pixel,
-                         0xFF, 0x80);
+                    int y0 = top + row * pixel;
+                    quad(glyphs, pen + column * pixel, y0, pen + end * pixel, y0 + pixel, 0xFF, 0x80);
                     column = end;
                 }
             }

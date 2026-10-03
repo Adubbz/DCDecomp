@@ -105,7 +105,8 @@ const ButtonMap kGamepadButtons[] = {
 constexpr std::size_t kActionCount = std::size(kActions);
 constexpr std::size_t kFirstHostAction = kActionCount - 2;
 constexpr std::size_t kHostActionCount = kActionCount - kFirstHostAction;
-static_assert(kActions[kFirstHostAction].name == "debug_toggle" && kActions[kFirstHostAction + 1].name == "fps_toggle");
+static_assert(kActions[kFirstHostAction].name == "debug_toggle");
+static_assert(kActions[kFirstHostAction + 1].name == "fps_toggle");
 static_assert(static_cast<std::size_t>(InputHostAction::FpsToggle) == 1);
 
 // AxisCalibration (src/ps2/gamepad.cpp): a byte within 49 above or 50 below the centre reads as
@@ -373,7 +374,8 @@ void SendRumble(int pad) {
 
 bool GamepadButtonHeld(int button) {
     return std::ranges::any_of(g_slots, [&](const PadSlot &slot) {
-        return slot.gamepad != nullptr && SDL_GetGamepadButton(slot.gamepad, static_cast<SDL_GamepadButton>(button));
+        return slot.gamepad != nullptr &&
+               SDL_GetGamepadButton(slot.gamepad, static_cast<SDL_GamepadButton>(button));
     });
 }
 
