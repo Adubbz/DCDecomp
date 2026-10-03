@@ -212,7 +212,9 @@ renders one.
   render left. With `options.present` it is presented and becomes what `ReadbackFrame` reads. A list
   that draws to the main target before clearing its logical frame starts from the canonical image.
   Display renders are refused once an immediate frame has followed the canonical render (the
-  loading screen took the window).
+  loading screen took the window). `options.overlay` names a second list whose drawing entries run
+  after the first's, uninterpolated, on `kMainTarget`, before the present: the host's FPS counter,
+  which so never reaches a canonical image.
 - **Interpolation.** A mesh draw may carry a `MeshTransform` (projection, view, middle, model,
   local: `mvp` is their product) and is tagged with the current `InterpKey` (`SetInterpKey`). A
   display render at `alpha` < 1 with `options.previous` matches each tagged draw with the previous

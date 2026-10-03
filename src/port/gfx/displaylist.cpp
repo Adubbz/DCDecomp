@@ -601,6 +601,10 @@ bool RenderList(const DisplayList &list, float alpha, const RenderOptions &optio
         return false;
     }
     Replay(list, false, interpolate ? &overrides : nullptr);
+    if (options.overlay != nullptr && options.overlay->instance == g.renderer_instance) {
+        SetRenderTarget(kMainTarget);
+        Replay(*options.overlay, false, nullptr);
+    }
     CloseListFrame(false, options.present);
     return true;
 }
