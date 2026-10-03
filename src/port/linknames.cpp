@@ -2,8 +2,11 @@
 // and the linker script). MWCC pools string literals and the PS2 build binds a unit's extern name
 // to another unit's pooled literal or to a differently typed copy of a function; clang has no such
 // pool, so each name gets its own definition here. Weak, so a replacement unit that takes one of
-// these over needs no change here. Pure aliases of existing storage (EditGaijiTbl, draw_rect,
-// WorkBuffer__2) are --defsym entries in src/port/CMakeLists.txt instead.
+// these over needs no change here. Pure aliases of existing storage (draw_rect, WorkBuffer__2,
+// ItemPutListTbl12_bytes) are linker aliases in src/port/CMakeLists.txt instead.
+
+#include <algorithm>
+#include <cstring>
 
 #include "btitem.hpp"
 #include "btmisc.hpp"
@@ -12,6 +15,8 @@
 #include "dranmapfield.hpp"
 #include "dungeonmap.hpp"
 #include "eastking.hpp"
+#include "editpartsdata.hpp"
+#include "gameutil.hpp"
 #include "hitmark.hpp"
 #include "main.hpp"
 #include "memcard.hpp"
@@ -21,6 +26,9 @@
 #include "water.hpp"
 
 #define PORT_LINK_NAME __attribute__((weak))
+#define PORT_STRINGIFY2(x) #x
+#define PORT_STRINGIFY(x) PORT_STRINGIFY2(x)
+#define PORT_ASM_NAME(name) PORT_STRINGIFY(__USER_LABEL_PREFIX__) #name
 
 // The literals, as the PAL executable has them.
 PORT_LINK_NAME char       BtAtraShortCharaFile[] = "dun/mainchara/c01d_ex00.chr";
@@ -121,3 +129,35 @@ PORT_LINK_NAME MAP_NPC_MODEL &MAP_NPC_MODEL::operator=(const MAP_NPC_MODEL &othe
     draw_num = other.draw_num;
     return *this;
 }
+
+// The linker script names EditGaijiTbl inside EditPartsData, and clsmes.cpp indexes it with codes -0x300
+// and up, which on the PS2 lands on the last word of each GaijiDataTbl entry: EditGaijiTbl is
+// GaijiDataTbl + 0x601C. ld64's -alias takes no offset, so instead of a linker alias on one platform and
+// not the other, the port gives the table its own storage, copied from GaijiDataTbl before main (which
+// nothing writes), and names its end with an assembler alias. Mach-O marks the alias an alt entry, so it
+// stays in the storage's atom.
+constexpr int kEditGaijiCodes = 0x300;
+
+alignas(16) EDIT_GAIJI PortEditGaijiStorage[kEditGaijiCodes + 1];
+
+static_assert(kEditGaijiCodes * sizeof(EDIT_GAIJI) == 0x6000);
+#define PORT_EDIT_GAIJI_TBL PORT_ASM_NAME(EditGaijiTbl)
+asm(".globl " PORT_EDIT_GAIJI_TBL "\n"
+    ".set " PORT_EDIT_GAIJI_TBL ", " PORT_ASM_NAME(PortEditGaijiStorage) " + 0x6000\n");
+
+namespace {
+
+[[gnu::constructor]] void CopyEditGaijiTable() {
+    const unsigned char  *table = reinterpret_cast<const unsigned char *>(GaijiDataTbl);
+    constexpr std::size_t kFirstWord = 0x1C;
+    for (std::size_t i = 0; i < kEditGaijiCodes; i++) {
+        std::size_t start = kFirstWord + i * sizeof(EDIT_GAIJI);
+        if (start >= sizeof(GaijiDataTbl)) {
+            break;
+        }
+        std::size_t bytes = std::min(sizeof(EDIT_GAIJI), sizeof(GaijiDataTbl) - start);
+        std::memcpy(&PortEditGaijiStorage[i], table + start, bytes);
+    }
+}
+
+} // namespace
