@@ -1,0 +1,65 @@
+# The Flatpak (docs/FLATPAK.md): builds flatpak/org.themoonpeople.Chronicle.yml in Flathub's
+# freedesktop 24.08 image, which fetches the runtime, the SDK and the llvm20 extension from Flathub,
+# and uploads chronicle.flatpak.
+#
+# The manifest's dir source would copy whatever the workspace holds; CI builds the commit under test
+# from a git source instead. The test suite is not run inside the build: the runtime has no Vulkan
+# driver to run it on (pc.yml runs it on lavapipe). darkcloud is still started once, headless and
+# without data, to show the packaged binary loads and reaches its data check (status 3).
+name: Flatpak
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  flatpak:
+    name: Build the Flatpak
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    env:
+      MANIFEST: flatpak/ci.yml
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Point the manifest at this commit
+        run: |
+          # flatpak-builder clones the workspace, which belongs to another user in the container.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          awk -v commit="$GITHUB_SHA" '
+            /# chronicle-source:/ {
+              print
+              print "      - type: git"
+              print "        path: .."
+              print "        commit: " commit
+              print "        disable-submodules: true"
+              skip = 1
+              next
+            }
+            /# chronicle-source-end/ { skip = 0 }
+            !skip { print }
+          ' flatpak/org.themoonpeople.Chronicle.yml > "$MANIFEST"
+          sed -n '/name: chronicle$/,$p' "$MANIFEST"
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: ${{ env.MANIFEST }}
+          bundle: chronicle.flatpak
+          artifact-name: chronicle-x86_64.flatpak
+          cache-key: flatpak-builder-${{ hashFiles('flatpak/org.themoonpeople.Chronicle.yml') }}
+
+      - name: Start darkcloud without data
+        run: |
+          set +e
+          flatpak build --env=XDG_DATA_HOME=/tmp/xdg flatpak_app darkcloud --headless --frames 1 > run.txt 2>&1
+          status=$?
+          cat run.txt
+          echo "darkcloud exited $status"
+          [ "$status" -eq 3 ] && grep -q 'no game data: /tmp/xdg/chronicle/data' run.txt

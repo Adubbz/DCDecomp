@@ -49,3 +49,9 @@ AGENTS.md
 # The PC port's extracted game data and its saves; see docs/PC_PORT_PLAN.md.
 /data/
 /save/
+
+# Flatpak builds (docs/FLATPAK.md)
+/.flatpak-builder/
+/build-dir/
+/repo/
+/chronicle.flatpak

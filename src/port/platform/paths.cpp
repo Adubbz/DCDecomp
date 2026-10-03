@@ -35,18 +35,34 @@ std::optional<fs::path> FromEnvironment(const char *name) {
 }
 
 // The working directory first, so a checkout run from its root finds its own data/, then beside
-// the executable, so an installed copy works from anywhere.
-fs::path Default(const char *name) {
+// the executable, so an unpacked copy works from anywhere.
+std::optional<fs::path> Local(const char *name) {
     std::error_code error;
     fs::path        here = fs::current_path(error) / name;
-    if (fs::is_directory(here, error)) {
+    if (!error && fs::is_directory(here, error)) {
         return here;
     }
     fs::path executable = ExecutableDirectory();
     if (!executable.empty() && fs::is_directory(executable / name, error)) {
         return executable / name;
     }
-    return here;
+    return std::nullopt;
+}
+
+// An installed copy, the Flatpak above all, has nothing local and may not write beside itself.
+// Inside the sandbox XDG_DATA_HOME is ~/.var/app/<id>/data, which the app owns without any
+// filesystem permission. The XDG spec has a relative XDG_DATA_HOME ignored.
+fs::path Installed(const char *name) {
+    fs::path base;
+    if (std::optional<fs::path> xdg = FromEnvironment("XDG_DATA_HOME"); xdg && xdg->is_absolute()) {
+        base = *xdg;
+    } else if (std::optional<fs::path> home = FromEnvironment("HOME")) {
+        base = *home / ".local" / "share";
+    } else {
+        std::error_code error;
+        return fs::current_path(error) / name;
+    }
+    return base / "chronicle" / name;
 }
 
 fs::path Absolute(const fs::path &path) {
@@ -139,19 +155,29 @@ void PathsSetSaveRoot(const fs::path &root) {
 
 const fs::path &PathsDataRoot() {
     if (!data_root) {
-        data_root = Absolute(data_override.value_or(FromEnvironment("DC_DATA").value_or(Default("data"))));
+        std::optional<fs::path> chosen = data_override ? data_override : FromEnvironment("DC_DATA");
+        data_root = Absolute(chosen.value_or(Local("data").value_or(Installed("data"))));
     }
     return *data_root;
 }
 
+// A save/ that exists wins; otherwise saves go beside a local data/, so a checkout or an unpacked
+// copy stays self-contained, and only an installed copy writes under XDG_DATA_HOME.
 const fs::path &PathsSaveRoot() {
     if (save_root) {
         return *save_root;
     }
     std::optional<fs::path> chosen = save_override ? save_override : FromEnvironment("DC_SAVE");
-    std::vector<fs::path>   candidates{Absolute(chosen.value_or(Default("save")))};
-    if (fs::path executable = ExecutableDirectory(); !chosen && !executable.empty()) {
-        candidates.push_back(Absolute(executable / "save"));
+    std::vector<fs::path>   candidates;
+    if (chosen) {
+        candidates.push_back(Absolute(*chosen));
+    } else if (std::optional<fs::path> save = Local("save")) {
+        candidates.push_back(Absolute(*save));
+    } else if (std::optional<fs::path> data = Local("data")) {
+        candidates.push_back(Absolute(data->parent_path() / "save"));
+        candidates.push_back(Absolute(Installed("save")));
+    } else {
+        candidates.push_back(Absolute(Installed("save")));
     }
     std::error_code error;
     for (const fs::path &candidate : candidates) {

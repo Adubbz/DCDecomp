@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Chronicle
+Comment=Native PC port built from a decompilation; needs your own game data
+Exec=darkcloud
+Icon=org.themoonpeople.Chronicle
+Terminal=false
+Categories=Game;RolePlaying;
+Keywords=rpg;action;decompilation;port;

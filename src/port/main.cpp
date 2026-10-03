@@ -22,6 +22,7 @@
 #include "platform/audio.hpp"
 #include "platform/clock.hpp"
 #include "platform/config.hpp"
+#include "platform/firstrun.hpp"
 #include "platform/input.hpp"
 #include "platform/input_script.hpp"
 #include "platform/memory.hpp"
@@ -209,6 +210,7 @@ int main(int argc, const char **argv, const char **envp) {
     if (options.high_arenas) {
         ArenaMemorySetHigh(true);
     }
+    FirstRunIfNoData(options.headless);
     RequireData();
     LoadInputScript(options.input);
 
