@@ -51,13 +51,14 @@ struct Options {
     int          display_per_tick = 0;
     const char  *jump = nullptr;
     bool         fast_load = false;
+    bool         show_fps = false;
 };
 
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
                  "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
                  "          [--input FILE] [--width W] [--height H] [--offscreen]\n"
-                 "          [--display-per-tick N] [--jump MODE[:MAP]] [--fast-load]\n"
+                 "          [--display-per-tick N] [--show-fps] [--jump MODE[:MAP]] [--fast-load]\n"
                  "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
                  "                     beside the executable)\n"
                  "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
@@ -67,10 +68,11 @@ struct Options {
                  "  --offscreen        --headless without a Vulkan surface: render to an image only (what\n"
                  "                     --headless does when there is no VK_EXT_headless_surface)\n"
                  "  --frames N         stop after N frames of the game's main loop\n"
-                 "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
+                 "  --screenshot PATH  write the last tick's image (no FPS counter) to PATH on exit\n"
                  "  --input FILE       drive pad 1 from a script (default: DC_INPUT); see docs/PC.md\n"
                  "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n"
                  "  --display-per-tick N  headless: also render N interpolated display frames per tick\n"
+                 "  --show-fps         draw the FPS counter on presented frames when headless too\n"
                  "test hooks:\n"
                  "  --jump MODE[:MAP]  start in edit:<map>, dungeon:<0-6>, title, rush, opening or menu,\n"
                  "                     skipping the warm-up (DC_JUMP); see docs/PC.md\n"
@@ -116,6 +118,8 @@ Options ParseOptions(int argc, const char **argv) {
             options.jump = value();
         } else if (arg == "--fast-load") {
             options.fast_load = true;
+        } else if (arg == "--show-fps") {
+            options.show_fps = true;
         } else if (arg == "--display-per-tick") {
             options.display_per_tick = static_cast<int>(number());
         } else {
@@ -227,13 +231,16 @@ void ReportPresentStats() {
                  static_cast<double>(stats.stateful) / ticks, static_cast<double>(stats.max_draws),
                  stats.canonical_seconds * 1000.0 / ticks, static_cast<double>(stats.display_frames),
                  stats.display_seconds * 1000.0 / displays);
+    if (GameShowingFps()) {
+        std::fprintf(stderr, "fps counter: %s\n", GameFpsText().c_str());
+    }
 }
 
 int Screenshot(const char *path) {
     std::vector<uint8_t> pixels;
     uint32_t             width = 0;
     uint32_t             height = 0;
-    if (!gfx::ReadbackFrame(pixels, width, height) || !gfx::WritePng(path, pixels.data(), width, height)) {
+    if (!GameScreenshot(pixels, width, height) || !gfx::WritePng(path, pixels.data(), width, height)) {
         std::fprintf(stderr, "cannot write the screenshot to %s\n", path);
         return kExitFailure;
     }
@@ -287,7 +294,8 @@ int main(int argc, const char **argv, const char **envp) {
     GameSetFrameBudget(options.frames);
     GameSetPresentSettings({.interpolation = config.interpolation,
                             .max_fps = config.max_fps,
-                            .display_per_tick = options.display_per_tick});
+                            .display_per_tick = options.display_per_tick,
+                            .show_fps = options.show_fps || (config.show_fps && !options.headless)});
 
     int status = RunGame(argc, const_cast<char **>(argv));
     if (status == kExitOk && options.screenshot != nullptr) {

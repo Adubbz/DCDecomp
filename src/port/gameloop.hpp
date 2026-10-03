@@ -2,6 +2,8 @@
 
 #include <chrono>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 #include "gfx/gfx.hpp"
 
@@ -68,6 +70,10 @@ struct GamePresentSettings {
     // Unbounded clock only (headless tests): display renders made per tick, at alphas k / n, before
     // the canonical image is presented.
     int display_per_tick = 0;
+    // The FPS counter over every presented frame, at first; [input] fps_toggle flips it. It is drawn
+    // after the list into the presented image only, never into a canonical image, so it is not in
+    // kPreviousFrame, frame copies or GameScreenshot.
+    bool show_fps = false;
 };
 
 void GameSetPresentSettings(const GamePresentSettings &settings);
@@ -86,6 +92,20 @@ struct GamePresentStats {
     std::uint64_t draws_2d;
     std::uint64_t stateful;
     std::uint64_t max_draws;
+    // Mesh and 2D draws of the newest tick.
+    std::uint64_t last_draws;
 };
 
 GamePresentStats GamePresentStatistics();
+
+// Whether the FPS counter is drawn now.
+bool GameShowingFps();
+
+// What the FPS counter says: presented frames per second, the measured and configured tick rates and
+// the newest tick's draws.
+std::string GameFpsText();
+
+// The newest canonical image (or the loading screen's frame, if it presented since), RGBA8 rows top
+// to bottom: what --screenshot writes. A display frame, and so the FPS counter, never is. Outside a
+// frame only.
+bool GameScreenshot(std::vector<std::uint8_t> &rgba, std::uint32_t &width, std::uint32_t &height);

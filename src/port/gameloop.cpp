@@ -4,6 +4,7 @@
 #include <charconv>
 #include <cstdio>
 #include <cstring>
+#include <format>
 #include <string_view>
 #include <thread>
 
@@ -25,6 +26,7 @@
 #include "platform/clock.hpp"
 #include "platform/config.hpp"
 #include "platform/input.hpp"
+#include "platform/overlay.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "title/opening.hpp"
@@ -68,13 +70,70 @@ double SecondsSince(PresentClock::time_point start) {
     return std::chrono::duration<double>(PresentClock::now() - start).count();
 }
 
+struct FpsOverlay {
+    bool                on = false;
+    OverlayRate         frames;
+    OverlayRate         ticks;
+    std::string         text;
+    gfx::LogicalMapping mapping = {};
+    gfx::DisplayListRef list;
+};
+
+FpsOverlay g_fps;
+
+void PollFpsToggle() {
+    if (InputHostPressed(InputHostAction::FpsToggle)) {
+        g_fps.on = !g_fps.on;
+    }
+}
+
+bool SameMapping(const gfx::LogicalMapping &a, const gfx::LogicalMapping &b) {
+    return a.scale_x == b.scale_x && a.scale_y == b.scale_y && a.offset_x == b.offset_x &&
+           a.offset_y == b.offset_y && a.pixel_width == b.pixel_width && a.pixel_height == b.pixel_height;
+}
+
+// Recorded again only when the text or the window's mapping changed.
+const gfx::DisplayList *FpsOverlayList() {
+    if (!g_fps.on) {
+        return nullptr;
+    }
+    std::string         text = GameFpsText();
+    gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
+    if (!g_fps.list || text != g_fps.text || !SameMapping(mapping, g_fps.mapping)) {
+        g_fps.list = OverlayRecord(text);
+        g_fps.text = std::move(text);
+        g_fps.mapping = mapping;
+    }
+    return g_fps.list.get();
+}
+
+void NotePresented() {
+    g_fps.frames.Count(PresentClock::now());
+}
+
 bool DisplayFrame(float alpha, bool present) {
     PresentClock::time_point start = PresentClock::now();
-    gfx::RenderOptions       options = {.previous = g_previous_list.get(), .present = present};
+    gfx::RenderOptions       options = {.previous = g_previous_list.get(),
+                                        .present = present,
+                                        .overlay = present ? FpsOverlayList() : nullptr};
     bool                     shown = gfx::RenderList(*g_list, alpha, options);
     if (shown) {
         g_stats.display_frames++;
         g_stats.display_seconds += SecondsSince(start);
+        if (present) {
+            NotePresented();
+        }
+    }
+    return shown;
+}
+
+// The canonical image as it is, or a display render of the overlay alone, which starts from it.
+bool PresentCanonicalFrame() {
+    const gfx::DisplayList *overlay = FpsOverlayList();
+    bool                    shown = overlay != nullptr ? gfx::RenderList(*overlay, 1.0f, {.present = true})
+                                                       : gfx::PresentCanonical();
+    if (shown) {
+        NotePresented();
     }
     return shown;
 }
@@ -490,6 +549,7 @@ void SetEnv(sceVif1Packet *packet) {
 
 void GameSetPresentSettings(const GamePresentSettings &settings) {
     g_present = settings;
+    g_fps.on = settings.show_fps;
 }
 
 void GameRenderTick(gfx::DisplayListRef list) {
@@ -503,6 +563,8 @@ void GameRenderTick(gfx::DisplayListRef list) {
     g_stats.draws_2d += counts.draws_2d;
     g_stats.stateful += counts.stateful;
     g_stats.max_draws = std::max<std::uint64_t>(g_stats.max_draws, counts.mesh_draws + counts.draws_2d);
+    g_stats.last_draws = counts.mesh_draws + counts.draws_2d;
+    g_fps.ticks.Count(PresentClock::now());
     g_previous_list = std::move(g_list);
     g_list = std::move(list);
     g_tick_shown = false;
@@ -512,9 +574,10 @@ bool GamePresentBetweenTicks(double fraction, std::chrono::steady_clock::time_po
     if (!g_list) {
         return false;
     }
+    PollFpsToggle();
     if (!g_present.interpolation) {
         if (!g_tick_shown) {
-            gfx::PresentCanonical();
+            PresentCanonicalFrame();
             g_tick_shown = true;
         }
         return false;
@@ -544,18 +607,34 @@ void GamePresentTickEnd() {
     if (g_tick_shown || !g_list) {
         return;
     }
+    PollFpsToggle();
     if (ClockUnbounded()) {
         for (int frame = 0; frame < g_present.display_per_tick; frame++) {
             DisplayFrame(static_cast<float>(frame) / static_cast<float>(g_present.display_per_tick), false);
         }
     }
-    gfx::PresentCanonical();
+    PresentCanonicalFrame();
     g_last_present = PresentClock::now();
     g_tick_shown = true;
 }
 
 GamePresentStats GamePresentStatistics() {
     return g_stats;
+}
+
+bool GameShowingFps() {
+    return g_fps.on;
+}
+
+std::string GameFpsText() {
+    return std::format("FPS {:.1f}  TICK {:.1f}/{:g}  DRAWS {}", g_fps.frames.PerSecond(),
+                       g_fps.ticks.PerSecond(), ClockTickRate(), g_stats.last_draws);
+}
+
+// kPreviousFrame outside a frame is the newest main image: the canonical render, or the loading
+// screen's frame after it. ReadbackFrame would read a display frame, overlay and all.
+bool GameScreenshot(std::vector<std::uint8_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
+    return gfx::ReadbackTexture(gfx::kPreviousFrame, rgba, width, height);
 }
 
 int RunGame(int argc, char **argv) {
@@ -595,9 +674,10 @@ int RunGame(int argc, char **argv) {
             DebugMode = 1;
         }
     }
-    if (DebugMode) {
+    if (DebugMode && !g_jump.set) {
         std::fprintf(stderr, "debug mode on: the developer menu\n");
-    } else {
+    }
+    if (!DebugMode) {
         MapNo = -1;
         mode = GAME_MODE_LANGUAGE;
         GamePad.KeyLock2(1);

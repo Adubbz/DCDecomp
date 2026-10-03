@@ -47,17 +47,19 @@ build/pc/darkcloud --data data --save save
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
 | `--offscreen` | `--headless` without a Vulkan surface: frames are drawn to an image only (what `--headless` does by itself when the loader has no `VK_EXT_headless_surface`) |
 | `--frames N` | stop after N frames of the game's main loop |
-| `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
+| `--screenshot PATH` | after the run, write the last tick's canonical image (or the loading screen's frame, if it presented since) to PATH as a PNG; never a display frame, so never the FPS counter |
 | `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
 | `--width W`, `--height H` | window size in pixels, over `config.ini` |
 | `--jump MODE[:MAP]` | test hook: start in a mode (see "Test hooks"); also `DC_JUMP` |
 | `--fast-load` | test hook: loading-screen holds and fades of a few ticks; also `DC_FAST_LOAD=1` |
 | `--display-per-tick N` | headless test aid: render N interpolated display frames per tick (offscreen, not presented) before presenting the tick's canonical image |
+| `--show-fps` | draw the FPS counter when headless too (a headless run leaves `show_fps` off) |
 
 Environment: `DC_DATA` and `DC_SAVE` (above), `DC_INPUT` (above), `DC_AUDIO=off` (no audio
 device), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
 release build; a debug build always asks for it), `DC_PRESENT_STATS=1` (print
-draws per tick and render times at exit), and SDL's own variables.
+draws per tick and render times at exit, and what the FPS counter said last
+when it is on), and SDL's own variables.
 
 Exit statuses (`src/port/exitcodes.hpp`): 0 when the window was closed or
 `--frames` ran out, 1 when the window, the renderer or the screenshot failed,
@@ -82,6 +84,7 @@ max_fps = 0             ; display frames per second at most; 0: as the present m
 width = 1280
 height = 960
 fullscreen = false
+show_fps = true         ; the FPS counter at the window's top-left corner (headless: --show-fps)
 [audio]
 master_volume = 1.0     ; 0 to 1
 [input]
@@ -91,6 +94,8 @@ mouse_sensitivity = 0.1 ; right-stick deflection (1 = full) per pixel moved in o
 mouse_invert_y = false
 mouse_capture = true    ; SDL relative mouse mode while the window has focus
 mouse_release = Escape  ; keys that give the cursor back in a window (empty: none)
+debug_toggle = Grave    ; the key left of 1: DebugMode (see "Developer menu")
+fps_toggle = F3         ; the FPS counter on and off
 ```
 
 ### Keyboard and mouse
@@ -118,6 +123,8 @@ dungeon's `PadInput_OK` is cross and `PadInput_NO` circle,
 | arrows | d-pad | left and right pick the active item in the dungeon (`dun/gameloop.cpp:3218`); menus |
 | V; middle click, B | L3; R3 | debug and editor functions only |
 | IJKL | right stick | the camera from the keyboard |
+| `` ` `` (Grave) | none | debug mode: held or pressed while the game starts, the developer menu; later, toggles `DebugMode` (see "Developer menu") |
+| F3 | none | the FPS counter on and off (see "The FPS counter") |
 
 The square button is not a guard in this game: the guard is R1 held while
 locked on, so right click is R1. The camera turns the way the view moves on
@@ -128,10 +135,16 @@ the view right; a positive RY lowers the camera, which looks up, so the
 default `ry = -MouseY` makes mouse up look up and `mouse_invert_y` flips it.
 
 The actions are `up down left right cross circle square triangle l1 r1 l2
-r2 l3 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+ lx ly rx ry`. Keys are
-SDL names (any case, `_` for a space); `Mouse1` to `Mouse5` are left, right,
-middle and the two side buttons. A gamepad axis deflected past the game's
+r2 l3 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+ lx ly rx ry`, and the
+port's own `debug_toggle` and `fps_toggle`, which press no pad button. Keys are
+SDL names (any case, `_` for a space; `Grave`, `Backquote` or `Backtick` for
+the key left of 1); `Mouse1` to `Mouse5` are left, right,
+middle and the two side buttons. The two toggles also take
+`Gamepad:<button>` with SDL's gamepad button names (`Gamepad:guide`,
+`Gamepad:misc1`), on any connected gamepad; the pad actions take a gamepad's
+buttons from the gamepad itself. A gamepad axis deflected past the game's
 dead zone wins over the keyboard and mouse on that axis; buttons add.
+Each key-down of a toggle's key counts once, however briefly it is held.
 
 - **Sticks.** A key is full deflection; two keys at right angles make a
   diagonal of the same length. Values go through the inverse of the game's
@@ -176,7 +189,8 @@ r1 l2 r2 l3 r3 up down left right`, any case) and the four stick bytes
 says `pad2`, from that frame until the pad's next line. On pad 1 lines,
 `key:NAME` (an SDL key name, `_` for a space), `mouse1` to `mouse5` and
 `mouse:DX,DY` (pixels per tick) go through the keyboard and mouse bindings
-as live input does, d-pad rule included. A line with no
+as live input does, d-pad rule included, and reach the two toggles too: a
+line that starts holding `key:grave` is one press of `debug_toggle`. A line with no
 button releases everything. Frames count the game's main loop as
 `--frames` does; frame 0 also covers the 60-tick warm-up and the loading
 screens before the first frame. `#` starts a comment; a pad's frames must
@@ -227,10 +241,42 @@ directory (and so one pipeline cache) under the build directory.
 PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
 the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
 (`MenuLoop`, `src/ps2/main.cpp`), instead of the language select, and leaves
-pad 2 unlocked. The port starts at the language select as retail does;
-`[game] debug_mode = on` in `config.ini` starts with `DebugMode` on, in the
-developer menu. Up and down (pad 1) pick a row, left and right change its
-number, circle or triangle enters it:
+pad 2 unlocked. The port starts at the language select as retail does. Three
+things start it in the developer menu: the pad 2 hold, the debug key
+(`` ` ``, `[input] debug_toggle`) held or pressed while the game starts (the
+60-tick warm-up, or before it while the shaders compile), and
+`[game] debug_mode = on` in `config.ini`. `darkcloud` prints
+`debug mode on: the developer menu` when it does.
+
+After start-up, retail PAL flips `DebugMode` after every frame of the main
+loop where pad 2 holds L1+R1+L2+R2 and R3 is pressed (`src/ps2/main.cpp:963`);
+the port does the same, and a press of the debug key flips it there too,
+printing `debug mode on` or `debug mode off`. Neither moves the game anywhere:
+`DebugMode` is a flag the modes read. What it does once set:
+
+- The town (`EditLoop`, `src/ps2/editloop.cpp:2041`) and the dungeon
+  (`GameLoop`, `src/ps2/dun/gameloop.cpp:2087`) leave on Select held with
+  Start (in the town after a fade); their loop results send the game to
+  `GAME_MODE_MENU` (`GameApplyLoopResult`: the town's result 1, any dungeon
+  result), and the top of `main`'s loop runs the developer menu there only
+  while `DebugMode` is set (otherwise the attract movie, `src/ps2/main.cpp:571`).
+  This is the one way back to the developer menu after start-up. The
+  interior (`EditInLoop`) leaves the same way to the title, not the menu.
+- In the town L3 shows the editor's debug overlay and R3 opens its debug
+  menu (`editloop.cpp:1849`); in an interior Select walks out of the door
+  (`edit_in.cpp:1342`); in the dungeon R3 opens the debug options outside an
+  event (`dun/gameloop.cpp:3109`); a town event pauses on Start and stops on
+  R3 (`editloop3.cpp:8678`); shops, menus and battles have their own, some
+  on pad 2.
+- Nothing on the language select, the attract movie, the title or the
+  opening reads it, so from there the game has to reach a town or a dungeon
+  first.
+
+A boot without debug mode locks pad 2 (`GamePad.KeyLock2(1)`, as retail),
+so the pad 2 combination never reaches the game after it, and the debug
+functions that read pad 2 stay dead; the key is not pad 2 and still
+toggles `DebugMode`. In the developer menu, up and down (pad 1) pick a row,
+left and right change its number, circle or triangle enters it:
 
 | Row | Goes to |
 |---|---|
@@ -253,7 +299,8 @@ number, circle or triangle enters it:
 22
 ```
 
-enters town 1 (Norune).
+enters town 1 (Norune); `0 key:grave` with `1` releasing it does the same
+from the keyboard.
 
 ## Start-up and the main loop
 
@@ -342,6 +389,31 @@ present one canonical image per tick, so screenshots are those images.
 
 The loading screen still presents from the idle hook as immediate frames; once
 it has, display frames stop until the next tick's canonical render.
+
+### The FPS counter
+
+With `[video] show_fps` (on by default; `fps_toggle`, F3, flips it at any
+time), every presented frame carries one line at the window's top-left
+corner, in the port's own 5x7 font (`src/port/platform/overlay.cpp`, white
+on a translucent black backdrop, on whole pixels: one per logical unit,
+rounded):
+
+```
+FPS 143.9  TICK 50.0/50  DRAWS 412
+```
+
+the frames presented per second and the logic ticks rendered per second,
+each over the last half second or so, the configured tick rate, and the
+newest tick's mesh and 2D draws. It is drawn with `gfx::Draw2D` into a
+display list of its own, recorded only when the text or the window's mapping
+changes, never into a tick's list: a display frame draws it after the tick's
+list and before the present (`gfx::RenderOptions::overlay`), and a tick
+presented as its canonical image is presented as a display render of the
+counter alone, which starts from that image. So the canonical image, which
+`kPreviousFrame`, frame copies, pick-Z and `--screenshot` read, never holds
+it, and screenshots are the same byte for byte with it on or off. The
+loading screen's own presents do not carry it. Headless runs leave it off
+unless `--show-fps` is given.
 
 A display frame costs what drawing the tick costs on the GPU, plus little on the
 CPU: in the opening's first scene (about 2,100 mesh draws and 100 2D draws per

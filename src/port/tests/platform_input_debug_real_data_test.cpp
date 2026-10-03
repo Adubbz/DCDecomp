@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <future>
 #include <iterator>
 #include <sstream>
 #include <string>
@@ -15,7 +16,9 @@
 
 // The debug key on the real PAL data (DC_DATA): held through the warm-up it boots into the developer
 // menu, as pad 2's shoulder buttons do; without it the game starts at the language select, and a
-// press there turns DebugMode on without leaving it. Skipped without the data.
+// press there turns DebugMode on without leaving it. In a town, DebugMode is what lets Select+Start
+// leave for the developer menu (retail's way back), and the key flips it as pad 2's L1+R1+L2+R2+R3
+// does. Skipped without the data.
 
 namespace fs = std::filesystem;
 
@@ -39,7 +42,8 @@ struct Run {
 };
 
 // Shares the real-data cases' save directory, so the pipeline cache is compiled once.
-Run Boot(const char *name, const fs::path &data, const std::string &script, int frames) {
+Run Boot(const char *name, const fs::path &data, const std::string &script, int frames,
+         const std::string &hooks = "") {
     fs::path build = fs::read_symlink("/proc/self/exe").parent_path();
     fs::path dir = build / "real_data" / name;
     fs::path save = build / "real_data" / "save";
@@ -49,9 +53,10 @@ Run Boot(const char *name, const fs::path &data, const std::string &script, int 
     std::ofstream(dir / "input.txt") << script;
     fs::path    log = dir / "output.txt";
     fs::path    screenshot = dir / "frame.png";
-    std::string command = "'" + (build / "darkcloud").string() + "' --headless --width 320 --height 240 --fast-load" +
-                          " --frames " + std::to_string(frames) + " --screenshot '" + screenshot.string() +
-                          "' --data '" + data.string() + "' --save '" + save.string() + "' --input '" +
+    std::string command = "'" + (build / "darkcloud").string() +
+                          "' --headless --width 320 --height 240 --fast-load " + hooks + " --frames " +
+                          std::to_string(frames) + " --screenshot '" + screenshot.string() + "' --data '" +
+                          data.string() + "' --save '" + save.string() + "' --input '" +
                           (dir / "input.txt").string() + "' > '" + log.string() + "' 2>&1";
     int raw = std::system(command.c_str());
     Run run;
@@ -66,7 +71,8 @@ Run Boot(const char *name, const fs::path &data, const std::string &script, int 
 }
 
 uint32_t BigEndian(const uint8_t *p) {
-    return static_cast<uint32_t>(p[0]) << 24 | static_cast<uint32_t>(p[1]) << 16 | static_cast<uint32_t>(p[2]) << 8 | p[3];
+    return static_cast<uint32_t>(p[0]) << 24 | static_cast<uint32_t>(p[1]) << 16 |
+           static_cast<uint32_t>(p[2]) << 8 | p[3];
 }
 
 // The mean RGB of gfx::WritePng's output (8-bit RGB, stored deflate blocks, filter 0).
@@ -138,4 +144,29 @@ DC_TEST(integration_real_data_no_debug_key_reaches_the_language_select) {
     double mean[3];
     DC_CHECK(MeanColor(run.png, mean));
     DC_CHECK(mean[2] < 60.0);
+}
+
+// --jump edit:0 starts in Norune with DebugMode on and pad 2 unlocked. Select+Start fades out and
+// EditLoop's result 1 leads to GAME_MODE_MENU, which runs the developer menu only while DebugMode is
+// set. The key turns it off at frame 20: Select+Start only pauses. Pad 2's combination turns it off
+// and the key on again: Select+Start reaches the developer menu.
+DC_TEST(integration_real_data_debug_key_decides_the_way_out_of_a_town) {
+    fs::path    data = RealData();
+    std::string leave = "40 select start\n45\n";
+    std::string key_off = "0\n20 key:grave\n21\n" + leave;
+    std::string pad2_off = "0 pad2\n20 pad2 l1 r1 l2 r2\n21 pad2 l1 r1 l2 r2 r3\n22 pad2\n";
+    std::string back_on = pad2_off + "0\n25 key:grave\n26\n" + leave;
+    std::string jump = "--jump edit:0";
+    auto        off = std::async(std::launch::async, Boot, "debug_key_town_off", data, key_off, 150, jump);
+    auto        on = std::async(std::launch::async, Boot, "debug_key_town_on", data, back_on, 150, jump);
+    Run         stayed = off.get();
+    Run         left = on.get();
+    DC_CHECK(stayed.status == kExitOk && left.status == kExitOk);
+    DC_CHECK(stayed.output.find("debug mode off\n") != std::string::npos);
+    DC_CHECK(left.output.find("debug mode off\ndebug mode on\n") != std::string::npos);
+    double mean[3];
+    DC_CHECK(MeanColor(stayed.png, mean));
+    DC_CHECK(mean[2] < 60.0);
+    DC_CHECK(MeanColor(left.png, mean));
+    DC_CHECK(mean[2] > 100.0 && mean[0] < 30.0 && mean[1] < 30.0);
 }
