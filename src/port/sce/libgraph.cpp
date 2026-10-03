@@ -2,8 +2,8 @@
 
 #include "platform/clock.hpp"
 
-// The frame is progressive, so the field the GS reports is always 0.
+// The frame is progressive, but the field parity still alternates with every tick as the PAL
+// interlace did: CGamePad::Init and main spin until sceGsSyncV reports the odd field.
 int sceGsSyncV(int mode) {
-    ClockSyncV();
-    return 0;
+    return static_cast<int>(ClockSyncV() & 1);
 }

@@ -7,10 +7,12 @@ struct WindowConfig {
     int  width = 1280;
     int  height = 960;
     bool headless = false;
+    bool fullscreen = false;
 };
 
 // Starts SDL's video subsystem and opens the window. Headless uses SDL's offscreen driver, which
-// gives Vulkan a VK_EXT_headless_surface.
+// gives Vulkan a VK_EXT_headless_surface, and SDL's dummy audio driver, which consumes the mix at
+// the device rate without a device.
 void        WindowInit(const WindowConfig &config);
 void        WindowShutdown();
 SDL_Window *WindowHandle();

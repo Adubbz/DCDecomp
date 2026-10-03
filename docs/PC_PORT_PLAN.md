@@ -45,9 +45,12 @@ update its status here and move the architectural facts into `docs/PC.md`.
 
 ## 2. Where the port stands
 
-`src/port` builds and links (`docs/PC.md`). `main` opens a window and
-presents cleared frames; everything else is a stub. The four subsystem
-surveys that back this plan are summarised in section 3. Key facts:
+Waves 1 to 3 have landed (section 5), and shadow volumes after them.
+`darkcloud` runs the game's main loop and no stub is reachable from `main`:
+with the PAL data it boots to the language select, and with input reaches
+the attract movie, which faults on a title-overlay layout (`docs/PC.md`,
+"How far the game runs" and "Known gaps"). The four subsystem surveys that back this plan are
+summarised in section 3. Key facts:
 
 - The game has no threads, semaphores, interrupt handlers or alarms. The one
   asynchronous thing is the GS VSync callback, which drives the loading
@@ -337,12 +340,14 @@ a blit and a depth readback on lavapipe and checks pixels. Shader build
 step with glslang. Pipeline precompilation with on-disk cache. Resize.
 Acceptance: `darkcloud --headless --frames 3 --screenshot out.png` works on
 lavapipe; tests pass; `gfx/` has no game headers.
+**Status: landed.** gfx Vulkan 1.4 renderer, shader build, pipeline cache, headless tests.
 
 **P1 Data** (`tools/dcdata`, `src/port/dataread.cpp`, `platform/paths.*`,
 tests). Deliver the extractor (ISO 9660 + HD2/DAT), the `dataread`
 replacement, pack-file tests with synthetic data, and a documented
 `data/` layout. No disc image is available in this environment: build the
 test fixtures (a tiny ISO, an HD2, a DAT, packs) in the tests.
+**Status: landed.** `tools/dcdata`, the `dataread` replacement, `platform/paths`.
 
 **P2+P9 Platform and runtime** (`platform/input,clock,config,audio-device`,
 `sce/libpad,libmc,eekernel,sifrpc,sifdma,sifdev,libcdvd`, `runtime.cpp`,
@@ -352,12 +357,14 @@ test fixtures (a tiny ISO, an HD2, a DAT, packs) in the tests.
 SDL3, saves on files, the clock and pump, arenas on host allocations,
 runtime no-ops, with tests for libmc (round-trip a save image through the
 state machine), the clock and the arenas.
+**Status: landed.** Input, clock, config, libpad/libmc/eekernel/sifrpc, arenas, runtime no-ops.
 
 **P8 Audio** (`src/port/audio/*`, `platform/audio.*`, `src/port/sound.cpp`,
 `src/port/gameutil.cpp` EZMIDI seam). Deliver VAG decoding, HD/BD/SQ
 parsing, sequencer, synth, SDL3 output, and `CSound` on top. Tests with
 synthetic banks and sequences (generate a VAG from a sine, an HD with one
 program, an SQ with a few notes; check the mix).
+**Status: landed.** VAG, HD/BD/SQ, sequencer, synth and mixer, SDL3 output, `CSound` on top.
 
 **P5a CPU math replacements** (`src/port/mathutil.cpp`, `frame.cpp`
 helpers, `collisionmdt.cpp`, `gameutil.cpp` `MotionProc2`,
@@ -372,6 +379,7 @@ sequences in `src/ps2`), keep the exact lane behaviour the game relies on
 computed values. Where a function emits VU1 data (the shadow CLIP builder)
 produce the same CPU-side clipped triangle list the renderer unit will
 consume, as plain arrays.
+**Status: landed.** Every `#ifndef PORT` assembly function in C++ with retail's lanes.
 
 ### Wave 2 (after P0+P3 merges)
 
@@ -382,34 +390,40 @@ the VU1 program semantics as shader constants, shadows (planar projection,
 `shadow_buf` composite), shade pass, water with frame snapshot, cloth
 rebuild per frame, pick-Z. Tests: build a mesh from a synthetic MDT and
 render it headless; shadow composite.
+**Status: landed.** MG library, meshes from MDT, `DrawVu1`, shadows, cloth, water, pick-Z.
 
 **P6 Textures** (`src/port/texture.cpp`, `textureanime.cpp`,
 `nowload.cpp` drawing side). TIM2 decode (RGB16/24/32, IDTEX8, IDTEX4),
 IMG packs, placeholder render targets, `ReloadTexture` no-op, fixed
 textures, Z-buffer background, texture animation on `CopyTexture`. Tests:
 decode synthetic TIM2 of each type and compare pixels.
+**Status: landed.** TIM2 decode, texture registry, placeholders, texture animation, loading screen.
 
 **P7a 2D core** (`src/port/snd.cpp` sprites and `LensFlare`,
 `gameutil.cpp` sprite batch and `SetClut`, `clsmes.cpp`,
 `spritetable.cpp`, `dispctrl.cpp`, `menu_draw.cpp` packet sites,
 `title/dispfade.cpp`, `title/scfader.cpp`, `editloop3.cpp` fades). Tests:
 render a sprite table headless and check pixels.
+**Status: landed.** Sprites, `SetClut`, message windows, sprite tables, debug font, fades.
 
 ### Wave 3 (after wave 2 merges)
 
 **P7b Long tail A** (`dun/gameloop.cpp` rendering functions,
 `effectmacro.cpp`, `runeffect.cpp`, `fireomni.cpp`, `fishing.cpp`,
 `shot_freefuncs.cpp`, `battlemenu.cpp`, `clothread.cpp`, `langset.cpp`).
+**Status: landed.** Dungeon draw and loader, effects, fishing, battle menu, cloth thread, language select.
 
 **P7c Long tail B** (`title/titleloop.cpp`, `title/opening.cpp`,
 `title/rushmovi.cpp`, `title/op_a..op_d.cpp`, `title/sprite.cpp`,
 `edit.cpp`, `edit_in.cpp`, `editloop.cpp` draw functions).
+**Status: landed.** Title scenes, opening, rush movie, title loop and the editor's draw functions; no stub is reachable from `main`.
 
 **P10 Integration** (`src/port/main.cpp`, `gameloop.cpp`, `docs/PC.md`,
 CI). The game's main loop runs through the title path headless with the
 extracted data when present; without data the run reaches the first
 `LoadFile` and reports the missing `data/` clearly. Every remaining
 `PS2_UNIMPLEMENTED` is listed in `docs/PC.md` with the unit that reaches it.
+**Status: landed.** `main` and `RunGame` run the game, link-time names, sifdev, smoke tests, CI, `docs/PC.md`.
 
 ## 6. Verification
 
@@ -439,7 +453,7 @@ extracted data when present; without data the run reaches the first
   would just repeat frames, so presentation runs at the tick rate with
   vsync as a setting. Decoupling with interpolation is out of scope.
 - **Arena headroom x4** is a stopgap that keeps retail call sites intact;
-  P10 measures actual peak usage and documents it.
+  peak usage is still to be measured once the game runs through its modes.
 - **Field rendering** is removed, not simulated: every `SCREEN_HALF_HEIGHT`
   dependent rect that reaches the port is interpreted in 640x480 logical
   space; `MGStretchMoveImage` and `MGMoveFrameBuffImage` lose their

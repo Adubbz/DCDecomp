@@ -66,9 +66,8 @@
 // program call each opens with and MainDraw's wait for GIF path idle before the frame grab, which
 // the renderer orders itself. Everything else is retail's, PAL's branch only.
 //
-// MainDraw() is also the name of editloop's draw. The port's merge of src/ps2 keeps one definition
-// per name (docs/PC.md), so until the two are told apart this one serves both modes, as the merged
-// copy did before.
+// include/port/stubs/dun/gameloop.hpp renames the unit's MainDraw to DunMainDraw, apart from
+// editloop's, as the PS2 link does.
 
 // Defined by src/ps2/dun/gameloop.cpp without a header declaration.
 struct BOMB_INFO {
@@ -126,7 +125,7 @@ CTexture *NamedTexture(const char *name) {
 
 } // namespace
 
-void MainDraw() {
+void DunMainDraw() {
     sceVu0FMATRIX camera;
     sceVu0FVECTOR eye;
     sceVu0FMATRIX view;

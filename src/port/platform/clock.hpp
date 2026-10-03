@@ -12,9 +12,11 @@
 // runs inside `ClockPump`, once for every tick that elapsed since the previous
 // pump, with the count already advanced to that tick. Every place retail
 // spins on the interrupt (`WaitVSync`, `check_now_loading`, `ReadBGSync`,
-// `sceGsSyncV`, ...) must pump, or its spin never ends. `ClockPump` also runs
-// the idle hook once (window events, loading-screen presents), and is not
-// reentrant: a pump from inside the callback or the hook does nothing.
+// `sceGsSyncV`, ...) must pump, or its spin never ends. `ClockPump` then runs
+// every pump hook (the host's: window events, input sampling) in the order
+// they were added, then the idle hook (the game's: loading-screen presents)
+// once. It is not reentrant: a pump from inside the callback or a hook does
+// nothing.
 //
 // The mglib VSync group maps onto it directly: `MGGetVSyncCount` returns
 // `ClockTickCount()`, `MGInitVSyncCallBack` calls `ClockSetTickCallback`, and
@@ -45,7 +47,16 @@ void ClockSetTickCallback(ClockTickCallback callback);
 
 ClockTickCallback ClockGetTickCallback();
 
+// One slot, owned by the game side; installing a hook replaces the previous one.
 void ClockSetIdleHook(ClockIdleHook hook);
+
+ClockIdleHook ClockGetIdleHook();
+
+// Pump hooks stay installed whatever the game does with the idle hook. Adding one twice runs it
+// once.
+void ClockAddPumpHook(ClockIdleHook hook);
+
+void ClockRemovePumpHook(ClockIdleHook hook);
 
 std::int64_t ClockPump();
 

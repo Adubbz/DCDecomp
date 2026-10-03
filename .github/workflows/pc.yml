@@ -1,0 +1,80 @@
+# The native PC port (docs/PC.md): builds PLATFORM=PC with clang 20 and runs
+# its tests, the headless smoke runs of darkcloud among them, on Mesa's
+# lavapipe software Vulkan driver.
+#
+# Ubuntu 24.04 ships neither SDL3 nor a Vulkan 1.4 loader, so SDL3, the
+# Vulkan headers and the loader are built from source into one prefix that is
+# cached by their versions. kisak-mesa provides a lavapipe new enough to
+# report Vulkan 1.4. No game data is needed: the smoke tests build their own
+# fixtures.
+name: PC port
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SDL_VERSION: release-3.2.24
+  VULKAN_VERSION: v1.4.321
+  DEPS: ${{ github.workspace }}/../deps
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the toolchain and libraries
+        run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main" | sudo tee /etc/apt/sources.list.d/llvm-20.list
+          sudo add-apt-repository -y ppa:kisak/kisak-mesa
+          sudo apt-get update
+          sudo apt-get install -y clang-20 lld-20 llvm-20 cmake ninja-build glslang-tools \
+            mesa-vulkan-drivers \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxss-dev libxfixes-dev \
+            libxkbcommon-dev libxcb1-dev libx11-xcb-dev libwayland-dev wayland-protocols \
+            libegl1-mesa-dev libasound2-dev libpulse-dev libudev-dev libdbus-1-dev
+          # llvm-objcopy and ld.lld under their plain names, as src/port/CMakeLists.txt looks them up.
+          echo "/usr/lib/llvm-20/bin" >> "$GITHUB_PATH"
+
+      - name: Restore SDL3 and Vulkan
+        id: deps
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DEPS }}
+          key: deps-ubuntu-24.04-sdl-${{ env.SDL_VERSION }}-vulkan-${{ env.VULKAN_VERSION }}
+
+      - name: Build SDL3 and Vulkan
+        if: steps.deps.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$DEPS" src && cd src
+          git clone --depth 1 --branch "$SDL_VERSION" https://github.com/libsdl-org/SDL.git
+          git clone --depth 1 --branch "$VULKAN_VERSION" https://github.com/KhronosGroup/Vulkan-Headers.git
+          git clone --depth 1 --branch "$VULKAN_VERSION" https://github.com/KhronosGroup/Vulkan-Loader.git
+          cmake -S SDL -B SDL/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$DEPS" \
+            -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
+          cmake --build SDL/build && cmake --install SDL/build
+          cmake -S Vulkan-Headers -B Vulkan-Headers/build -G Ninja -DCMAKE_INSTALL_PREFIX="$DEPS"
+          cmake --install Vulkan-Headers/build
+          cmake -S Vulkan-Loader -B Vulkan-Loader/build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$DEPS" -DCMAKE_PREFIX_PATH="$DEPS"
+          cmake --build Vulkan-Loader/build && cmake --install Vulkan-Loader/build
+
+      - name: Configure
+        run: |
+          cmake -S . -B build/pc -G Ninja -DPLATFORM=PC -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_COMPILER=clang++-20 -DCMAKE_PREFIX_PATH="$DEPS"
+
+      - name: Build
+        run: cmake --build build/pc
+
+      - name: Test
+        working-directory: build/pc
+        run: ctest --output-on-failure -j4

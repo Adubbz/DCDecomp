@@ -9,6 +9,7 @@
 #include "../platform/paths.hpp"
 #include "data_fixture.hpp"
 #include "dataread.hpp"
+#include "exitcodes.hpp"
 #include "test.hpp"
 
 using namespace datafix;
@@ -75,6 +76,18 @@ int AbortSignal(F f) {
     return WIFSIGNALED(status) ? WTERMSIG(status) : 0;
 }
 
+template <class F>
+int ExitStatusOf(F f) {
+    pid_t child = fork();
+    if (child == 0) {
+        f();
+        _exit(0);
+    }
+    int status = 0;
+    waitpid(child, &status, 0);
+    return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+}
+
 } // namespace
 
 DC_TEST(data_loadfile2_reads_exact_size_and_zero_fills) {
@@ -134,7 +147,7 @@ DC_TEST(data_loadfile2_folds_case_and_devices) {
 DC_TEST(data_loadfile_missing_asserts) {
     fs::path dir = InstallStandardData("read_assert");
     int      size;
-    DC_CHECK(AbortSignal([&] { LoadFile(Mutable("nothing/here.bin"), buffer, &size); }) == SIGABRT);
+    DC_CHECK(ExitStatusOf([&] { LoadFile(Mutable("nothing/here.bin"), buffer, &size); }) == kExitGameAssert);
     fs::remove_all(dir);
 }
 
