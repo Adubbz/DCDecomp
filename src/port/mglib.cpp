@@ -284,13 +284,23 @@ void Draw3DEyeToClip(const RenderInfo &info, float clip[4][4]) {
     clip[2][3] = 1.0f;
 }
 
-void Draw3DSceneConstants(gfx::MeshConstants &constants, const RenderInfo &info, const float model[4][4]) {
+void Draw3DSceneConstants(gfx::MeshConstants &constants, const RenderInfo &info, const float model[4][4],
+                          gfx::MeshTransform *transform) {
     float eye_to_clip[4][4];
     float world_to_clip[4][4];
     float model_to_clip[4][4];
     Draw3DEyeToClip(info, eye_to_clip);
     Draw3DMul(world_to_clip, eye_to_clip, info.view_scaled);
     bool projected = info.shadow_pass == 1 || info.shadow_pass == 2;
+    if (transform != nullptr) {
+        *transform = gfx::IdentityMeshTransform();
+        std::memcpy(transform->projection, eye_to_clip, sizeof(transform->projection));
+        std::memcpy(transform->view, info.view_scaled, sizeof(transform->view));
+        std::memcpy(transform->model, model, sizeof(transform->model));
+        if (projected) {
+            std::memcpy(transform->middle, info.shadow, sizeof(transform->middle));
+        }
+    }
     if (projected) {
         float shadow[4][4];
         Draw3DMul(shadow, info.shadow, model);
