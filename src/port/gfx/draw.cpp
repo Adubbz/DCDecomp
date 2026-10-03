@@ -162,6 +162,11 @@ VkCompareOp DepthOp(DepthTest test) {
     }
 }
 
+// A span reaches an edge of the logical frame from inside it: what lies wholly in a bar (the host's
+// overlay) is not carried anywhere.
+bool ReachesLow(float low, float high, float edge) { return low <= edge && high > edge; }
+bool ReachesHigh(float low, float high, float edge) { return high >= edge && low < edge; }
+
 // A scissor or clear rect on the current target.
 LogicalRect ExtendClearRect(const LogicalRect &rect, const LogicalMapping &mapping) {
     return ExtendRect(rect, ExtentAxes(g.target), LogicalFrame(g.target), mapping);
@@ -510,10 +515,10 @@ std::vector<Vertex2D> FrameFlanks(Primitive primitive, std::span<const Vertex2D>
         bool  y = (axes & kAxisY) != 0;
         float xs[4] = {std::min(left, q.x[0]), q.x[0], q.x[1], std::max(right, q.x[1])};
         float ys[4] = {std::min(top, q.y[0]), q.y[0], q.y[1], std::max(bottom, q.y[1])};
-        int   first_column = x && q.x[0] <= frame.x ? 0 : 1;
-        int   last_column = x && q.x[1] >= frame.x + frame.w ? 2 : 1;
-        int   first_row = y && q.y[0] <= frame.y ? 0 : 1;
-        int   last_row = y && q.y[1] >= frame.y + frame.h ? 2 : 1;
+        int   first_column = x && ReachesLow(q.x[0], q.x[1], frame.x) ? 0 : 1;
+        int   last_column = x && ReachesHigh(q.x[0], q.x[1], frame.x + frame.w) ? 2 : 1;
+        int   first_row = y && ReachesLow(q.y[0], q.y[1], frame.y) ? 0 : 1;
+        int   last_row = y && ReachesHigh(q.y[0], q.y[1], frame.y + frame.h) ? 2 : 1;
         for (int row = first_row; row <= last_row; row++) {
             for (int column = first_column; column <= last_column; column++) {
                 if ((row == 1 && column == 1) || xs[column] == xs[column + 1] || ys[row] == ys[row + 1]) {
@@ -698,12 +703,16 @@ LogicalRect ExtendRect(LogicalRect rect, uint32_t axes, const LogicalRect &frame
     float       top = rect.y;
     float       bottom = rect.y + rect.h;
     if (axes & kAxisX) {
-        left = left <= frame.x ? std::min(left, bounds.x) : left;
-        right = right >= frame.x + frame.w ? std::max(right, bounds.x + bounds.w) : right;
+        float low = left;
+        float high = right;
+        left = ReachesLow(low, high, frame.x) ? std::min(left, bounds.x) : left;
+        right = ReachesHigh(low, high, frame.x + frame.w) ? std::max(right, bounds.x + bounds.w) : right;
     }
     if (axes & kAxisY) {
-        top = top <= frame.y ? std::min(top, bounds.y) : top;
-        bottom = bottom >= frame.y + frame.h ? std::max(bottom, bounds.y + bounds.h) : bottom;
+        float low = top;
+        float high = bottom;
+        top = ReachesLow(low, high, frame.y) ? std::min(top, bounds.y) : top;
+        bottom = ReachesHigh(low, high, frame.y + frame.h) ? std::max(bottom, bounds.y + bounds.h) : bottom;
     }
     return {left, top, right - left, bottom - top};
 }

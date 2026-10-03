@@ -132,9 +132,10 @@ gfx::DisplayListRef OverlayRecord(std::string_view text) {
     if (!gfx::Recording()) {
         return nullptr;
     }
-    gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
-    int                 pixel = OverlayPixelSize(mapping);
-    OverlayDrawText(text, mapping, pixel, pixel * kOverlayPadding, pixel * kOverlayPadding);
+    // Draw2D places depthless 2D by the UI mapping; the counter's size follows the window alone.
+    int pixel = OverlayPixelSize(gfx::GetLogicalMapping(gfx::kMainTarget));
+    OverlayDrawText(text, gfx::GetUiMapping(gfx::kMainTarget), pixel, pixel * kOverlayPadding,
+                    pixel * kOverlayPadding);
     return gfx::EndRecording();
 }
 
