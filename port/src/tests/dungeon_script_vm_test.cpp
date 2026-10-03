@@ -1,10 +1,11 @@
+#include <gtest/gtest.h>
+
 #include <cstdint>
 #include <cstring>
 #include <string>
 #include <vector>
 
 #include "runscript.hpp"
-#include "test.hpp"
 
 // The script VM on a .stb assembled here in the on-disc layout: a five-word header, the program
 // table, then the code section holding the instructions, 16-byte function records and strings,
@@ -166,7 +167,7 @@ bool Untouched(const Arena &arena) {
 } // namespace
 
 // Locals, stores, an integer compare and both jumps: the sum of 1 to 5 through a loop.
-DC_TEST(dungeon_script_vm_loops_with_compare_and_jumps) {
+TEST(DungeonScriptVm, LoopsWithCompareAndJumps) {
     Stb stb;
     int sum = stb.Func(2, 0);
     stb.Start(sum);
@@ -203,19 +204,19 @@ DC_TEST(dungeon_script_vm_loops_with_compare_and_jumps) {
     CRunScript            script;
     Arena                 arena;
     Load(script, file, arena);
-    DC_CHECK(script.check_program(1) == 1);
-    DC_CHECK(script.check_program(2) == 0);
-    DC_CHECK(script.run(1) == 0);
-    DC_CHECK(script.IsEnd() != 0);
-    DC_CHECK(script.result == 15);
-    DC_CHECK(script.run(2) == -1);
-    DC_CHECK(Untouched(arena));
+    ASSERT_TRUE(script.check_program(1) == 1);
+    ASSERT_TRUE(script.check_program(2) == 0);
+    ASSERT_TRUE(script.run(1) == 0);
+    ASSERT_TRUE(script.IsEnd() != 0);
+    ASSERT_TRUE(script.result == 15);
+    ASSERT_TRUE(script.run(2) == -1);
+    ASSERT_TRUE(Untouched(arena));
 }
 
 // A script call through a 16-byte record placed after another (a 24-byte read would take the
 // neighbour's words), an external call with an int and a string, waits and resumes, a float
 // constant, and an external getter writing through a reference.
-DC_TEST(dungeon_script_vm_calls_waits_and_external_functions) {
+TEST(DungeonScriptVm, CallsWaitsAndExternalFunctions) {
     Stb stb;
     int triple = stb.Func(2, 1);
     int main = stb.Func(1, 0);
@@ -251,29 +252,29 @@ DC_TEST(dungeon_script_vm_calls_waits_and_external_functions) {
     Load(script, file, arena);
     g_calls.clear();
 
-    DC_CHECK(script.run(-1) == 1);
-    DC_CHECK(script.IsEnd() == 0);
-    DC_CHECK(g_calls.size() == 2);
-    DC_CHECK(g_calls[0].ext == 0 && g_calls[0].argc == 2);
-    DC_CHECK(g_calls[0].type == RS_INT && g_calls[0].i == 21);
-    DC_CHECK(g_calls[1].type == RS_STR && g_calls[1].s == "hello");
+    ASSERT_TRUE(script.run(-1) == 1);
+    ASSERT_TRUE(script.IsEnd() == 0);
+    ASSERT_TRUE(g_calls.size() == 2);
+    ASSERT_TRUE(g_calls[0].ext == 0 && g_calls[0].argc == 2);
+    ASSERT_TRUE(g_calls[0].type == RS_INT && g_calls[0].i == 21);
+    ASSERT_TRUE(g_calls[1].type == RS_STR && g_calls[1].s == "hello");
 
     script.resume();
-    DC_CHECK(script.IsEnd() == 0);
-    DC_CHECK(g_calls.size() == 3);
-    DC_CHECK(g_calls[2].ext == 1 && g_calls[2].type == RS_FLOAT);
-    DC_CHECK_NEAR(g_calls[2].f, 2.5f, 0.0f);
+    ASSERT_TRUE(script.IsEnd() == 0);
+    ASSERT_TRUE(g_calls.size() == 3);
+    ASSERT_TRUE(g_calls[2].ext == 1 && g_calls[2].type == RS_FLOAT);
+    ASSERT_NEAR(g_calls[2].f, 2.5f, 0.0f);
 
     script.resume();
-    DC_CHECK(script.IsEnd() != 0);
-    DC_CHECK(g_calls.size() == 4);
-    DC_CHECK(g_calls[3].ext == 0 && g_calls[3].type == RS_INT && g_calls[3].i == 42);
-    DC_CHECK(Untouched(arena));
+    ASSERT_TRUE(script.IsEnd() != 0);
+    ASSERT_TRUE(g_calls.size() == 4);
+    ASSERT_TRUE(g_calls[3].ext == 0 && g_calls[3].type == RS_INT && g_calls[3].i == 42);
+    ASSERT_TRUE(Untouched(arena));
 }
 
 // skip runs through waits with external calls and jumps suppressed until SKIP_END, and stops
 // after it.
-DC_TEST(dungeon_script_vm_skip_runs_to_skip_end) {
+TEST(DungeonScriptVm, SkipRunsToSkipEnd) {
     Stb stb;
     int main = stb.Func(0, 0);
     stb.Start(main);
@@ -298,20 +299,20 @@ DC_TEST(dungeon_script_vm_skip_runs_to_skip_end) {
     Load(script, file, arena);
     g_calls.clear();
 
-    DC_CHECK(script.run(3) == 1);
-    DC_CHECK(g_calls.empty());
+    ASSERT_TRUE(script.run(3) == 1);
+    ASSERT_TRUE(g_calls.empty());
     script.skip();
-    DC_CHECK(g_calls.empty());
-    DC_CHECK(script.IsEnd() == 0);
+    ASSERT_TRUE(g_calls.empty());
+    ASSERT_TRUE(script.IsEnd() == 0);
     script.resume();
-    DC_CHECK(g_calls.size() == 1 && g_calls[0].i == 10);
-    DC_CHECK(script.IsEnd() == 0);
+    ASSERT_TRUE(g_calls.size() == 1 && g_calls[0].i == 10);
+    ASSERT_TRUE(script.IsEnd() == 0);
     script.resume();
-    DC_CHECK(script.IsEnd() != 0);
+    ASSERT_TRUE(script.IsEnd() != 0);
 }
 
 // Mixed int and float arithmetic, float compares, conversions, modulo, negation and logic.
-DC_TEST(dungeon_script_vm_mixed_arithmetic) {
+TEST(DungeonScriptVm, MixedArithmetic) {
     Stb stb;
     int main = stb.Func(0, 0);
     stb.Start(main);
@@ -353,18 +354,18 @@ DC_TEST(dungeon_script_vm_mixed_arithmetic) {
     Load(script, file, arena);
     g_calls.clear();
 
-    DC_CHECK(script.run(4) == 0);
-    DC_CHECK(g_calls.size() == 3);
-    DC_CHECK(g_calls[0].type == RS_INT && g_calls[0].i == -1);
-    DC_CHECK(g_calls[1].type == RS_INT && g_calls[1].i == 0);
-    DC_CHECK(g_calls[2].ext == 1 && g_calls[2].type == RS_FLOAT);
-    DC_CHECK_NEAR(g_calls[2].f, 2.5f, 0.0f);
-    DC_CHECK(script.result == 0);
+    ASSERT_TRUE(script.run(4) == 0);
+    ASSERT_TRUE(g_calls.size() == 3);
+    ASSERT_TRUE(g_calls[0].type == RS_INT && g_calls[0].i == -1);
+    ASSERT_TRUE(g_calls[1].type == RS_INT && g_calls[1].i == 0);
+    ASSERT_TRUE(g_calls[2].ext == 1 && g_calls[2].type == RS_FLOAT);
+    ASSERT_NEAR(g_calls[2].f, 2.5f, 0.0f);
+    ASSERT_TRUE(script.result == 0);
 }
 
 // 128 operand slots and 512 nested calls at host sizes, none of them in the arena retail sized
 // for the PS2's records.
-DC_TEST(dungeon_script_vm_stacks_are_host_sized) {
+TEST(DungeonScriptVm, StacksAreHostSized) {
     Stb stb;
     int down = stb.Func(1, 1);
     int main = stb.Func(0, 0);
@@ -392,9 +393,9 @@ DC_TEST(dungeon_script_vm_stacks_are_host_sized) {
     CRunScript            script;
     Arena                 arena;
     Load(script, file, arena);
-    DC_CHECK(script.stack_num == 128 && script.call_num == 512);
-    DC_CHECK(reinterpret_cast<unsigned char *>(script.stack) != arena.stack);
-    DC_CHECK(script.run(5) == 0);
-    DC_CHECK(script.result == 100);
-    DC_CHECK(Untouched(arena));
+    ASSERT_TRUE(script.stack_num == 128 && script.call_num == 512);
+    ASSERT_TRUE(reinterpret_cast<unsigned char *>(script.stack) != arena.stack);
+    ASSERT_TRUE(script.run(5) == 0);
+    ASSERT_TRUE(script.result == 100);
+    ASSERT_TRUE(Untouched(arena));
 }

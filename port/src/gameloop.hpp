@@ -29,13 +29,18 @@ bool GameSetJump(const char *spec);
 void GameSetFastLoad(bool fast);
 bool GameFastLoad();
 
-// DebugMode from the pads and the host's debug key ([input] debug_toggle), factored out of RunGame
-// for the tests. GameDebugRequestedAtBoot is the warm-up's test, once per tick: pad 2's L1+R1+L2+R2
-// held, as retail PAL, or the key held or pressed since the last test. GameCheckDebugToggle runs after
-// every frame of the main loop and flips DebugMode on pad 2's L1+R1+L2+R2 held with R3 pressed, as
-// retail PAL, or on a press of the key.
-bool GameDebugRequestedAtBoot();
+// DebugMode starts as the config file's game.debug_mode. GameCheckDebugToggle runs after every frame
+// of the main loop and, while that setting is on, flips DebugMode when pad 1 holds L1+R1+L2+R2 and
+// R3 is pressed: retail PAL's pad 2 combination, read past the game's pad lock.
 void GameCheckDebugToggle();
+
+// The way back to the developer menu from any mode while DebugMode is set. GameDeveloperMenuRequested
+// runs after every frame of the main loop: true on the frame pad 1's Start and Select first are both
+// held, read past the game's pad lock, outside the developer menu itself. GameEnterDeveloperMenu
+// then ends the running mode where it stands (sound stopped, pad unlocked, any pending map jump or
+// start event dropped) and sets mode to GAME_MODE_MENU.
+bool GameDeveloperMenuRequested();
+void GameEnterDeveloperMenu();
 
 // Honoured at the next frame boundary of the main loop.
 void GameRequestStop();
@@ -70,7 +75,7 @@ struct GamePresentSettings {
     // Unbounded clock only (headless tests): display renders made per tick, at alphas k / n, before
     // the canonical image is presented.
     int display_per_tick = 0;
-    // The FPS counter over every presented frame, at first; [input] fps_toggle flips it. It is drawn
+    // The FPS counter over every presented frame, at first; input.bindings.fps_toggle flips it. It is drawn
     // after the list into the presented image only, never into a canonical image, so it is not in
     // kPreviousFrame, frame copies or GameScreenshot.
     bool show_fps = false;

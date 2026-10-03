@@ -173,10 +173,33 @@ LogicalRect ExtendClearRect(const LogicalRect &rect, const LogicalMapping &mappi
     return ExtendRect(rect, ExtentAxes(g.target), LogicalFrame(g.target), mapping);
 }
 
+// The pixels an anchored UI draw moves by: on each anchored axis, from the UI frame's edge to the
+// edge of what the main target shows.
+void UiSideShift(UiSide side, const LogicalMapping &logical, const LogicalMapping &ui, float &dx, float &dy) {
+    LogicalRect visible = VisibleLogicalRect(kMainTarget);
+    dx = 0.0f;
+    dy = 0.0f;
+    if (side.x < 0) {
+        dx = visible.x * logical.scale_x + logical.offset_x - ui.offset_x;
+    } else if (side.x > 0) {
+        dx = (visible.x + visible.w) * logical.scale_x + logical.offset_x -
+             (kLogicalWidth * ui.scale_x + ui.offset_x);
+    }
+    if (side.y < 0) {
+        dy = visible.y * logical.scale_y + logical.offset_y - ui.offset_y;
+    } else if (side.y > 0) {
+        dy = (visible.y + visible.h) * logical.scale_y + logical.offset_y -
+             (kLogicalHeight * ui.scale_y + ui.offset_y);
+    }
+    dx = std::round(dx);
+    dy = std::round(dy);
+}
+
 // Resolves the binding and the state into push constants and binds the pipeline and dynamic
-// state. ui places the draw by the target's UI mapping. False when the draw must be dropped.
+// state. ui places the draw by the target's UI mapping, moved to the edges side names; the scissor
+// stays where the frame has it. False when the draw must be dropped.
 bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureBinding &binding,
-             const DrawState &state, PushConstants &push, bool ui = false) {
+             const DrawState &state, PushConstants &push, bool ui = false, UiSide side = {}) {
     if (!g.in_frame) {
         return false;
     }
@@ -256,6 +279,13 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
     push.xform[1] = 2.0f * mapping.scale_y / static_cast<float>(mapping.pixel_height);
     push.xform[2] = 2.0f * mapping.offset_x / static_cast<float>(mapping.pixel_width) - 1.0f;
     push.xform[3] = 2.0f * mapping.offset_y / static_cast<float>(mapping.pixel_height) - 1.0f;
+    if (ui && g.target == kMainTarget && (side.x != 0 || side.y != 0)) {
+        float dx;
+        float dy;
+        UiSideShift(side, target.mapping, mapping, dx, dy);
+        push.xform[2] += 2.0f * dx / static_cast<float>(mapping.pixel_width);
+        push.xform[3] += 2.0f * dy / static_cast<float>(mapping.pixel_height);
+    }
     // Index textures are looked up texel by texel in the shader, so their sampler never filters.
     Filter filter = mode == kTexturePalette ? Filter::Nearest : binding.filter;
     push.sampler_slot = SamplerIndex(filter, binding.wrap_u, binding.wrap_v);
@@ -550,7 +580,28 @@ uint32_t TextureAxes(const TextureBinding &binding) {
 }
 
 void DrawPrepared(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
-                  const DrawState &state, bool ui);
+                  const DrawState &state, bool ui, UiSide side = {});
+
+// The sides the current anchor gives a draw: where the centre of its bounds lies.
+UiSide AnchoredSide(std::span<const Vertex2D> vertices) {
+    const UiAnchor &anchor = g.ui_anchor;
+    float           low_x = INFINITY;
+    float           low_y = INFINITY;
+    float           high_x = -INFINITY;
+    float           high_y = -INFINITY;
+    for (const Vertex2D &vertex : vertices) {
+        low_x = std::min(low_x, vertex.x);
+        low_y = std::min(low_y, vertex.y);
+        high_x = std::max(high_x, vertex.x);
+        high_y = std::max(high_y, vertex.y);
+    }
+    float  x = (low_x + high_x) * 0.5f;
+    float  y = (low_y + high_y) * 0.5f;
+    UiSide side;
+    side.x = x < anchor.left_until ? -1 : x >= anchor.right_from ? 1 : 0;
+    side.y = y < anchor.top_until ? -1 : y >= anchor.bottom_from ? 1 : 0;
+    return side;
+}
 
 VkCommandBuffer CopyCommands() {
     if (g.in_frame) {
@@ -795,18 +846,34 @@ LogicalRect VisibleLogicalRect(TextureHandle handle) {
     return ExtendRect(frame, axes, frame, GetLogicalMapping(handle));
 }
 
+void SetUiAnchor(const UiAnchor &anchor) { g.ui_anchor = anchor; }
+
+UiAnchor CurrentUiAnchor() { return g.ui_anchor; }
+
 void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
             const DrawState &state) {
     if (vertices.empty()) {
         return;
     }
+    Draw2DSided(primitive, vertices, binding, state, AnchoredSide(vertices));
+}
+
+namespace detail {
+
+void Draw2DSided(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
+                 const DrawState &state, UiSide side) {
     if (RecordingCalls()) {
-        RecordEntry(
-            Draw2DEntry{primitive, std::vector<Vertex2D>(vertices.begin(), vertices.end()), binding, state});
+        RecordEntry(Draw2DEntry{primitive, std::vector<Vertex2D>(vertices.begin(), vertices.end()), binding,
+                                state, side});
         return;
     }
     // Depth places a draw among the meshes, and an image of the frame lies where the frame does.
     bool ui = state.depth_test == DepthTest::Always && !state.depth_write && !SamplesFrame(binding);
+    if (ui && g.target == kMainTarget && (side.x != 0 || side.y != 0)) {
+        // An anchored draw is a piece of the HUD, never the frame's cover: nothing flanks it.
+        DrawPrepared(primitive, vertices, binding, state, ui, side);
+        return;
+    }
     DrawPrepared(primitive, vertices, binding, state, ui);
     if (uint32_t axes = ExtentAxes(g.target) & TextureAxes(binding); axes != 0 && g.in_frame) {
         LogicalMapping mapping = GetLogicalMapping(g.target);
@@ -821,11 +888,10 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
     }
 }
 
-namespace detail {
 namespace {
 
 void DrawPrepared(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
-                  const DrawState &state, bool ui) {
+                  const DrawState &state, bool ui, UiSide side) {
     bool lines = primitive == Primitive::Lines || primitive == Primitive::LineStrip;
     // VK_KHR_portability_subset may lack fans (Metal has none); the same triangles go as a list.
     bool                fan_as_list = primitive == Primitive::TriangleFan && !g.triangle_fans;
@@ -847,7 +913,7 @@ void DrawPrepared(Primitive primitive, std::span<const Vertex2D> vertices, const
             break;
     }
     PushConstants push;
-    if (!Prepare(lines ? kFamily2DLines : kFamily2DTriangles, topology, binding, state, push, ui)) {
+    if (!Prepare(lines ? kFamily2DLines : kFamily2DTriangles, topology, binding, state, push, ui, side)) {
         return;
     }
     VkCommandBuffer cmd = DrawCommands();

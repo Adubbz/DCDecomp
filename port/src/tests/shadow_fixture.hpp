@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 #include "dataset.hpp"
 #include "draw3d_fixture.hpp"
 #include "framevu1.hpp"

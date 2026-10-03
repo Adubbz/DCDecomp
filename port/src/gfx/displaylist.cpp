@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstring>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "context.hpp"
 
@@ -272,44 +273,120 @@ void BlendVertices(const std::vector<Vertex3D> &a, const std::vector<Vertex3D> &
     }
 }
 
+// A key drawn with more than one model in a tick is one model placed several times (the town's
+// parts and grid cells, each a shared frame moved from place to place), and which of its places are
+// drawn changes with the camera's culling, so the n-th draw of one tick is not the n-th of the next.
+// Keys seen so since the last cut.
+std::unordered_set<InterpKey> g_instanced_keys;
+
+// How far one place of an instanced key may move in a tick and still be the same place.
+constexpr float kInstanceStep = 25.0f;
+
+struct KeyDraws {
+    std::vector<int32_t> records;
+    bool                 instanced = false;
+};
+
+std::unordered_map<InterpKey, KeyDraws> DrawsByKey(const DisplayList &list) {
+    std::unordered_map<InterpKey, KeyDraws> keys;
+    for (size_t i = 0; i < list.records.size(); i++) {
+        const MeshRecord &record = list.records[i];
+        if (record.key == 0 || !record.has_transform) {
+            continue;
+        }
+        KeyDraws &draws = keys[record.key];
+        draws.instanced = draws.instanced ||
+                          (!draws.records.empty() && list.records[draws.records.front()].model != record.model);
+        draws.records.push_back(static_cast<int32_t>(i));
+    }
+    return keys;
+}
+
+float Moved(const Mat4 &before, const Mat4 &after) {
+    float dx = after[12] - before[12];
+    float dy = after[13] - before[13];
+    float dz = after[14] - before[14];
+    return std::sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+// Each place with the previous draw that stood exactly there, then what is left with the nearest
+// previous place nothing stood still at, within a step.
+void MatchInstanced(const DisplayList &list, const DisplayList &previous, const KeyDraws &draws,
+                    const KeyDraws &before, std::vector<int32_t> &match) {
+    std::vector<bool> stood(before.records.size(), false);
+    for (int32_t index : draws.records) {
+        const MeshRecord &record = list.records[index];
+        if (record.no_interpolation) {
+            continue;
+        }
+        for (size_t i = 0; i < before.records.size(); i++) {
+            if (previous.records[before.records[i]].model == record.model) {
+                stood[i] = true;
+                match[index] = before.records[i];
+                break;
+            }
+        }
+    }
+    for (int32_t index : draws.records) {
+        const MeshRecord &record = list.records[index];
+        if (record.no_interpolation || match[index] >= 0) {
+            continue;
+        }
+        float nearest = std::min(kInstanceStep, record.teleport_distance);
+        for (size_t i = 0; i < before.records.size(); i++) {
+            float moved = Moved(previous.records[before.records[i]].model, record.model);
+            if (!stood[i] && moved <= nearest) {
+                nearest = moved;
+                match[index] = before.records[i];
+            }
+        }
+    }
+}
+
 void BuildMatches(const DisplayList &list, const DisplayList &previous) {
     MatchCache &cache = list.cache;
     cache.previous_serial = previous.serial;
-
-    struct KeyHash {
-        size_t operator()(const std::pair<InterpKey, uint32_t> &k) const {
-            return std::hash<uint64_t>()(k.first * 0x9E3779B97F4A7C15ull ^ k.second);
-        }
-    };
-
-    std::unordered_map<std::pair<InterpKey, uint32_t>, int32_t, KeyHash> keyed;
-    for (size_t i = 0; i < previous.records.size(); i++) {
-        const MeshRecord &record = previous.records[i];
-        if (record.key != 0 && record.has_transform) {
-            keyed.emplace(std::pair{record.key, record.occurrence}, static_cast<int32_t>(i));
-        }
-    }
     cache.match.assign(list.records.size(), -1);
     cache.blend.assign(list.records.size(), false);
-    for (size_t i = 0; i < list.records.size(); i++) {
-        const MeshRecord &record = list.records[i];
-        if (record.key == 0 || !record.has_transform || record.no_interpolation) {
+
+    std::unordered_map<InterpKey, KeyDraws> before = DrawsByKey(previous);
+    std::unordered_map<InterpKey, KeyDraws> now = DrawsByKey(list);
+    for (const auto *keys : {&before, &now}) {
+        for (const auto &[key, draws] : *keys) {
+            if (draws.instanced) {
+                g_instanced_keys.insert(key);
+            }
+        }
+    }
+    for (const auto &[key, draws] : now) {
+        auto it = before.find(key);
+        if (it == before.end()) {
             continue;
         }
-        auto it = keyed.find({record.key, record.occurrence});
-        if (it == keyed.end()) {
+        if (g_instanced_keys.contains(key)) {
+            MatchInstanced(list, previous, draws, it->second, cache.match);
             continue;
         }
-        const Mat4 &before = previous.records[it->second].model;
-        float       dx = record.model[12] - before[12];
-        float       dy = record.model[13] - before[13];
-        float       dz = record.model[14] - before[14];
-        if (!(std::sqrt(dx * dx + dy * dy + dz * dz) > record.teleport_distance)) {
-            cache.match[i] = it->second;
-            cache.blend[i] =
-                record.blend_vertices && previous.records[it->second].blend_vertices &&
-                VerticesBlend(std::get<MeshEntry>(previous.entries[previous.records[it->second].entry]),
-                              std::get<MeshEntry>(list.entries[record.entry]), record.teleport_distance);
+        // One model: its strips and passes come in the same order every tick.
+        for (int32_t index : draws.records) {
+            const MeshRecord &record = list.records[index];
+            if (record.no_interpolation) {
+                continue;
+            }
+            for (int32_t candidate : it->second.records) {
+                const MeshRecord &earlier = previous.records[candidate];
+                if (earlier.occurrence != record.occurrence) {
+                    continue;
+                }
+                if (!(Moved(earlier.model, record.model) > record.teleport_distance)) {
+                    cache.match[index] = candidate;
+                    cache.blend[index] =
+                        record.blend_vertices && earlier.blend_vertices &&
+                        VerticesBlend(std::get<MeshEntry>(previous.entries[earlier.entry]),
+                                      std::get<MeshEntry>(list.entries[record.entry]), record.teleport_distance);
+                }
+                break;
+            }
         }
     }
     cache.cameras.assign(list.cameras.size(), -1);
@@ -403,28 +480,134 @@ void Interpolated(const DisplayList &list, const DisplayList &previous, float al
     }
 }
 
+// A grab of the frame (a copy or blit out of the main target) is taken by the canonical render at
+// the tick's camera. A display render draws the scene under another camera, so what it draws back
+// from the canonical grab (the depth of field's blurred bands, the water's refraction) stands
+// beside the scene it was taken from. It takes the grab again from its own image instead, into a
+// twin of the destination that its draws then sample; the destination keeps what the canonical
+// render left.
+struct GrabTwin {
+    TextureHandle twin = kNullTexture;
+    TextureInfo   shape = {};
+    bool          active = false;
+};
+
+std::unordered_map<TextureHandle, GrabTwin> g_grab_twins;
+uint64_t                                    g_grab_instance = 0;
+
+bool SameShape(const TextureInfo &a, const TextureInfo &b) {
+    return a.width == b.width && a.height == b.height && a.pixel_width == b.pixel_width &&
+           a.pixel_height == b.pixel_height && a.format == b.format && a.mip_levels == b.mip_levels &&
+           a.has_alpha == b.has_alpha && a.render_target == b.render_target &&
+           a.shares_main_depth == b.shares_main_depth && a.frame_target == b.frame_target;
+}
+
+// Every twin starts a display render unused; those whose destination is gone are destroyed.
+void ResetGrabTwins() {
+    if (g_grab_instance != g.renderer_instance) {
+        g_grab_twins.clear();
+        g_grab_instance = g.renderer_instance;
+    }
+    for (auto it = g_grab_twins.begin(); it != g_grab_twins.end();) {
+        it->second.active = false;
+        if (!GetTextureInfo(it->first)) {
+            DestroyTexture(it->second.twin);
+            it = g_grab_twins.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+// The twin this display render samples in place of texture, if it has grabbed into one.
+TextureHandle GrabbedTwin(TextureHandle texture) {
+    auto it = g_grab_twins.find(texture);
+    return it != g_grab_twins.end() && it->second.active ? it->second.twin : texture;
+}
+
+// dst's twin, created to its shape and holding its contents from this render's first grab on.
+TextureHandle ActivateGrabTwin(TextureHandle dst) {
+    std::optional<TextureInfo> info = GetTextureInfo(dst);
+    if (!info || dst == kMainTarget || dst == kPreviousFrame || info->shares_main_depth) {
+        return kNullTexture;
+    }
+    auto it = g_grab_twins.find(dst);
+    if (it != g_grab_twins.end() && (!SameShape(it->second.shape, *info) || !GetTextureInfo(it->second.twin))) {
+        DestroyTexture(it->second.twin);
+        g_grab_twins.erase(it);
+        it = g_grab_twins.end();
+    }
+    if (it == g_grab_twins.end()) {
+        TextureHandle twin =
+            info->render_target
+                ? CreateRenderTarget(info->width, info->height, info->has_alpha, false, info->frame_target)
+                : CreateTexture({info->width, info->height, info->format, info->mip_levels, info->has_alpha});
+        if (twin == kNullTexture) {
+            return kNullTexture;
+        }
+        it = g_grab_twins.emplace(dst, GrabTwin{twin, *info, false}).first;
+    }
+    if (!it->second.active) {
+        CopyTexture(dst, Rect{0, 0, static_cast<int32_t>(info->width), static_cast<int32_t>(info->height)},
+                    it->second.twin, 0, 0);
+        it->second.active = true;
+    }
+    return it->second.twin;
+}
+
+void GrabAgain(const CopyEntry &entry) {
+    TextureHandle src = GrabbedTwin(entry.src);
+    if (entry.src != kMainTarget && src == entry.src) {
+        return;
+    }
+    TextureHandle dst = ActivateGrabTwin(entry.dst);
+    if (dst == kNullTexture) {
+        return;
+    }
+    if (entry.src == entry.dst) {
+        src = dst;
+    }
+    if (entry.kind == CopyEntry::Copy) {
+        CopyTexture(src, entry.src_rect, dst, entry.dst_rect.x, entry.dst_rect.y);
+    } else {
+        BlitTexture(src, entry.src_rect, dst, entry.dst_rect, entry.filter);
+    }
+}
+
+TextureBinding GrabbedBinding(const TextureBinding &binding, bool canonical) {
+    TextureBinding out = binding;
+    if (!canonical) {
+        out.texture = GrabbedTwin(binding.texture);
+    }
+    return out;
+}
+
 void Replay(const DisplayList &list, bool canonical, const Overrides *overrides) {
     g.replaying = true;
     g.quiet = !canonical;
+    if (!canonical) {
+        ResetGrabTwins();
+    }
     for (const Entry &entry : list.entries) {
         std::visit(
             [&](const auto &e) {
                 using T = std::decay_t<decltype(e)>;
                 if constexpr (std::is_same_v<T, Draw2DEntry>) {
-                    Draw2D(e.primitive, e.vertices, e.binding, e.state);
+                    Draw2DSided(e.primitive, e.vertices, GrabbedBinding(e.binding, canonical), e.state, e.side);
                 } else if constexpr (std::is_same_v<T, MeshEntry>) {
                     const MeshConstants *constants = &e.constants;
                     if (overrides != nullptr && overrides->index[e.record] >= 0) {
                         constants = &overrides->constants[overrides->index[e.record]];
                     }
+                    TextureBinding binding = GrabbedBinding(e.binding, canonical);
                     if (e.mesh != kNullMesh) {
-                        DrawMesh(e.mesh, e.first_index, e.index_count, *constants, e.binding, e.state);
+                        DrawMesh(e.mesh, e.first_index, e.index_count, *constants, binding, e.state);
                     } else {
                         const std::vector<Vertex3D> *vertices = &e.vertices;
                         if (overrides != nullptr && overrides->vertex_index[e.record] >= 0) {
                             vertices = &overrides->vertices[overrides->vertex_index[e.record]];
                         }
-                        DrawMeshImmediate(*vertices, e.indices, *constants, e.binding, e.state);
+                        DrawMeshImmediate(*vertices, e.indices, *constants, binding, e.state);
                     }
                 } else if constexpr (std::is_same_v<T, ClearEntry>) {
                     if (e.stencil) {
@@ -433,7 +616,7 @@ void Replay(const DisplayList &list, bool canonical, const Overrides *overrides)
                         Clear(e.color, e.rgba, e.depth, e.z, e.has_rect ? &e.rect : nullptr);
                     }
                 } else if constexpr (std::is_same_v<T, TargetEntry>) {
-                    SetRenderTarget(e.target);
+                    SetRenderTarget(canonical ? e.target : GrabbedTwin(e.target));
                 } else if (canonical) {
                     if constexpr (std::is_same_v<T, CopyEntry>) {
                         if (e.kind == CopyEntry::Copy) {
@@ -448,6 +631,8 @@ void Replay(const DisplayList &list, bool canonical, const Overrides *overrides)
                     } else if constexpr (std::is_same_v<T, ReadDepthEntry>) {
                         ReadDepth(e.id, e.rect.x, e.rect.y, e.rect.w, e.rect.h);
                     }
+                } else if constexpr (std::is_same_v<T, CopyEntry>) {
+                    GrabAgain(e);
                 }
             },
             entry);
@@ -628,6 +813,7 @@ void CutInterpolation() {
     if (g.list != nullptr) {
         g.list->cut = true;
     }
+    g_instanced_keys.clear();
 }
 
 void CutCameraInterpolation() {

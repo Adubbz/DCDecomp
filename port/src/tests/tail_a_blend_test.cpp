@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "fireomni.hpp"
@@ -27,7 +29,7 @@ struct SolidTexture {
         decoded.levels.push_back(std::move(level));
         unsigned palette = 0;
         key = PortCreateTexture(decoded, PortTextureOwner::Other, &palette);
-        DC_CHECK(key != 0);
+        EXPECT_TRUE(key != 0);
         texture->tex0 = SCE_GS_SET_TEX0(key, 1, SCE_GS_PSMCT32, 6, 6, 1, 0, 0, 0, 0, 0, 0);
     }
 
@@ -38,7 +40,7 @@ struct SolidTexture {
 
 // Into the target: flat grey under the first rect, the first texture over it with the caller's
 // ALPHA (opaque, so red), then the second added as Cs + Cd * As with As one half.
-DC_TEST(tail_a_blend_textures_into_named_target) {
+TEST(TailABlend, TexturesIntoNamedTarget) {
     Draw3DFixture      fixture;
     unsigned           key = PortRegisterNamedTarget("blender", 128, 128, true, PortTextureOwner::Other);
     gfx::TextureHandle blender = gfx::FindNamedRenderTarget("blender");
@@ -49,24 +51,24 @@ DC_TEST(tail_a_blend_textures_into_named_target) {
         blendTextuer(GetVif1Packet(), static_cast<int>(key), 2, SCE_GS_PSMCT32, red.texture.get(),
                      CRect_i_(0, 0, 64, 64), CRect_i_(0, 0, 64, 64), green.texture.get(), CRect_i_(32, 32, 64, 64),
                      CRect_i_(0, 0, 64, 64));
-        DC_CHECK(gfx::CurrentRenderTarget() == gfx::kMainTarget);
+        ASSERT_TRUE(gfx::CurrentRenderTarget() == gfx::kMainTarget);
     });
 
     TailAFixture::Pixels target = TailAFixture::Read(blender);
-    DC_CHECK(target.Near(10, 10, 255, 0, 0));
-    DC_CHECK(target.Near(48, 48, 128, 255, 0, -1, 4));
-    DC_CHECK(target.Near(80, 80, 0, 255, 0));
-    DC_CHECK(target.Near(110, 10, 0, 0, 0));
-    DC_CHECK(MGPortCurrent().alpha.value == mgAlpha.value);
-    DC_CHECK(MGPortCurrent().test.value == mgPixelTest.value);
+    ASSERT_TRUE(target.Near(10, 10, 255, 0, 0));
+    ASSERT_TRUE(target.Near(48, 48, 128, 255, 0, -1, 4));
+    ASSERT_TRUE(target.Near(80, 80, 0, 255, 0));
+    ASSERT_TRUE(target.Near(110, 10, 0, 0, 0));
+    ASSERT_TRUE(MGPortCurrent().alpha.value == mgAlpha.value);
+    ASSERT_TRUE(MGPortCurrent().test.value == mgPixelTest.value);
     // The frame itself is untouched.
-    DC_CHECK(fixture.PixelNear(10, 10, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(10, 10, 0, 0, 0));
     PortReleaseKey(key);
 }
 
 // Two-row strips of the frame land in the target's rows (field rows of the frame), then the
 // texture's alpha replaces theirs and the colour stays the frame's.
-DC_TEST(tail_a_blend_frame_strips_take_texture_alpha) {
+TEST(TailABlend, FrameStripsTakeTextureAlpha) {
     Draw3DFixture      fixture;
     unsigned           key = PortRegisterNamedTarget("blender", 640, 256, true, PortTextureOwner::Other);
     gfx::TextureHandle blender = gfx::FindNamedRenderTarget("blender");
@@ -81,11 +83,11 @@ DC_TEST(tail_a_blend_frame_strips_take_texture_alpha) {
 
     // Target row r holds the frame's field row 20 + r, logical row 40 + 2r; red stops at row 100.
     TailAFixture::Pixels target = TailAFixture::Read(blender);
-    DC_CHECK(target.Near(10, 10, 200, 0, 0, 0x40));
-    DC_CHECK(target.Near(100, 20, 200, 0, 0, 0x40));
-    DC_CHECK(target.Near(10, 50, 0, 0, 200, 0x40));
-    DC_CHECK(target.Near(200, 70, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(150, 60, 200, 0, 0));
+    ASSERT_TRUE(target.Near(10, 10, 200, 0, 0, 0x40));
+    ASSERT_TRUE(target.Near(100, 20, 200, 0, 0, 0x40));
+    ASSERT_TRUE(target.Near(10, 50, 0, 0, 200, 0x40));
+    ASSERT_TRUE(target.Near(200, 70, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(150, 60, 200, 0, 0));
     PortReleaseKey(key);
 }
 
@@ -93,7 +95,7 @@ DC_TEST(tail_a_blend_frame_strips_take_texture_alpha) {
 // blendTextuerTest and draws it back over the same place, so with no shimmer the frame comes back
 // as it was. The fire stands at depth 100 on the axis: the copy covers x 260..380, logical rows
 // 136..264 (field rows 68..132).
-DC_TEST(tail_a_draw_raster_round_trips_through_blender) {
+TEST(TailABlend, DrawRasterRoundTripsThroughBlender) {
     TailAFixture fixture;
     fixture.Placeholders({"#blender#640#256#4"});
     fixture.Images(texfix::Img({
@@ -112,10 +114,10 @@ DC_TEST(tail_a_draw_raster_round_trips_through_blender) {
         fire.DrawRaster();
     });
 
-    DC_CHECK(fixture.PixelNear(300, 170, 200, 0, 0, 4));
-    DC_CHECK(fixture.PixelNear(300, 240, 0, 0, 200, 4));
-    DC_CHECK(fixture.PixelNear(500, 170, 200, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(300, 170, 200, 0, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(300, 240, 0, 0, 200, 4));
+    ASSERT_TRUE(fixture.PixelNear(500, 170, 200, 0, 0));
     TailAFixture::Pixels target = TailAFixture::Read(TailAFixture::Handle("blender"));
-    DC_CHECK(target.Near(10, 10, 200, 0, 0, 0xFF));
-    DC_CHECK(target.Near(10, 50, 0, 0, 200, 0xFF));
+    ASSERT_TRUE(target.Near(10, 10, 200, 0, 0, 0xFF));
+    ASSERT_TRUE(target.Near(10, 50, 0, 0, 200, 0xFF));
 }

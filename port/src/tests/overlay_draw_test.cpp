@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <array>
 #include <chrono>
 #include <cstdint>
@@ -6,7 +8,6 @@
 
 #include "../platform/overlay.hpp"
 #include "gfx_fixture.hpp"
-#include "test.hpp"
 
 // The FPS counter's text drawn over a display frame (RenderOptions::overlay) and over the canonical
 // image presented as a display render of the overlay alone; read back glyph by glyph, and absent from
@@ -81,28 +82,28 @@ int CheckText(const Image &image, std::string_view text, int x, int y, int pixel
 
 void CheckOverlaid(GfxFixture &fixture, std::string_view text, int pixel) {
     Image shown;
-    DC_CHECK(gfx::ReadbackFrame(shown.pixels, shown.width, shown.height));
-    DC_CHECK(shown.width == fixture.width && shown.height == fixture.height);
+    ASSERT_TRUE(gfx::ReadbackFrame(shown.pixels, shown.width, shown.height));
+    ASSERT_TRUE(shown.width == fixture.width && shown.height == fixture.height);
     int corner = kOverlayPadding * pixel;
     int text_corner = corner + kOverlayPadding * pixel;
-    DC_CHECK(CheckText(shown, text, text_corner, text_corner, pixel) == 0);
+    ASSERT_TRUE(CheckText(shown, text, text_corner, text_corner, pixel) == 0);
     // The backdrop covers the scene's square at the corner; beyond it, the scene as drawn.
-    DC_CHECK(Near(shown.At(corner, corner), {kSky[0] / 4, kSky[1] / 4, kSky[2] / 4}));
-    DC_CHECK(Near(shown.At(corner - 1, corner - 1), {0x80, 0x80, 0x80}));
-    DC_CHECK(Near(shown.At(static_cast<int>(shown.width) - 1, static_cast<int>(shown.height) - 1),
-                  {kSky[0], kSky[1], kSky[2]}));
+    ASSERT_TRUE(Near(shown.At(corner, corner), {kSky[0] / 4, kSky[1] / 4, kSky[2] / 4}));
+    ASSERT_TRUE(Near(shown.At(corner - 1, corner - 1), {0x80, 0x80, 0x80}));
+    ASSERT_TRUE(Near(shown.At(static_cast<int>(shown.width) - 1, static_cast<int>(shown.height) - 1),
+                     {kSky[0], kSky[1], kSky[2]}));
     int width = (static_cast<int>(text.size()) * kOverlayAdvance - 1 + 2 * kOverlayPadding) * pixel;
-    DC_CHECK(Near(shown.At(corner + width, corner + pixel), {kSky[0], kSky[1], kSky[2]}));
+    ASSERT_TRUE(Near(shown.At(corner + width, corner + pixel), {kSky[0], kSky[1], kSky[2]}));
 
     // The canonical image never holds it.
     Image canonical;
-    DC_CHECK(gfx::ReadbackTexture(gfx::kPreviousFrame, canonical.pixels, canonical.width, canonical.height));
+    ASSERT_TRUE(gfx::ReadbackTexture(gfx::kPreviousFrame, canonical.pixels, canonical.width, canonical.height));
     for (int y = 0; y < (kOverlayGlyphHeight + 4 * kOverlayPadding) * pixel; y++) {
         for (int x = 0; x < width + corner; x++) {
             bool square = x < corner && y < corner;
             if (!Near(canonical.At(x, y), square ? std::array<int, 3>{0x80, 0x80, 0x80}
                                                  : std::array<int, 3>{kSky[0], kSky[1], kSky[2]})) {
-                DC_CHECK(!"the canonical image holds the overlay");
+                ASSERT_TRUE(!"the canonical image holds the overlay");
             }
         }
     }
@@ -112,87 +113,87 @@ void DrawsTheCounter(int window_width, int window_height, int pixel) {
     GfxFixture fixture(window_width, window_height);
     fixture.width = static_cast<uint32_t>(window_width);
     fixture.height = static_cast<uint32_t>(window_height);
-    DC_CHECK(OverlayPixelSize(gfx::GetLogicalMapping(gfx::kMainTarget)) == pixel);
+    ASSERT_TRUE(OverlayPixelSize(gfx::GetLogicalMapping(gfx::kMainTarget)) == pixel);
     gfx::DisplayListRef scene = SceneList();
-    DC_CHECK(gfx::RenderList(*scene, 1.0f, {.canonical = true}));
+    ASSERT_TRUE(gfx::RenderList(*scene, 1.0f, {.canonical = true}));
 
     constexpr std::string_view kText = "FPS 59.9  TICK 50.0/50  DRAWS 412";
     gfx::DisplayListRef        overlay = OverlayRecord(kText);
-    DC_CHECK(overlay != nullptr);
+    ASSERT_TRUE(overlay != nullptr);
 
     // A display frame with the counter over it.
-    DC_CHECK(gfx::RenderList(*scene, 0.5f, {.present = true, .overlay = overlay.get()}));
+    ASSERT_TRUE(gfx::RenderList(*scene, 0.5f, {.present = true, .overlay = overlay.get()}));
     CheckOverlaid(fixture, kText, pixel);
 
     // The canonical image presented with the counter: a display render of the overlay alone.
-    DC_CHECK(gfx::RenderList(*overlay, 1.0f, {.present = true}));
+    ASSERT_TRUE(gfx::RenderList(*overlay, 1.0f, {.present = true}));
     CheckOverlaid(fixture, kText, pixel);
 
     // Without the overlay the display frame is the scene alone.
-    DC_CHECK(gfx::RenderList(*scene, 0.5f, {.present = true}));
+    ASSERT_TRUE(gfx::RenderList(*scene, 0.5f, {.present = true}));
     Image plain;
-    DC_CHECK(gfx::ReadbackFrame(plain.pixels, plain.width, plain.height));
+    ASSERT_TRUE(gfx::ReadbackFrame(plain.pixels, plain.width, plain.height));
     int text_corner = kOverlayPadding * pixel * 2;
-    DC_CHECK(Near(plain.At(text_corner, text_corner), {kSky[0], kSky[1], kSky[2]}));
+    ASSERT_TRUE(Near(plain.At(text_corner, text_corner), {kSky[0], kSky[1], kSky[2]}));
 }
 
 } // namespace
 
-DC_TEST(overlay_draws_the_counter_over_presented_frames) {
+TEST(OverlayDraw, DrawsTheCounterOverPresentedFrames) {
     DrawsTheCounter(640, 480, 1);
 }
 
 // Twice the logical size: two pixels per font pixel, still on whole pixels.
-DC_TEST(overlay_draws_the_counter_at_the_window_scale) {
+TEST(OverlayDraw, DrawsTheCounterAtTheWindowScale) {
     DrawsTheCounter(1280, 960, 2);
 }
 
 // A wide window pillarboxes logical space; the counter stays at the window's corner, in the bar.
-DC_TEST(overlay_sits_in_the_window_corner_when_pillarboxed) {
+TEST(OverlayDraw, SitsInTheWindowCornerWhenPillarboxed) {
     GfxFixture          fixture(960, 480);
     gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
-    DC_CHECK(mapping.offset_x > 0.0f);
+    ASSERT_TRUE(mapping.offset_x > 0.0f);
     gfx::DisplayListRef scene = SceneList();
-    DC_CHECK(gfx::RenderList(*scene, 1.0f, {.canonical = true}));
+    ASSERT_TRUE(gfx::RenderList(*scene, 1.0f, {.canonical = true}));
     gfx::DisplayListRef overlay = OverlayRecord("60");
-    DC_CHECK(gfx::RenderList(*overlay, 1.0f, {.present = true}));
+    ASSERT_TRUE(gfx::RenderList(*overlay, 1.0f, {.present = true}));
     Image shown;
-    DC_CHECK(gfx::ReadbackFrame(shown.pixels, shown.width, shown.height));
+    ASSERT_TRUE(gfx::ReadbackFrame(shown.pixels, shown.width, shown.height));
     // '6' row 0 is 0x06: columns 2 and 3 lit, from pixel (4, 4).
-    DC_CHECK(Near(shown.At(4 + 2, 4), {0xFF, 0xFF, 0xFF}));
-    DC_CHECK(Near(shown.At(4 + 3, 4), {0xFF, 0xFF, 0xFF}));
-    DC_CHECK(!Near(shown.At(4 + 1, 4), {0xFF, 0xFF, 0xFF}));
+    ASSERT_TRUE(Near(shown.At(4 + 2, 4), {0xFF, 0xFF, 0xFF}));
+    ASSERT_TRUE(Near(shown.At(4 + 3, 4), {0xFF, 0xFF, 0xFF}));
+    ASSERT_TRUE(!Near(shown.At(4 + 1, 4), {0xFF, 0xFF, 0xFF}));
 }
 
-DC_TEST(overlay_font_and_pixel_size) {
-    DC_CHECK(OverlayGlyph(' ') == nullptr);
-    DC_CHECK(OverlayGlyph('a') == OverlayGlyph('A'));
-    DC_CHECK(OverlayGlyph('\x01') == OverlayGlyph('?'));
+TEST(OverlayDraw, FontAndPixelSize) {
+    ASSERT_TRUE(OverlayGlyph(' ') == nullptr);
+    ASSERT_TRUE(OverlayGlyph('a') == OverlayGlyph('A'));
+    ASSERT_TRUE(OverlayGlyph('\x01') == OverlayGlyph('?'));
     for (char c : std::string_view("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ./:-%()")) {
-        DC_CHECK(OverlayGlyph(c) != OverlayGlyph('?') || c == '?');
+        ASSERT_TRUE(OverlayGlyph(c) != OverlayGlyph('?') || c == '?');
     }
     auto mapping = [](float scale) { return gfx::LogicalMapping{scale, scale, 0.0f, 0.0f, 0, 0}; };
-    DC_CHECK(OverlayPixelSize(mapping(0.5f)) == 1);
-    DC_CHECK(OverlayPixelSize(mapping(1.0f)) == 1);
-    DC_CHECK(OverlayPixelSize(mapping(2.0f)) == 2);
-    DC_CHECK(OverlayPixelSize(mapping(2.25f)) == 2);
-    DC_CHECK(OverlayPixelSize(mapping(4.5f)) == 5);
+    ASSERT_TRUE(OverlayPixelSize(mapping(0.5f)) == 1);
+    ASSERT_TRUE(OverlayPixelSize(mapping(1.0f)) == 1);
+    ASSERT_TRUE(OverlayPixelSize(mapping(2.0f)) == 2);
+    ASSERT_TRUE(OverlayPixelSize(mapping(2.25f)) == 2);
+    ASSERT_TRUE(OverlayPixelSize(mapping(4.5f)) == 5);
 }
 
-DC_TEST(overlay_rate_over_half_second_windows) {
+TEST(OverlayDraw, RateOverHalfSecondWindows) {
     using namespace std::chrono_literals;
     OverlayRate                    rate;
     OverlayRate::Clock::time_point t0;
     bool                           closed = false;
     for (int i = 0; i <= 50; i++) {
         closed = rate.Count(t0 + i * 10ms);
-        DC_CHECK(closed == (i == 50));
+        ASSERT_TRUE(closed == (i == 50));
     }
-    DC_CHECK_NEAR(rate.PerSecond(), 100.0, 1e-9);
+    ASSERT_NEAR(rate.PerSecond(), 100.0, 1e-9);
     // 144 Hz for the next window.
     auto start = t0 + 500ms;
     for (int i = 1; i <= 72; i++) {
         rate.Count(start + std::chrono::duration_cast<OverlayRate::Clock::duration>(i * 1s / 144.0));
     }
-    DC_CHECK_NEAR(rate.PerSecond(), 144.0, 1e-6);
+    ASSERT_NEAR(rate.PerSecond(), 144.0, 1e-6);
 }

@@ -11,14 +11,17 @@ to and records the phases; this document describes what is built.
 ```sh
 ./build.sh linux-x64
 (cd port/build/pc && ctest --output-on-failure -j4)
-(cd port/build/pc && DC_DATA=$PWD/../../../data ctest -R integration_real_data)
 ```
 
-The build runs natively using the Debug `linux-x64` preset. `CLEAN=1`
+The build runs in the dev container (in place when already inside one) using
+the Debug `linux-x64` preset, and discards a `CMakeCache.txt` configured for
+another source path. `CLEAN=1`
 discards `port/build/pc` first; `JOBS=N` sets the number of parallel build jobs.
 
-The `integration_real_data_*` cases run `darkcloud` on the extracted data
-and are skipped unless `DC_DATA` names it.
+The tests are GoogleTest cases, each a unit test that finishes in
+milliseconds; none of them runs the whole game. The `AudioRealData` cases read
+the title pack out of the extracted data and are skipped unless `DC_DATA` names
+it.
 
 `cmake --preset linux-x64` (and `linux-x64-release`, in `port/build/pc-release`)
 with `cmake --build --preset` and `ctest --preset` of the same name does the
@@ -45,13 +48,13 @@ port/build/pc/darkcloud --data data --save save
 | Option | Meaning |
 |---|---|
 | `--data DIR` | the extracted data (default: `DC_DATA`, then `./data`, then `data/` beside the executable, then `$XDG_DATA_HOME/chronicle/data`) |
-| `--save DIR` | memory cards, `config.ini`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable, then `save/` beside a local `data/`, then `$XDG_DATA_HOME/chronicle/save`); created on first use |
+| `--save DIR` | memory cards, `config.json`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable, then `save/` beside a local `data/`, then `$XDG_DATA_HOME/chronicle/save`); created on first use |
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
 | `--offscreen` | `--headless` without a Vulkan surface: frames are drawn to an image only (what `--headless` does by itself when the loader has no `VK_EXT_headless_surface`) |
 | `--frames N` | stop after N frames of the game's main loop |
 | `--screenshot PATH` | after the run, write the last tick's canonical image (or the loading screen's frame, if it presented since) to PATH as a PNG; never a display frame, so never the FPS counter |
 | `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
-| `--width W`, `--height H` | window size in pixels, over `config.ini` |
+| `--width W`, `--height H` | window size in pixels, over `config.json` (default: the monitor's resolution) |
 | `--jump MODE[:MAP]` | test hook: start in a mode (see "Test hooks"); also `DC_JUMP` |
 | `--fast-load` | test hook: loading-screen holds and fades of a few ticks; also `DC_FAST_LOAD=1` |
 | `--display-per-tick N` | headless test aid: render N interpolated display frames per tick (offscreen, not presented) before presenting the tick's canonical image |
@@ -71,36 +74,83 @@ and no disc was given at the first-run prompt (one line names it and the
 own message: `LoadFile` prints `File open error "<path>"`). A `PS2_UNIMPLEMENTED`
 stub aborts (SIGABRT) so a debugger or a core dump stops at it.
 
-`<save>/config.ini` (`port/src/platform/config.cpp`; unknown keys and bad
-values are reported and ignored):
+`<save>/config.json` (`port/src/platform/config.cpp`, read with
+[nlohmann/json](https://github.com/nlohmann/json); `//` and `/* */` comments
+are allowed, unknown keys and bad values are reported and ignored, and a file
+that is not valid JSON is reported and leaves every default in place). When
+there is no `config.json`, `darkcloud` creates one holding the defaults (the
+file it writes has no comments). It prints `config: loaded <path>` when it
+has read the file and `config: saved <path>` when it has written it. Every
+key is optional; these are the defaults:
 
-```ini
-[game]
-tick_rate = 50          ; logic ticks (the game's VSyncs) per second
-debug_mode = false      ; true: start with DebugMode on, in the developer menu
-[video]
-present_mode = fifo     ; fifo, mailbox or immediate (each falls back to the next safer one)
-vsync = true            ; shorthand: true is fifo, false immediate
-interpolation = on      ; off: present each tick's image once, as rendered
-max_fps = 0             ; display frames per second at most; 0: as the present mode allows
-width = 1280
-height = 960
-fullscreen = false
-aspect = auto           ; auto: the world fills the window, 2D in the centred 4:3 frame; 4:3: letterboxed
-ui_scale = 1.0          ; 0.25 to 4: the HUD scaled about the window's centre
-show_fps = true         ; the FPS counter at the window's top-left corner (headless: --show-fps)
-[audio]
-master_volume = 1.0     ; 0 to 1
-[input]
-cross = Mouse1, Space   ; an action = its keys and mouse buttons; replaces the defaults
-ry = -MouseY            ; lx ly rx ry take MouseX or MouseY, with a sign and a scale (MouseX*0.5)
-mouse_sensitivity = 0.1 ; right-stick deflection (1 = full) per pixel moved in one tick
-mouse_invert_y = false
-mouse_capture = true    ; SDL relative mouse mode while the window has focus
-mouse_release = Escape  ; keys that give the cursor back in a window (empty: none)
-debug_toggle = Grave    ; the key left of 1: DebugMode (see "Developer menu")
-fps_toggle = F3         ; the FPS counter on and off
+```jsonc
+{
+    "game": {
+        "tick_rate": 50,            // logic ticks (the game's VSyncs) per second
+        "debug_mode": true          // DebugMode: start in the developer menu; Start + Select returns to it
+    },
+    "video": {
+        "present_mode": "fifo",     // fifo, mailbox or immediate (each falls back to the next safer one)
+        "interpolation": true,      // false: present each tick's image once, as rendered
+        "max_fps": 0,               // display frames per second at most; 0: as the present mode allows
+        "width": 0,                 // window size in pixels; 0: the monitor's resolution. Both 0: fullscreen on the
+        "height": 0,                //   monitor, so "aspect": "auto" takes the monitor's shape; headless: 1280x960
+        "fullscreen": false,        // fullscreen at a given width and height
+        "aspect": "auto",           // auto: the world fills the window, the HUD in its corners, other 2D in the centred 4:3 frame; 4:3: letterboxed
+        "ui_scale": 1.0,            // 0.25 to 4: the HUD scaled about the window's centre
+        "show_fps": true,           // the FPS counter at the window's top-left corner (headless: --show-fps)
+        "detail_distance": 0,       // how far full detail reaches (world units); 0: at any distance
+        "shadow_distance": 0        // how far town parts cast full shadows (world units); 0: at any distance
+    },
+    "audio": {
+        "master_volume": 1.0        // 0 to 1
+    },
+    "input": {
+        "mouse_sensitivity": 0.1,   // right-stick deflection (1 = full) per pixel moved in one tick
+        "mouse_invert_y": false,
+        "mouse_capture": true,      // SDL relative mouse mode while the window has focus
+        "mouse_release": ["Escape"], // keys that give the cursor back in a window ([]: none)
+        "bindings": {
+            "cross": ["Mouse1", "Space"], // an action: its keys and mouse buttons; replaces the defaults
+            "ry": "-MouseY",        // lx ly rx ry take MouseX or MouseY, with a sign and a scale (MouseX*0.5)
+            "fps_toggle": "F3"      // the FPS counter on and off
+        }
+    }
+}
 ```
+
+`video.detail_distance` is how far away town houses, villagers and dungeon
+monsters keep their full detail; past it the game's own distances apply, so a
+small value such as `1` is retail's behaviour. A town part within that
+distance of the eye draws its finest level of detail (retail steps down from
+300, 500 and 800 plus a share of the part's size). A villager within it of
+the player steps and draws (retail: the two nearest in front of the camera,
+within 150). A dungeon monster within it of the player draws and animates
+while still dormant: it wakes, acts, and shows on the map only at its own
+clip distance (300 unless its script sets one) and under retail's limit of
+four awake at once. The overhead view of georama mode keeps its coarse
+models, and the 1200 cull of far town parts is unchanged.
+
+`video.shadow_distance` is how deep into the view a town part (a house, a
+tree, a fixed part) casts its shadow at full strength; past it the game's own
+distances apply, so a small value such as `1` is retail's behaviour. Retail
+sorts the parts into two bands by their depth from the eye
+(`ps2/src/editloop.cpp:2356`, `CEditGround::DrawShadow`): those nearer than
+the map's `shadow_near` (320 unless its `SHADOW_LEVEL` says otherwise) darken
+the ground by `shadow_mode` (0x34 of 0x80), those out to `shadow_far` (740) by
+the fainter `shadow_mode_2` (0x20), and a part past that casts none, so a
+shadow lightens and then goes as the camera backs away. A part deeper than
+300 also takes the cheaper volume program, and one with a `draw_distance`
+drops its shadow past it. A part within `shadow_distance` belongs to the near
+band with the precise program (`port/src/editground.cpp`). The characters'
+shadows have no such distances, the overhead view of georama mode keeps its
+own faint shadows, and a map whose `SHADOW_LEVEL` is 0 still has none.
+
+`video.vsync` is shorthand for `present_mode`: `true` is `fifo`, `false`
+`immediate`. A binding is one name or a list of names. The `bindings` shown
+are examples of the form (the defaults are in the table below); a
+`config.ini` from an earlier build is not read, and `darkcloud` says so when
+it finds one without a `config.json`.
 
 ### Keyboard and mouse
 
@@ -127,7 +177,6 @@ dungeon's `PadInput_OK` is cross and `PadInput_NO` circle,
 | arrows | d-pad | left and right pick the active item in the dungeon (`dun/gameloop.cpp:3218`); menus |
 | V; middle click, B | L3; R3 | debug and editor functions only |
 | IJKL | right stick | the camera from the keyboard |
-| `` ` `` (Grave) | none | debug mode: held or pressed while the game starts, the developer menu; later, toggles `DebugMode` (see "Developer menu") |
 | F3 | none | the FPS counter on and off (see "The FPS counter") |
 
 The square button is not a guard in this game: the guard is R1 held while
@@ -140,10 +189,10 @@ default `ry = -MouseY` makes mouse up look up and `mouse_invert_y` flips it.
 
 The actions are `up down left right cross circle square triangle l1 r1 l2
 r2 l3 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+ lx ly rx ry`, and the
-port's own `debug_toggle` and `fps_toggle`, which press no pad button. Keys are
+port's own `fps_toggle`, which presses no pad button. Keys are
 SDL names (any case, `_` for a space; `Grave`, `Backquote` or `Backtick` for
 the key left of 1); `Mouse1` to `Mouse5` are left, right,
-middle and the two side buttons. The two toggles also take
+middle and the two side buttons. `fps_toggle` also takes
 `Gamepad:<button>` with SDL's gamepad button names (`Gamepad:guide`,
 `Gamepad:misc1`), on any connected gamepad; the pad actions take a gamepad's
 buttons from the gamepad itself. A gamepad axis deflected past the game's
@@ -193,8 +242,8 @@ r1 l2 r2 l3 r3 up down left right`, any case) and the four stick bytes
 says `pad2`, from that frame until the pad's next line. On pad 1 lines,
 `key:NAME` (an SDL key name, `_` for a space), `mouse1` to `mouse5` and
 `mouse:DX,DY` (pixels per tick) go through the keyboard and mouse bindings
-as live input does, d-pad rule included, and reach the two toggles too: a
-line that starts holding `key:grave` is one press of `debug_toggle`. A line with no
+as live input does, d-pad rule included, and reach `fps_toggle` too: a
+line that starts holding `key:F3` is one press of it. A line with no
 button releases everything. Frames count the game's main loop as
 `--frames` does; frame 0 also covers the 60-tick warm-up and the loading
 screens before the first frame. `#` starts a comment; a pad's frames must
@@ -236,26 +285,38 @@ For tests and debugging only; nothing the game does depends on them.
   ticks) to two. The modes' own fades are untouched.
 
 `darkcloud --headless --jump dungeon:0 --fast-load --frames 60` shows the first
-dungeon's floor select after about five seconds on lavapipe. The
-`integration_real_data_*` cases jump, run at 320x240 and share one save
-directory (and so one pipeline cache) under the build directory.
+dungeon's floor select after about five seconds on lavapipe.
 
 ### Developer menu
 
 PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
 the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
 (`MenuLoop`, `ps2/src/main.cpp`), instead of the language select, and leaves
-pad 2 unlocked. The port starts at the language select as retail does. Three
-things start it in the developer menu: the pad 2 hold, the debug key
-(`` ` ``, `[input] debug_toggle`) held or pressed while the game starts (the
-60-tick warm-up, or before it while the shaders compile), and
-`[game] debug_mode = on` in `config.ini`. `darkcloud` prints
-`debug mode on: the developer menu` when it does.
+pad 2 unlocked. The port takes `DebugMode` from `game.debug_mode` in
+`config.json`, which is on by default, so it starts in the developer menu;
+with the flag off it starts at the language select as retail does, and
+nothing held or pressed changes that: the flag is the one way into debug
+mode. `darkcloud` prints `debug mode on: the developer menu` when it starts
+there.
+
+While `DebugMode` is set, Start and Select on pad 1 go to the developer menu
+at once from every mode: the language select, the memory card check, the
+attract movie, the title, the opening, a town or an interior, the dungeon
+loader, a dungeon and the save screen (`GameDeveloperMenuRequested`,
+`port/src/gameloop.cpp`, after every frame of the main loop). The frame the
+second of the two goes down ends the mode where it stands: there is no fade
+and the town is not saved back to the save data; sound stops, the pad is
+unlocked and a pending map jump or start event is dropped
+(`GameEnterDeveloperMenu`). The chord is read from the host's pad, past the
+game's pad lock, so it works in events and fades; the loading screen between
+two modes and the fades a town presents on its own run to their end first.
+Holding it into the next mode does nothing until it is pressed again.
 
 After start-up, retail PAL flips `DebugMode` after every frame of the main
 loop where pad 2 holds L1+R1+L2+R2 and R3 is pressed (`ps2/src/main.cpp:963`);
-the port does the same, and a press of the debug key flips it there too,
-printing `debug mode on` or `debug mode off`. Neither moves the game anywhere:
+the port reads the same combination on pad 1 instead (`GameCheckDebugToggle`,
+past the game's pad lock), and only while `game.debug_mode` is on, printing
+`debug mode on` or `debug mode off`. It does not move the game anywhere:
 `DebugMode` is a flag the modes read. What it does once set:
 
 - The town (`EditLoop`, `ps2/src/editloop.cpp:2041`) and the dungeon
@@ -264,8 +325,9 @@ printing `debug mode on` or `debug mode off`. Neither moves the game anywhere:
   `GAME_MODE_MENU` (`GameApplyLoopResult`: the town's result 1, any dungeon
   result), and the top of `main`'s loop runs the developer menu there only
   while `DebugMode` is set (otherwise the attract movie, `ps2/src/main.cpp:571`).
-  This is the one way back to the developer menu after start-up. The
-  interior (`EditInLoop`) leaves the same way to the title, not the menu.
+  These are retail's own ways back, which the port's Start and Select
+  (above) now takes ahead of: the interior's (`EditInLoop`) went to the
+  title, not the menu.
 - In the town L3 shows the editor's debug overlay and R3 opens its debug
   menu (`editloop.cpp:1849`); in an interior Select walks out of the door
   (`edit_in.cpp:1342`); in the dungeon R3 opens the debug options outside an
@@ -273,13 +335,12 @@ printing `debug mode on` or `debug mode off`. Neither moves the game anywhere:
   R3 (`editloop3.cpp:8678`); shops, menus and battles have their own, some
   on pad 2.
 - Nothing on the language select, the attract movie, the title or the
-  opening reads it, so from there the game has to reach a town or a dungeon
-  first.
+  opening reads it; the port's Start and Select is the one thing that works
+  there.
 
 A boot without debug mode locks pad 2 (`GamePad.KeyLock2(1)`, as retail),
-so the pad 2 combination never reaches the game after it, and the debug
-functions that read pad 2 stay dead; the key is not pad 2 and still
-toggles `DebugMode`. In the developer menu, up and down (pad 1) pick a row,
+so the game's own debug functions that read pad 2 stay dead. In the
+developer menu, up and down (pad 1) pick a row,
 left and right change its number, circle or triangle enters it:
 
 | Row | Goes to |
@@ -310,7 +371,7 @@ from the keyboard.
 
 `port/src/main.cpp` is the executable's `main`. In order: `PathsConsumeArgs`
 takes `--data`/`--save` out of argv; the other options are parsed; the data
-directory is checked; `ConfigLoad` reads `config.ini`; `WindowInit` opens the
+directory is checked; `ConfigLoad` reads `config.json`; `WindowInit` opens the
 window (size and fullscreen from the config, offscreen when headless);
 `InputInit`; `gfx::RendererInit` with the config's present mode, the pipeline
 cache at `<save>/pipeline_cache.bin` and a progress callback that prints
@@ -380,7 +441,8 @@ rate, with motion interpolated between ticks (`port/src/gfx/README.md`,
    list's drawing only, into its own image, with each `CFrame`'s model matrix
    (`frame_draw.cpp` tags its draws with the frame's address; a visual drawn
    outside one with its record) and the camera interpolated between the two
-   ticks. A tick that did not wait, or presented nothing, presents its
+   ticks. A frame drawn at several places in a tick (a town's tiles and parts
+   share theirs) is matched place by place, not in draw order. A tick that did not wait, or presented nothing, presents its
    canonical image.
 
 What a display frame does not interpolate: 2D (the HUD is tick-exact), 3D
@@ -396,7 +458,7 @@ it has, display frames stop until the next tick's canonical render.
 
 ### The FPS counter
 
-With `[video] show_fps` (on by default; `fps_toggle`, F3, flips it at any
+With `video.show_fps` (on by default; `fps_toggle`, F3, flips it at any
 time), every presented frame carries one line at the window's top-left
 corner, in the port's own 5x7 font (`port/src/platform/overlay.cpp`, white
 on a translucent black backdrop, on whole pixels: one per logical unit,
@@ -496,7 +558,7 @@ Vulkan blending and where it does not.
 
 The logical 640x480 frame is centred in the window at `min(W / 640, H / 480)`
 pixels per unit, so the HUD keeps its place relative to the frame at any window
-shape. With `[video] aspect = auto` the rest of the window is not bars:
+shape. With `video.aspect` `auto` the rest of the window is not bars:
 
 - **3D.** `Draw3DEyeToClip` (`mglib.cpp`) maps the game's projection, logical
   `(320 + 800 x / z, 240 + 800 y / z)` (`MGSetRenderInfo`'s scale over the
@@ -518,7 +580,15 @@ shape. With `[video] aspect = auto` the rest of the window is not bars:
   `port/src/gfx/README.md`, "Aspect": an untextured or frame-image rectangle that
   reaches an edge of the frame from inside is carried to the window's edge;
   textured HUD pieces and 4:3 pictures (the floor select's backdrop) are not.
-  `[video] ui_scale` scales the depthless 2D about the window's centre.
+  `video.ui_scale` scales the depthless 2D about the window's centre.
+- **HUD.** The pieces that sit by an edge of the frame keep their distance to
+  that edge of the window instead, at their own size (`gfx::UiAnchor`,
+  `port/src/gfx/README.md`, "Aspect"): the dungeon's status panel (life, weapon
+  and water to the top left, the quick items top centre, the floor plate and the
+  mini map to the top right, the weapon's portrait and gauge to the bottom left;
+  `DrawGame`, `port/src/dun/gameloop.cpp`) and the town's clock (top right;
+  `EdDrawClock`, `port/src/editloop.cpp`). Menus, message windows, the Georama
+  editor's panels and 2D placed from 3D projections stay in the frame.
 - **Frame grabs** (`frame_image`, `frame_buff` and the other `frame_*`
   placeholders, `MGPortFrameTarget`) are as wide as the window, so what they
   hold and draw back includes the sides; the canonical and display images are
@@ -665,6 +735,18 @@ block, and an overflow aborts naming the arena instead of retail's endless
 loop. A debug build stops when no block lies above 4 GiB, so a mapping that
 drifted low cannot hide a pointer the game truncates (below).
 
+Retail places objects in runs whose quadword counts it wrote by hand
+(`new ((u_long128 *) alloc->Alloc(4)) CCollisionMDT`), and the host's object is
+larger wherever it holds a pointer or a vtable: the collision is five
+quadwords, the cloth, its bounds, the fish and the visuals outgrow theirs too.
+The placement operators (`dataalloc2_1.cpp`) therefore grow the run they are
+handed to the object's size while it is still the arena's last, so nothing
+allocated afterwards lies under the object's tail. At retail's four quadwords
+the collision's `mesh_count` landed on the x of the first triangle built
+behind it, which opened holes in dungeon floors. An allocation that is cast
+rather than placed has no size to go by and is sized in `port/src` instead
+(`Quadwords<T>` in `editloop_init.cpp`).
+
 ## Pointers and 32-bit integers
 
 The game was written for a 32-bit ABI and casts pointers to `int` and back.
@@ -768,9 +850,7 @@ the title screen and its menu, and START opens the opening book. Through the
 developer menu, the opening's scenes play, the dungeon loader lists the
 seven dungeons, floor 1 of the first starts through its name card and Toan
 walks it until the Mayor's event script takes over, and the town `e01`
-(Norune) loads its parts and is walked. No stub is reached on the way. The
-`integration_real_data_*` cases (skipped unless `DC_DATA` names the data)
-run the title, the loader, the town and the dungeon routes.
+(Norune) loads its parts and is walked. No stub is reached on the way.
 
 ## The title overlay's own class declarations
 
@@ -831,8 +911,8 @@ The root `CMakeLists.txt` only picks the platform:
   SDK; `stubs/sce/` holds the stubs left; `<unit>.cpp` (and `dun/`) replace
   functions of `ps2/src/<unit>.cpp`, sometimes split as `<unit>_math.cpp`,
   `<unit>_draw.cpp` or `<unit>_port.cpp`; `linknames.cpp` supplies link-time
-  names (below); `tests/` is `darkcloud_tests`, one ctest case per
-  `DC_TEST` (`DC_SKIP` ends a case as skipped, exit status 77).
+  names (below); `tests/` is `darkcloud_tests`, GoogleTest cases that ctest
+  runs one process each.
 - `tools/dcdata` is the data extraction tool.
 - `ps2/include` holds the game's headers and, under `ps2/include/sce` and
   `ps2/include/std`, the SDK and standard headers MWCC compiles against. Both
@@ -881,6 +961,8 @@ renames what the unit takes from MWCC or from the PS2 link alone:
 - `battlemenu` and `editground` pass each temporary `CRect_i_` as an lvalue
   (`Ps2Lvalue`, `port/include/port.h`): MWCC binds a temporary to the non-const
   references of `DrawMenuColorGradation` and `CEditGround::CheckPartsRect`.
+- `editloop3` gives its static `EdSetVillagerNextPos` a global forwarder,
+  `PortEdSetVillagerNextPos`, for the port's `EdMoveVillager`.
 - `main` gets an overload of `LoadFileMenuData` for a `const char *`: one call
   names its file with a comma expression ending in a string literal.
 - `mathutil` gets the Metrowerks runtime's own `std::exception` and
@@ -894,6 +976,11 @@ renames what the unit takes from MWCC or from the PS2 link alone:
 - `title/rushmovi` declares title.cpp's `DataLoad`, `DrawProcA`..`I` and
   `DrawProcTitle` static; its header defines those statics as forwarders to
   the global ones.
+- `mapparts` has its `CMapParts::DrawLOD` replaced (`port/src/mapparts.cpp`):
+  retail lifts a part off the ground by its own distance from the eye, which
+  leaves neighbouring road tiles at different heights and the ground showing
+  through the step between them at any resolution above the PS2's; the port
+  lifts every part by the height retail gives one 100 units away.
 - `title/op_d` declares the state and the helpers `OpD_InitProcess`,
   `OpD_InitProcess2` and `OpD_DrawProcess` share with the rest of the unit
   `extern` under `OpD_*` names before the unit declares them `static`, and

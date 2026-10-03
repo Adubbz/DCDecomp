@@ -30,9 +30,11 @@
 //   subtracted, and the prism's section by the near plane is added when the near plane cuts it, so
 //   the count holds with the eye inside a volume.
 //
-// The prisms are built here in eye space, which lets every face be routed to the adding or the
-// subtracting draw by which side of its plane the eye is on, as the microprograms route quads by
-// their screen winding.
+// The prisms are built here in eye space with every face wound outwards. The adding draw culls the
+// faces turned away and the subtracting draw those turned towards the eye, so the rasteriser routes
+// each face by its screen winding as the microprograms do, under whatever camera the draw is
+// replayed with: a display frame's interpolated view turns faces near the silhouette over, and a
+// face routed by the tick's eye would then count on the wrong side.
 
 namespace {
 
@@ -68,9 +70,14 @@ enum class Count {
     AwayOnly,
 };
 
+// Triangles wound outwards (counter-clockwise on the target when turned towards the eye).
 struct Volume {
-    std::vector<gfx::Vertex3D> plus;
-    std::vector<gfx::Vertex3D> minus;
+    // Count::Both faces, drawn by both passes.
+    std::vector<gfx::Vertex3D> both;
+    // Count::AwayOnly faces, drawn by the subtracting pass.
+    std::vector<gfx::Vertex3D> away;
+    // Near-plane sections, turned towards the eye and drawn by the adding pass.
+    std::vector<gfx::Vertex3D> cap;
 };
 
 void Emit(std::vector<gfx::Vertex3D> &out, std::span<const Vec3> polygon) {
@@ -100,13 +107,8 @@ void AddFace(Volume &volume, std::vector<Vec3> polygon, Vec3 inside, Count count
     }
     if (Dot(normal, centre - inside) < 0.0f) {
         std::reverse(polygon.begin(), polygon.end());
-        normal = normal * -1.0f;
     }
-    bool towards_eye = Dot(normal, centre) < 0.0f;
-    if (towards_eye && count == Count::AwayOnly) {
-        return;
-    }
-    Emit(towards_eye ? volume.plus : volume.minus, polygon);
+    Emit(count == Count::Both ? volume.both : volume.away, polygon);
 }
 
 // The triangle's prism down to its drop on the plane. A prism the light grazes has no inside and
@@ -168,9 +170,9 @@ void AddNearCap(Volume &volume, const Vec3 top[3], const Vec3 drop[3], float dep
     }
     mean = mean * (1.0f / static_cast<float>(section.size()));
     std::sort(section.begin(), section.end(), [mean](Vec3 a, Vec3 b) {
-        return std::atan2(a.y - mean.y, a.x - mean.x) < std::atan2(b.y - mean.y, b.x - mean.x);
+        return std::atan2(a.y - mean.y, a.x - mean.x) > std::atan2(b.y - mean.y, b.x - mean.x);
     });
-    Emit(volume.plus, section);
+    Emit(volume.cap, section);
 }
 
 struct Projection {
@@ -222,8 +224,10 @@ float NearPlane(const Projection &projection) {
     return a < 1.0f ? b / (1.0f - a) : 0.0f;
 }
 
-void DrawCount(const std::vector<gfx::Vertex3D> &faces, const Projection &projection, const RenderInfo &info,
-               bool add) {
+void DrawCount(const std::vector<gfx::Vertex3D> &shared, const std::vector<gfx::Vertex3D> &own,
+               const Projection &projection, const RenderInfo &info, bool add) {
+    std::vector<gfx::Vertex3D> faces = shared;
+    faces.insert(faces.end(), own.begin(), own.end());
     if (faces.empty()) {
         return;
     }
@@ -235,7 +239,7 @@ void DrawCount(const std::vector<gfx::Vertex3D> &faces, const Projection &projec
     constants.diffuse[3] = 0.5f;
 
     gfx::DrawState state = Draw3DState(info, false);
-    state.cull = gfx::CullMode::None;
+    state.cull = add ? gfx::CullMode::Back : gfx::CullMode::Front;
     state.alpha = add ? gfx::GsBlend{0, 2, 2, 1, 0x80} : gfx::GsBlend{2, 0, 2, 1, 0x80};
     std::vector<uint32_t> indices(faces.size());
     for (uint32_t i = 0; i < indices.size(); i++) {
@@ -246,8 +250,8 @@ void DrawCount(const std::vector<gfx::Vertex3D> &faces, const Projection &projec
 }
 
 void DrawVolume(const Volume &volume, const Projection &projection, const RenderInfo &info) {
-    DrawCount(volume.plus, projection, info, true);
-    DrawCount(volume.minus, projection, info, false);
+    DrawCount(volume.both, volume.cap, projection, info, true);
+    DrawCount(volume.both, volume.away, projection, info, false);
     // The GS is left with the subtracting pass's ALPHA.
     MGPortRegisters &current = MGPortCurrent();
     current.alpha.bits.a = 2;
@@ -290,8 +294,8 @@ int CVisualShadow::RemakeData(u_int *block) {
     return CreateVUdataShadow(vu_data_buffer[DBuffID], data);
 }
 
-// This frame's volume of the selected triangles, in eye space: the faces to add, then those to
-// subtract, as the record's two strips.
+// This frame's volume of the selected triangles, in eye space: the faces both passes draw, those
+// only subtracted and the near-plane sections, as the record's three strips.
 int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, RenderInfo *info, float (*matrix)[4]) {
     if (model_data == nullptr) {
         return 0;
@@ -320,14 +324,18 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
         AddNearCap(volume, top, drop, near_cap);
     }
 
-    Draw3DStrip plus;
-    plus.index_count = static_cast<uint32_t>(volume.plus.size());
-    Draw3DStrip minus;
-    minus.first_index = plus.index_count;
-    minus.index_count = static_cast<uint32_t>(volume.minus.size());
-    visual.strips = {plus, minus};
-    visual.vertices = std::move(volume.plus);
-    visual.vertices.insert(visual.vertices.end(), volume.minus.begin(), volume.minus.end());
+    Draw3DStrip both;
+    both.index_count = static_cast<uint32_t>(volume.both.size());
+    Draw3DStrip away;
+    away.first_index = both.index_count;
+    away.index_count = static_cast<uint32_t>(volume.away.size());
+    Draw3DStrip cap;
+    cap.first_index = away.first_index + away.index_count;
+    cap.index_count = static_cast<uint32_t>(volume.cap.size());
+    visual.strips = {both, away, cap};
+    visual.vertices = std::move(volume.both);
+    visual.vertices.insert(visual.vertices.end(), volume.away.begin(), volume.away.end());
+    visual.vertices.insert(visual.vertices.end(), volume.cap.begin(), volume.cap.end());
     return vu_size;
 }
 
@@ -348,11 +356,12 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, 
         ActiveData->Align64();
         ActiveData->Alloc(CreateVUdataShadowCLIP(reinterpret_cast<u_int *>(ActiveData->base + ActiveData->used * 16), data,
                                                  info, matrix));
-        if (const Draw3DVisual *visual = Draw3DFindVisual(vu_data); visual && visual->strips.size() == 2) {
+        if (const Draw3DVisual *visual = Draw3DFindVisual(vu_data); visual && visual->strips.size() == 3) {
             Volume volume;
             auto   begin = visual->vertices.begin();
-            volume.plus.assign(begin, begin + visual->strips[0].index_count);
-            volume.minus.assign(begin + visual->strips[1].first_index, visual->vertices.end());
+            volume.both.assign(begin, begin + visual->strips[1].first_index);
+            volume.away.assign(begin + visual->strips[1].first_index, begin + visual->strips[2].first_index);
+            volume.cap.assign(begin + visual->strips[2].first_index, visual->vertices.end());
             DrawVolume(volume, projection, *info);
         }
         vu_data_buffer[0] = saved_primary;

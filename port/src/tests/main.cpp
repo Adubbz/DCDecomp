@@ -1,35 +1,8 @@
-#include "test.hpp"
+#include <gtest/gtest.h>
 
-#include <cstring>
-
-namespace dc::test {
-
-Case *&Registry() {
-    static Case *head;
-    return head;
-}
-
-[[noreturn]] void Fail(const char *file, int line, const char *expression) {
-    std::fprintf(stderr, "%s:%d: check failed: %s\n", file, line, expression);
-    std::exit(1);
-}
-
-} // namespace dc::test
-
+// A main of the tests' own rather than gtest_main's: the game's main is a weak definition in the
+// link, and an archive member is not pulled in to replace a symbol that is already defined.
 int main(int argc, char **argv) {
-    using namespace dc::test;
-    if (argc < 2) {
-        for (Case *c = Registry(); c != nullptr; c = c->next) {
-            std::printf("%s\n", c->name);
-        }
-        return 0;
-    }
-    for (Case *c = Registry(); c != nullptr; c = c->next) {
-        if (std::strcmp(c->name, argv[1]) == 0) {
-            c->run();
-            return 0;
-        }
-    }
-    std::fprintf(stderr, "no test named %s\n", argv[1]);
-    return 2;
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

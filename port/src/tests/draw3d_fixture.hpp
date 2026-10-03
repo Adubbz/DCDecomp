@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 // SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
 #include <SDL3/SDL.h>
 #include <libvu0.h>
@@ -46,7 +48,7 @@ struct Draw3DFixture : GfxFixture {
         MGBeginFrame();
         record();
         MGEndFrame();
-        DC_CHECK(gfx::ReadbackFrame(pixels, width, height));
+        ASSERT_TRUE(gfx::ReadbackFrame(pixels, width, height));
     }
 };
 

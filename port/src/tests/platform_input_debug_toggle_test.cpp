@@ -1,133 +1,157 @@
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 #include <libpad.h>
 
+#include <unistd.h>
+
+#include <filesystem>
+#include <fstream>
+#include <string>
+
+#include "../platform/config.hpp"
 #include "../platform/input.hpp"
+#include "../platform/paths.hpp"
 #include "gameloop.hpp"
+#include "main.hpp"
 #include "gamepad.hpp"
 #include "mainselect.hpp"
-#include "test.hpp"
 
-// RunGame's DebugMode tests (GameDebugRequestedAtBoot in the warm-up, GameCheckDebugToggle after each
-// frame) on pad 2's shoulder buttons, as retail PAL, and on the host's debug key. The pads are set
-// up as platform_pad_test does: CGamePad::Init waits on a stub.
+// RunGame's DebugMode tests after each frame, both on pad 1 and both read past the game's pad lock:
+// GameCheckDebugToggle (retail PAL's shoulder buttons and R3, while the config file's debug mode is
+// on) and GameDeveloperMenuRequested (Start and Select). The pads are set up as platform_pad_test
+// does: CGamePad::Init waits on a stub.
 
 namespace {
 
 unsigned char g_dma_buffer[2][1024];
 
-void SetPad2(std::uint16_t buttons) {
-    InputPadState state;
-    state.connected = true;
-    state.buttons = buttons;
-    InputSetOverride(1, &state);
-}
-
 void OpenPads() {
-    DC_CHECK(scePadInit(0) == 1);
-    DC_CHECK(scePadPortOpen(0, 0, g_dma_buffer[0]) == 1);
-    DC_CHECK(scePadPortOpen(1, 0, g_dma_buffer[1]) == 1);
-    SetPad2(0);
+    ASSERT_TRUE(scePadInit(0) == 1);
+    ASSERT_TRUE(scePadPortOpen(0, 0, g_dma_buffer[0]) == 1);
+    ASSERT_TRUE(scePadPortOpen(1, 0, g_dma_buffer[1]) == 1);
     for (int i = 0; i < 4; ++i) {
         GamePad.UpDate();
     }
 }
 
-void Key(SDL_Scancode scancode, bool down) {
-    SDL_Event event{};
-    event.type = down ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
-    event.key.scancode = scancode;
-    event.key.down = down;
-    InputHandleEvent(event);
+void SetPad1(std::uint16_t buttons) {
+    InputPadState state;
+    state.connected = true;
+    state.buttons = buttons;
+    InputSetOverride(0, &state);
+    GamePad.UpDate();
 }
 
 // One frame of RunGame's main loop, as far as DebugMode is concerned.
-void Frame() {
-    GamePad.UpDate();
+void Frame(std::uint16_t buttons) {
+    SetPad1(buttons);
     GameCheckDebugToggle();
+}
+
+void LoadConfig(const char *text) {
+    std::filesystem::path root =
+        std::filesystem::temp_directory_path() / ("dc_debug_toggle_test_" + std::to_string(getpid()));
+    std::filesystem::create_directories(root);
+    PathsSetSaveRoot(root);
+    std::ofstream(root / "config.json") << text;
+    ASSERT_TRUE(ConfigLoad());
+    std::filesystem::remove_all(root);
 }
 
 constexpr std::uint16_t kShoulders = PAD_L1 | PAD_R1 | PAD_L2 | PAD_R2;
 
 } // namespace
 
-DC_TEST(platform_input_debug_requested_at_boot) {
+extern s32 mode;
+
+TEST(PlatformInputDebugToggle, StartAndSelectAskForTheDeveloperMenu) {
     InputResetBindings();
     OpenPads();
-    GamePad.UpDate();
-    DC_CHECK(!GameDebugRequestedAtBoot());
+    DebugMode = 1;
+    mode = GAME_MODE_TITLE;
+    SetPad1(0);
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
+    SetPad1(PAD_START);
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
 
-    SetPad2(kShoulders);
-    GamePad.UpDate();
-    DC_CHECK(GameDebugRequestedAtBoot());
-    SetPad2(PAD_L1 | PAD_R1 | PAD_L2);
-    GamePad.UpDate();
-    DC_CHECK(!GameDebugRequestedAtBoot());
+    // The press of the chord, not the hold; a locked pad does not hide it.
+    GamePad.KeyLock(1);
+    SetPad1(PAD_START | PAD_SELECT);
+    ASSERT_TRUE(GamePad.On(PAD_SELECT) == 0);
+    ASSERT_TRUE(GameDeveloperMenuRequested());
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
+    GamePad.KeyLock(0);
 
-    // The key held through a tick, or pressed and let go between two.
-    SetPad2(0);
-    GamePad.UpDate();
-    Key(SDL_SCANCODE_GRAVE, true);
-    DC_CHECK(GameDebugRequestedAtBoot());
-    DC_CHECK(GameDebugRequestedAtBoot());
-    Key(SDL_SCANCODE_GRAVE, false);
-    DC_CHECK(!GameDebugRequestedAtBoot());
-    Key(SDL_SCANCODE_GRAVE, true);
-    Key(SDL_SCANCODE_GRAVE, false);
-    DC_CHECK(GameDebugRequestedAtBoot());
-    DC_CHECK(!GameDebugRequestedAtBoot());
+    SetPad1(PAD_SELECT);
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
+    mode = GAME_MODE_MENU;
+    SetPad1(PAD_START | PAD_SELECT | PAD_CROSS);
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
+
+    SetPad1(0);
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
+    mode = GAME_MODE_DUNGEON;
+    DebugMode = 0;
+    SetPad1(PAD_START | PAD_SELECT);
+    ASSERT_TRUE(!GameDeveloperMenuRequested());
+    InputSetOverride(0, nullptr);
 }
 
-DC_TEST(platform_input_debug_toggles_in_game) {
+TEST(PlatformInputDebugToggle, TogglesInGameOnPad1) {
     InputResetBindings();
     OpenPads();
+    LoadConfig(R"({"game": {"debug_mode": true}})");
+    DebugMode = 1;
+
+    // The four shoulders held, R3's press edge flips it, once per press.
+    Frame(kShoulders);
+    ASSERT_TRUE(DebugMode == 1);
+    Frame(kShoulders | PAD_R3);
+    ASSERT_TRUE(DebugMode == 0);
+    Frame(kShoulders | PAD_R3);
+    ASSERT_TRUE(DebugMode == 0);
+    Frame(kShoulders);
+    Frame(kShoulders | PAD_R3);
+    ASSERT_TRUE(DebugMode == 1);
+    Frame(PAD_R3);
+    Frame(0);
+    Frame(PAD_L1 | PAD_R1 | PAD_L2 | PAD_R3);
+    ASSERT_TRUE(DebugMode == 1);
+    Frame(0);
+
+    // A locked pad does not hide it.
+    GamePad.KeyLock(1);
+    Frame(kShoulders | PAD_R3);
+    ASSERT_TRUE(DebugMode == 0);
+    GamePad.KeyLock(0);
+    InputSetOverride(0, nullptr);
+}
+
+TEST(PlatformInputDebugToggle, NothingTogglesWithTheConfigFlagOff) {
+    InputResetBindings();
+    OpenPads();
+    LoadConfig(R"({"game": {"debug_mode": false}})");
     DebugMode = 0;
+    Frame(kShoulders);
+    Frame(kShoulders | PAD_R3);
+    ASSERT_TRUE(DebugMode == 0);
 
-    // Retail PAL: the four shoulders held, R3's press edge flips it, once per press.
-    SetPad2(kShoulders);
-    Frame();
-    DC_CHECK(DebugMode == 0);
-    SetPad2(kShoulders | PAD_R3);
-    Frame();
-    DC_CHECK(DebugMode == 1);
-    Frame();
-    DC_CHECK(DebugMode == 1);
-    SetPad2(kShoulders);
-    Frame();
-    SetPad2(kShoulders | PAD_R3);
-    Frame();
-    DC_CHECK(DebugMode == 0);
-    SetPad2(PAD_R3);
-    Frame();
-    SetPad2(0);
-    Frame();
-    DC_CHECK(DebugMode == 0);
-
-    // The key: one flip per press, holding it does nothing more.
-    Key(SDL_SCANCODE_GRAVE, true);
-    Frame();
-    DC_CHECK(DebugMode == 1);
-    Frame();
-    Frame();
-    DC_CHECK(DebugMode == 1);
-    Key(SDL_SCANCODE_GRAVE, false);
-    Frame();
-    DC_CHECK(DebugMode == 1);
-    Key(SDL_SCANCODE_GRAVE, true);
-    Key(SDL_SCANCODE_GRAVE, false);
-    Frame();
-    DC_CHECK(DebugMode == 0);
-
-    // A boot without debug mode locks pad 2 (KeyLock2), so retail's combination cannot reach the
-    // game any more; the key is not pad 2 and still can.
-    GamePad.KeyLock2(1);
-    SetPad2(kShoulders);
-    Frame();
-    SetPad2(kShoulders | PAD_R3);
-    Frame();
-    DC_CHECK(DebugMode == 0);
-    Key(SDL_SCANCODE_GRAVE, true);
-    Key(SDL_SCANCODE_GRAVE, false);
-    Frame();
-    DC_CHECK(DebugMode == 1);
-    GamePad.KeyLock2(0);
+    // Pad 2's combination and the key left of 1 are not read at all.
+    InputPadState pad2;
+    pad2.connected = true;
+    pad2.buttons = kShoulders;
+    InputSetOverride(1, &pad2);
+    Frame(0);
+    pad2.buttons = kShoulders | PAD_R3;
+    InputSetOverride(1, &pad2);
+    Frame(0);
+    SDL_Event event{};
+    event.type = SDL_EVENT_KEY_DOWN;
+    event.key.scancode = SDL_SCANCODE_GRAVE;
+    event.key.down = true;
+    InputHandleEvent(event);
+    Frame(0);
+    ASSERT_TRUE(DebugMode == 0);
+    InputSetOverride(0, nullptr);
+    InputSetOverride(1, nullptr);
 }

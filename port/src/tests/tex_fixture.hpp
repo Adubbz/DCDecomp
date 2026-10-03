@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 // Synthetic TIM2 pictures and IMG archives for the texture tests, and a renderer with a fresh
 // texture manager over a staging buffer of its own.
 

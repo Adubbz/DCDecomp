@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <cstring>
 
 #include "debugfont.hpp"
@@ -39,7 +41,7 @@ texfix::Bytes IndexTim2(uint8_t index) {
 // The lock-on cursor's four corners land where retail puts them: MGRotTransPers3DSprite's 12.4
 // field corners, less the window offset, in logical pixels. A 10x10 cursor at depth 100 spans
 // logical (279, 159) to (359, 319); each corner takes its band of d01e04.
-DC_TEST(tail_a_target_cursor_corners) {
+TEST(TailADungeon, TargetCursorCorners) {
     TailAFixture fixture;
     fixture.Images(texfix::Img({
         {"d01e04", CursorTim2()}
@@ -47,16 +49,16 @@ DC_TEST(tail_a_target_cursor_corners) {
     float world[4] = {0.0f, 0.0f, 100.0f, 1.0f};
 
     fixture.Frame([&] { DrawtargetCursor(world, 10.0f, 10.0f, 8.0f); });
-    DC_CHECK(fixture.PixelNear(287, 167, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(367, 167, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(287, 327, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(367, 327, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(320, 240, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(287, 167, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(367, 167, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(287, 327, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(367, 327, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(320, 240, 0, 0, 0));
 }
 
 // MainDraw's two frame grabs: the field into "water" before the water draws, the whole frame into
 // "frame_image" at the end for the menus.
-DC_TEST(tail_a_main_draw_frame_grabs) {
+TEST(TailADungeon, MainDrawFrameGrabs) {
     TailAFixture fixture;
     fixture.Placeholders({"#water#640#256#4", "#frame_image#640#480#4"});
 
@@ -71,15 +73,15 @@ DC_TEST(tail_a_main_draw_frame_grabs) {
     });
 
     TailAFixture::Pixels water = TailAFixture::Read(TailAFixture::Handle("water"));
-    DC_CHECK(water.Near(10, 50, 200, 0, 0));
-    DC_CHECK(water.Near(10, 70, 0, 0, 200));
+    ASSERT_TRUE(water.Near(10, 50, 200, 0, 0));
+    ASSERT_TRUE(water.Near(10, 70, 0, 0, 200));
     TailAFixture::Pixels image = TailAFixture::Read(TailAFixture::Handle("frame_image"));
-    DC_CHECK(image.Near(10, 110, 200, 0, 0));
-    DC_CHECK(image.Near(10, 130, 0, 0, 200));
+    ASSERT_TRUE(image.Near(10, 110, 200, 0, 0));
+    ASSERT_TRUE(image.Near(10, 130, 0, 0, 200));
 }
 
 // The reserved-slot copy moves 32x32 index texels from the page to the item.
-DC_TEST(tail_a_item_to_reserved_copies_indices) {
+TEST(TailADungeon, ItemToReservedCopiesIndices) {
     TailAFixture fixture;
     fixture.Images(texfix::Img({
         {"page", IndexTim2(7)},
@@ -90,33 +92,33 @@ DC_TEST(tail_a_item_to_reserved_copies_indices) {
 
     fixture.Frame([&] { setItemToReserved(page, 0, 0, item, 16, 8); });
     TailAFixture::Pixels pixels;
-    DC_CHECK(gfx::ReadbackTexture(TailAFixture::Handle("item"), pixels.rgba, pixels.width, pixels.height));
-    DC_CHECK(pixels.width == 64);
-    DC_CHECK(pixels.rgba[8 * 64 + 16] == 7);
-    DC_CHECK(pixels.rgba[39 * 64 + 47] == 7);
-    DC_CHECK(pixels.rgba[7 * 64 + 16] == 3);
-    DC_CHECK(pixels.rgba[8 * 64 + 48] == 3);
+    ASSERT_TRUE(gfx::ReadbackTexture(TailAFixture::Handle("item"), pixels.rgba, pixels.width, pixels.height));
+    ASSERT_TRUE(pixels.width == 64);
+    ASSERT_TRUE(pixels.rgba[8 * 64 + 16] == 7);
+    ASSERT_TRUE(pixels.rgba[39 * 64 + 47] == 7);
+    ASSERT_TRUE(pixels.rgba[7 * 64 + 16] == 3);
+    ASSERT_TRUE(pixels.rgba[8 * 64 + 48] == 3);
 }
 
 // The language screen runs headless: fades in, and picks the language on the way out.
-DC_TEST(tail_a_langset_loop_steps) {
+TEST(TailADungeon, LangsetLoopSteps) {
     TailAFixture fixture;
     Proc = LANGSET_FADE_IN;
     Fade.value = 0;
     int result = -1;
     fixture.Frame([&] { result = LangsetLoop(); });
-    DC_CHECK(result == 0);
-    DC_CHECK(Fade.value > 0);
+    ASSERT_TRUE(result == 0);
+    ASSERT_TRUE(Fade.value > 0);
 
     Proc = LANGSET_FADE_OUT;
     Fade.value = 0;
     Cursor = 1;
     fixture.Frame([&] { result = LangsetLoop(); });
-    DC_CHECK(result == 1);
-    DC_CHECK(LanguageCode == 3);
+    ASSERT_TRUE(result == 1);
+    ASSERT_TRUE(LanguageCode == 3);
 }
 
-DC_TEST(tail_a_loader_loop_lists_maps) {
+TEST(TailADungeon, LoaderLoopListsMaps) {
     TailAFixture fixture;
     CDbgMsg.length = 0;
     CDbgMsg.text[0] = 0;
@@ -124,7 +126,7 @@ DC_TEST(tail_a_loader_loop_lists_maps) {
     CDbgMsg.texture_name = name;
     int result = -1;
     fixture.Frame([&] { result = LoaderLoop(); });
-    DC_CHECK(result == 0);
-    DC_CHECK(std::strncmp(CDbgMsg.text, "- MapInfomationFile Loader -\n", 29) == 0);
-    DC_CHECK(std::strstr(CDbgMsg.text, ">>[ 1]") != nullptr);
+    ASSERT_TRUE(result == 0);
+    ASSERT_TRUE(std::strncmp(CDbgMsg.text, "- MapInfomationFile Loader -\n", 29) == 0);
+    ASSERT_TRUE(std::strstr(CDbgMsg.text, ">>[ 1]") != nullptr);
 }

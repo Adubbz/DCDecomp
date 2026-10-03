@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 // SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
 #include <SDL3/SDL.h>
 #include <libgraph.h>
@@ -67,7 +69,7 @@ std::array<uint8_t, 4> Texel(const std::vector<uint8_t> &pixels, uint32_t width,
 // In unbounded mode every MGEndFrame moves the count by exactly one tick and runs the callback
 // MGInitVSyncCallBack installed once for it, whether or not the game asked to wait; sceGsSyncV
 // waits a tick too.
-DC_TEST(draw3d_vsync_group) {
+TEST(Draw3dMglib, VsyncGroup) {
     Draw3DFixture fixture;
     g_ticks_seen = 0;
     MGInitVSyncCallBack(CountTick);
@@ -77,72 +79,72 @@ DC_TEST(draw3d_vsync_group) {
     MGFlipWaitVSync(0);
     MGBeginFrame();
     MGEndFrame();
-    DC_CHECK(MGGetVSyncCount() == start + 1);
-    DC_CHECK(DBuffID == !buffer);
+    ASSERT_TRUE(MGGetVSyncCount() == start + 1);
+    ASSERT_TRUE(DBuffID == !buffer);
 
     MGFlipWaitVSync(1);
     MGBeginFrame();
     MGEndFrame();
-    DC_CHECK(MGGetVSyncCount() == start + 2);
+    ASSERT_TRUE(MGGetVSyncCount() == start + 2);
 
     // EditLoop presents from inside the main loop's frame.
     MGBeginFrame();
     MGEndFrame();
     MGBeginFrame();
     MGEndFrame();
-    DC_CHECK(MGGetVSyncCount() == start + 4);
-    DC_CHECK(g_ticks_seen == 4);
+    ASSERT_TRUE(MGGetVSyncCount() == start + 4);
+    ASSERT_TRUE(g_ticks_seen == 4);
 
     sceGsSyncV(0);
-    DC_CHECK(MGGetVSyncCount() == start + 5);
-    DC_CHECK(g_ticks_seen == 5);
-    DC_CHECK(VSyncField__2 == 0);
+    ASSERT_TRUE(MGGetVSyncCount() == start + 5);
+    ASSERT_TRUE(g_ticks_seen == 5);
+    ASSERT_TRUE(VSyncField__2 == 0);
     MGInitVSyncCallBack(nullptr);
 }
 
 // MGClearScreen fills the logical frame; MGFillBox takes x in 12.4 and y in 12.4 field rows.
-DC_TEST(draw3d_fill_and_clear) {
+TEST(Draw3dMglib, FillAndClear) {
     Draw3DFixture fixture;
     fixture.Frame([] {
         MGClearScreen(10, 20, 30, 0x80);
         MGFillBox(CRect_i_(100 * 16, 30 * 16, 100 * 16, 40 * 16), 200, 0, 0, 0x80);
     });
-    DC_CHECK(fixture.PixelNear(50, 50, 10, 20, 30));
-    DC_CHECK(fixture.PixelNear(101, 61, 200, 0, 0));
-    DC_CHECK(fixture.PixelNear(198, 138, 200, 0, 0));
-    DC_CHECK(fixture.PixelNear(202, 100, 10, 20, 30));
-    DC_CHECK(fixture.PixelNear(150, 142, 10, 20, 30));
-    DC_CHECK(fixture.PixelNear(150, 58, 10, 20, 30));
+    ASSERT_TRUE(fixture.PixelNear(50, 50, 10, 20, 30));
+    ASSERT_TRUE(fixture.PixelNear(101, 61, 200, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(198, 138, 200, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(202, 100, 10, 20, 30));
+    ASSERT_TRUE(fixture.PixelNear(150, 142, 10, 20, 30));
+    ASSERT_TRUE(fixture.PixelNear(150, 58, 10, 20, 30));
 
     // The background colour clears every frame; all components negative turns the clear off.
     MGSetBGColor(0.0f, 0.0f, 90.0f, 128.0f);
     fixture.Frame([] {});
-    DC_CHECK(fixture.PixelNear(320, 240, 0, 0, 90));
+    ASSERT_TRUE(fixture.PixelNear(320, 240, 0, 0, 90));
 }
 
 // Pick-Z reads back what MGClearZBuffer wrote, in GS units; requests off the edges get -1.
-DC_TEST(draw3d_pick_z_round_trip) {
+TEST(Draw3dMglib, PickZRoundTrip) {
     Draw3DFixture fixture;
     mgPickZBuff[0] = {1, 320, 240, 0};
     mgPickZBuff[1] = {1, 2, 240, 0};
     mgPickZBuff[2] = {1, 320, 478, 0};
     fixture.Frame([] { MGClearZBuffer(1000000); });
-    DC_CHECK(std::abs(mgPickZBuff[0].z - 1000000) <= 2);
-    DC_CHECK(mgPickZBuff[1].z == -1);
-    DC_CHECK(mgPickZBuff[2].z == -1);
+    ASSERT_TRUE(std::abs(mgPickZBuff[0].z - 1000000) <= 2);
+    ASSERT_TRUE(mgPickZBuff[1].z == -1);
+    ASSERT_TRUE(mgPickZBuff[2].z == -1);
 
     // The cleared buffer is Z 0.
     fixture.Frame([] {});
-    DC_CHECK(mgPickZBuff[0].z == 0);
+    ASSERT_TRUE(mgPickZBuff[0].z == 0);
     for (MG_PICKZ &pick : mgPickZBuff) {
         pick = {};
     }
-    DC_CHECK(MGPortDepth(16700000) == 1.0f && MGPortDepth(1) == 0.0f && MGPortDepth(0) == 0.0f);
+    ASSERT_TRUE(MGPortDepth(16700000) == 1.0f && MGPortDepth(1) == 0.0f && MGPortDepth(0) == 0.0f);
 }
 
 // MGMoveImage copies a rect between two TEX0s; MGStretchMoveImage scales one (rects in 12.4).
 // The frame buffer's rects count field rows, so a frame grab of 640x240 is the full frame.
-DC_TEST(draw3d_move_images) {
+TEST(Draw3dMglib, MoveImages) {
     Draw3DFixture fixture;
     Registry::textures[0] = gfx::CreateTexture({64, 64, gfx::TextureFormat::Rgba8, 1, true});
     Registry::textures[1] = gfx::CreateTexture({64, 64, gfx::TextureFormat::Rgba8, 1, true});
@@ -153,7 +155,7 @@ DC_TEST(draw3d_move_images) {
             pattern[y * 64 + x] = Rgba(static_cast<uint8_t>(x * 4), static_cast<uint8_t>(y * 4), 77);
         }
     }
-    DC_CHECK(gfx::UpdateTexture(Registry::textures[0], 0, 0, 0, 64, 64, pattern.data()));
+    ASSERT_TRUE(gfx::UpdateTexture(Registry::textures[0], 0, 0, 0, 64, 64, pattern.data()));
 
     // Without a resolver every TEX0 is unknown: nothing happens and nothing breaks.
     sceGsTex0 a = AsTex0(Registry::Tex0(0));
@@ -164,10 +166,10 @@ DC_TEST(draw3d_move_images) {
     Draw3DSetResolvers(Registry::Resolve, nullptr);
     sceGsTex0 frame;
     MGGetFBuffTex(&frame);
-    DC_CHECK(frame.TBP0 == kMGPortFrameTbp0 && frame.bits.tw == 10 && frame.bits.th == 8);
+    ASSERT_TRUE(frame.TBP0 == kMGPortFrameTbp0 && frame.bits.tw == 10 && frame.bits.th == 8);
     sceGsTex0 back;
     MGGetFBuffBackTex(&back);
-    DC_CHECK(back.TBP0 == kMGPortPreviousFrameTbp0);
+    ASSERT_TRUE(back.TBP0 == kMGPortPreviousFrameTbp0);
 
     fixture.Frame([&] {
         MGClearScreen(0, 0, 0, 0x80);
@@ -180,20 +182,20 @@ DC_TEST(draw3d_move_images) {
     std::vector<uint8_t> pixels;
     uint32_t             width = 0;
     uint32_t             height = 0;
-    DC_CHECK(gfx::ReadbackTexture(Registry::textures[1], pixels, width, height));
+    ASSERT_TRUE(gfx::ReadbackTexture(Registry::textures[1], pixels, width, height));
     std::array<uint8_t, 4> moved = Texel(pixels, width, 32 + 3, 40 + 5);
-    DC_CHECK(moved[0] == (8 + 3) * 4 && moved[1] == (4 + 5) * 4 && moved[2] == 77);
-    DC_CHECK(Texel(pixels, width, 31, 39)[2] == 0);
+    ASSERT_TRUE(moved[0] == (8 + 3) * 4 && moved[1] == (4 + 5) * 4 && moved[2] == 77);
+    ASSERT_TRUE(Texel(pixels, width, 31, 39)[2] == 0);
     // Doubled: destination texel 20 samples source 10.
     std::array<uint8_t, 4> stretched = Texel(pixels, width, 21, 9);
-    DC_CHECK(std::abs(stretched[0] - 10 * 4 - 2) <= 3 && std::abs(stretched[1] - 4 * 4 - 2) <= 3);
+    ASSERT_TRUE(std::abs(stretched[0] - 10 * 4 - 2) <= 3 && std::abs(stretched[1] - 4 * 4 - 2) <= 3);
 
     // The grab: the frame's top 120 logical rows were green over the left half, which on the
     // field-high copy are its top 60 rows.
-    DC_CHECK(gfx::ReadbackTexture(Registry::textures[2], pixels, width, height));
-    DC_CHECK(Texel(pixels, width, 100, 50)[1] == 200);
-    DC_CHECK(Texel(pixels, width, 100, 70)[1] == 0);
-    DC_CHECK(Texel(pixels, width, 330, 50)[1] == 0);
+    ASSERT_TRUE(gfx::ReadbackTexture(Registry::textures[2], pixels, width, height));
+    ASSERT_TRUE(Texel(pixels, width, 100, 50)[1] == 200);
+    ASSERT_TRUE(Texel(pixels, width, 100, 70)[1] == 0);
+    ASSERT_TRUE(Texel(pixels, width, 330, 50)[1] == 0);
 
     // MGMoveFrameBuffImage weaves both fields into a full-height image.
     gfx::TextureHandle full = gfx::CreateTexture({640, 480, gfx::TextureFormat::Rgba8, 1, true});
@@ -203,9 +205,9 @@ DC_TEST(draw3d_move_images) {
         MGFillBox(CRect_i_(0, 0, 320 * 16, 60 * 16), 0, 0, 220, 0x80);
         MGMoveFrameBuffImage(&image, 0, 0, 0);
     });
-    DC_CHECK(gfx::ReadbackTexture(full, pixels, width, height));
-    DC_CHECK(Texel(pixels, width, 100, 110)[2] == 220);
-    DC_CHECK(Texel(pixels, width, 100, 130)[2] == 0);
+    ASSERT_TRUE(gfx::ReadbackTexture(full, pixels, width, height));
+    ASSERT_TRUE(Texel(pixels, width, 100, 110)[2] == 220);
+    ASSERT_TRUE(Texel(pixels, width, 100, 130)[2] == 0);
 
     for (gfx::TextureHandle &texture : Registry::textures) {
         gfx::DestroyTexture(texture);

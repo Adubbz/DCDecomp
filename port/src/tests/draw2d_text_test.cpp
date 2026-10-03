@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 
 #include <cmath>
 #include <cstring>
@@ -48,7 +49,7 @@ void AddFont(FakeGs &gs) {
 
 } // namespace
 
-DC_TEST(draw2d_debug_font_glyphs) {
+TEST(Draw2dText, DebugFontGlyphs) {
     GfxFixture fixture;
     FakeGs     gs;
     AddFont(gs);
@@ -59,24 +60,24 @@ DC_TEST(draw2d_debug_font_glyphs) {
     fixture.Frame(kBlue, [&] { font.Draw(); });
 
     // Glyph texels at TA0 times 0x40: half white over the blue.
-    DC_CHECK(fixture.PixelNear(103, 107, 127, 127, 227, 3));
-    DC_CHECK(fixture.PixelNear(119, 107, 127, 127, 227, 3));
-    DC_CHECK(fixture.PixelNear(103, 123, 127, 127, 227, 3));
+    ASSERT_TRUE(fixture.PixelNear(103, 107, 127, 127, 227, 3));
+    ASSERT_TRUE(fixture.PixelNear(119, 107, 127, 127, 227, 3));
+    ASSERT_TRUE(fixture.PixelNear(103, 123, 127, 127, 227, 3));
     // The (1,1,1) backdrop at the same alpha where no glyph was blitted.
-    DC_CHECK(fixture.PixelNear(111, 107, 1, 1, 100, 2));
-    DC_CHECK(fixture.PixelNear(111, 123, 1, 1, 100, 2));
-    DC_CHECK(fixture.PixelNear(220, 107, 1, 1, 100, 2));
-    DC_CHECK(fixture.PixelNear(150, 131, 1, 1, 100, 2));
+    ASSERT_TRUE(fixture.PixelNear(111, 107, 1, 1, 100, 2));
+    ASSERT_TRUE(fixture.PixelNear(111, 123, 1, 1, 100, 2));
+    ASSERT_TRUE(fixture.PixelNear(220, 107, 1, 1, 100, 2));
+    ASSERT_TRUE(fixture.PixelNear(150, 131, 1, 1, 100, 2));
     // Width x height texels land on (width - 1) x (height - 1) pixels.
-    DC_CHECK(fixture.PixelNear(228, 107, 0, 0, 200));
-    DC_CHECK(fixture.PixelNear(150, 132, 0, 0, 200));
-    DC_CHECK(fixture.PixelNear(99, 107, 0, 0, 200));
-    DC_CHECK(font.length == 0);
-    DC_CHECK(mgTexa.AEM == 1 && mgTexa.TA0 == 0x80);
-    DC_CHECK(gs.texa_writes == 1);
+    ASSERT_TRUE(fixture.PixelNear(228, 107, 0, 0, 200));
+    ASSERT_TRUE(fixture.PixelNear(150, 132, 0, 0, 200));
+    ASSERT_TRUE(fixture.PixelNear(99, 107, 0, 0, 200));
+    ASSERT_TRUE(font.length == 0);
+    ASSERT_TRUE(mgTexa.AEM == 1 && mgTexa.TA0 == 0x80);
+    ASSERT_TRUE(gs.texa_writes == 1);
 }
 
-DC_TEST(draw2d_debug_font_without_font_texture) {
+TEST(Draw2dText, DebugFontWithoutFontTexture) {
     GfxFixture fixture;
     FakeGs     gs;
     gs.Name("ankfnt24", 0x400);
@@ -86,9 +87,9 @@ DC_TEST(draw2d_debug_font_without_font_texture) {
 
     fixture.Frame(kBlue, [&] { font.Draw(); });
 
-    DC_CHECK(fixture.PixelNear(103, 107, 0, 0, 200));
-    DC_CHECK(fixture.PixelNear(111, 107, 0, 0, 200));
-    DC_CHECK(font.length == 0);
+    ASSERT_TRUE(fixture.PixelNear(103, 107, 0, 0, 200));
+    ASSERT_TRUE(fixture.PixelNear(111, 107, 0, 0, 200));
+    ASSERT_TRUE(font.length == 0);
 }
 
 namespace {
@@ -121,11 +122,11 @@ std::vector<std::array<int, 2>> BubblePoints(int x, int width, int height) {
 
 } // namespace
 
-DC_TEST(draw2d_fukidashi_mask) {
+TEST(Draw2dText, FukidashiMask) {
     GfxFixture         fixture;
     FakeGs             gs;
     gfx::TextureHandle base = gfx::NamedRenderTarget("fukidashibase", 640, 256, true);
-    DC_CHECK(base != gfx::kNullTexture);
+    ASSERT_TRUE(base != gfx::kNullTexture);
     gs.textures[0x600] = {base, gfx::kNullTexture, 640, 256};
     gs.Name("fukidashibase", 0x600);
     gs.Solid("fuki256", 0x700, 128, 128, 0xFFFFFFFF);
@@ -145,37 +146,37 @@ DC_TEST(draw2d_fukidashi_mask) {
 
     fixture.Frame(kBlue, [&] {
         message->MakeFukidashi(nullptr);
-        DC_CHECK(gfx::CurrentRenderTarget() == gfx::kMainTarget);
+        ASSERT_TRUE(gfx::CurrentRenderTarget() == gfx::kMainTarget);
     });
 
     std::vector<uint8_t> pixels;
     uint32_t             width = 0;
     uint32_t             height = 0;
-    DC_CHECK(gfx::ReadbackTexture(base, pixels, width, height));
-    DC_CHECK(width == 640 && height == 256);
+    ASSERT_TRUE(gfx::ReadbackTexture(base, pixels, width, height));
+    ASSERT_TRUE(width == 640 && height == 256);
     auto at = [&](uint32_t x, uint32_t y) { return &pixels[(y * width + x) * 4]; };
 
     // Inside: half of fuki256's white over the bubble's 0xBF, alpha from the tile (GS 0x40).
     for (auto [x, y] : {
              std::array<uint32_t, 2>{200, 50},
-              {150, 30},
-              {260, 80}
+             {150, 30},
+             {260, 80}
     }) {
         const uint8_t *p = at(x, y);
-        DC_CHECK(std::abs(p[0] - 223) <= 2 && std::abs(p[1] - 223) <= 2 && std::abs(p[2] - 223) <= 2);
-        DC_CHECK(std::abs(p[3] - 0x7F) <= 2);
+        ASSERT_TRUE(std::abs(p[0] - 223) <= 2 && std::abs(p[1] - 223) <= 2 && std::abs(p[2] - 223) <= 2);
+        ASSERT_TRUE(std::abs(p[3] - 0x7F) <= 2);
     }
     // Outside the bubble but under the fill: alpha cleared, tiles kept out.
     for (auto [x, y] : {
              std::array<uint32_t, 2>{105, 5  },
-              {400, 50 },
-              {20,  200},
-              {295, 98 }
+             {400, 50 },
+             {20,  200},
+             {295, 98 }
     }) {
-        DC_CHECK(at(x, y)[3] == 0);
+        ASSERT_TRUE(at(x, y)[3] == 0);
     }
     // Below the fill's 240 field rows the target keeps what it had.
-    DC_CHECK(at(300, 250)[3] == 0xFF);
+    ASSERT_TRUE(at(300, 250)[3] == 0xFF);
 
     // The mask is the fan: count its pixels against the area of the triangles it is made of.
     std::vector<std::array<int, 2>> points = BubblePoints(100, 200, 100);
@@ -193,6 +194,6 @@ DC_TEST(draw2d_fukidashi_mask) {
             covered += at(x, y)[3] != 0 ? 1 : 0;
         }
     }
-    DC_CHECK(std::fabs(covered - area) / area < 0.02);
-    DC_CHECK(gs.test_writes == 1 && gs.zbuf_writes == 1 && gs.alpha_writes == 1);
+    ASSERT_TRUE(std::fabs(covered - area) / area < 0.02);
+    ASSERT_TRUE(gs.test_writes == 1 && gs.zbuf_writes == 1 && gs.alpha_writes == 1);
 }

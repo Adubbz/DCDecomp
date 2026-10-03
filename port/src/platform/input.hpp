@@ -69,7 +69,7 @@ struct InputRumble {
     std::uint8_t large_motor = 0;
 };
 
-// Opens SDL's gamepad subsystem, applies config.ini's [input] and watches the window's events.
+// Opens SDL's gamepad subsystem, applies config.json's input section and watches the window's events.
 // Input works without a gamepad subsystem or a window (nothing but overrides then).
 void InputInit();
 
@@ -128,10 +128,9 @@ const InputMouseSettings &InputGetMouseSettings();
 // and Backtick name the key left of 1. -1 if unknown.
 int InputScancodeFromName(std::string_view name);
 
-// Keys that drive the port rather than a pad, bound like the pad's actions ("debug_toggle",
-// "fps_toggle"), which also take Gamepad:<SDL gamepad button name> (Gamepad:guide).
+// Keys that drive the port rather than a pad, bound like the pad's actions ("fps_toggle"), which
+// also take Gamepad:<SDL gamepad button name> (Gamepad:guide).
 enum class InputHostAction {
-    DebugToggle,
     FpsToggle,
 };
 

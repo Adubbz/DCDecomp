@@ -20,7 +20,7 @@ Homebrew in its standard prefix `/opt/homebrew`. KosmicKrisp needs macOS 26
 (it is built on Metal 4); lavapipe runs on any macOS Homebrew supports.
 
 ```sh
-brew install llvm lld cmake ninja python glslang sdl3 vulkan-headers vulkan-loader vulkan-tools
+brew install llvm lld cmake ninja python glslang sdl3 nlohmann-json vulkan-headers vulkan-loader vulkan-tools
 scripts/host/mesa-macos.sh                 # KosmicKrisp and lavapipe, into ~/.local/mesa/<tag>
 ./build.sh macos                           # port/build/macos-arm64, Debug
 ctest --preset macos-arm64                 # with VK_DRIVER_FILES set, below
@@ -260,8 +260,6 @@ nothing here has been run.
   with the script's options.
 - The game at run time on arm64: pointers truncated to 32 bits (above).
   Expect faults until `docs/MACOS_PLAN.md` section 3 is done.
-- Tests that assume Linux: `integration_smoke_test.cpp` finds `darkcloud`
-  through `/proc/self/exe`.
 - KosmicKrisp: pipeline compilation time for the 504 start-up pipelines
   (NIR to MSL to Metal) and whether the on-disk `VkPipelineCache` saves it
   on the second run; correctness of dual-source blending and the stencil

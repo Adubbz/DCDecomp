@@ -1,5 +1,5 @@
-#include "test.hpp"
+#include <gtest/gtest.h>
 
-DC_TEST(smoke) {
-    DC_CHECK(1 + 1 == 2);
+TEST(Smoke, Smoke) {
+    ASSERT_TRUE(1 + 1 == 2);
 }

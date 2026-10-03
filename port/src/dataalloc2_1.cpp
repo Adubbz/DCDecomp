@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <cstdint>
 
 #include "arena.hpp"
@@ -24,7 +25,40 @@ int AlignedUsed(const unsigned char *start, int used) {
     return used;
 }
 
+// The run a CDataAlloc2<1> handed out last, which the placement operators below may grow.
+struct Run {
+    CDataAlloc2<1> *arena;
+    u_char         *block;
+    int             quads;
+};
+
+Run g_last_run;
+
+// Retail sizes the run it places an object in by hand, in the PS2's quadwords, and the host's
+// object is larger wherever it holds a pointer. The run is still the arena's last when the object
+// is placed, so it is grown to the host's size and nothing allocated after it lies under the
+// object's tail.
+void *Place(std::size_t size, u_long128 *block) {
+    Run   run = g_last_run;
+    auto *bytes = reinterpret_cast<u_char *>(block);
+    int   quads = static_cast<int>((size + 15) / 16);
+    if (run.arena != nullptr && run.block == bytes && quads > run.quads &&
+        run.arena->base + run.arena->used * 16 == bytes + run.quads * 16) {
+        run.arena->Alloc(quads - run.quads);
+        g_last_run = {run.arena, bytes, quads};
+    }
+    return block;
+}
+
 } // namespace
+
+void *operator new(size_t size, u_long128 *block) {
+    return Place(size, block);
+}
+
+void *operator new[](size_t size, u_long128 *block) {
+    return Place(size, block);
+}
 
 u_char *CDataAlloc2<1>::Alloc(int quads) {
     if (used + quads > limit) {
@@ -32,6 +66,7 @@ u_char *CDataAlloc2<1>::Alloc(int quads) {
     }
     u_char *block = base + used * 16;
     used += quads;
+    g_last_run = {this, block, quads};
     return block;
 }
 
@@ -42,6 +77,7 @@ u_char *CDataAlloc2<1>::Alloc64(int quads) {
     if (used >= limit) {
         ArenaOverflow(this, used, limit);
     }
+    g_last_run = {this, block, quads};
     return block;
 }
 

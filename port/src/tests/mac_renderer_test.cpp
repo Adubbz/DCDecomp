@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 
 #include <algorithm>
 #include <array>
@@ -13,7 +14,6 @@
 #include "gfx/requirements.hpp"
 #include "gfx_fixture.hpp"
 #include "platform/window.hpp"
-#include "test.hpp"
 
 // The renderer's paths for Vulkan on Metal, forced on lavapipe: fans drawn as lists, one stencil
 // mask pair for both faces, no surface, and the device check of a 1.3 device.
@@ -42,7 +42,7 @@ std::vector<uint8_t> DrawFans(const GfxOptions &options) {
     GfxFixture         fixture(640, 480, 1.0f, options);
     gfx::TextureHandle texture = gfx::CreateTexture({2, 2});
     uint32_t           texels[4] = {Rgba(255, 0, 0), Rgba(0, 255, 0), Rgba(0, 0, 255), Rgba(255, 255, 255)};
-    DC_CHECK(gfx::UpdateTexture(texture, 0, 0, 0, 2, 2, texels));
+    EXPECT_TRUE(gfx::UpdateTexture(texture, 0, 0, 0, 2, 2, texels));
     fixture.Frame(kBlack, [&] {
         gfx::Draw2D(gfx::Primitive::TriangleFan, Fan(120, 120, 100, 7, {255, 255, 0, 0x80}, {255, 255, 0, 0x80}), {},
                     gfx::DrawState{});
@@ -72,8 +72,8 @@ std::vector<uint8_t> DrawFans(const GfxOptions &options) {
         // Fewer than three vertices draw nothing either way.
         gfx::Draw2D(gfx::Primitive::TriangleFan, std::span(star).first(2), {}, gfx::DrawState{});
     });
-    DC_CHECK(gfx::ActiveRendererFeatures().triangle_fans == options.triangle_fans);
-    DC_CHECK(fixture.PixelNear(40, 120, 255, 255, 0));
+    EXPECT_TRUE(gfx::ActiveRendererFeatures().triangle_fans == options.triangle_fans);
+    EXPECT_TRUE(fixture.PixelNear(40, 120, 255, 255, 0));
     return fixture.pixels;
 }
 
@@ -90,7 +90,7 @@ struct FrameSet {
 FrameSet DrawFrames(bool offscreen) {
     FrameSet   set;
     GfxFixture fixture(800, 600, 1.0f, GfxOptions{.offscreen = offscreen});
-    DC_CHECK(gfx::ActiveRendererFeatures().offscreen == offscreen);
+    EXPECT_TRUE(gfx::ActiveRendererFeatures().offscreen == offscreen);
     gfx::TextureHandle snapshot = gfx::CreateRenderTarget(64, 48, true);
     gfx::TextureHandle target = gfx::CreateRenderTarget(160, 120, true);
 
@@ -100,7 +100,7 @@ FrameSet DrawFrames(bool offscreen) {
         state.depth_write = true;
         gfx::Draw2D(gfx::Primitive::Quads, Quad(100, 100, 200, 200, {255, 0, 0, 0x80}, 0, 0, 0, 0, 0.75f), {}, state);
         gfx::Draw2D(gfx::Primitive::Quads, Quad(200, 100, 200, 200, {0, 255, 0, 0x80}, 0, 0, 0, 0, 0.25f), {}, state);
-        DC_CHECK(gfx::SnapshotFrame(snapshot));
+        ASSERT_TRUE(gfx::SnapshotFrame(snapshot));
         gfx::Draw2D(gfx::Primitive::Quads, Quad(0, 0, 640, 60, {0, 0, 255, 0x80}), {}, gfx::DrawState{});
         gfx::ReadDepth(0, 120, 120, 8, 8);
         gfx::ReadDepth(1, 350, 150, 8, 8);
@@ -112,7 +112,7 @@ FrameSet DrawFrames(bool offscreen) {
     }
     uint32_t width;
     uint32_t height;
-    DC_CHECK(gfx::ReadbackTexture(snapshot, set.snapshot, width, height));
+    EXPECT_TRUE(gfx::ReadbackTexture(snapshot, set.snapshot, width, height));
 
     fixture.Frame(kBlack, [&] {
         gfx::SetRenderTarget(target);
@@ -130,8 +130,8 @@ FrameSet DrawFrames(bool offscreen) {
                     gfx::DrawState{});
     });
     set.frames.push_back(fixture.pixels);
-    DC_CHECK(fixture.PixelNear(150, 30 * 1.25, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(550, 425, 255, 255, 255));
+    EXPECT_TRUE(fixture.PixelNear(150, 30 * 1.25, 0, 0, 255));
+    EXPECT_TRUE(fixture.PixelNear(550, 425, 255, 255, 255));
 
     SDL_SetWindowSize(WindowHandle(), 640, 400);
     SDL_SyncWindow(WindowHandle());
@@ -176,35 +176,35 @@ bool Mentions(const std::vector<std::string> &missing, const char *what) {
 
 } // namespace
 
-DC_TEST(mac_renderer_fans_as_lists_match_fans) {
+TEST(MacRenderer, FansAsListsMatchFans) {
     std::vector<uint8_t> fans = DrawFans(GfxOptions{});
     std::vector<uint8_t> lists = DrawFans(GfxOptions{.triangle_fans = false});
-    DC_CHECK(fans.size() == lists.size());
-    DC_CHECK(fans == lists);
+    ASSERT_TRUE(fans.size() == lists.size());
+    ASSERT_TRUE(fans == lists);
 }
 
-DC_TEST(mac_renderer_offscreen_matches_the_swapchain) {
+TEST(MacRenderer, OffscreenMatchesTheSwapchain) {
     FrameSet swapchain = DrawFrames(false);
     FrameSet offscreen = DrawFrames(true);
-    DC_CHECK(offscreen.frames.size() == swapchain.frames.size());
+    ASSERT_TRUE(offscreen.frames.size() == swapchain.frames.size());
     for (size_t i = 0; i < offscreen.frames.size(); i++) {
-        DC_CHECK(offscreen.frames[i] == swapchain.frames[i]);
+        ASSERT_TRUE(offscreen.frames[i] == swapchain.frames[i]);
     }
-    DC_CHECK(offscreen.depths == swapchain.depths);
-    DC_CHECK_NEAR(offscreen.depths[0], 0.75f, 1e-6f);
-    DC_CHECK_NEAR(offscreen.depths[1], 0.25f, 1e-6f);
-    DC_CHECK_NEAR(offscreen.depths[2], 0.0f, 1e-6f);
-    DC_CHECK(offscreen.snapshot == swapchain.snapshot);
-    DC_CHECK(offscreen.resized_width == 640 && offscreen.resized_height == 400);
-    DC_CHECK(swapchain.resized_width == 640 && swapchain.resized_height == 400);
+    ASSERT_TRUE(offscreen.depths == swapchain.depths);
+    ASSERT_NEAR(offscreen.depths[0], 0.75f, 1e-6f);
+    ASSERT_NEAR(offscreen.depths[1], 0.25f, 1e-6f);
+    ASSERT_NEAR(offscreen.depths[2], 0.0f, 1e-6f);
+    ASSERT_TRUE(offscreen.snapshot == swapchain.snapshot);
+    ASSERT_TRUE(offscreen.resized_width == 640 && offscreen.resized_height == 400);
+    ASSERT_TRUE(swapchain.resized_width == 640 && swapchain.resized_height == 400);
 }
 
 // The shadow-volume pattern: front faces increment, back faces decrement, one reference and mask.
-DC_TEST(mac_renderer_shared_stencil_masks_match_separate) {
+TEST(MacRenderer, SharedStencilMasksMatchSeparate) {
     std::vector<uint8_t> results[2];
     for (bool separate : {true, false}) {
         GfxFixture fixture(640, 480, 1.0f, GfxOptions{.separate_stencil_masks = separate});
-        DC_CHECK(gfx::ActiveRendererFeatures().separate_stencil_masks == separate);
+        ASSERT_TRUE(gfx::ActiveRendererFeatures().separate_stencil_masks == separate);
         fixture.Frame(kBlack, [&] {
             gfx::ClearStencil(0);
             gfx::DrawState count;
@@ -227,64 +227,64 @@ DC_TEST(mac_renderer_shared_stencil_masks_match_separate) {
             show.stencil_back = show.stencil_front;
             gfx::Draw2D(gfx::Primitive::Quads, Quad(0, 0, 640, 480, {255, 255, 255, 0x80}), {}, show);
         });
-        DC_CHECK(fixture.PixelNear(150, 120, 0, 0, 0));
-        DC_CHECK(fixture.PixelNear(450, 300, 255, 255, 255));
+        ASSERT_TRUE(fixture.PixelNear(150, 120, 0, 0, 0));
+        ASSERT_TRUE(fixture.PixelNear(450, 300, 255, 255, 255));
         results[separate ? 0 : 1] = fixture.pixels;
     }
-    DC_CHECK(results[0] == results[1]);
+    ASSERT_TRUE(results[0] == results[1]);
 }
 
-DC_TEST(mac_renderer_device_requirements) {
+TEST(MacRenderer, DeviceRequirements) {
     using gfx::detail::MissingRequirements;
     gfx::detail::DeviceCaps caps = FullCaps();
-    DC_CHECK(MissingRequirements(caps, false).empty());
-    DC_CHECK(gfx::detail::PortabilityWorkarounds(caps).size() == 2);
+    ASSERT_TRUE(MissingRequirements(caps, false).empty());
+    ASSERT_TRUE(gfx::detail::PortabilityWorkarounds(caps).size() == 2);
 
     gfx::detail::DeviceCaps v14 = caps;
     v14.api_version = VK_API_VERSION_1_4;
-    DC_CHECK(MissingRequirements(v14, false).empty());
+    ASSERT_TRUE(MissingRequirements(v14, false).empty());
 
     gfx::detail::DeviceCaps v12 = caps;
     v12.api_version = VK_API_VERSION_1_2;
     std::vector<std::string> missing = MissingRequirements(v12, false);
-    DC_CHECK(missing.size() == 1 && Mentions(missing, "Vulkan 1.3 (it has 1.2)"));
+    ASSERT_TRUE(missing.size() == 1 && Mentions(missing, "Vulkan 1.3 (it has 1.2)"));
 
     gfx::detail::DeviceCaps no_dual = caps;
     no_dual.features.dualSrcBlend = VK_FALSE;
     no_dual.features13.synchronization2 = VK_FALSE;
     missing = MissingRequirements(no_dual, false);
-    DC_CHECK(missing.size() == 2 && Mentions(missing, "dualSrcBlend") && Mentions(missing, "synchronization2"));
+    ASSERT_TRUE(missing.size() == 2 && Mentions(missing, "dualSrcBlend") && Mentions(missing, "synchronization2"));
 
     gfx::detail::DeviceCaps small = caps;
     small.properties12.maxPerStageDescriptorUpdateAfterBindSampledImages = 4096;
-    DC_CHECK(Mentions(MissingRequirements(small, false), "8192 update-after-bind sampled images"));
+    ASSERT_TRUE(Mentions(MissingRequirements(small, false), "8192 update-after-bind sampled images"));
 
     gfx::detail::DeviceCaps headless = caps;
     headless.extensions = {};
-    DC_CHECK(Mentions(MissingRequirements(headless, false), VK_KHR_SWAPCHAIN_EXTENSION_NAME));
+    ASSERT_TRUE(Mentions(MissingRequirements(headless, false), VK_KHR_SWAPCHAIN_EXTENSION_NAME));
     headless.portability_subset = false;
-    DC_CHECK(MissingRequirements(headless, true).empty());
+    ASSERT_TRUE(MissingRequirements(headless, true).empty());
 
     gfx::detail::DeviceCaps strides = caps;
     strides.portability_properties.minVertexInputBindingStrideAlignment = 8;
-    DC_CHECK(Mentions(MissingRequirements(strides, false), "minVertexInputBindingStrideAlignment"));
+    ASSERT_TRUE(Mentions(MissingRequirements(strides, false), "minVertexInputBindingStrideAlignment"));
 
     gfx::detail::DeviceCaps depth = caps;
     depth.depth_stencil_format = false;
     depth.features12.descriptorBindingPartiallyBound = VK_FALSE;
     missing = MissingRequirements(depth, false);
-    DC_CHECK(missing.size() == 2 && Mentions(missing, "D24_UNORM_S8_UINT") &&
-             Mentions(missing, "descriptorBindingPartiallyBound"));
+    ASSERT_TRUE(missing.size() == 2 && Mentions(missing, "D24_UNORM_S8_UINT") &&
+                Mentions(missing, "descriptorBindingPartiallyBound"));
 
     caps.portability.triangleFans = VK_TRUE;
     caps.portability.separateStencilMaskRef = VK_TRUE;
-    DC_CHECK(gfx::detail::PortabilityWorkarounds(caps).empty());
+    ASSERT_TRUE(gfx::detail::PortabilityWorkarounds(caps).empty());
 }
 
 // lavapipe is a 1.4 device; what the check makes of it is what selection made of it.
-DC_TEST(mac_renderer_selects_the_test_device) {
+TEST(MacRenderer, SelectsTheTestDevice) {
     GfxFixture            fixture;
     gfx::RendererFeatures features = gfx::ActiveRendererFeatures();
-    DC_CHECK(features.api_version >= VK_API_VERSION_1_3);
-    DC_CHECK(features.triangle_fans && features.separate_stencil_masks);
+    ASSERT_TRUE(features.api_version >= VK_API_VERSION_1_3);
+    ASSERT_TRUE(features.triangle_fans && features.separate_stencil_masks);
 }

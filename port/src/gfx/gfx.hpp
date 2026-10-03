@@ -39,6 +39,27 @@ struct FrameLayout {
     float ui_scale = 1.0f;
 };
 
+// Which of the HUD's 2D keeps its distance to an edge of what the main target shows, instead of its
+// place in the logical frame (README, "Aspect"). A draw is anchored whole, by the centre of its
+// bounds: left of left_until to the left edge, at or right of right_from to the right edge, above
+// top_until to the top edge, at or below bottom_from to the bottom edge. The default anchors nothing.
+struct UiAnchor {
+    float left_until = -INFINITY;
+    float right_from = INFINITY;
+    float top_until = -INFINITY;
+    float bottom_from = INFINITY;
+
+    // Every draw to one side: x -1 left, 1 right, y -1 top, 1 bottom, 0 the frame's own place.
+    static constexpr UiAnchor Side(int x, int y) {
+        return {x < 0 ? INFINITY : -INFINITY, x > 0 ? -INFINITY : INFINITY, y < 0 ? INFINITY : -INFINITY,
+                y > 0 ? -INFINITY : INFINITY};
+    }
+};
+
+// The frame in thirds: its corners, edges and centre each keep their own place.
+inline constexpr UiAnchor kUiAnchorThirds = {kLogicalWidth / 3.0f, kLogicalWidth * 2.0f / 3.0f,
+                                             kLogicalHeight / 3.0f, kLogicalHeight * 2.0f / 3.0f};
+
 enum class PresentMode : uint8_t {
     Fifo,
     Mailbox,
@@ -442,6 +463,20 @@ LogicalMapping GetLogicalMapping(TextureHandle target);
 // Where the rest of 2D lands: on the main target the logical mapping scaled by ui_scale about the
 // target's centre, elsewhere the logical mapping.
 LogicalMapping GetUiMapping(TextureHandle target);
+// The anchor of the 2D drawn from here on that the UI mapping places on the main target.
+void     SetUiAnchor(const UiAnchor &anchor);
+UiAnchor CurrentUiAnchor();
+// Sets an anchor for its lifetime and puts back the one it replaced.
+class UiAnchorScope {
+public:
+    explicit UiAnchorScope(const UiAnchor &anchor) : previous_(CurrentUiAnchor()) { SetUiAnchor(anchor); }
+    ~UiAnchorScope() { SetUiAnchor(previous_); }
+    UiAnchorScope(const UiAnchorScope &) = delete;
+    UiAnchorScope &operator=(const UiAnchorScope &) = delete;
+
+private:
+    UiAnchor previous_;
+};
 // The logical rect the target's pixels show: its logical frame, or with AspectMode::Fill on the main
 // target (and the targets mapped like it) all of the target, past the frame on its wider axis, and
 // on a frame target the main target's horizontal extent.
@@ -483,7 +518,7 @@ using DisplayListRef = std::shared_ptr<const DisplayList>;
 
 // Identity of the object the following mesh draws belong to, so a display frame can match each one
 // with the same object's draw in the previous tick (the n-th draw with a key matches the n-th with
-// it). 0 is none. no_interpolation draws them at this tick's transform, as does a model whose
+// it; a key drawn with several models in a tick is matched by where each stood). 0 is none. no_interpolation draws them at this tick's transform, as does a model whose
 // translation moved more than teleport_distance since the previous tick (a teleport). With
 // blend_vertices a matched DrawMeshImmediate with the same vertex count has its vertices
 // interpolated too, unless one moved more than teleport_distance: for vertices that are the same

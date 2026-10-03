@@ -52,6 +52,13 @@ endif()
 # SDL3 owns the window and input; Vulkan 1.4 renders.
 find_package(SDL3 REQUIRED CONFIG)
 find_package(Vulkan 1.4 REQUIRED)
+# nlohmann/json reads config.json: the installed package where there is one, fetched otherwise.
+include(FetchContent)
+FetchContent_Declare(nlohmann_json
+    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+    URL_HASH SHA256=42f6e95cad6ec532fd372391373363b62a14af6d771056dbfc86160e6dfff7aa
+    FIND_PACKAGE_ARGS CONFIG)
+FetchContent_MakeAvailable(nlohmann_json)
 
 set(PS2_DIR ${CMAKE_SOURCE_DIR}/ps2/src)
 set(PORT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -187,7 +194,7 @@ endforeach()
 
 add_library(dc_host OBJECT ${HOST_SOURCES} ${SHADER_HEADERS})
 target_include_directories(dc_host PRIVATE ${PORT_DIR} ${SHADER_HEADER_DIR})
-target_link_libraries(dc_host PRIVATE SDL3::SDL3 Vulkan::Vulkan)
+target_link_libraries(dc_host PRIVATE SDL3::SDL3 Vulkan::Vulkan nlohmann_json::nlohmann_json)
 target_compile_options(dc_host PRIVATE -Wall -ffunction-sections -fdata-sections)
 
 add_library(dc_port OBJECT ${PORT_LIB_SOURCES})
@@ -247,6 +254,10 @@ dc_link_game(darkcloud)
 include(GNUInstallDirs)
 install(TARGETS darkcloud RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-enable_testing()
-add_subdirectory(src/tests)
+# The tests fetch GoogleTest at configure time; a build with no network turns them off.
+option(DC_BUILD_TESTS "Build darkcloud_tests" ON)
+if(DC_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(src/tests)
+endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/tools/dcdata ${CMAKE_BINARY_DIR}/tools/dcdata)

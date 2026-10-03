@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 #include <libgraph.h>
 
 #include <map>
@@ -81,8 +82,8 @@ struct FakeGs {
                     const uint32_t *rgba, bool has_alpha = true) {
         gfx::TextureHandle handle =
             gfx::CreateTexture({width, height, gfx::TextureFormat::Rgba8, 1, has_alpha});
-        DC_CHECK(handle != gfx::kNullTexture);
-        DC_CHECK(gfx::UpdateTexture(handle, 0, 0, 0, width, height, rgba));
+        EXPECT_TRUE(handle != gfx::kNullTexture);
+        EXPECT_TRUE(gfx::UpdateTexture(handle, 0, 0, 0, width, height, rgba));
         textures[tbp0] = {handle, gfx::kNullTexture, width, height};
         return Name(name, tbp0);
     }

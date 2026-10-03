@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 
 #include <cmath>
 
@@ -24,7 +25,7 @@ bool Covered(const GfxFixture &fixture, uint32_t x, uint32_t y) {
 
 } // namespace
 
-DC_TEST(draw2d_sprite_covers_its_rect) {
+TEST(Draw2dSprite, CoversItsRect) {
     GfxFixture fixture;
     FakeGs     gs;
     CTexture  *white = gs.Solid("white", 0x100, 4, 4, kWhite);
@@ -38,19 +39,19 @@ DC_TEST(draw2d_sprite_covers_its_rect) {
                     0x80);
     });
 
-    DC_CHECK(fixture.PixelNear(100, 50, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(139, 79, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(140, 50, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(99, 50, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(100, 49, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(100, 80, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(100, 50, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(139, 79, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(140, 50, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(99, 50, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(100, 49, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(100, 80, 0, 0, 0));
     // An unresolved texture draws nothing; a null one returns before touching any register.
-    DC_CHECK(fixture.PixelNear(320, 60, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(420, 60, 0, 0, 0));
-    DC_CHECK(gs.test_writes == 2 && gs.zbuf_writes == 2);
+    ASSERT_TRUE(fixture.PixelNear(320, 60, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(420, 60, 0, 0, 0));
+    ASSERT_TRUE(gs.test_writes == 2 && gs.zbuf_writes == 2);
 }
 
-DC_TEST(draw2d_flat_untextured_rect) {
+TEST(Draw2dSprite, FlatUntexturedRect) {
     GfxFixture fixture;
     FakeGs     gs;
     spRGBA     colour = {0x20, 0x40, 0x60, 0x80};
@@ -62,13 +63,13 @@ DC_TEST(draw2d_flat_untextured_rect) {
     for (uint32_t y = 0; y < 80; y++) {
         for (uint32_t x = 0; x < 60; x++) {
             const bool inside = x >= 10 && x < 40 && y >= 20 && y < 60;
-            DC_CHECK(Covered(fixture, x, y) == inside);
+            ASSERT_TRUE(Covered(fixture, x, y) == inside);
         }
     }
-    DC_CHECK(fixture.PixelNear(25, 40, 0x20, 0x40, 0x60, 0));
+    ASSERT_TRUE(fixture.PixelNear(25, 40, 0x20, 0x40, 0x60, 0));
 }
 
-DC_TEST(draw2d_sprite_into_render_target_halves_rows) {
+TEST(Draw2dSprite, IntoRenderTargetHalvesRows) {
     GfxFixture         fixture;
     FakeGs             gs;
     CTexture          *white = gs.Solid("white", 0x100, 4, 4, kWhite);
@@ -83,15 +84,15 @@ DC_TEST(draw2d_sprite_into_render_target_halves_rows) {
     std::vector<uint8_t> pixels;
     uint32_t             width = 0;
     uint32_t             height = 0;
-    DC_CHECK(gfx::ReadbackTexture(target, pixels, width, height));
-    DC_CHECK(width == 64 && height == 64);
+    ASSERT_TRUE(gfx::ReadbackTexture(target, pixels, width, height));
+    ASSERT_TRUE(width == 64 && height == 64);
     auto red = [&](uint32_t x, uint32_t y) { return pixels[(y * width + x) * 4]; };
-    DC_CHECK(red(8, 10) == 255 && red(23, 29) == 255);
-    DC_CHECK(red(8, 9) == 0 && red(8, 30) == 0 && red(24, 10) == 0);
+    ASSERT_TRUE(red(8, 10) == 255 && red(23, 29) == 255);
+    ASSERT_TRUE(red(8, 9) == 0 && red(8, 30) == 0 && red(24, 10) == 0);
     gfx::DestroyTexture(target);
 }
 
-DC_TEST(draw2d_alpha_flag_variants) {
+TEST(Draw2dSprite, AlphaFlagVariants) {
     GfxFixture fixture;
     FakeGs     gs;
     CTexture  *white = gs.Solid("white", 0x100, 4, 4, kWhite);
@@ -129,17 +130,17 @@ DC_TEST(draw2d_alpha_flag_variants) {
         set2DSprite(nullptr, white, CRect_i_(50, 300, 100, 50), texel, 0, 0, 0x80, 0x80);
     });
 
-    DC_CHECK(fixture.PixelNear(25, 25, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(75, 25, 127, 127, 0, 3));
-    DC_CHECK(fixture.PixelNear(125, 25, 0, 127, 0, 3));
-    DC_CHECK(fixture.PixelNear(75, 125, 255, 255, 0));
-    DC_CHECK(fixture.PixelNear(125, 125, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(75, 225, 127, 255, 255, 3));
-    DC_CHECK(fixture.PixelNear(75, 325, 0, 0, 255));
-    DC_CHECK(gs.alpha_writes == 4);
+    ASSERT_TRUE(fixture.PixelNear(25, 25, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(75, 25, 127, 127, 0, 3));
+    ASSERT_TRUE(fixture.PixelNear(125, 25, 0, 127, 0, 3));
+    ASSERT_TRUE(fixture.PixelNear(75, 125, 255, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(125, 125, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(75, 225, 127, 255, 255, 3));
+    ASSERT_TRUE(fixture.PixelNear(75, 325, 0, 0, 255));
+    ASSERT_TRUE(gs.alpha_writes == 4);
 }
 
-DC_TEST(draw2d_c4_gradient_corners) {
+TEST(Draw2dSprite, C4GradientCorners) {
     GfxFixture fixture;
     FakeGs     gs;
     spRGBA     top_left = {0xFF, 0, 0, 0x80};
@@ -152,16 +153,16 @@ DC_TEST(draw2d_c4_gradient_corners) {
                       &bottom_right);
     });
 
-    DC_CHECK(fixture.PixelNear(100, 100, 255, 0, 0, 4));
-    DC_CHECK(fixture.PixelNear(299, 100, 0, 255, 0, 4));
-    DC_CHECK(fixture.PixelNear(100, 199, 0, 0, 255, 4));
-    DC_CHECK(fixture.PixelNear(299, 199, 255, 255, 255, 4));
-    DC_CHECK(fixture.PixelNear(200, 100, 127, 127, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(100, 100, 255, 0, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(299, 100, 0, 255, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(100, 199, 0, 0, 255, 4));
+    ASSERT_TRUE(fixture.PixelNear(299, 199, 255, 255, 255, 4));
+    ASSERT_TRUE(fixture.PixelNear(200, 100, 127, 127, 0, 4));
     // A strip of TL, TR, BL, BR splits along TR-BL, so the centre is their mean, not all four's.
-    DC_CHECK(fixture.PixelNear(200, 150, 0, 127, 127, 4));
+    ASSERT_TRUE(fixture.PixelNear(200, 150, 0, 127, 127, 4));
 }
 
-DC_TEST(draw2d_rotated_sprite_quarter_turn) {
+TEST(Draw2dSprite, RotatedSpriteQuarterTurn) {
     GfxFixture fixture;
     FakeGs     gs;
     CTexture  *white = gs.Solid("white", 0x100, 4, 4, kWhite);
@@ -172,17 +173,17 @@ DC_TEST(draw2d_rotated_sprite_quarter_turn) {
     });
 
     // A 40x20 rect turned a quarter about its top-left corner spans 20 left and 40 up of it.
-    DC_CHECK(Covered(fixture, 190, 180));
-    DC_CHECK(Covered(fixture, 181, 161));
-    DC_CHECK(Covered(fixture, 198, 198));
-    DC_CHECK(!Covered(fixture, 205, 180));
-    DC_CHECK(!Covered(fixture, 190, 205));
-    DC_CHECK(!Covered(fixture, 175, 180));
-    DC_CHECK(!Covered(fixture, 190, 155));
-    DC_CHECK(!Covered(fixture, 220, 210));
+    ASSERT_TRUE(Covered(fixture, 190, 180));
+    ASSERT_TRUE(Covered(fixture, 181, 161));
+    ASSERT_TRUE(Covered(fixture, 198, 198));
+    ASSERT_TRUE(!Covered(fixture, 205, 180));
+    ASSERT_TRUE(!Covered(fixture, 190, 205));
+    ASSERT_TRUE(!Covered(fixture, 175, 180));
+    ASSERT_TRUE(!Covered(fixture, 190, 155));
+    ASSERT_TRUE(!Covered(fixture, 220, 210));
 }
 
-DC_TEST(draw2d_3d_sprite_depth_tested) {
+TEST(Draw2dSprite, 3dSpriteDepthTested) {
     GfxFixture fixture;
     FakeGs     gs;
     CTexture  *white = gs.Solid("white", 0x100, 4, 4, kWhite);
@@ -212,15 +213,15 @@ DC_TEST(draw2d_3d_sprite_depth_tested) {
                     0x80);
     });
 
-    DC_CHECK(fixture.PixelNear(250, 140, 0, 0xC0, 0));
-    DC_CHECK(fixture.PixelNear(350, 140, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(200, 180, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(120, 150, 0, 0xC0, 0));
-    DC_CHECK(fixture.PixelNear(350, 170, 0, 0, 0));
-    DC_CHECK(gs.test_writes == 2);
+    ASSERT_TRUE(fixture.PixelNear(250, 140, 0, 0xC0, 0));
+    ASSERT_TRUE(fixture.PixelNear(350, 140, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(200, 180, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(120, 150, 0, 0xC0, 0));
+    ASSERT_TRUE(fixture.PixelNear(350, 170, 0, 0, 0));
+    ASSERT_TRUE(gs.test_writes == 2);
 }
 
-DC_TEST(draw2d_sprite_table_layers) {
+TEST(Draw2dSprite, TableLayers) {
     GfxFixture   fixture;
     FakeGs       gs;
     CTexture    *red = gs.Solid("red", 0x100, 4, 4, Rgba(255, 0, 0));
@@ -242,17 +243,17 @@ DC_TEST(draw2d_sprite_table_layers) {
 
     fixture.Frame(kBlack, [&] { table.DrawTable(); });
 
-    DC_CHECK(fixture.PixelNear(110, 110, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(140, 130, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(160, 150, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(149, 139, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(179, 159, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(180, 159, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(110, 140, 0, 0, 0));
-    DC_CHECK(gs.alpha_writes == 1 && gs.test_writes == 1 && gs.zbuf_writes == 1);
+    ASSERT_TRUE(fixture.PixelNear(110, 110, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(140, 130, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(160, 150, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(149, 139, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(179, 159, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(180, 159, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(110, 140, 0, 0, 0));
+    ASSERT_TRUE(gs.alpha_writes == 1 && gs.test_writes == 1 && gs.zbuf_writes == 1);
 }
 
-DC_TEST(draw2d_sprite_batch) {
+TEST(Draw2dSprite, Batch) {
     GfxFixture fixture;
     FakeGs     gs;
     CTexture  *white = gs.Solid("white", 0x100, 4, 4, kWhite);
@@ -268,13 +269,13 @@ DC_TEST(draw2d_sprite_batch) {
         set2DSprite_End(nullptr, white);
     });
 
-    DC_CHECK(fixture.PixelNear(20, 20, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(60, 20, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(100, 20, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(40, 20, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(20, 20, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(60, 20, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(100, 20, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(40, 20, 0, 0, 0));
 }
 
-DC_TEST(draw2d_set_clut_reorders_csm1) {
+TEST(Draw2dSprite, SetClutReordersCsm1) {
     GfxFixture         fixture;
     FakeGs             gs;
     PortDecodedTexture decoded;
@@ -284,7 +285,7 @@ DC_TEST(draw2d_set_clut_reorders_csm1) {
     decoded.levels.push_back({8, 16});
     unsigned palette_key = 0;
     unsigned image_key = PortCreateTexture(decoded, PortTextureOwner::Other, &palette_key);
-    DC_CHECK(image_key != 0 && palette_key != 0);
+    ASSERT_TRUE(image_key != 0 && palette_key != 0);
     CTexture font;
     font.tex0 = SCE_GS_SET_TEX0(image_key, 1, SCE_GS_PSMT8, 1, 0, 1, 0, palette_key, 0, 0, 0, 0);
 
@@ -300,13 +301,13 @@ DC_TEST(draw2d_set_clut_reorders_csm1) {
     });
 
     // The GS reads index 8 from the 16th stored entry and index 16 from the 8th.
-    DC_CHECK(fixture.PixelNear(25, 25, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(75, 25, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(25, 25, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(75, 25, 0, 255, 0));
     PortReleaseKey(image_key);
     PortReleaseKey(palette_key);
 }
 
-DC_TEST(draw2d_sprite_from_registered_texture) {
+TEST(Draw2dSprite, FromRegisteredTexture) {
     GfxFixture         fixture;
     FakeGs             gs;
     PortDecodedTexture decoded;
@@ -314,7 +315,7 @@ DC_TEST(draw2d_sprite_from_registered_texture) {
     decoded.height = 2;
     decoded.levels.push_back({255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255});
     unsigned key = PortCreateTexture(decoded, PortTextureOwner::Other, nullptr);
-    DC_CHECK(key != 0);
+    ASSERT_TRUE(key != 0);
     CTexture texture;
     texture.tex0 = SCE_GS_SET_TEX0(key, 1, SCE_GS_PSMCT32, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 
@@ -326,10 +327,10 @@ DC_TEST(draw2d_sprite_from_registered_texture) {
 
     // set2DSprite(screen, u, v) maps texels one to one from (u, v): only the 2x2 corner is texture,
     // the rest clamps to its edges.
-    DC_CHECK(fixture.PixelNear(200, 100, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(201, 100, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(200, 101, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(250, 150, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(300, 150, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(200, 100, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(201, 100, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(200, 101, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(250, 150, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(300, 150, 0, 0, 0));
     PortReleaseKey(key);
 }

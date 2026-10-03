@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Build PS2 by default, or a native Linux/macOS port using its CMake preset.
+# PS2 and Linux build in the dev container; macOS builds on the host.
 # PS2 results go in ps2/build/ntsc (ps2/build/pal for the PAL prototype). Use run.sh
 # instead if you want the disc image as well, booted in PCSX2.
 #
@@ -34,21 +35,15 @@ fi
 
 case "${1-ps2}" in
     ps2) ;;
-    linux-x64|macos)
-        case "$1" in
-            linux-x64) preset=linux-x64; dir=port/build/pc; host=Linux ;;
-            macos) preset=macos-arm64; dir=port/build/macos-arm64; host=Darwin ;;
-        esac
-        if [ "$(uname -s)" != "$host" ]; then
-            echo "The $1 build requires a $host host." >&2
+    linux-x64) ;;
+    macos)
+        # Mach-O cannot be built in the Linux container, so this one stays on
+        # the host.
+        if [ "$(uname -s)" != Darwin ]; then
+            echo "The macos build requires a Darwin host." >&2
             exit 1
         fi
-        if [ "${CLEAN:-0}" = 1 ]; then
-            echo "CLEAN=1: discarding $dir; everything in it is built again."
-            rm -rf "$dir"
-        fi
-        cmake --preset "$preset"
-        exec cmake --build --preset "$preset" --parallel "${JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)}"
+        exec scripts/build/port.sh macos-arm64 port/build/macos-arm64
         ;;
     -h|--help) usage; exit 0 ;;
     *)
@@ -60,15 +55,18 @@ esac
 
 . scripts/host/container.sh
 
-require_rom
-
 # The build itself, the same inside a container as through the one started
-# below. CLEAN discards the region's build directory -- and nothing else under
-# ps2/build/ -- under the lock every build of the tree takes (see
-# scripts/build/cmake.sh), so it cannot pull the directory out from under a
-# build objdiff started. The region's objdiff report supplies the coloured
-# progress summary after the link.
-BUILD='
+# below.
+if [ "${1-ps2}" = linux-x64 ]; then
+    BUILD='exec scripts/build/port.sh linux-x64 port/build/pc'
+else
+    # CLEAN discards the region's build directory -- and nothing else under
+    # ps2/build/ -- under the lock every build of the tree takes (see
+    # scripts/build/cmake.sh), so it cannot pull the directory out from under
+    # a build objdiff started. The region's objdiff report supplies the
+    # coloured progress summary after the link.
+    require_rom
+    BUILD='
     set -e
     export REGION="${REGION:-NTSC}"
     dir=ps2/build/$(printf %s "$REGION" | tr "[:upper:]" "[:lower:]")
@@ -79,6 +77,7 @@ BUILD='
     scripts/build/cmake.sh elf ctx objdiff
     python3 scripts/build/progress_report.py --region "$REGION"
 '
+fi
 
 if in_container; then
     exec sh -c "$BUILD"

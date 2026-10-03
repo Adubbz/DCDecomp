@@ -31,6 +31,7 @@
 #include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "gameutil.hpp"
+#include "gfx/gfx.hpp"
 #include "healeffect.hpp"
 #include "hit_machingun_effect.hpp"
 #include "hitmark.hpp"
@@ -61,6 +62,8 @@
 #include "userstatus.hpp"
 #include "weaponeffect.hpp"
 #include "weaponelement.hpp"
+
+#include "platform/config.hpp"
 
 // The dungeon's MainDraw and LoaderLoop, replaced to drop what the renderer has no use for: the VU1
 // program call each opens with and MainDraw's wait for GIF path idle before the frame grab, which
@@ -112,7 +115,41 @@ extern s32             rogoAlphaA[3];
 extern s32             rogoSwitch2;
 extern s32             rogoY3;
 
+// Draws the floor's monsters. CMonstorUnit::DrawMonstor draws the ones taking part; a dormant one
+// within video.detail_distance of the player is passed off as taking part for the length of the
+// call, so that its model draws and animates without the monster waking.
+static void DrawMonstorDetail() {
+    CMonstorUnit *unit = NowMonstorUnit;
+    float         detail = ConfigDetailDistance();
+    bool          dormant[16];
+
+    for (int i = 0; i < 16; i++) {
+        MONSTOR *monster = &unit->monster[i];
+        dormant[i] = monster->state == 1 && monster->revealed != 0 && monster->player_distance < detail;
+
+        if (dormant[i]) {
+            monster->state = 2;
+        }
+    }
+
+    unit->DrawMonstor();
+
+    for (int i = 0; i < 16; i++) {
+        if (dormant[i]) {
+            unit->monster[i].state = 1;
+        }
+    }
+}
+
 namespace {
+
+// Where the status panel's pieces go in a window wider or taller than the frame: life, weapon and
+// water (left of the quick items at 0x124) to the left edge, the floor plate (from 0x1FC) to the
+// right edge, the quick items between them stay centred; the panel to the top edge, the weapon's
+// portrait and gauge to the bottom edge.
+constexpr gfx::UiAnchor kStatusAnchor = {0x124, 0x1FC, 240.0f, 240.0f};
+// The mini map hangs under the floor plate.
+constexpr gfx::UiAnchor kMiniMapAnchor = gfx::UiAnchor::Side(1, -1);
 
 float CharaHeight(CUserStatus *status) {
     float chara_height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
@@ -224,7 +261,7 @@ void DunMainDraw() {
     }
 
     if (CMonUnitHyde == 0 && BtEventMode == 0) {
-        NowMonstorUnit->DrawMonstor();
+        DrawMonstorDetail();
     }
 
     if (CharaMainHandViewFlag != 0) {
@@ -513,6 +550,8 @@ void DunMainDraw() {
 
         TexManager.ReloadTexture(Vif1Packet, 2);
 
+        gfx::SetUiAnchor(kStatusAnchor);
+
         int gauge_alpha = rogoY3 + 0x60;
 
         if ((int) BtActStatus.action_gauge >= 100) {
@@ -536,6 +575,8 @@ void DunMainDraw() {
             sceVu0FVECTOR map_pos;
             sceVu0FVECTOR map_rot;
 
+            gfx::UiAnchorScope map_anchor(kMiniMapAnchor);
+
             TexManager.ReloadTexture(Vif1Packet, 0x1F);
             sceVu0CopyVector(map_pos, CharaFrame->position);
             CharaFrame->GetRotation(map_rot);
@@ -546,6 +587,7 @@ void DunMainDraw() {
 
         topStatusInfo(rogoY3, itemNowSel, UserStatus->cur_floor);
         BtStatusErrDraw(rogoY3);
+        gfx::SetUiAnchor({});
 
         for (i = 0; i < 32; i++) {
             HitValue[i].Draw();

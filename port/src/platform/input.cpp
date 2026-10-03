@@ -75,7 +75,6 @@ constexpr Action kActions[] = {
     {"rx",           ActionKind::Axis,     0,              kAxisRightX, 0,  "MouseX"},
     // Mouse up looks up: a negative ry lowers the follow camera (AddHeight(-GetRYf())).
     {"ry",           ActionKind::Axis,     0,              kAxisRightY, 0,  "-MouseY"},
-    {"debug_toggle", ActionKind::Host,     0,              kAxisLeftX,  0,  "Grave"},
     {"fps_toggle",   ActionKind::Host,     0,              kAxisLeftX,  0,  "F3"},
 };
 
@@ -103,11 +102,10 @@ const ButtonMap kGamepadButtons[] = {
 // clang-format on
 
 constexpr std::size_t kActionCount = std::size(kActions);
-constexpr std::size_t kFirstHostAction = kActionCount - 2;
+constexpr std::size_t kFirstHostAction = kActionCount - 1;
 constexpr std::size_t kHostActionCount = kActionCount - kFirstHostAction;
-static_assert(kActions[kFirstHostAction].name == "debug_toggle");
-static_assert(kActions[kFirstHostAction + 1].name == "fps_toggle");
-static_assert(static_cast<std::size_t>(InputHostAction::FpsToggle) == 1);
+static_assert(kActions[kFirstHostAction].name == "fps_toggle");
+static_assert(static_cast<std::size_t>(InputHostAction::FpsToggle) == 0);
 
 // AxisCalibration (ps2/src/gamepad.cpp): a byte within 49 above or 50 below the centre reads as
 // zero, and the remaining 78 steps each side span the game's +-128.

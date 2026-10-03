@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "gfx_fixture.hpp"
 
 using namespace dc::test;
@@ -38,17 +40,17 @@ gfx::Vertex3D Vertex(float x, float y, float z, float u = 0, float v = 0,
 
 } // namespace
 
-DC_TEST(gfx_mesh_lit_fog_alpha) {
+TEST(GfxMesh, LitFogAlpha) {
     GfxFixture                   fixture;
     std::array<gfx::Vertex3D, 3> triangle = {Vertex(-0.9f, -0.5f, 0.5f), Vertex(-0.1f, -0.5f, 0.5f),
                                              Vertex(-0.5f, 0.5f, 0.5f)};
     std::array<uint32_t, 3>      indices = {0, 1, 2};
     gfx::MeshHandle              mesh = gfx::CreateMesh(triangle, indices);
-    DC_CHECK(mesh != gfx::kNullMesh);
+    ASSERT_TRUE(mesh != gfx::kNullMesh);
 
     uint32_t           texels[2] = {Rgba(255, 0, 0), Rgba(0, 255, 0)};
     gfx::TextureHandle texture = gfx::CreateTexture({2, 1, gfx::TextureFormat::Rgba8, 1, true});
-    DC_CHECK(gfx::UpdateTexture(texture, 0, 0, 0, 2, 1, texels));
+    ASSERT_TRUE(gfx::UpdateTexture(texture, 0, 0, 0, 2, 1, texels));
 
     fixture.Frame(kBlack, [&] {
         // One white light along +z onto a normal facing -z, material (1, 0.5, 0.25): GS bytes
@@ -105,21 +107,21 @@ DC_TEST(gfx_mesh_lit_fog_alpha) {
         gfx::ReadDepth(0, 160, 200, 4, 4);
     });
 
-    DC_CHECK(fixture.PixelNear(160, 210, 191, 32, 16));
-    DC_CHECK(fixture.PixelNear(480, 210, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(160, 450, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(480, 450, 128, 128, 128));
-    DC_CHECK(fixture.PixelNear(300, 30, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(340, 30, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(160, 210, 191, 32, 16));
+    ASSERT_TRUE(fixture.PixelNear(480, 210, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(160, 450, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(480, 450, 128, 128, 128));
+    ASSERT_TRUE(fixture.PixelNear(300, 30, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(340, 30, 0, 255, 0));
     std::optional<float> depth = gfx::DepthResult(0);
-    DC_CHECK(depth.has_value());
-    DC_CHECK_NEAR(*depth, 0.5f, 1e-4f);
+    ASSERT_TRUE(depth.has_value());
+    ASSERT_NEAR(*depth, 0.5f, 1e-4f);
 
     gfx::DestroyMesh(mesh);
     gfx::DestroyTexture(texture);
 }
 
-DC_TEST(gfx_depth_test_and_readback) {
+TEST(GfxMesh, DepthTestAndReadback) {
     GfxFixture fixture(800, 600);
     fixture.Frame(kBlack, [&] {
         gfx::DrawState state;
@@ -151,22 +153,22 @@ DC_TEST(gfx_depth_test_and_readback) {
                                              static_cast<uint32_t>(y * 1.25f));
     };
     auto [rx, ry] = at(150, 150);
-    DC_CHECK(fixture.PixelNear(rx, ry, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(rx, ry, 255, 0, 0));
     auto [ox, oy] = at(220, 150);
-    DC_CHECK(fixture.PixelNear(ox, oy, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(ox, oy, 255, 0, 0));
     auto [gx, gy] = at(350, 150);
-    DC_CHECK(fixture.PixelNear(gx, gy, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(gx, gy, 0, 255, 0));
     auto [bx, by] = at(260, 150);
-    DC_CHECK(fixture.PixelNear(bx, by, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(bx, by, 0, 0, 255));
 
-    DC_CHECK_NEAR(gfx::DepthResult(0).value_or(-1.0f), 0.75f, 1e-6f);
-    DC_CHECK_NEAR(gfx::DepthResult(1).value_or(-1.0f), 0.25f, 1e-6f);
-    DC_CHECK_NEAR(gfx::DepthResult(2).value_or(-1.0f), 0.0f, 1e-6f);
-    DC_CHECK_NEAR(gfx::DepthResult(3).value_or(-1.0f), 0.25f, 1e-6f);
-    DC_CHECK(!gfx::DepthResult(4).has_value());
-    DC_CHECK(!gfx::DepthResult(5).has_value());
+    ASSERT_NEAR(gfx::DepthResult(0).value_or(-1.0f), 0.75f, 1e-6f);
+    ASSERT_NEAR(gfx::DepthResult(1).value_or(-1.0f), 0.25f, 1e-6f);
+    ASSERT_NEAR(gfx::DepthResult(2).value_or(-1.0f), 0.0f, 1e-6f);
+    ASSERT_NEAR(gfx::DepthResult(3).value_or(-1.0f), 0.25f, 1e-6f);
+    ASSERT_TRUE(!gfx::DepthResult(4).has_value());
+    ASSERT_TRUE(!gfx::DepthResult(5).has_value());
 
     // Results stay until asked again; a new frame with no query leaves them.
     fixture.Frame(kBlack, [] {});
-    DC_CHECK_NEAR(gfx::DepthResult(0).value_or(-1.0f), 0.75f, 1e-6f);
+    ASSERT_NEAR(gfx::DepthResult(0).value_or(-1.0f), 0.75f, 1e-6f);
 }

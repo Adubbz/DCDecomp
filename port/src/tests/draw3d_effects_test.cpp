@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 // SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
 #include <SDL3/SDL.h>
 
@@ -14,7 +16,7 @@ using namespace dc::test;
 // The water samples the frame copy where each vertex lands on the screen: a copy that is red on
 // its left half and blue on its right shows the split at the screen's centre column, whatever
 // the surface's own extent. The surface lies at y = 5 over depths 60..160, rows 265 to 307.
-DC_TEST(draw3d_water_samples_frame_copy_in_screen_space) {
+TEST(Draw3dEffects, WaterSamplesFrameCopyInScreenSpace) {
     Draw3DFixture fixture;
     SetDataBuffer(&WaterData, 4096);
     unsigned  key = PortRegisterNamedTarget("water", 640, SCREEN_HALF_HEIGHT, true, PortTextureOwner::Other);
@@ -45,16 +47,16 @@ DC_TEST(draw3d_water_samples_frame_copy_in_screen_space) {
         MGClearScreen(0, 0, 0, 0x80);
         DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(&water, &mgRenderInfo, GetVif1Packet(), nullptr);
     });
-    DC_CHECK(fixture.PixelNear(300, 285, 200, 0, 0, 4));
-    DC_CHECK(fixture.PixelNear(340, 285, 0, 0, 200, 4));
-    DC_CHECK(fixture.PixelNear(320, 250, 0, 0, 0));
-    DC_CHECK(mgRenderInfo.fog_enabled == 0);
+    ASSERT_TRUE(fixture.PixelNear(300, 285, 200, 0, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(340, 285, 0, 0, 200, 4));
+    ASSERT_TRUE(fixture.PixelNear(320, 250, 0, 0, 0));
+    ASSERT_TRUE(mgRenderInfo.fog_enabled == 0);
     PortReleaseKey(key);
 }
 
 // The cloth is rebuilt from its grid every draw and lit with its fixed material: ambient 0.3 of
 // the scene's full ambient, 0x26 in GS bytes, with no directional light.
-DC_TEST(draw3d_cloth_rebuilt_per_draw) {
+TEST(Draw3dEffects, ClothRebuiltPerDraw) {
     Draw3DFixture fixture;
     SetDataBuffer(&VisualData, 4096);
     static CCloth cloth(16, 16, 1.0f);
@@ -70,9 +72,9 @@ DC_TEST(draw3d_cloth_rebuilt_per_draw) {
     }
 
     fixture.Frame([&] { cloth.Draw(); });
-    DC_CHECK(fixture.PixelNear(320, 240, 38, 38, 38));
-    DC_CHECK(fixture.PixelNear(265, 185, 38, 38, 38));
-    DC_CHECK(fixture.PixelNear(250, 240, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(320, 240, 38, 38, 38));
+    ASSERT_TRUE(fixture.PixelNear(265, 185, 38, 38, 38));
+    ASSERT_TRUE(fixture.PixelNear(250, 240, 0, 0, 0));
 
     // Moved: the next draw follows the grid.
     for (int i = 0; i < 16; i++) {
@@ -81,6 +83,6 @@ DC_TEST(draw3d_cloth_rebuilt_per_draw) {
         }
     }
     fixture.Frame([&] { cloth.Draw(); });
-    DC_CHECK(fixture.PixelNear(320, 240, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(480, 240, 38, 38, 38));
+    ASSERT_TRUE(fixture.PixelNear(320, 240, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(480, 240, 38, 38, 38));
 }

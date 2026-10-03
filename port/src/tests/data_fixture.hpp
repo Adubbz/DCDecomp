@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 // Synthetic disc fixtures for the data tests: a DATA.DAT/DATA.HD2 pair laid out as the disc's,
 // packs in the game's 76-byte entry format, and a minimal ISO 9660 image holding the pair.
 

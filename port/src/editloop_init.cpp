@@ -433,7 +433,7 @@ int EditInit(void *param) {
     MainCamera.SetAngleSoon(yaw);
     MainCamera.SetFollow(start_position[0], 14.0f + start_position[1], start_position[2]);
     MainCamera.Step(-1);
-    EffectTable__3 = (CEffect *) EtcDataBuffer.Alloc(0x800);
+    EffectTable__3 = (CEffect *) EtcDataBuffer.Alloc(Quadwords<CEffect>(128));
     EdEffectGroup.Initialize(EffectTable__3, 128);
     EdEffectGroup.Clear();
     EdInitMesParam();

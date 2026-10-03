@@ -502,7 +502,6 @@ int EditInLoop() {
         EdIn_goto_return_menu = 1;
     }
 
-
     if (GameMode != 14) {
         if (!EdCheckViewMode()) {
             MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
@@ -1665,8 +1664,7 @@ static void LoadChara() {
  * @size 0x818
  */
 void LoadData() {
-    func_point = new ((u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16)) EPARTS_FUNC_DATA[128];
-    EdNPCBuffer.Alloc(0x600);
+    func_point = new ((u_long128 *) EdNPCBuffer.Alloc(0x600)) EPARTS_FUNC_DATA[128];
 
     for (int i = 0; i < 128; i++) {
         func_point[i].kind = 0;

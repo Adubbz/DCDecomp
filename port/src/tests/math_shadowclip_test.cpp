@@ -1,3 +1,4 @@
+#include <gtest/gtest.h>
 #include <libvu0.h>
 
 #include <cstddef>
@@ -6,7 +7,6 @@
 #include "../shadowclip.hpp"
 #include "mdt.hpp"
 #include "renderinfo.hpp"
-#include "test.hpp"
 
 namespace {
 
@@ -68,54 +68,54 @@ RenderInfo &BuildInfo(float near_z) {
 
 // Only triangles with face . light <= 0 come out, in shape order, with their corners' edge flags,
 // the model-space corners a, b, c, c and, clear of the near plane, a cap of five copies of a.
-DC_TEST(math_shadowclip_selects_and_copies) {
+TEST(MathShadowclip, SelectsAndCopies) {
     ShadowModel  &model = BuildModel();
     RenderInfo   &info = BuildInfo(1.0f);
     sceVu0FMATRIX matrix;
     sceVu0UnitMatrix(matrix);
 
     ShadowClipTriangle out[4];
-    DC_CHECK(ShadowClipBuild(out, 4, (unsigned int *) &model, &info, matrix, 0) == 2);
+    ASSERT_TRUE(ShadowClipBuild(out, 4, (unsigned int *) &model, &info, matrix, 0) == 2);
 
-    DC_CHECK(out[0].edges[0] == 1 && out[0].edges[1] == 0 && out[0].edges[2] == 1 && out[0].edges[3] == 0);
-    DC_CHECK(std::memcmp(out[0].local[0], model.vertex[0], 16) == 0);
-    DC_CHECK(std::memcmp(out[0].local[1], model.vertex[2], 16) == 0);
-    DC_CHECK(std::memcmp(out[0].local[2], model.vertex[1], 16) == 0);
-    DC_CHECK(std::memcmp(out[0].local[3], model.vertex[1], 16) == 0);
-    DC_CHECK(out[0].counts[0] == 0 && out[0].counts[1] == 0 && out[0].counts[2] == 0 && out[0].counts[3] == 1);
+    ASSERT_TRUE(out[0].edges[0] == 1 && out[0].edges[1] == 0 && out[0].edges[2] == 1 && out[0].edges[3] == 0);
+    ASSERT_TRUE(std::memcmp(out[0].local[0], model.vertex[0], 16) == 0);
+    ASSERT_TRUE(std::memcmp(out[0].local[1], model.vertex[2], 16) == 0);
+    ASSERT_TRUE(std::memcmp(out[0].local[2], model.vertex[1], 16) == 0);
+    ASSERT_TRUE(std::memcmp(out[0].local[3], model.vertex[1], 16) == 0);
+    ASSERT_TRUE(out[0].counts[0] == 0 && out[0].counts[1] == 0 && out[0].counts[2] == 0 && out[0].counts[3] == 1);
     for (int k = 0; k < 5; k++) {
-        DC_CHECK(std::memcmp(out[0].cap[k], model.vertex[0], 16) == 0);
+        ASSERT_TRUE(std::memcmp(out[0].cap[k], model.vertex[0], 16) == 0);
     }
 
-    DC_CHECK(out[1].edges[0] == 0 && out[1].edges[2] == 1);
-    DC_CHECK(std::memcmp(out[1].local[1], model.vertex[3], 16) == 0);
+    ASSERT_TRUE(out[1].edges[0] == 0 && out[1].edges[2] == 1);
+    ASSERT_TRUE(std::memcmp(out[1].local[1], model.vertex[3], 16) == 0);
 
-    DC_CHECK(ShadowClipBuild(out, 1, (unsigned int *) &model, &info, matrix, 0) == 2);
-    DC_CHECK(ShadowClipBuild(out, 4, nullptr, &info, matrix, 0) == 0);
+    ASSERT_TRUE(ShadowClipBuild(out, 1, (unsigned int *) &model, &info, matrix, 0) == 2);
+    ASSERT_TRUE(ShadowClipBuild(out, 4, nullptr, &info, matrix, 0) == 0);
 }
 
 // A triangle straddling the near plane (z 5 and 6 about 5.5) gives a four-point cap on the plane;
 // with an identity perspective the cap is in eye space. Pass 1 zeroes the counts and repeats the
 // last cap entry of pass 0.
-DC_TEST(math_shadowclip_near_cap) {
+TEST(MathShadowclip, NearCap) {
     ShadowModel  &model = BuildModel();
     RenderInfo   &info = BuildInfo(5.5f);
     sceVu0FMATRIX matrix;
     sceVu0UnitMatrix(matrix);
 
     ShadowClipTriangle first[2];
-    DC_CHECK(ShadowClipBuild(first, 2, (unsigned int *) &model, &info, matrix, 0) == 2);
-    DC_CHECK(first[0].counts[0] == 4 && first[0].counts[1] == 0 && first[0].counts[3] == 1);
+    ASSERT_TRUE(ShadowClipBuild(first, 2, (unsigned int *) &model, &info, matrix, 0) == 2);
+    ASSERT_TRUE(first[0].counts[0] == 4 && first[0].counts[1] == 0 && first[0].counts[3] == 1);
     for (int k = 0; k < 5; k++) {
-        DC_CHECK(first[0].cap[k][2] == 5.5f);
-        DC_CHECK(first[0].cap[k][3] == 1.0f);
+        ASSERT_TRUE(first[0].cap[k][2] == 5.5f);
+        ASSERT_TRUE(first[0].cap[k][3] == 1.0f);
     }
 
     ShadowClipTriangle second[2];
-    DC_CHECK(ShadowClipBuild(second, 2, (unsigned int *) &model, &info, matrix, 1) == 2);
-    DC_CHECK(second[0].counts[0] == 0 && second[0].counts[1] == 0 && second[0].counts[3] == 1);
+    ASSERT_TRUE(ShadowClipBuild(second, 2, (unsigned int *) &model, &info, matrix, 1) == 2);
+    ASSERT_TRUE(second[0].counts[0] == 0 && second[0].counts[1] == 0 && second[0].counts[3] == 1);
     for (int k = 0; k < 5; k++) {
-        DC_CHECK(std::memcmp(second[0].cap[k], first[0].cap[4], 16) == 0);
+        ASSERT_TRUE(std::memcmp(second[0].cap[k], first[0].cap[4], 16) == 0);
     }
-    DC_CHECK(std::memcmp(second[0].local, first[0].local, sizeof(first[0].local)) == 0);
+    ASSERT_TRUE(std::memcmp(second[0].local, first[0].local, sizeof(first[0].local)) == 0);
 }

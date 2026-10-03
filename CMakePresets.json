@@ -24,7 +24,7 @@
                 "rhs": "Linux"
             },
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++-20"
+                "CMAKE_CXX_COMPILER": "clang++"
             }
         },
         {

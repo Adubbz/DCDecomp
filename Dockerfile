@@ -28,13 +28,6 @@ RUN apt-get update \
         wget \
     && rm -rf /var/lib/apt/lists/* 
 
-
-# Install build requirements. clang, lld and llvm build the PC port
-# (port/CMakeLists.txt), against SDL3 for the window and input and Vulkan
-# for rendering. gdb is one of them too: scripts/build/statefix.py
-# drives the compiler under it to put back the state MWCC carries and never
-# resets, which the build compiles every unit through. It has to be the full
-# gdb rather than gdb-minimal -- statefix runs as a gdb Python script.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
@@ -42,12 +35,27 @@ RUN apt-get update \
         cmake \
         ninja-build \
         gdb \
-        clang \
-        lld \
-        llvm \
         libsdl3-dev \
         libvulkan-dev \
+        nlohmann-json3-dev \
+        glslang-tools \
     && rm -rf /var/lib/apt/lists/*
+
+# clang, lld and the LLVM binary tools build the PC port. They come from
+# apt.llvm.org rather than Debian, which stops at 19; the versioned packages
+# install under /usr/lib/llvm-<version>/bin, which goes on PATH so the build
+# finds them under their plain names.
+ARG LLVM_VERSION=23
+RUN wget -qO /etc/apt/trusted.gpg.d/apt.llvm.org.asc https://apt.llvm.org/llvm-snapshot.gpg.key \
+    && echo "deb http://apt.llvm.org/trixie/ llvm-toolchain-trixie-${LLVM_VERSION} main" \
+        > /etc/apt/sources.list.d/llvm.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        clang-${LLVM_VERSION} \
+        lld-${LLVM_VERSION} \
+        llvm-${LLVM_VERSION} \
+    && rm -rf /var/lib/apt/lists/*
+ENV PATH /usr/lib/llvm-${LLVM_VERSION}/bin:$PATH
 
 # The binutils built for PS2 decompilation projects. This is the assembler the
 # reference .s files go through and every objcopy/objdump/readelf/nm the build

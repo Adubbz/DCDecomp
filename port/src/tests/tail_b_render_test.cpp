@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 // SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
 #include <SDL3/SDL.h>
 #include <libgraph.h>
@@ -51,8 +53,8 @@ struct TailBFixture : Draw3DFixture {
 
     std::vector<uint8_t> Texels(CTexture *texture, uint32_t &width, uint32_t &height) {
         std::vector<uint8_t> texels;
-        DC_CHECK(texture != nullptr);
-        DC_CHECK(gfx::ReadbackTexture(PortTextureFromCTexture(texture).binding.texture, texels, width, height));
+        EXPECT_TRUE(texture != nullptr);
+        EXPECT_TRUE(gfx::ReadbackTexture(PortTextureFromCTexture(texture).binding.texture, texels, width, height));
         return texels;
     }
 };
@@ -68,7 +70,7 @@ unsigned Tbp(const CTexture *texture) { return static_cast<unsigned>(texture->te
 
 // TitleDraw's trail: the previous frame at alpha 35 through mgAlpha (Cs - Cd) * As + Cd, over the
 // whole logical frame, the bottom rows included.
-DC_TEST(tail_b_feedback_blends_previous_frame) {
+TEST(TailBRender, FeedbackBlendsPreviousFrame) {
     TailBFixture fixture;
     MGSetBGColor(200.0f, 0.0f, 0.0f, 128.0f);
     fixture.Frame([] {});
@@ -77,13 +79,13 @@ DC_TEST(tail_b_feedback_blends_previous_frame) {
 
     const int red = 200 * 35 / 128;
     const int blue = 200 - 200 * 35 / 128;
-    DC_CHECK(fixture.PixelNear(320, 240, red, 0, blue, 3));
-    DC_CHECK(fixture.PixelNear(10, 470, red, 0, blue, 3));
-    DC_CHECK(fixture.PixelNear(630, 5, red, 0, blue, 3));
+    ASSERT_TRUE(fixture.PixelNear(320, 240, red, 0, blue, 3));
+    ASSERT_TRUE(fixture.PixelNear(10, 470, red, 0, blue, 3));
+    ASSERT_TRUE(fixture.PixelNear(630, 5, red, 0, blue, 3));
 }
 
 // setTexScroll's two transfers with the seam at row 40: the plate shows the strip scrolled up 40 rows.
-DC_TEST(tail_b_scroll_moves_texture_rows) {
+TEST(TailBRender, ScrollMovesTextureRows) {
     TailBFixture fixture;
     Bytes        strip_texels;
     for (int y = 0; y < 128; y++) {
@@ -98,7 +100,7 @@ DC_TEST(tail_b_scroll_moves_texture_rows) {
     fixture.Enter(img);
     CTexture *plate = Named("cloud");
     CTexture *strip = Named("cloudan");
-    DC_CHECK(plate != nullptr && strip != nullptr);
+    ASSERT_TRUE(plate != nullptr && strip != nullptr);
 
     const int seam = 40;
     fixture.Frame([&] {
@@ -111,20 +113,20 @@ DC_TEST(tail_b_scroll_moves_texture_rows) {
     uint32_t             width = 0;
     uint32_t             height = 0;
     std::vector<uint8_t> texels = fixture.Texels(plate, width, height);
-    DC_CHECK(width == 128 && height == 128);
+    ASSERT_TRUE(width == 128 && height == 128);
     for (int y : {0, 1, 50, 87, 88, 100, 127}) {
         for (int x : {0, 63, 127}) {
             const uint8_t *texel = &texels[(static_cast<size_t>(y) * width + x) * 4];
-            DC_CHECK(texel[0] == (y + seam) % 128);
-            DC_CHECK(texel[1] == x);
-            DC_CHECK(texel[2] == 7);
+            ASSERT_TRUE(texel[0] == (y + seam) % 128);
+            ASSERT_TRUE(texel[1] == x);
+            ASSERT_TRUE(texel[2] == 7);
         }
     }
 }
 
 // op_d's face table, actor 3: eye frame 1 of c09a01an lands 78 rows down the plate, mouth frame 2
 // 20 rows down. Pause keeps the mouth where the script put it.
-DC_TEST(tail_b_face_change_copies_face_rects) {
+TEST(TailBRender, FaceChangeCopiesFaceRects) {
     TailBFixture fixture;
     Bytes        strip_texels(256 * 448, 0);
     auto         fill = [&](int x0, int y0, int w, int h, uint8_t index) {
@@ -152,16 +154,16 @@ DC_TEST(tail_b_face_change_copies_face_rects) {
     uint32_t             width = 0;
     uint32_t             height = 0;
     std::vector<uint8_t> texels = fixture.Texels(Named("c09a01"), width, height);
-    DC_CHECK(width == 128 && height == 128);
+    ASSERT_TRUE(width == 128 && height == 128);
     auto at = [&](int x, int y) { return texels[static_cast<size_t>(y) * width + x]; };
-    DC_CHECK(at(0, 78) == 7 && at(127, 117) == 7);
-    DC_CHECK(at(0, 77) == 1 && at(0, 118) == 1);
-    DC_CHECK(at(0, 20) == 9 && at(127, 54) == 9);
-    DC_CHECK(at(0, 19) == 1 && at(64, 55) == 1);
+    ASSERT_TRUE(at(0, 78) == 7 && at(127, 117) == 7);
+    ASSERT_TRUE(at(0, 77) == 1 && at(0, 118) == 1);
+    ASSERT_TRUE(at(0, 20) == 9 && at(127, 54) == 9);
+    ASSERT_TRUE(at(0, 19) == 1 && at(64, 55) == 1);
 }
 
 // The menu's backdrop: the frame as drawn so far lands in frame_image, once per request.
-DC_TEST(tail_b_save_frame_image_grabs_frame) {
+TEST(TailBRender, SaveFrameImageGrabsFrame) {
     TailBFixture     fixture;
     char             name[] = "#frame_image#640#480#4";
     char             end[] = "";
@@ -171,7 +173,7 @@ DC_TEST(tail_b_save_frame_image_grabs_frame) {
     };
     TexManager.LoadTextureBlock(-1, table, nullptr);
     CTexture *frame_image = Named("frame_image");
-    DC_CHECK(frame_image != nullptr);
+    ASSERT_TRUE(frame_image != nullptr);
 
     MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
     fixture.Frame([&] {
@@ -187,16 +189,20 @@ DC_TEST(tail_b_save_frame_image_grabs_frame) {
     uint32_t             width = 0;
     uint32_t             height = 0;
     std::vector<uint8_t> texels = fixture.Texels(frame_image, width, height);
-    DC_CHECK(width == 640 && height == 480);
-    for (auto [x, y] : {std::pair{0, 0}, std::pair{320, 240}, std::pair{639, 479}}) {
+    ASSERT_TRUE(width == 640 && height == 480);
+    for (auto [x, y] : {
+             std::pair{0,   0  },
+             std::pair{320, 240},
+             std::pair{639, 479}
+    }) {
         const uint8_t *texel = &texels[(static_cast<size_t>(y) * width + x) * 4];
-        DC_CHECK(texel[0] == 0 && texel[1] == 160 && texel[2] == 0);
+        ASSERT_TRUE(texel[0] == 0 && texel[1] == 160 && texel[2] == 0);
     }
 }
 
 // The free camera's reference box goes through DrawLine: a unit cube 50 units ahead, drawn in
 // (128, 64, 64) at alpha 80 over black (80, 40, 40), around the centre of the frame and nowhere else.
-DC_TEST(tail_b_debug_box_draws_lines) {
+TEST(TailBRender, DebugBoxDrawsLines) {
     TailBFixture  fixture;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FVECTOR reference = {0.0f, 0.0f, 50.0f, 1.0f};
@@ -215,7 +221,7 @@ DC_TEST(tail_b_debug_box_draws_lines) {
                 continue;
             }
             // Where two edges cross the colour is blended twice; it keeps the line's 2:1:1 hue.
-            DC_CHECK(pixel[1] == pixel[2] && std::abs(pixel[0] - 2 * pixel[1]) <= 3);
+            ASSERT_TRUE(pixel[1] == pixel[2] && std::abs(pixel[0] - 2 * pixel[1]) <= 3);
             bool near = x > 320 - 64 && x < 320 + 64 && y > 240 - 64 && y < 240 + 64;
             (near ? inside : outside)++;
             left = std::min(left, x);
@@ -224,9 +230,9 @@ DC_TEST(tail_b_debug_box_draws_lines) {
             bottom = std::max(bottom, y);
         }
     }
-    DC_CHECK(inside > 40);
-    DC_CHECK(outside == 0);
+    ASSERT_TRUE(inside > 40);
+    ASSERT_TRUE(outside == 0);
     // Square on screen: the field's half-height rows are doubled back into the logical frame.
-    DC_CHECK(right > left && std::abs(static_cast<int>(right - left) - static_cast<int>(bottom - top)) <= 2);
-    DC_CHECK(right - left >= 28 && right - left <= 36);
+    ASSERT_TRUE(right > left && std::abs(static_cast<int>(right - left) - static_cast<int>(bottom - top)) <= 2);
+    ASSERT_TRUE(right - left >= 28 && right - left <= 36);
 }

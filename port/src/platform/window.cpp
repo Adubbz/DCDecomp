@@ -37,7 +37,23 @@ void WindowInit(const WindowConfig &config) {
     if (config.fullscreen && !config.headless) {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
-    g_window = SDL_CreateWindow("Dark Cloud", config.width, config.height, flags);
+    int width = config.width;
+    int height = config.height;
+    if (width <= 0 || height <= 0) {
+        const SDL_DisplayMode *desktop =
+            config.headless ? nullptr : SDL_GetDesktopDisplayMode(SDL_GetPrimaryDisplay());
+        // A window cannot be given the whole monitor: the desktop keeps its panels. Fullscreen can.
+        if (width <= 0 && height <= 0 && desktop != nullptr) {
+            flags |= SDL_WINDOW_FULLSCREEN;
+        }
+        if (width <= 0) {
+            width = desktop != nullptr ? desktop->w : 1280;
+        }
+        if (height <= 0) {
+            height = desktop != nullptr ? desktop->h : 960;
+        }
+    }
+    g_window = SDL_CreateWindow("Dark Cloud", width, height, flags);
     if (g_window == nullptr) {
         Fatal("SDL_CreateWindow");
     }

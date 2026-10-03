@@ -66,7 +66,7 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
 `RendererConfig::layout` (`SetFrameLayout` outside a frame) is a `FrameLayout`: the aspect mode and
 `ui_scale`. The logical frame is centred in the window in both modes.
 
-- **`AspectMode::Fill`** (`[video] aspect = auto`). The window past the frame is the game's too:
+- **`AspectMode::Fill`** (`video.aspect` `auto`). The window past the frame is the game's too:
   - Meshes draw through the target's mapping, so the frame's 480 rows keep their place and a wider
     window shows more of the world at the sides at retail's vertical field of view (a narrower one
     keeps the frame's width and shows more above and below). `VisibleLogicalRect(target)` is the
@@ -88,6 +88,17 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
     are the main target's pixel width with their logical width laid over its logical frame, and
     rows at the main target's scale, so a grab of the frame keeps its sides. Other render targets
     keep their logical size at the render scale.
+- **`UiAnchor`** (`SetUiAnchor`, `UiAnchorScope`; the default anchors nothing). While one is set,
+  each `Draw2D` the UI mapping places on the main target is classified by the centre of its bounds
+  against the anchor's four limits and moved, whole and unscaled, by the pixels between the UI
+  frame's edge and the edge of what the target shows on each side it falls to: a piece 40 units
+  from the frame's left edge lands 40 units from the window's. `UiAnchor::Side` sends every draw
+  to one side or corner (an element made of many draws, the mini map); limits inside the frame
+  split a panel whose pieces belong to different corners. The side is chosen when the draw is
+  made and travels with it in a display list; the shift is taken at render time, so it follows
+  the window and `ui_scale` (a HUD scaled past the window is pulled back to its edges). An
+  anchored draw is never flanked by the full-frame rule and its scissor stays the frame's. With
+  `AspectMode::Letterbox` at `ui_scale` 1 the shift is zero.
 - **`AspectMode::Letterbox`** (`aspect = 4:3`). Nothing is carried past the frame and frame targets
   are ordinary render targets: the letterboxed output, byte for byte.
 - **`ui_scale`** (default 1) scales 2D that tests no depth, writes none and samples no image of the
@@ -255,7 +266,8 @@ renders one.
 - **Interpolation.** A mesh draw may carry a `MeshTransform` (projection, view, middle, model,
   local: `mvp` is their product) and is tagged with the current `InterpKey` (`SetInterpKey`). A
   display render at `alpha` < 1 with `options.previous` matches each tagged draw with the previous
-  list's draw of the same key and occurrence, and draws the model interpolated: translation lerped,
+  list's draw of the same key and occurrence (below for a key drawn at several places), and draws
+  the model interpolated: translation lerped,
   rotation slerped (from the Gram-Schmidt rotation of the 3x3), the remaining scale and shear lerped
   in that rotation's frame; `normal_matrix` turns with the rotation. Views are numbered by first
   appearance in a list and the n-th is interpolated with the previous list's n-th as a placed
@@ -270,8 +282,19 @@ renders one.
   many vertices as its predecessor, has them interpolated instead: positions lerped, normals lerped
   and normalised, unless one moved further than the teleport distance. The cloth asks for it: its
   vertices are the same grid points in world space, under an identity model, every tick. The shadow
-  volumes must not: they are rebuilt in each tick's eye space with the faces sorted by which way
-  they turn, so a vertex of one tick is not the same point as that vertex of the next.
+  volumes must not: they are rebuilt in each tick's eye space, so a vertex of one tick is not the
+  same point as that vertex of the next.
+- **Instanced keys.** A key drawn with more than one model in a tick is one object placed several
+  times (a town's parts and tiles share their frames), and culling changes which places are drawn,
+  so occurrences do not line up from tick to tick. Such a key, from the tick it is first seen so
+  until the next `CutInterpolation()`, matches by place instead: each draw with the previous draw
+  whose model is identical, and what is left with the nearest previous model that nothing stood
+  still at, no further than 25 units away. A place that comes into view therefore starts where it
+  is instead of sliding in from a neighbour's.
+- **Faces that depend on the view.** A display render replays a draw under a camera the tick did
+  not have, so anything the recorder decided from the tick's eye can be wrong in it. What turns
+  towards or away from the eye must be left to `DrawState::cull`: the shadow volumes are recorded
+  wound outwards and counted by a back-culled adding draw and a front-culled subtracting draw.
 
 ## Device
 

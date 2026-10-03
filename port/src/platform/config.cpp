@@ -1,14 +1,19 @@
 #include "config.hpp"
-#include "paths.hpp"
 
 #include <algorithm>
 #include <cctype>
-#include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
-#include <cstdlib>
+#include <format>
 #include <fstream>
+#include <limits>
 #include <sstream>
+#include <string>
+
+#include <nlohmann/json.hpp>
+
+#include "paths.hpp"
 
 namespace {
 
@@ -29,37 +34,35 @@ std::string Lower(std::string_view text) {
     return lower;
 }
 
+using Json = nlohmann::ordered_json;
+
 template <class T>
-bool ParseNumber(std::string_view text, T &out) {
-    T value{};
-    auto [end, error] = std::from_chars(text.data(), text.data() + text.size(), value);
-    if (error != std::errc{} || end != text.data() + text.size()) {
+bool ReadNumber(const Json &value, T &out) {
+    if (!value.is_number()) {
         return false;
     }
-    out = value;
+    out = value.get<T>();
     return true;
 }
 
-bool ParseBool(std::string_view text, bool &out) {
-    std::string value = Lower(text);
-    if (value == "1" || value == "true" || value == "on" || value == "yes") {
-        out = true;
-        return true;
+bool ReadBool(const Json &value, bool &out) {
+    if (!value.is_boolean()) {
+        return false;
     }
-    if (value == "0" || value == "false" || value == "off" || value == "no") {
-        out = false;
-        return true;
-    }
-    return false;
+    out = value.get<bool>();
+    return true;
 }
 
-bool ParsePresentMode(std::string_view text, ConfigPresentMode &out) {
-    std::string value = Lower(text);
-    if (value == "fifo") {
+bool ReadPresentMode(const Json &value, ConfigPresentMode &out) {
+    if (!value.is_string()) {
+        return false;
+    }
+    std::string mode = Lower(value.get<std::string>());
+    if (mode == "fifo") {
         out = ConfigPresentMode::Fifo;
-    } else if (value == "mailbox") {
+    } else if (mode == "mailbox") {
         out = ConfigPresentMode::Mailbox;
-    } else if (value == "immediate") {
+    } else if (mode == "immediate") {
         out = ConfigPresentMode::Immediate;
     } else {
         return false;
@@ -67,66 +70,116 @@ bool ParsePresentMode(std::string_view text, ConfigPresentMode &out) {
     return true;
 }
 
-std::vector<std::string> SplitList(std::string_view text) {
-    std::vector<std::string> items;
-    while (!text.empty()) {
-        std::size_t      comma = text.find(',');
-        std::string_view item = Trim(text.substr(0, comma));
-        if (!item.empty()) {
-            items.emplace_back(item);
-        }
-        if (comma == std::string_view::npos) {
-            break;
-        }
-        text.remove_prefix(comma + 1);
+const char *PresentModeName(ConfigPresentMode mode) {
+    switch (mode) {
+        case ConfigPresentMode::Mailbox:
+            return "mailbox";
+        case ConfigPresentMode::Immediate:
+            return "immediate";
+        default:
+            return "fifo";
     }
-    return items;
 }
 
-bool Apply(Config &config, std::string_view section, std::string_view key, std::string_view value) {
-    std::string name = Lower(section) + "." + Lower(key);
+// The double that prints as the float does: 0.1f as 0.1, not 0.10000000149011612.
+double Shortest(float value) {
+    return std::stod(std::format("{}", value));
+}
+
+bool ReadAspect(const Json &value, ConfigAspect &out) {
+    if (!value.is_string()) {
+        return false;
+    }
+    std::string aspect = Lower(value.get<std::string>());
+    if (aspect == "auto") {
+        out = ConfigAspect::Auto;
+    } else if (aspect == "4:3") {
+        out = ConfigAspect::FourThree;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool ReadList(const Json &value, std::vector<std::string> &out) {
+    std::vector<std::string> items;
+    if (value.is_string()) {
+        items.push_back(value.get<std::string>());
+    } else if (value.is_array()) {
+        for (const Json &item : value) {
+            if (!item.is_string()) {
+                return false;
+            }
+            items.push_back(item.get<std::string>());
+        }
+    } else {
+        return false;
+    }
+    out = std::move(items);
+    return true;
+}
+
+void Ignore(std::string_view name, const Json &value) {
+    std::fprintf(stderr, "config.json: ignoring %.*s = %s\n", static_cast<int>(name.size()), name.data(),
+                 value.dump().c_str());
+}
+
+bool ApplyBindings(Config &config, const Json &bindings) {
+    if (!bindings.is_object()) {
+        return false;
+    }
+    for (const auto &[action, keys] : bindings.items()) {
+        ConfigKeyBinding binding = {Lower(action), {}};
+        if (ReadList(keys, binding.keys)) {
+            config.key_bindings.push_back(std::move(binding));
+        } else {
+            Ignore("input.bindings." + action, keys);
+        }
+    }
+    return true;
+}
+
+bool Apply(Config &config, std::string_view name, const Json &value) {
     if (name == "input.mouse_sensitivity") {
         float sensitivity = 0.0f;
-        if (!ParseNumber(value, sensitivity) || !(sensitivity > 0.0f) || !std::isfinite(sensitivity)) {
+        if (!ReadNumber(value, sensitivity) || !(sensitivity > 0.0f) || !std::isfinite(sensitivity)) {
             return false;
         }
         config.mouse_sensitivity = sensitivity;
         return true;
     }
     if (name == "input.mouse_invert_y") {
-        return ParseBool(value, config.mouse_invert_y);
+        return ReadBool(value, config.mouse_invert_y);
     }
     if (name == "input.mouse_capture") {
-        return ParseBool(value, config.mouse_capture);
+        return ReadBool(value, config.mouse_capture);
     }
     if (name == "input.mouse_release") {
-        config.mouse_release_keys = SplitList(value);
-        return true;
+        return ReadList(value, config.mouse_release_keys);
     }
-    if (Lower(section) == "input") {
-        config.key_bindings.push_back({Lower(key), SplitList(value)});
-        return true;
+    if (name == "input.bindings") {
+        return ApplyBindings(config, value);
     }
     if (name == "game.tick_rate") {
         double rate = 0.0;
-        if (!ParseNumber(value, rate) || !(rate > 0.0) || !std::isfinite(rate)) {
+        if (!ReadNumber(value, rate) || !(rate > 0.0) || !std::isfinite(rate)) {
             return false;
         }
         config.tick_rate = rate;
         return true;
     }
     if (name == "game.debug_mode") {
-        return ParseBool(value, config.debug_mode);
+        return ReadBool(value, config.debug_mode);
     }
     if (name == "video.present_mode") {
-        return ParsePresentMode(value, config.present_mode);
+        return ReadPresentMode(value, config.present_mode);
     }
     if (name == "video.interpolation") {
-        return ParseBool(value, config.interpolation);
+        return ReadBool(value, config.interpolation);
     }
     if (name == "video.max_fps") {
         double fps = 0.0;
-        if (!ParseNumber(value, fps) || !(fps >= 0.0) || !std::isfinite(fps)) {
+        if (!ReadNumber(value, fps) || !(fps >= 0.0) || !std::isfinite(fps)) {
             return false;
         }
         config.max_fps = fps;
@@ -134,48 +187,56 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
     }
     if (name == "video.vsync") {
         bool vsync = true;
-        if (!ParseBool(value, vsync)) {
+        if (!ReadBool(value, vsync)) {
             return false;
         }
         config.present_mode = vsync ? ConfigPresentMode::Fifo : ConfigPresentMode::Immediate;
         return true;
     }
     if (name == "video.width" || name == "video.height") {
-        int size = 0;
-        if (!ParseNumber(value, size) || size <= 0) {
+        if (!value.is_number_integer() || value.get<std::int64_t>() < 0 ||
+            value.get<std::int64_t>() > std::numeric_limits<int>::max()) {
             return false;
         }
-        (name == "video.width" ? config.window_width : config.window_height) = size;
+        (name == "video.width" ? config.window_width : config.window_height) = value.get<int>();
         return true;
     }
     if (name == "video.fullscreen") {
-        return ParseBool(value, config.fullscreen);
+        return ReadBool(value, config.fullscreen);
     }
     if (name == "video.aspect") {
-        std::string aspect = Lower(value);
-        if (aspect == "auto") {
-            config.aspect = ConfigAspect::Auto;
-        } else if (aspect == "4:3") {
-            config.aspect = ConfigAspect::FourThree;
-        } else {
-            return false;
-        }
-        return true;
+        return ReadAspect(value, config.aspect);
     }
     if (name == "video.ui_scale") {
         float scale = 0.0f;
-        if (!ParseNumber(value, scale) || !(scale >= 0.25f && scale <= 4.0f)) {
+        if (!ReadNumber(value, scale) || !(scale >= 0.25f && scale <= 4.0f)) {
             return false;
         }
         config.ui_scale = scale;
         return true;
     }
     if (name == "video.show_fps") {
-        return ParseBool(value, config.show_fps);
+        return ReadBool(value, config.show_fps);
+    }
+    if (name == "video.detail_distance") {
+        float distance = 0.0f;
+        if (!ReadNumber(value, distance) || !(distance >= 0.0f) || !std::isfinite(distance)) {
+            return false;
+        }
+        config.detail_distance = distance;
+        return true;
+    }
+    if (name == "video.shadow_distance") {
+        float distance = 0.0f;
+        if (!ReadNumber(value, distance) || !(distance >= 0.0f) || !std::isfinite(distance)) {
+            return false;
+        }
+        config.shadow_distance = distance;
+        return true;
     }
     if (name == "audio.master_volume") {
         float volume = 0.0f;
-        if (!ParseNumber(value, volume) || !std::isfinite(volume)) {
+        if (!ReadNumber(value, volume) || !std::isfinite(volume)) {
             return false;
         }
         config.master_volume = std::clamp(volume, 0.0f, 1.0f);
@@ -190,45 +251,99 @@ const Config &ConfigGet() {
     return g_config;
 }
 
+float ConfigDetailDistance() {
+    float distance = g_config.detail_distance;
+    return distance > 0.0f ? distance : std::numeric_limits<float>::infinity();
+}
+
+float ConfigShadowDistance() {
+    float distance = g_config.shadow_distance;
+    return distance > 0.0f ? distance : std::numeric_limits<float>::infinity();
+}
+
 Config ConfigParse(std::string_view text) {
-    Config      config;
-    std::string section;
-    int         line_no = 0;
-    while (!text.empty()) {
-        std::size_t      end = text.find('\n');
-        std::string_view line = Trim(text.substr(0, end));
-        text.remove_prefix(end == std::string_view::npos ? text.size() : end + 1);
-        ++line_no;
-        if (line.empty() || line[0] == ';' || line[0] == '#') {
+    Config config;
+    if (Trim(text).empty()) {
+        return config;
+    }
+    Json root = Json::parse(text, nullptr, false, true);
+    if (!root.is_object()) {
+        std::fprintf(stderr, "config.json: %s; using the defaults\n",
+                     root.is_discarded() ? "not valid JSON" : "expected an object");
+        return config;
+    }
+    for (const auto &[section, keys] : root.items()) {
+        if (!keys.is_object()) {
+            Ignore(section, keys);
             continue;
         }
-        if (line.front() == '[' && line.back() == ']') {
-            section = Trim(line.substr(1, line.size() - 2));
-            continue;
-        }
-        std::size_t equals = line.find('=');
-        if (equals == std::string_view::npos) {
-            std::fprintf(stderr, "config.ini:%d: expected key = value\n", line_no);
-            continue;
-        }
-        std::string_view key = Trim(line.substr(0, equals));
-        std::string_view value = Trim(line.substr(equals + 1));
-        if (!Apply(config, section, key, value)) {
-            std::fprintf(stderr, "config.ini:%d: ignoring [%s] %.*s = %.*s\n", line_no, section.c_str(),
-                         static_cast<int>(key.size()), key.data(), static_cast<int>(value.size()), value.data());
+        for (const auto &[key, value] : keys.items()) {
+            std::string name = section + "." + key;
+            if (!Apply(config, name, value)) {
+                Ignore(name, value);
+            }
         }
     }
     return config;
 }
 
+std::string ConfigSerialize(const Config &config) {
+    Json bindings = Json::object();
+    for (const ConfigKeyBinding &binding : config.key_bindings) {
+        bindings[binding.action] = binding.keys;
+    }
+    Json root;
+    root["game"]["tick_rate"] = config.tick_rate;
+    root["game"]["debug_mode"] = config.debug_mode;
+    root["video"]["present_mode"] = PresentModeName(config.present_mode);
+    root["video"]["interpolation"] = config.interpolation;
+    root["video"]["max_fps"] = config.max_fps;
+    root["video"]["width"] = config.window_width;
+    root["video"]["height"] = config.window_height;
+    root["video"]["fullscreen"] = config.fullscreen;
+    root["video"]["aspect"] = config.aspect == ConfigAspect::FourThree ? "4:3" : "auto";
+    root["video"]["ui_scale"] = Shortest(config.ui_scale);
+    root["video"]["show_fps"] = config.show_fps;
+    root["video"]["detail_distance"] = Shortest(config.detail_distance);
+    root["video"]["shadow_distance"] = Shortest(config.shadow_distance);
+    root["audio"]["master_volume"] = Shortest(config.master_volume);
+    root["input"]["mouse_sensitivity"] = Shortest(config.mouse_sensitivity);
+    root["input"]["mouse_invert_y"] = config.mouse_invert_y;
+    root["input"]["mouse_capture"] = config.mouse_capture;
+    root["input"]["mouse_release"] = config.mouse_release_keys;
+    root["input"]["bindings"] = std::move(bindings);
+    return root.dump(4) + "\n";
+}
+
+bool ConfigSave() {
+    std::filesystem::path path = PathsSaveRoot() / "config.json";
+    std::error_code       error;
+    std::filesystem::create_directories(path.parent_path(), error);
+    std::ofstream file(path, std::ios::binary | std::ios::trunc);
+    file << ConfigSerialize(g_config);
+    file.flush();
+    if (!file) {
+        std::fprintf(stderr, "config: could not save %s\n", path.string().c_str());
+        return false;
+    }
+    std::fprintf(stderr, "config: saved %s\n", path.string().c_str());
+    return true;
+}
+
 bool ConfigLoad() {
-    std::ifstream file(PathsSaveRoot() / "config.ini", std::ios::binary);
+    std::filesystem::path path = PathsSaveRoot() / "config.json";
+    std::ifstream         file(path, std::ios::binary);
     if (!file) {
         g_config = Config{};
+        if (std::filesystem::exists(PathsSaveRoot() / "config.ini")) {
+            std::fprintf(stderr, "config.ini is no longer read: move its settings to config.json (docs/PC.md)\n");
+        }
+        ConfigSave();
         return false;
     }
     std::ostringstream text;
     text << file.rdbuf();
     g_config = ConfigParse(text.str());
+    std::fprintf(stderr, "config: loaded %s\n", path.string().c_str());
     return true;
 }

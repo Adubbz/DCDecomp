@@ -78,6 +78,18 @@ modules:
         url: https://github.com/libsdl-org/SDL/releases/download/release-3.2.24/SDL3-3.2.24.tar.gz
         sha256: 81cc0fc17e5bf2c1754eeca9af9c47a76789ac5efdd165b3b91cbbe4b90bfb76
 
+  # Header only, for the build alone: the network is off while chronicle configures.
+  - name: nlohmann-json
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DJSON_BuildTests=OFF
+    cleanup:
+      - '*'
+    sources:
+      - type: archive
+        url: https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+        sha256: 42f6e95cad6ec532fd372391373363b62a14af6d771056dbfc86160e6dfff7aa
+
   - name: chronicle
     buildsystem: cmake-ninja
     builddir: true
@@ -101,6 +113,7 @@ modules:
       - -DCMAKE_PREFIX_PATH=/app
       - -DCMAKE_CXX_COMPILER=/usr/lib/sdk/llvm20/bin/clang++
       - -DGLSLANG_VALIDATOR=/app/bin/glslangValidator
+      - -DDC_BUILD_TESTS=OFF
     # post-install runs in the build directory, not the source.
     post-install:
       - install -Dm644 -t ${FLATPAK_DEST}/share/applications ${FLATPAK_BUILDER_BUILDDIR}/port/flatpak/${FLATPAK_ID}.desktop

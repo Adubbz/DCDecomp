@@ -15,11 +15,18 @@ namespace detail {
 
 using Mat4 = std::array<float, 16>;
 
+// The visible edges a UI draw keeps its distance to: -1 the low edge, 1 the high edge, 0 neither.
+struct UiSide {
+    int8_t x = 0;
+    int8_t y = 0;
+};
+
 struct Draw2DEntry {
     Primitive             primitive;
     std::vector<Vertex2D> vertices;
     TextureBinding        binding;
     DrawState             state;
+    UiSide                side;
 };
 
 // One record of DisplayList::meshes per entry.
@@ -129,6 +136,11 @@ struct DisplayList {
 };
 
 namespace detail {
+
+// draw.cpp
+// Draw2D with the sides its anchor chose.
+void Draw2DSided(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &binding,
+                 const DrawState &state, UiSide side);
 
 // displaylist.cpp
 void RecordEntry(Entry &&entry);

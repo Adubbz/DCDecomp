@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 // SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
 #include <SDL3/SDL.h>
 
@@ -61,32 +63,32 @@ struct PresentScope {
 
 // MGBeginFrame records the tick and MGEndFrame renders and presents it: headless, each tick shows
 // its canonical image, where the model is.
-DC_TEST(decouple_game_tick_records_and_presents) {
+TEST(DecoupleGame, TickRecordsAndPresents) {
     Draw3DFixture fixture;
     Model         model;
     MGBeginFrame();
-    DC_CHECK(gfx::Recording() && gfx::InFrame());
+    ASSERT_TRUE(gfx::Recording() && gfx::InFrame());
     MGDraw(&model.frame);
     MGEndFrame();
-    DC_CHECK(!gfx::Recording() && !gfx::InFrame());
-    DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-    DC_CHECK(LitAt(fixture, 320));
+    ASSERT_TRUE(!gfx::Recording() && !gfx::InFrame());
+    ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+    ASSERT_TRUE(LitAt(fixture, 320));
     GamePresentStats stats = GamePresentStatistics();
-    DC_CHECK(stats.ticks == 1 && stats.mesh_draws == 1 && stats.keyed_mesh_draws == 1);
+    ASSERT_TRUE(stats.ticks == 1 && stats.mesh_draws == 1 && stats.keyed_mesh_draws == 1);
 }
 
 // A frame drawn at x -20 then +20 shows halfway in a display frame at alpha 0.5; the first tick
 // after a cut (a mode's first) does not interpolate.
-DC_TEST(decouple_game_frame_interpolates) {
+TEST(DecoupleGame, FrameInterpolates) {
     Draw3DFixture fixture;
     Model         model;
     model.Tick(-20.0f);
     model.Tick(20.0f);
-    DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-    DC_CHECK(LitAt(fixture, 480));
-    DC_CHECK(GamePresentBetweenTicks(0.5, Later()));
-    DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-    DC_CHECK(LitAt(fixture, 320));
+    ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+    ASSERT_TRUE(LitAt(fixture, 480));
+    ASSERT_TRUE(GamePresentBetweenTicks(0.5, Later()));
+    ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+    ASSERT_TRUE(LitAt(fixture, 320));
 
     // A camera that moves the other way cancels the model's motion on screen.
     sceVu0FMATRIX view;
@@ -95,17 +97,17 @@ DC_TEST(decouple_game_frame_interpolates) {
     sceVu0FVECTOR eye = {20.0f, 0.0f, 0.0f, 0.0f};
     MGSetViewMatrix(view, eye);
     model.Tick(40.0f);
-    DC_CHECK(GamePresentBetweenTicks(0.5, Later()));
-    DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-    DC_CHECK(LitAt(fixture, 480));
+    ASSERT_TRUE(GamePresentBetweenTicks(0.5, Later()));
+    ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+    ASSERT_TRUE(LitAt(fixture, 480));
 
     // After a cut the tick is shown as it is.
     model.Tick(-20.0f);
     MGPortCutInterpolation();
     model.Tick(20.0f);
-    DC_CHECK(GamePresentBetweenTicks(0.5, Later()));
-    DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-    DC_CHECK(LitAt(fixture, 320));
+    ASSERT_TRUE(GamePresentBetweenTicks(0.5, Later()));
+    ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+    ASSERT_TRUE(LitAt(fixture, 320));
 
     // So is a jump past the teleport distance, here 900 units further away, where a unit is 0.8
     // pixels: -250 to 250 would pass 320 halfway.
@@ -115,14 +117,14 @@ DC_TEST(decouple_game_frame_interpolates) {
     model.Tick(-250.0f, 900.0f);
     model.Tick(-250.0f, 900.0f);
     model.Tick(250.0f, 900.0f);
-    DC_CHECK(GamePresentBetweenTicks(0.5, Later()));
-    DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-    DC_CHECK(fixture.PixelNear(520, 240, 0x80, 0x80, 0x80) && fixture.PixelNear(320, 240, 0, 0, 0));
+    ASSERT_TRUE(GamePresentBetweenTicks(0.5, Later()));
+    ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+    ASSERT_TRUE(fixture.PixelNear(520, 240, 0x80, 0x80, 0x80) && fixture.PixelNear(320, 240, 0, 0, 0));
 }
 
 // The previous-frame trail drawn through the game's ticks is byte for byte the same whether each
 // tick is displayed once or four times between canonical renders.
-DC_TEST(decouple_game_display_rate_keeps_feedback) {
+TEST(DecoupleGame, DisplayRateKeepsFeedback) {
     Draw3DFixture fixture;
     Model         model;
     auto          run = [&](int displays) {
@@ -143,20 +145,20 @@ DC_TEST(decouple_game_display_rate_keeps_feedback) {
             MGEndFrame();
         }
         std::vector<uint8_t> pixels;
-        DC_CHECK(gfx::ReadbackFrame(pixels, fixture.width, fixture.height));
+        EXPECT_TRUE(gfx::ReadbackFrame(pixels, fixture.width, fixture.height));
         return pixels;
     };
     uint64_t             before = GamePresentStatistics().display_frames;
     std::vector<uint8_t> once = run(0);
-    DC_CHECK(GamePresentStatistics().display_frames == before);
+    ASSERT_TRUE(GamePresentStatistics().display_frames == before);
     std::vector<uint8_t> many = run(4);
-    DC_CHECK(GamePresentStatistics().display_frames == before + 24);
-    DC_CHECK(once == many);
+    ASSERT_TRUE(GamePresentStatistics().display_frames == before + 24);
+    ASSERT_TRUE(once == many);
 }
 
 // With a real clock the wait between ticks presents display frames; with interpolation off it
 // presents each canonical image once, as the PS2 did.
-DC_TEST(decouple_game_presents_between_ticks) {
+TEST(DecoupleGame, PresentsBetweenTicks) {
     Draw3DFixture fixture;
     Model         model;
     ClockSetUnbounded(false);
@@ -166,9 +168,9 @@ DC_TEST(decouple_game_presents_between_ticks) {
         uint64_t     before = GamePresentStatistics().display_frames;
         model.Tick(-20.0f);
         model.Tick(20.0f);
-        DC_CHECK(GamePresentStatistics().display_frames == before);
-        DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
-        DC_CHECK(LitAt(fixture, 480));
+        ASSERT_TRUE(GamePresentStatistics().display_frames == before);
+        ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+        ASSERT_TRUE(LitAt(fixture, 480));
     }
     {
         PresentScope present({.max_fps = 1000.0});
@@ -176,8 +178,8 @@ DC_TEST(decouple_game_presents_between_ticks) {
         int          start = MGGetVSyncCount();
         model.Tick(-20.0f);
         model.Tick(20.0f);
-        DC_CHECK(MGGetVSyncCount() >= start + 2);
-        DC_CHECK(GamePresentStatistics().display_frames > before);
+        ASSERT_TRUE(MGGetVSyncCount() >= start + 2);
+        ASSERT_TRUE(GamePresentStatistics().display_frames > before);
     }
     ClockSetTickRate(50.0);
     ClockSetUnbounded(true);
@@ -185,7 +187,7 @@ DC_TEST(decouple_game_presents_between_ticks) {
 
 // ClockWaitNextTick runs its hook with the tick's elapsed fraction until the hook is done or the
 // next tick is due, and not at all when unbounded.
-DC_TEST(decouple_clock_wait_hook) {
+TEST(DecoupleGame, ClockWaitHook) {
     static std::vector<double> fractions;
     static int                 stop_after = 0;
     auto                       hook = [](double fraction, std::chrono::steady_clock::time_point) {
@@ -199,30 +201,30 @@ DC_TEST(decouple_clock_wait_hook) {
     stop_after = 3;
     ClockWaitNextTick(hook);
     ClockPump();
-    DC_CHECK(ClockTickCount() >= start + 1);
-    DC_CHECK(fractions.size() == 3);
+    ASSERT_TRUE(ClockTickCount() >= start + 1);
+    ASSERT_TRUE(fractions.size() == 3);
     for (size_t i = 0; i < fractions.size(); i++) {
-        DC_CHECK(fractions[i] >= 0.0 && fractions[i] < 1.0);
-        DC_CHECK(i == 0 || fractions[i] >= fractions[i - 1]);
+        ASSERT_TRUE(fractions[i] >= 0.0 && fractions[i] < 1.0);
+        ASSERT_TRUE(i == 0 || fractions[i] >= fractions[i - 1]);
     }
     fractions.clear();
     stop_after = 1 << 30;
     ClockWaitNextTick(hook);
-    DC_CHECK(!fractions.empty() && fractions.back() < 1.0);
+    ASSERT_TRUE(!fractions.empty() && fractions.back() < 1.0);
     ClockSetUnbounded(true);
     fractions.clear();
     ClockWaitNextTick(hook);
-    DC_CHECK(fractions.empty());
-    DC_CHECK(ClockTickFraction() == 1.0);
+    ASSERT_TRUE(fractions.empty());
+    ASSERT_TRUE(ClockTickFraction() == 1.0);
     ClockSetUnbounded(false);
     ClockSetTickRate(50.0);
 }
 
-DC_TEST(decouple_config_video_keys) {
-    Config config = ConfigParse("[video]\ninterpolation = off\nmax_fps = 144\npresent_mode = immediate\n");
-    DC_CHECK(!config.interpolation);
-    DC_CHECK(config.max_fps == 144.0);
-    DC_CHECK(config.present_mode == ConfigPresentMode::Immediate);
-    Config defaults = ConfigParse("[video]\nmax_fps = -1\ninterpolation = sometimes\n");
-    DC_CHECK(defaults.interpolation && defaults.max_fps == 0.0);
+TEST(DecoupleGame, ConfigVideoKeys) {
+    Config config = ConfigParse(R"({"video": {"interpolation": false, "max_fps": 144, "present_mode": "immediate"}})");
+    ASSERT_TRUE(!config.interpolation);
+    ASSERT_TRUE(config.max_fps == 144.0);
+    ASSERT_TRUE(config.present_mode == ConfigPresentMode::Immediate);
+    Config defaults = ConfigParse(R"({"video": {"max_fps": -1, "interpolation": "sometimes"}})");
+    ASSERT_TRUE(defaults.interpolation && defaults.max_fps == 0.0);
 }

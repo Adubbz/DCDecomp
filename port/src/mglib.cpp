@@ -1063,18 +1063,26 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
     MGPortCurrent().texa.TA0 = 128;
 }
 
-// Retail weaves the two fields line by line into a full-height image; one blit of the frame does.
-void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int direction) {
+static void MoveFrameImage(gfx::TextureHandle frame, sceGsTex0 *dst) {
     PortTextureRef ref = Draw3DResolveTex0(*reinterpret_cast<u_long *>(dst));
     if (!ref.valid || ref.binding.texture == gfx::kNullTexture || ref.binding.texture == gfx::kMainTarget ||
         ref.binding.texture == gfx::kPreviousFrame) {
         return;
     }
-    gfx::BlitTexture(gfx::kMainTarget, {0, 0, 640, SCREEN_HEIGHT}, ref.binding.texture, {0, 0, 640, SCREEN_HEIGHT},
+    gfx::BlitTexture(frame, {0, 0, 640, SCREEN_HEIGHT}, ref.binding.texture, {0, 0, 640, SCREEN_HEIGHT},
                      gfx::Filter::Nearest);
+}
+
+// Retail weaves the two fields line by line into a full-height image; one blit of the frame does.
+void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int direction) {
+    MoveFrameImage(gfx::kMainTarget, dst);
     (void) x;
     (void) y;
     (void) direction;
+}
+
+void MGPortMovePreviousFrameImage(sceGsTex0 *dst) {
+    MoveFrameImage(gfx::kPreviousFrame, dst);
 }
 
 void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {

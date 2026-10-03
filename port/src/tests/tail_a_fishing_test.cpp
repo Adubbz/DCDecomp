@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "fishing.hpp"
 #include "tail_a_fixture.hpp"
 
@@ -37,25 +39,25 @@ bool LineAt(const Draw3DFixture &fixture, uint32_t x) {
 
 } // namespace
 
-DC_TEST(tail_a_fish_line_joins_projected_points) {
+TEST(TailAFishing, FishLineJoinsProjectedPoints) {
     Draw3DFixture fixture;
     TwoPointLine();
 
     fixture.Frame([] { FishLineDraw(1); });
-    DC_CHECK(LineAt(fixture, 170));
-    DC_CHECK(LineAt(fixture, 320));
-    DC_CHECK(LineAt(fixture, 470));
-    DC_CHECK(!LineAt(fixture, 150));
-    DC_CHECK(!LineAt(fixture, 490));
-    DC_CHECK(fixture.PixelNear(320, 200, 0, 0, 0));
-    DC_CHECK(MGPortCurrent().test.value == mgPixelTest.value);
+    ASSERT_TRUE(LineAt(fixture, 170));
+    ASSERT_TRUE(LineAt(fixture, 320));
+    ASSERT_TRUE(LineAt(fixture, 470));
+    ASSERT_TRUE(!LineAt(fixture, 150));
+    ASSERT_TRUE(!LineAt(fixture, 490));
+    ASSERT_TRUE(fixture.PixelNear(320, 200, 0, 0, 0));
+    ASSERT_TRUE(MGPortCurrent().test.value == mgPixelTest.value);
 }
 
 // Drawing the underwater part: every point is above the water, so nothing is kicked.
-DC_TEST(tail_a_fish_line_underwater_pass_skips_points_above) {
+TEST(TailAFishing, FishLineUnderwaterPassSkipsPointsAbove) {
     Draw3DFixture fixture;
     TwoPointLine();
 
     fixture.Frame([] { FishLineDraw(0); });
-    DC_CHECK(!LineAt(fixture, 320));
+    ASSERT_TRUE(!LineAt(fixture, 320));
 }

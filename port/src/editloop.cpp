@@ -36,6 +36,7 @@
 #include "framevu1.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
+#include "gfx/gfx.hpp"
 #include "mainselect.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
@@ -1533,3 +1534,41 @@ static void EditMainDraw() {
     }
 }
 
+
+// Retail's EdDrawClock, kept in the window's top right corner.
+void EdDrawClock(int x, int y) {
+    if (draw_clock != 0 && EditMapInfo->time_stop == 0) {
+        gfx::UiAnchorScope anchor(gfx::UiAnchor::Side(1, -1));
+
+        TexManager.ReloadTexture(Vif1Packet, 20);
+        setbilinear(0);
+
+        CRect_i_ clock_screen;
+        CRect_i_ clock_texel;
+        clock_texel.x = 0;
+        clock_texel.y = 0;
+        clock_texel.width = 88;
+        clock_texel.height = 80;
+        clock_screen.x = x + 520;
+        clock_screen.y = y + 14;
+        clock_screen.width = 88;
+        clock_screen.height = 80;
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("dayclock", -1), clock_screen, clock_texel, 128);
+
+        float scale = 2.0f * (NowTime / 12.0f);
+        float pi = PI_SHORT;
+        float angle = pi * scale;
+        angle = SIXTH_PI_SHORT + (pi - angle);
+        CRect_i_ hand_screen;
+        CRect_i_ hand_texel;
+        hand_texel.x = 88;
+        hand_texel.y = 0;
+        hand_texel.width = 22;
+        hand_texel.height = 40;
+        hand_screen.x = x + 564;
+        hand_screen.y = y + 54;
+        hand_screen.width = 22;
+        hand_screen.height = 40;
+        set2DSpriteRot(GetVif1Packet(), TexManager.GetTexture("dayclock", -1), hand_screen, hand_texel, 12, 40, angle, 128);
+    }
+}

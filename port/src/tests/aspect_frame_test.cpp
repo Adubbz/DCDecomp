@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <array>
 #include <cstdint>
 #include <cstring>
@@ -5,7 +7,6 @@
 
 #include "../platform/config.hpp"
 #include "gfx_fixture.hpp"
-#include "test.hpp"
 
 // 2D at window aspects other than 4:3: the HUD anchored in the logical 640x480 frame centred in the
 // window, ui_scale about the window's centre, full-frame 2D (fades, previous-frame feedback, frame
@@ -71,7 +72,7 @@ Placed FindHud(const GfxFixture &fixture) {
 // At one height the HUD keeps its pixels relative to the window's centre at 4:3, 16:9 and 21:9: the
 // frame is centred and its scale is the height's. The clear of the frame reaches every window edge.
 // Portrait windows take the scale of their width and centre the frame vertically.
-DC_TEST(aspect_hud_pixels_fixed_across_aspects) {
+TEST(AspectFrame, HudPixelsFixedAcrossAspects) {
     struct Size {
         int width;
         int height;
@@ -88,41 +89,41 @@ DC_TEST(aspect_hud_pixels_fixed_across_aspects) {
         Placed placed = FindHud(fixture);
         int    centre = size.width / 2;
         int    offset = (size.width - 640) / 2;
-        DC_CHECK(placed.left == offset + 40 && placed.right == offset + 103);
-        DC_CHECK(placed.top == 40 && placed.bottom == 71);
-        DC_CHECK(placed.left - centre == -280 && placed.right - centre == -217);
-        DC_CHECK(Near(fixture, 0, 0, kSky));
-        DC_CHECK(Near(fixture, size.width - 1, size.height - 1, kSky));
+        ASSERT_TRUE(placed.left == offset + 40 && placed.right == offset + 103);
+        ASSERT_TRUE(placed.top == 40 && placed.bottom == 71);
+        ASSERT_TRUE(placed.left - centre == -280 && placed.right - centre == -217);
+        ASSERT_TRUE(Near(fixture, 0, 0, kSky));
+        ASSERT_TRUE(Near(fixture, size.width - 1, size.height - 1, kSky));
     }
     {
         GfxFixture fixture(480, 854);
         fixture.Frame({0, 0, 0, 0x80}, HudScene);
         Placed placed = FindHud(fixture);
         // 0.75 pixels a logical unit, the frame at y 247.
-        DC_CHECK(placed.left == 30 && placed.right == 77);
-        DC_CHECK(placed.top == 247 + 30 && placed.bottom == 247 + 53);
-        DC_CHECK(Near(fixture, 0, 0, kSky));
-        DC_CHECK(Near(fixture, 479, 853, kSky));
+        ASSERT_TRUE(placed.left == 30 && placed.right == 77);
+        ASSERT_TRUE(placed.top == 247 + 30 && placed.bottom == 247 + 53);
+        ASSERT_TRUE(Near(fixture, 0, 0, kSky));
+        ASSERT_TRUE(Near(fixture, 479, 853, kSky));
     }
 }
 
 // ui_scale scales depthless 2D about the window's centre; 2D that tests depth (a 3D sprite) stays
 // where the logical mapping puts it, among the meshes.
-DC_TEST(aspect_ui_scale_about_the_centre) {
+TEST(AspectFrame, UiScaleAboutTheCentre) {
     GfxFixture fixture(854, 480);
     gfx::SetFrameLayout({gfx::AspectMode::Fill, 0.5f});
-    DC_CHECK(gfx::CurrentFrameLayout().ui_scale == 0.5f);
+    ASSERT_TRUE(gfx::CurrentFrameLayout().ui_scale == 0.5f);
     gfx::LogicalMapping ui = gfx::GetUiMapping(gfx::kMainTarget);
-    DC_CHECK(ui.scale_x == 0.5f && ui.offset_x == 107.0f + 160.0f && ui.offset_y == 120.0f);
+    ASSERT_TRUE(ui.scale_x == 0.5f && ui.offset_x == 107.0f + 160.0f && ui.offset_y == 120.0f);
 
     fixture.Frame({0, 0, 0, 0x80}, HudScene);
     Placed placed = FindHud(fixture);
     // Logical 40 is 280 left of the centre: 140 pixels at half scale, from the window's centre 427.
-    DC_CHECK(placed.left == 427 - 140 && placed.right == 427 - 140 + 31);
-    DC_CHECK(placed.top == 240 - 100 && placed.bottom == 240 - 100 + 15);
+    ASSERT_TRUE(placed.left == 427 - 140 && placed.right == 427 - 140 + 31);
+    ASSERT_TRUE(placed.top == 240 - 100 && placed.bottom == 240 - 100 + 15);
     // The frame clear still covers the window.
-    DC_CHECK(Near(fixture, 0, 0, kSky));
-    DC_CHECK(Near(fixture, 853, 479, kSky));
+    ASSERT_TRUE(Near(fixture, 0, 0, kSky));
+    ASSERT_TRUE(Near(fixture, 853, 479, kSky));
 
     gfx::SetFrameLayout({gfx::AspectMode::Fill, 2.0f});
     fixture.Frame({0, 0, 0, 0x80}, [] {
@@ -134,14 +135,14 @@ DC_TEST(aspect_ui_scale_about_the_centre) {
         gfx::Draw2D(gfx::Primitive::Quads, marker, {}, sprite);
     });
     placed = FindHud(fixture);
-    DC_CHECK(placed.left == 427 - 20 && placed.right == 427 + 19);
-    DC_CHECK(placed.top == 220 && placed.bottom == 259);
-    DC_CHECK(Near(fixture, 107 + 45, 45, kRed));
+    ASSERT_TRUE(placed.left == 427 - 20 && placed.right == 427 + 19);
+    ASSERT_TRUE(placed.top == 220 && placed.bottom == 259);
+    ASSERT_TRUE(Near(fixture, 107 + 45, 45, kRed));
 }
 
 // A fade over the logical frame, whole or tiled, covers a 16:9 window edge to edge; a box that
 // stops short of the frame's edge does not grow.
-DC_TEST(aspect_full_frame_fade_covers_16_9) {
+TEST(AspectFrame, FullFrameFadeCovers169) {
     GfxFixture     fixture(1280, 720);
     gfx::DrawState fade;
     fade.blend = true;
@@ -153,13 +154,13 @@ DC_TEST(aspect_full_frame_fade_covers_16_9) {
     });
     for (auto [x, y] : {
              std::array<int, 2>{0,    0  },
-              {1279, 0  },
-              {0,    719},
-              {1279, 719},
-              {640,  360},
-              {80,   360}
+             {1279, 0  },
+             {0,    719},
+             {1279, 719},
+             {640,  360},
+             {80,   360}
     }) {
-        DC_CHECK(Near(fixture, x, y, {0x80, 0x80, 0x80, 0}, 3));
+        ASSERT_TRUE(Near(fixture, x, y, {0x80, 0x80, 0x80, 0}, 3));
     }
 
     fixture.Frame({0, 0, 0, 0x80}, [&] {
@@ -176,26 +177,26 @@ DC_TEST(aspect_full_frame_fade_covers_16_9) {
     });
     for (auto [x, y] : {
              std::array<int, 2>{0,    0  },
-              {1279, 0  },
-              {0,    719},
-              {1279, 719},
-              {150,  100}
+             {1279, 0  },
+             {0,    719},
+             {1279, 719},
+             {150,  100}
     }) {
-        DC_CHECK(Near(fixture, x, y, {0x80, 0x80, 0x80, 0}, 3));
+        ASSERT_TRUE(Near(fixture, x, y, {0x80, 0x80, 0x80, 0}, 3));
     }
-    DC_CHECK(Near(fixture, 160 + 10, 460, kHud));
-    DC_CHECK(Near(fixture, 150, 460, {0x80, 0x80, 0x80, 0}, 3));
+    ASSERT_TRUE(Near(fixture, 160 + 10, 460, kHud));
+    ASSERT_TRUE(Near(fixture, 150, 460, {0x80, 0x80, 0x80, 0}, 3));
 }
 
 // Previous-frame feedback and a frame grab drawn back carry the window's sides: the sides of the
 // frame they sample, not black. Letterboxed, the sides stay black as before.
-DC_TEST(aspect_previous_frame_and_frame_grab_cover_the_sides) {
+TEST(AspectFrame, PreviousFrameAndFrameGrabCoverTheSides) {
     for (gfx::AspectMode mode : {gfx::AspectMode::Fill, gfx::AspectMode::Letterbox}) {
         GfxFixture fixture(1280, 720);
         gfx::SetFrameLayout({mode});
         bool               fill = mode == gfx::AspectMode::Fill;
         gfx::TextureHandle grab = gfx::CreateRenderTarget(640, 480, true, false, true);
-        DC_CHECK(gfx::GetTextureInfo(grab)->pixel_width == (fill ? 1280u : 640u));
+        ASSERT_TRUE(gfx::GetTextureInfo(grab)->pixel_width == (fill ? 1280u : 640u));
 
         gfx::BeginRecording();
         gfx::LogicalRect frame = {0.0f, 0.0f, gfx::kLogicalWidth, gfx::kLogicalHeight};
@@ -205,7 +206,7 @@ DC_TEST(aspect_previous_frame_and_frame_grab_cover_the_sides) {
         gfx::Draw2D(gfx::Primitive::Quads, side, {}, gfx::DrawState{});
         gfx::BlitTexture(gfx::kMainTarget, {0, 0, 640, 480}, grab, {0, 0, 640, 480}, gfx::Filter::Nearest);
         gfx::DisplayListRef first = gfx::EndRecording();
-        DC_CHECK(gfx::RenderList(*first, 1.0f, {.canonical = true}));
+        ASSERT_TRUE(gfx::RenderList(*first, 1.0f, {.canonical = true}));
 
         gfx::BeginRecording();
         gfx::Clear(true, kSky.data(), true, 0.0f);
@@ -221,20 +222,20 @@ DC_TEST(aspect_previous_frame_and_frame_grab_cover_the_sides) {
             Quad(0.0f, 240.0f, 640.0f, 240.0f, {0x80, 0x80, 0x80, 0x80}, 0.0f, 0.0f, 640.0f, 240.0f);
         gfx::Draw2D(gfx::Primitive::Quads, bottom, grabbed, gfx::DrawState{});
         gfx::DisplayListRef second = gfx::EndRecording();
-        DC_CHECK(gfx::RenderList(*second, 1.0f, {.canonical = true}));
-        DC_CHECK(gfx::PresentCanonical());
-        DC_CHECK(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
+        ASSERT_TRUE(gfx::RenderList(*second, 1.0f, {.canonical = true}));
+        ASSERT_TRUE(gfx::PresentCanonical());
+        ASSERT_TRUE(gfx::ReadbackFrame(fixture.pixels, fixture.width, fixture.height));
 
         // Logical (-60, 150): pixel (70, 225) from the previous frame, and 360 rows lower from the
         // grab, whose rows 0..240 are drawn over logical 240..480.
         // Letterboxed, nothing is drawn past the frame and the second list's clear shows there.
         std::array<uint8_t, 4> sides = fill ? kHud : kSky;
-        DC_CHECK(Near(fixture, 70, 225, sides));
-        DC_CHECK(Near(fixture, 70, 225 + 360, sides));
-        DC_CHECK(Near(fixture, 640, 100, kRed));
-        DC_CHECK(Near(fixture, 640, 600, kRed));
+        ASSERT_TRUE(Near(fixture, 70, 225, sides));
+        ASSERT_TRUE(Near(fixture, 70, 225 + 360, sides));
+        ASSERT_TRUE(Near(fixture, 640, 100, kRed));
+        ASSERT_TRUE(Near(fixture, 640, 600, kRed));
         std::array<uint8_t, 4> beside = fill ? kRed : kSky;
-        DC_CHECK(Near(fixture, 1270, 100, beside));
+        ASSERT_TRUE(Near(fixture, 1270, 100, beside));
         gfx::DestroyTexture(grab);
     }
 }
@@ -256,7 +257,7 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
         if (second) {
             gfx::TextureBinding previous;
             previous.texture = gfx::kPreviousFrame;
-            auto           back =
+            auto back =
                 Quad(0.0f, 0.0f, 640.0f, 480.0f, {0x80, 0x80, 0x80, 0x40}, 0.0f, 0.0f, 640.0f, 480.0f);
             gfx::DrawState blended;
             blended.blend = true;
@@ -292,13 +293,13 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
         return gfx::EndRecording();
     };
     gfx::DisplayListRef first = record(false);
-    DC_CHECK(gfx::RenderList(*first, 1.0f, {.canonical = true}));
+    EXPECT_TRUE(gfx::RenderList(*first, 1.0f, {.canonical = true}));
     gfx::DisplayListRef second = record(true);
-    DC_CHECK(gfx::RenderList(*second, 1.0f, {.canonical = true}));
-    DC_CHECK(gfx::PresentCanonical());
+    EXPECT_TRUE(gfx::RenderList(*second, 1.0f, {.canonical = true}));
+    EXPECT_TRUE(gfx::PresentCanonical());
     std::vector<uint8_t> pixels;
     uint32_t             h = 0;
-    DC_CHECK(gfx::ReadbackFrame(pixels, out_width, h));
+    EXPECT_TRUE(gfx::ReadbackFrame(pixels, out_width, h));
     gfx::DestroyTexture(grab);
     return pixels;
 }
@@ -308,15 +309,15 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
 // aspect = 4:3 is the letterboxed renderer: at 854x480 its frame holds, byte for byte, what a
 // 640x480 window shows, and the bars are black. At a 4:3 window both layouts draw the same bytes, so
 // every existing 4:3 screenshot is unchanged.
-DC_TEST(aspect_four_three_matches_the_letterboxed_output) {
+TEST(AspectFrame, FourThreeMatchesTheLetterboxedOutput) {
     uint32_t             narrow_width = 0;
     uint32_t             wide_width = 0;
     uint32_t             fill_width = 0;
     std::vector<uint8_t> narrow = LayoutScene(640, 480, gfx::AspectMode::Letterbox, narrow_width);
     std::vector<uint8_t> wide = LayoutScene(854, 480, gfx::AspectMode::Letterbox, wide_width);
     std::vector<uint8_t> fill = LayoutScene(640, 480, gfx::AspectMode::Fill, fill_width);
-    DC_CHECK(narrow_width == 640 && wide_width == 854 && fill_width == 640);
-    DC_CHECK(narrow == fill);
+    ASSERT_TRUE(narrow_width == 640 && wide_width == 854 && fill_width == 640);
+    ASSERT_TRUE(narrow == fill);
     bool inside = true;
     bool bars = true;
     for (uint32_t y = 0; y < 480; y++) {
@@ -329,17 +330,77 @@ DC_TEST(aspect_four_three_matches_the_letterboxed_output) {
             bars = bars && row[x * 4] == 0 && row[x * 4 + 1] == 0 && row[x * 4 + 2] == 0;
         }
     }
-    DC_CHECK(inside);
-    DC_CHECK(bars);
+    ASSERT_TRUE(inside);
+    ASSERT_TRUE(bars);
 }
 
-DC_TEST(aspect_config_keys) {
+TEST(AspectFrame, ConfigKeys) {
     Config config = ConfigParse("");
-    DC_CHECK(config.aspect == ConfigAspect::Auto && config.ui_scale == 1.0f);
-    config = ConfigParse("[video]\naspect = 4:3\nui_scale = 1.25\n");
-    DC_CHECK(config.aspect == ConfigAspect::FourThree && config.ui_scale == 1.25f);
-    config = ConfigParse("[video]\naspect = AUTO\nui_scale = 9\n");
-    DC_CHECK(config.aspect == ConfigAspect::Auto && config.ui_scale == 1.0f);
-    config = ConfigParse("[video]\naspect = 16:9\nui_scale = 0.1\n");
-    DC_CHECK(config.aspect == ConfigAspect::Auto && config.ui_scale == 1.0f);
+    ASSERT_TRUE(config.aspect == ConfigAspect::Auto && config.ui_scale == 1.0f);
+    config = ConfigParse(R"({"video": {"aspect": "4:3", "ui_scale": 1.25}})");
+    ASSERT_TRUE(config.aspect == ConfigAspect::FourThree && config.ui_scale == 1.25f);
+    config = ConfigParse(R"({"video": {"aspect": "AUTO", "ui_scale": 9}})");
+    ASSERT_TRUE(config.aspect == ConfigAspect::Auto && config.ui_scale == 1.0f);
+    config = ConfigParse(R"({"video": {"aspect": "16:9", "ui_scale": 0.1}})");
+    ASSERT_TRUE(config.aspect == ConfigAspect::Auto && config.ui_scale == 1.0f);
+}
+
+// An anchored HUD draw keeps its distance to the window's edge at its own size: the box 40 units
+// from the frame's left and top edges lands 40 pixels from the window's, 107 pixels left of its
+// place in the centred frame at 16:9. Unanchored draws and the letterboxed layout stay put.
+TEST(AspectFrame, UiAnchorKeepsEdgeDistance) {
+    {
+        GfxFixture fixture(854, 480);
+        fixture.Frame({0, 0, 0, 0x80}, [] {
+            gfx::UiAnchorScope anchor(gfx::kUiAnchorThirds);
+            HudScene();
+        });
+        Placed placed = FindHud(fixture);
+        ASSERT_TRUE(placed.left == 40 && placed.right == 103);
+        ASSERT_TRUE(placed.top == 40 && placed.bottom == 71);
+        ASSERT_TRUE(Near(fixture, 0, 0, kSky));
+        ASSERT_TRUE(Near(fixture, 853, 479, kSky));
+
+        fixture.Frame({0, 0, 0, 0x80}, [] {
+            gfx::UiAnchorScope       anchor(gfx::UiAnchor::Side(1, 1));
+            gfx::LogicalRect frame = {0.0f, 0.0f, gfx::kLogicalWidth, gfx::kLogicalHeight};
+            gfx::Clear(true, kSky.data(), true, 0.0f, &frame);
+            auto box = Quad(536.0f, 408.0f, 64.0f, 32.0f, kHud);
+            gfx::Draw2D(gfx::Primitive::Quads, box, {}, gfx::DrawState{});
+        });
+        placed = FindHud(fixture);
+        ASSERT_TRUE(placed.left == 854 - 104 && placed.right == 854 - 41);
+        ASSERT_TRUE(placed.top == 408 && placed.bottom == 439);
+
+        fixture.Frame({0, 0, 0, 0x80}, [] {
+            gfx::UiAnchorScope anchor(gfx::kUiAnchorThirds);
+            gfx::LogicalRect   frame = {0.0f, 0.0f, gfx::kLogicalWidth, gfx::kLogicalHeight};
+            gfx::Clear(true, kSky.data(), true, 0.0f, &frame);
+            auto box = Quad(288.0f, 224.0f, 64.0f, 32.0f, kHud);
+            gfx::Draw2D(gfx::Primitive::Quads, box, {}, gfx::DrawState{});
+        });
+        placed = FindHud(fixture);
+        ASSERT_TRUE(placed.left == 107 + 288 && placed.right == 107 + 351);
+        ASSERT_TRUE(gfx::CurrentUiAnchor().left_until == -INFINITY);
+    }
+    {
+        GfxFixture fixture(480, 854);
+        fixture.Frame({0, 0, 0, 0x80}, [] {
+            gfx::UiAnchorScope anchor(gfx::kUiAnchorThirds);
+            HudScene();
+        });
+        Placed placed = FindHud(fixture);
+        ASSERT_TRUE(placed.left == 30 && placed.right == 77);
+        ASSERT_TRUE(placed.top == 30 && placed.bottom == 53);
+    }
+    {
+        GfxFixture fixture(854, 480);
+        gfx::SetFrameLayout({gfx::AspectMode::Letterbox, 1.0f});
+        fixture.Frame({0, 0, 0, 0x80}, [] {
+            gfx::UiAnchorScope anchor(gfx::kUiAnchorThirds);
+            HudScene();
+        });
+        Placed placed = FindHud(fixture);
+        ASSERT_TRUE(placed.left == 107 + 40 && placed.right == 107 + 103);
+    }
 }

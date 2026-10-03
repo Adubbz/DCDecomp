@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtest/gtest.h>
+
 // SDL's headers name parameters A and B, which libgraph.h defines as macros: SDL goes first.
 #include <SDL3/SDL.h>
 
@@ -67,7 +69,7 @@ struct TailAFixture : Draw3DFixture {
         bool Near(uint32_t x, uint32_t y, int r, int g, int b, int a = -1, int tolerance = 3) const {
             std::array<uint8_t, 4> p = At(x, y);
             bool                   near = std::abs(p[0] - r) <= tolerance && std::abs(p[1] - g) <= tolerance &&
-                        std::abs(p[2] - b) <= tolerance && (a < 0 || std::abs(p[3] - a) <= tolerance);
+                                          std::abs(p[2] - b) <= tolerance && (a < 0 || std::abs(p[3] - a) <= tolerance);
             if (!near) {
                 std::fprintf(stderr, "texel %u,%u is %d,%d,%d,%d, expected %d,%d,%d,%d\n", x, y, p[0], p[1], p[2],
                              p[3], r, g, b, a);
@@ -78,7 +80,7 @@ struct TailAFixture : Draw3DFixture {
 
     static Pixels Read(gfx::TextureHandle texture) {
         Pixels pixels;
-        DC_CHECK(gfx::ReadbackTexture(texture, pixels.rgba, pixels.width, pixels.height));
+        EXPECT_TRUE(gfx::ReadbackTexture(texture, pixels.rgba, pixels.width, pixels.height));
         return pixels;
     }
 

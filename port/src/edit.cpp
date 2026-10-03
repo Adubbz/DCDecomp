@@ -1251,3 +1251,13 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
     MGPortCurrent().test = mgPixelTest;
     MGPortCurrent().zbuf = mgZBuffer;
 }
+
+// Runs in the town's step, ahead of the tick's drawing, so the scene to keep behind the menu is
+// the frame before.
+void EdSaveFrameImageTask() {
+    if (frame_image_flag != 0) {
+        MGPortMovePreviousFrameImage((sceGsTex0 *) &frame_image_tex.tex0);
+        frame_image_tex.Initialize();
+        frame_image_flag = 0;
+    }
+}

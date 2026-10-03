@@ -51,6 +51,14 @@ vec2 Footprint() {
     return fract(v_uv * vec2(textureSize(TEXTURE, 0)) - 0.5);
 }
 
+// The footprint's shared corner. Gathering at v_uv itself lets the hardware's fixed-point pick of
+// the 2x2 disagree with Footprint() where a sample lands on a texel centre, which swaps in the
+// neighbouring footprint under the old weights.
+vec2 FootprintCorner() {
+    vec2 size = vec2(textureSize(TEXTURE, 0));
+    return (floor(v_uv * size - 0.5) + 1.0) / size;
+}
+
 vec4 PaletteEntry(float index) {
     return texelFetch(PALETTE, ivec2(int(index * 255.0 + 0.5), 0), 0);
 }
@@ -60,7 +68,7 @@ vec4 SamplePalette() {
     if ((pc.flags & kLinear) == 0u) {
         return PaletteEntry(texture(TEXTURE, v_uv).r);
     }
-    vec4 index = textureGather(TEXTURE, v_uv, 0);
+    vec4 index = textureGather(TEXTURE, FootprintCorner(), 0);
     vec2 f     = Footprint();
     return mix(mix(PaletteEntry(index.w), PaletteEntry(index.z), f.x), mix(PaletteEntry(index.x), PaletteEntry(index.y), f.x), f.y);
 }
@@ -73,7 +81,8 @@ vec4 SampleRgba() {
         float ta0 = float(pc.alpha >> 24) / 128.0;
         bool  aem = (pc.flags & kAem) != 0u;
         if (aem && (pc.flags & kLinear) != 0u) {
-            vec4 sum = textureGather(TEXTURE, v_uv, 0) + textureGather(TEXTURE, v_uv, 1) + textureGather(TEXTURE, v_uv, 2);
+            vec2 corner = FootprintCorner();
+            vec4 sum    = textureGather(TEXTURE, corner, 0) + textureGather(TEXTURE, corner, 1) + textureGather(TEXTURE, corner, 2);
             t.a      = Bilerp(vec4(greaterThan(sum, vec4(0.0))) * ta0, Footprint());
         } else {
             t.a = aem && t.r + t.g + t.b == 0.0 ? 0.0 : ta0;

@@ -54,6 +54,10 @@ void MGPortWorldToClip(float clip[4][4]);
 // "frame_buff" and their kin), which gfx keeps at the window's aspect (gfx::CreateRenderTarget).
 bool MGPortFrameTarget(std::string_view name);
 
+// MGMoveFrameBuffImage of the last finished frame, for a grab made before the tick has drawn:
+// there the main target holds only MGBeginFrame's clear.
+void MGPortMovePreviousFrameImage(sceGsTex0 *dst);
+
 // ---- Display lists ---------------------------------------------------------------------------
 
 // The next tick MGBeginFrame records is not interpolated from the one before (a mode's first).

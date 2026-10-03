@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 
 #include <array>
 #include <cstdint>
@@ -11,7 +12,6 @@
 
 #include "gfx/gfx.hpp"
 #include "platform/window.hpp"
-#include "test.hpp"
 
 namespace dc::test {
 
@@ -61,19 +61,18 @@ struct GfxFixture {
         gfx::RendererShutdown();
         WindowShutdown();
         if (gfx::ValidationMessageCount() != 0) {
-            std::fprintf(stderr, "%u validation messages\n", gfx::ValidationMessageCount());
-            std::exit(1);
+            ADD_FAILURE() << gfx::ValidationMessageCount() << " validation messages";
         }
     }
 
     // Draws nothing but what record does, on a cleared frame, and reads the frame back.
     template <class Record>
     void Frame(const std::array<uint8_t, 4> &clear, Record record) {
-        DC_CHECK(gfx::BeginFrame());
+        ASSERT_TRUE(gfx::BeginFrame());
         gfx::Clear(true, clear.data(), true, 0.0f);
         record();
         gfx::EndFrame();
-        DC_CHECK(gfx::ReadbackFrame(pixels, width, height));
+        ASSERT_TRUE(gfx::ReadbackFrame(pixels, width, height));
     }
 
     std::array<uint8_t, 4> Pixel(uint32_t x, uint32_t y) const {
@@ -84,7 +83,7 @@ struct GfxFixture {
     bool PixelNear(uint32_t x, uint32_t y, int r, int g, int b, int tolerance = 2) const {
         std::array<uint8_t, 4> p = Pixel(x, y);
         bool                   near = std::abs(p[0] - r) <= tolerance && std::abs(p[1] - g) <= tolerance &&
-                    std::abs(p[2] - b) <= tolerance;
+                                      std::abs(p[2] - b) <= tolerance;
         if (!near) {
             std::fprintf(stderr, "pixel %u,%u is %d,%d,%d, expected %d,%d,%d\n", x, y, p[0], p[1], p[2], r, g,
                          b);

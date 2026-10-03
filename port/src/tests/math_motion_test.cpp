@@ -1,3 +1,4 @@
+#include <gtest/gtest.h>
 #include <libvu0.h>
 
 #include <cmath>
@@ -7,7 +8,6 @@
 #include "framevu1.hpp"
 #include "gameutil.hpp"
 #include "mdt.hpp"
-#include "test.hpp"
 #include "visualvu1.hpp"
 
 namespace {
@@ -48,7 +48,7 @@ bool Near(const float *v, float x, float y, float z, float w) {
 // v goes to bone * (v - (0, 2, 0)): vertex 1 lands on (-1, 2, 0); vertex 0 would land on (2, 3, 0)
 // and moves half way, to (1.5, 1.5, 0). The MDT copy is the deformed vertex back in the mesh
 // frame's space, so z drops by 5, and w passes through the inverse with the base vertex's 1.
-DC_TEST(math_motion_proc2_two_bones) {
+TEST(MathMotion, Proc2TwoBones) {
     static CFrameVu1  frame[3];
     static SkinModel  model;
     static SkinVisual visual;
@@ -104,18 +104,18 @@ DC_TEST(math_motion_proc2_two_bones) {
     skip = {.frame = 1, .target = 2, .type = MOTION_KEY_SKIP, .key_count = 2, .keys = bone_keys, .next = &bone};
     bone = {.frame = 1, .target = 2, .type = 0, .key_count = 2, .keys = bone_keys, .next = nullptr};
 
-    DC_CHECK(MotionProc2(frame, &motion, info, &root) == &skip);
-    DC_CHECK(frame[1].attr.remake_pending == 1);
-    DC_CHECK(Near(model.vertex[0], 1.0f, 0.0f, -5.0f, 1.0f));
-    DC_CHECK(info[0].bone_matrix[0][0] == 1.0f && info[0].bone_base_matrix[3][3] == 1.0f);
+    ASSERT_TRUE(MotionProc2(frame, &motion, info, &root) == &skip);
+    ASSERT_TRUE(frame[1].attr.remake_pending == 1);
+    ASSERT_TRUE(Near(model.vertex[0], 1.0f, 0.0f, -5.0f, 1.0f));
+    ASSERT_TRUE(info[0].bone_matrix[0][0] == 1.0f && info[0].bone_base_matrix[3][3] == 1.0f);
 
-    DC_CHECK(MotionProc2(frame, &motion, info, &skip) == &bone);
-    DC_CHECK(Near(model.vertex[1], 0.0f, 0.0f, 0.0f, 0.0f));
+    ASSERT_TRUE(MotionProc2(frame, &motion, info, &skip) == &bone);
+    ASSERT_TRUE(Near(model.vertex[1], 0.0f, 0.0f, 0.0f, 0.0f));
 
-    DC_CHECK(MotionProc2(frame, &motion, info, &bone) == nullptr);
-    DC_CHECK(Near(model.vertex[1], -1.0f, 2.0f, -5.0f, 1.0f));
-    DC_CHECK(Near(model.vertex[0], 1.5f, 1.5f, -5.0f, 1.0f));
-    DC_CHECK(std::memcmp(info[2].bone_matrix, turned, sizeof(turned)) == 0);
-    DC_CHECK(info[2].bone_base_matrix[3][1] == 2.0f);
-    DC_CHECK(base_vertices[1][1] == 3.0f);
+    ASSERT_TRUE(MotionProc2(frame, &motion, info, &bone) == nullptr);
+    ASSERT_TRUE(Near(model.vertex[1], -1.0f, 2.0f, -5.0f, 1.0f));
+    ASSERT_TRUE(Near(model.vertex[0], 1.5f, 1.5f, -5.0f, 1.0f));
+    ASSERT_TRUE(std::memcmp(info[2].bone_matrix, turned, sizeof(turned)) == 0);
+    ASSERT_TRUE(info[2].bone_base_matrix[3][1] == 2.0f);
+    ASSERT_TRUE(base_vertices[1][1] == 3.0f);
 }

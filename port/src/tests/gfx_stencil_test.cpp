@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <gtest/gtest.h>
 
 #include "gfx_fixture.hpp"
 
@@ -44,36 +45,36 @@ void CheckStencil(GfxFixture &fixture) {
         gfx::ClearStencil(2, &rect);
         Fill(0, 0, 640, 480, {0, 255, 0, 0x80}, StencilEqual(2));
     });
-    DC_CHECK(fixture.PixelNear(150, 150, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(50, 150, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(350, 150, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(450, 350, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(390, 350, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(150, 150, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(50, 150, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(350, 150, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(450, 350, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(390, 350, 0, 0, 0));
 
     // A frame's stencil starts where the last one left it unless cleared; the clear here resets it.
     fixture.Frame(kBlack, [] {
         gfx::ClearStencil(0);
         Fill(0, 0, 640, 480, {255, 0, 0, 0x80}, StencilEqual(1));
     });
-    DC_CHECK(fixture.PixelNear(150, 150, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(150, 150, 0, 0, 0));
 }
 
 } // namespace
 
-DC_TEST(gfx_stencil_clear_and_test) {
+TEST(GfxStencil, ClearAndTest) {
     GfxFixture fixture;
     CheckStencil(fixture);
 }
 
 // Without the dynamic mask the colourless pipelines are precompiled alongside the rest.
-DC_TEST(gfx_color_write_mask_variants) {
+TEST(GfxStencil, ColorWriteMaskVariants) {
     uint32_t dynamic_count = 0;
     {
         GfxFixture fixture;
         dynamic_count = gfx::PipelineCount();
     }
     GfxFixture fixture(640, 480, 1.0f, false);
-    DC_CHECK(gfx::PipelineCount() == dynamic_count + 18);
+    ASSERT_TRUE(gfx::PipelineCount() == dynamic_count + 18);
     CheckStencil(fixture);
 }
 
@@ -81,12 +82,12 @@ DC_TEST(gfx_color_write_mask_variants) {
 // frame holds depth 0.5, so a quad at 0.25 tested GEQUAL lands in the right half only.
 static void CheckSharedDepth(GfxFixture &fixture, gfx::TextureHandle target) {
     std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(target);
-    DC_CHECK(info && info->shares_main_depth && info->width == 640 && info->height == 480);
-    DC_CHECK(info->pixel_width == fixture.width && info->pixel_height == fixture.height);
+    ASSERT_TRUE(info && info->shares_main_depth && info->width == 640 && info->height == 480);
+    ASSERT_TRUE(info->pixel_width == fixture.width && info->pixel_height == fixture.height);
     gfx::LogicalMapping main = gfx::GetLogicalMapping(gfx::kMainTarget);
     gfx::LogicalMapping mapping = gfx::GetLogicalMapping(target);
-    DC_CHECK(main.scale_x == mapping.scale_x && main.offset_x == mapping.offset_x &&
-             main.offset_y == mapping.offset_y);
+    ASSERT_TRUE(main.scale_x == mapping.scale_x && main.offset_x == mapping.offset_x &&
+                main.offset_y == mapping.offset_y);
 
     fixture.Frame(kBlack, [&] {
         gfx::DrawState write;
@@ -112,34 +113,34 @@ static void CheckSharedDepth(GfxFixture &fixture, gfx::TextureHandle target) {
     });
     float x0 = mapping.offset_x;
     float y = mapping.offset_y + 240.0f * mapping.scale_y;
-    DC_CHECK(fixture.PixelNear(static_cast<uint32_t>(x0 + 100 * mapping.scale_x), static_cast<uint32_t>(y), 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(static_cast<uint32_t>(x0 + 500 * mapping.scale_x), static_cast<uint32_t>(y), 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(static_cast<uint32_t>(x0 + 319 * mapping.scale_x), static_cast<uint32_t>(y), 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(static_cast<uint32_t>(x0 + 321 * mapping.scale_x), static_cast<uint32_t>(y), 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(static_cast<uint32_t>(x0 + 100 * mapping.scale_x), static_cast<uint32_t>(y), 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(static_cast<uint32_t>(x0 + 500 * mapping.scale_x), static_cast<uint32_t>(y), 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(static_cast<uint32_t>(x0 + 319 * mapping.scale_x), static_cast<uint32_t>(y), 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(static_cast<uint32_t>(x0 + 321 * mapping.scale_x), static_cast<uint32_t>(y), 255, 255, 255));
 }
 
-DC_TEST(gfx_shared_depth_target) {
+TEST(GfxStencil, SharedDepthTarget) {
     GfxFixture         fixture;
     gfx::TextureHandle target = gfx::NamedRenderTarget("shared", 640, 256, false, true);
-    DC_CHECK(target != gfx::kNullTexture);
-    DC_CHECK(gfx::NamedRenderTarget("shared", 100, 100, false, true) == target);
+    ASSERT_TRUE(target != gfx::kNullTexture);
+    ASSERT_TRUE(gfx::NamedRenderTarget("shared", 100, 100, false, true) == target);
     fixture.Frame(kBlack, [] {});
     CheckSharedDepth(fixture, target);
 
     // The render scale leaves it alone; a resize carries it to the new main size and mapping.
     gfx::SetRenderScale(2.0f);
-    DC_CHECK(gfx::GetTextureInfo(target)->pixel_width == 640);
+    ASSERT_TRUE(gfx::GetTextureInfo(target)->pixel_width == 640);
     SDL_SetWindowSize(WindowHandle(), 960, 600);
     SDL_SyncWindow(WindowHandle());
     WindowPollEvents();
     gfx::RendererResize();
     fixture.Frame(kBlack, [] {});
-    DC_CHECK(fixture.width == 960 && fixture.height == 600);
+    ASSERT_TRUE(fixture.width == 960 && fixture.height == 600);
     CheckSharedDepth(fixture, target);
 
     // Asking for it without sharing replaces it with an ordinary target.
     gfx::TextureHandle plain = gfx::NamedRenderTarget("shared", 640, 256, false);
-    DC_CHECK(plain != target && !gfx::GetTextureInfo(plain)->shares_main_depth);
-    DC_CHECK(gfx::GetTextureInfo(plain)->height == 256);
+    ASSERT_TRUE(plain != target && !gfx::GetTextureInfo(plain)->shares_main_depth);
+    ASSERT_TRUE(gfx::GetTextureInfo(plain)->height == 256);
     gfx::DestroyTexture(plain);
 }

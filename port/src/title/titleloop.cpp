@@ -351,7 +351,6 @@ void TitleDraw() {
         {0.0f,   0.0f,   0.0f,   0.0f  }
     };
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 100.0f};
-    int           i;
 
     if (CProcess.no == TITLE_STEP_FADE_IN || (CProcess.no == TITLE_STEP_MENU_FADE_OUT && CCursol.GetSelect() == TITLE_MENU_NEW_GAME) || CProcess.no == TITLE_STEP_ATTRACT_FADE_OUT) {
         ambient[3] = (float) CFade.Get(128);
@@ -403,14 +402,15 @@ void TitleDraw() {
         MGSetGsTEST(&test);
         setbilinear(1);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect_i_(0, 0, 640, 85), CRect_i_(1, 0, 639, 45), 112);
-
-        for (i = 1; i < 4; i++) {
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect_i_(0, i * 84 + 1, 640, 84), CRect_i_(1, i * 42, 639, 45), 114);
-        }
-
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect_i_(0, 336, 640, 105), CRect_i_(1, 167, 639, 57), 114);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect_i_(0, 441, 640, 39), CRect_i_(1, 220, 639, 19), 114);
+        const TitleFogBand bands[] = {
+            {CRect_i_(0, 0, 640, 85),    CRect_i_(1, 0, 639, 45),   112},
+            {CRect_i_(0, 85, 640, 84),   CRect_i_(1, 42, 639, 45),  114},
+            {CRect_i_(0, 169, 640, 84),  CRect_i_(1, 84, 639, 45),  114},
+            {CRect_i_(0, 253, 640, 84),  CRect_i_(1, 126, 639, 45), 114},
+            {CRect_i_(0, 336, 640, 105), CRect_i_(1, 167, 639, 57), 114},
+            {CRect_i_(0, 441, 640, 39),  CRect_i_(1, 220, 639, 19), 114},
+        };
+        TitlePortFog(bands);
 
         MGSetGsTEST(0);
     }

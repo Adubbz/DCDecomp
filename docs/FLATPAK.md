@@ -59,9 +59,9 @@ so:
 | | |
 |---|---|
 | game data | `~/.var/app/org.themoonpeople.Chronicle/data/chronicle/data` |
-| saves, `config.ini`, the pipeline cache | `~/.var/app/org.themoonpeople.Chronicle/data/chronicle/save` |
+| saves, `config.json`, the pipeline cache | `~/.var/app/org.themoonpeople.Chronicle/data/chronicle/save` |
 
-`config.ini` is described in `docs/PC.md`. `flatpak uninstall --delete-data
+`config.json` is described in `docs/PC.md`. `flatpak uninstall --delete-data
 org.themoonpeople.Chronicle` removes both. The usual options still apply:
 `flatpak run org.themoonpeople.Chronicle --width 1920 --height 1080`.
 
@@ -93,6 +93,15 @@ through the file-chooser portal, which every Flatpak may call without a
 `--device=input`; it is left out so the bundle still installs on Flatpak 1.14.
 
 ## Building
+
+```sh
+port/flatpak.sh
+```
+
+builds `chronicle.flatpak` in the repository root from the working tree,
+installing the runtime, the SDK and the llvm20 extension from Flathub when
+they are missing. `INSTALL=1` also installs the bundle for this user;
+`CLEAN=1` discards flatpak-builder's cache first. By hand, the same is:
 
 ```sh
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo

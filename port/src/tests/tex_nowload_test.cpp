@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 // The fixture brings SDL, which must come ahead of libgraph.h and its one-letter macros.
 // clang-format off
 #include "tex_fixture.hpp"
@@ -71,7 +73,7 @@ std::array<uint8_t, 4> Presented(int x, int y) {
     std::vector<uint8_t> pixels;
     uint32_t             width;
     uint32_t             height;
-    DC_CHECK(gfx::ReadbackFrame(pixels, width, height));
+    EXPECT_TRUE(gfx::ReadbackFrame(pixels, width, height));
     const uint8_t *p = &pixels[(static_cast<size_t>(y) * width + x) * 4];
     return {p[0], p[1], p[2], p[3]};
 }
@@ -87,115 +89,115 @@ bool Near(std::array<uint8_t, 4> pixel, int r, int g, int b, int tolerance = 3) 
 
 } // namespace
 
-DC_TEST(tex_nowload_fades_in_holds_and_ends) {
+TEST(TexNowload, FadesInHoldsAndEnds) {
     TexEnv      env;
     LoadingData data;
     init_now_loading(0);
-    DC_CHECK(end_flag == 0 && check_now_loading_vsync_end() == 1);
+    ASSERT_TRUE(end_flag == 0 && check_now_loading_vsync_end() == 1);
     PortTextureRef ref = PortTextureFromCTexture(&nl_tex);
-    DC_CHECK(ref.valid && ref.width == 384 && ref.height == 128);
+    ASSERT_TRUE(ref.valid && ref.width == 384 && ref.height == 128);
 
     // Twenty vertical syncs of nothing before the picture starts to fade in.
     for (int i = 0; i < 10; i++) {
-        DC_CHECK(check_now_loading() == 0);
+        ASSERT_TRUE(check_now_loading() == 0);
     }
-    DC_CHECK(Near(Presented(320, 224), 0, 0, 0));
+    ASSERT_TRUE(Near(Presented(320, 224), 0, 0, 0));
 
     std::int64_t before = ClockTickCount();
     wait_now_loading_vsync();
-    DC_CHECK(ClockTickCount() == before + 1);
+    ASSERT_TRUE(ClockTickCount() == before + 1);
 
     int pumps = 11;
     while (col_cnt < 64.0f) {
-        DC_CHECK(check_now_loading() == 0);
+        ASSERT_TRUE(check_now_loading() == 0);
         pumps++;
     }
     // The sprite drawn on the tick that reached 64 still carried 63: 0x80 grey times 63/128 alpha.
-    DC_CHECK(pumps == 20 + 64);
-    DC_CHECK(Near(Presented(320, 224), 255 * 63 / 128, 0, 0));
-    DC_CHECK(Near(Presented(128 + 2, 160 + 2), 255 * 63 / 128, 0, 0));
-    DC_CHECK(Near(Presented(126, 224), 0, 0, 0));
-    DC_CHECK(Near(Presented(320, 160 + 128 + 2), 0, 0, 0));
+    ASSERT_TRUE(pumps == 20 + 64);
+    ASSERT_TRUE(Near(Presented(320, 224), 255 * 63 / 128, 0, 0));
+    ASSERT_TRUE(Near(Presented(128 + 2, 160 + 2), 255 * 63 / 128, 0, 0));
+    ASSERT_TRUE(Near(Presented(126, 224), 0, 0, 0));
+    ASSERT_TRUE(Near(Presented(320, 160 + 128 + 2), 0, 0, 0));
 
     while (col_add > 0.0f) {
-        DC_CHECK(check_now_loading() == 0);
+        ASSERT_TRUE(check_now_loading() == 0);
         pumps++;
     }
-    DC_CHECK(Near(Presented(320, 224), 255, 0, 0));
+    ASSERT_TRUE(Near(Presented(320, 224), 255, 0, 0));
 
     while (check_now_loading() == 0) {
         pumps++;
-        DC_CHECK(pumps < 1000);
+        ASSERT_TRUE(pumps < 1000);
     }
     // 20 idle, 129 up, 120 held, 129 down, give or take the turns.
-    DC_CHECK(pumps > 380 && pumps < 410);
-    DC_CHECK(end_flag == 1);
+    ASSERT_TRUE(pumps > 380 && pumps < 410);
+    ASSERT_TRUE(end_flag == 1);
 
     // Finished: waits return at once and pumps present nothing more.
     before = ClockTickCount();
     wait_now_loading_vsync();
-    DC_CHECK(ClockTickCount() == before);
+    ASSERT_TRUE(ClockTickCount() == before);
     env.gfx.Frame({0, 0, 255, 0x80}, [] {});
     ClockPump();
-    DC_CHECK(Near(Presented(320, 224), 0, 0, 255));
+    ASSERT_TRUE(Near(Presented(320, 224), 0, 0, 255));
 }
 
-DC_TEST(tex_nowload_never_presents_inside_an_open_frame) {
+TEST(TexNowload, NeverPresentsInsideAnOpenFrame) {
     TexEnv      env;
     LoadingData data;
     init_now_loading(0);
     while (col_cnt < 100.0f) {
         check_now_loading();
     }
-    DC_CHECK(gfx::BeginFrame());
+    ASSERT_TRUE(gfx::BeginFrame());
     const uint8_t green[4] = {0, 255, 0, 0x80};
     gfx::Clear(true, green, true, 0.0f);
     std::int64_t before = ClockTickCount();
     wait_now_loading_vsync();
     ClockPump();
-    DC_CHECK(ClockTickCount() == before + 2);
+    ASSERT_TRUE(ClockTickCount() == before + 2);
     gfx::EndFrame();
-    DC_CHECK(Near(Presented(320, 224), 0, 255, 0));
-    DC_CHECK(gfx::ValidationMessageCount() == 0);
+    ASSERT_TRUE(Near(Presented(320, 224), 0, 255, 0));
+    ASSERT_TRUE(gfx::ValidationMessageCount() == 0);
 }
 
-DC_TEST(tex_nowload_boot_logos) {
+TEST(TexNowload, BootLogos) {
     TexEnv      env;
     LoadingData data;
     LanguageCode = LANG_ENGLISH_US;
     init_now_loading(0x321);
-    DC_CHECK(end_flag == 0);
-    DC_CHECK(PortTextureFromCTexture(&nl_tex).valid && PortTextureFromCTexture(&nl_tex2).valid);
+    ASSERT_TRUE(end_flag == 0);
+    ASSERT_TRUE(PortTextureFromCTexture(&nl_tex).valid && PortTextureFromCTexture(&nl_tex2).valid);
 
     while (!(logo_count == 0 && col_add < 0.0f)) {
-        DC_CHECK(check_now_loading() == 0);
+        ASSERT_TRUE(check_now_loading() == 0);
     }
     // The SCE logo, 448x64 at (96, 192), at full strength through its CLUT.
-    DC_CHECK(Near(Presented(320, 224), 0, 0, 255));
-    DC_CHECK(Near(Presented(320, 150), 0, 0, 0));
+    ASSERT_TRUE(Near(Presented(320, 224), 0, 0, 255));
+    ASSERT_TRUE(Near(Presented(320, 150), 0, 0, 0));
 
     while (!(logo_count == 1 && col_add < 0.0f)) {
-        DC_CHECK(check_now_loading() == 0);
+        ASSERT_TRUE(check_now_loading() == 0);
     }
-    DC_CHECK(Near(Presented(320, 224), 0, 255, 0));
-    DC_CHECK(Near(Presented(250, 224), 0, 0, 0));
+    ASSERT_TRUE(Near(Presented(320, 224), 0, 255, 0));
+    ASSERT_TRUE(Near(Presented(250, 224), 0, 0, 0));
 
     int pumps = 0;
     while (check_now_loading() == 0) {
-        DC_CHECK(++pumps < 1000);
+        ASSERT_TRUE(++pumps < 1000);
     }
-    DC_CHECK(logo_count == 2);
+    ASSERT_TRUE(logo_count == 2);
 }
 
-DC_TEST(tex_nowload_off_and_missing_screens) {
+TEST(TexNowload, OffAndMissingScreens) {
     TexEnv      env;
     LoadingData data;
     now_loading_off();
     init_now_loading(0);
-    DC_CHECK(end_flag == 1 && check_now_loading() == 1);
+    ASSERT_TRUE(end_flag == 1 && check_now_loading() == 1);
     // A map without a picture shows nothing and does not hold the game.
     init_now_loading(42);
-    DC_CHECK(end_flag == 1);
+    ASSERT_TRUE(end_flag == 1);
     init_now_loading(0);
-    DC_CHECK(end_flag == 0);
+    ASSERT_TRUE(end_flag == 0);
 }

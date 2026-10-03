@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "gfx_fixture.hpp"
 
 using namespace dc::test;
@@ -18,7 +20,7 @@ uint32_t Pattern(uint32_t x, uint32_t y) {
 
 } // namespace
 
-DC_TEST(gfx_copy_and_blit) {
+TEST(GfxCopy, AndBlit) {
     GfxFixture         fixture;
     gfx::TextureHandle a = gfx::CreateTexture({4, 4, gfx::TextureFormat::Rgba8, 1, true});
     gfx::TextureHandle b = gfx::CreateTexture({4, 4, gfx::TextureFormat::Rgba8, 1, true});
@@ -29,19 +31,19 @@ DC_TEST(gfx_copy_and_blit) {
             texels[y * 4 + x] = Pattern(x, y);
         }
     }
-    DC_CHECK(gfx::UpdateTexture(a, 0, 0, 0, 4, 4, texels));
+    ASSERT_TRUE(gfx::UpdateTexture(a, 0, 0, 0, 4, 4, texels));
 
     // Outside a frame the copy rides the upload command buffer.
-    DC_CHECK(gfx::CopyTexture(a, {0, 0, 2, 2}, b, 2, 2));
+    ASSERT_TRUE(gfx::CopyTexture(a, {0, 0, 2, 2}, b, 2, 2));
     std::vector<uint8_t> pixels;
     uint32_t             width;
     uint32_t             height;
-    DC_CHECK(gfx::ReadbackTexture(b, pixels, width, height));
-    DC_CHECK(width == 4 && height == 4);
-    DC_CHECK(TexelAt(pixels, 4, 2, 2) == Pattern(0, 0));
-    DC_CHECK(TexelAt(pixels, 4, 3, 3) == Pattern(1, 1));
-    DC_CHECK(TexelAt(pixels, 4, 0, 0) == 0);
-    DC_CHECK(TexelAt(pixels, 4, 1, 3) == 0);
+    ASSERT_TRUE(gfx::ReadbackTexture(b, pixels, width, height));
+    ASSERT_TRUE(width == 4 && height == 4);
+    ASSERT_TRUE(TexelAt(pixels, 4, 2, 2) == Pattern(0, 0));
+    ASSERT_TRUE(TexelAt(pixels, 4, 3, 3) == Pattern(1, 1));
+    ASSERT_TRUE(TexelAt(pixels, 4, 0, 0) == 0);
+    ASSERT_TRUE(TexelAt(pixels, 4, 1, 3) == 0);
 
     // Inside a frame, after a draw has sampled both, in order with it.
     fixture.Frame(kBlack, [&] {
@@ -50,53 +52,53 @@ DC_TEST(gfx_copy_and_blit) {
         binding.filter = gfx::Filter::Nearest;
         auto quad = Quad(0, 0, 40, 40, kNeutral, 0, 0, 4, 4);
         gfx::Draw2D(gfx::Primitive::Quads, quad, binding, gfx::DrawState{});
-        DC_CHECK(gfx::BlitTexture(a, {0, 0, 4, 4}, c, {0, 0, 8, 8}, gfx::Filter::Nearest));
+        ASSERT_TRUE(gfx::BlitTexture(a, {0, 0, 4, 4}, c, {0, 0, 8, 8}, gfx::Filter::Nearest));
         // Mirrored horizontally into b.
-        DC_CHECK(gfx::BlitTexture(a, {0, 0, 4, 1}, b, {4, 0, -4, 1}, gfx::Filter::Nearest));
+        ASSERT_TRUE(gfx::BlitTexture(a, {0, 0, 4, 1}, b, {4, 0, -4, 1}, gfx::Filter::Nearest));
         auto after = Quad(40, 0, 40, 40, kNeutral, 0, 0, 4, 4);
         gfx::Draw2D(gfx::Primitive::Quads, after, binding, gfx::DrawState{});
     });
     // The first draw saw b before the mirrored blit, the second after it.
-    DC_CHECK(fixture.PixelNear(5, 5, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(45, 5, 3 * 60 + 10, 10, 0x55));
+    ASSERT_TRUE(fixture.PixelNear(5, 5, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(45, 5, 3 * 60 + 10, 10, 0x55));
 
-    DC_CHECK(gfx::ReadbackTexture(c, pixels, width, height));
-    DC_CHECK(width == 8 && height == 8);
-    DC_CHECK(TexelAt(pixels, 8, 0, 0) == Pattern(0, 0));
-    DC_CHECK(TexelAt(pixels, 8, 1, 1) == Pattern(0, 0));
-    DC_CHECK(TexelAt(pixels, 8, 7, 7) == Pattern(3, 3));
-    DC_CHECK(TexelAt(pixels, 8, 4, 2) == Pattern(2, 1));
-    DC_CHECK(gfx::ReadbackTexture(b, pixels, width, height));
-    DC_CHECK(TexelAt(pixels, 4, 0, 0) == Pattern(3, 0));
-    DC_CHECK(TexelAt(pixels, 4, 3, 0) == Pattern(0, 0));
+    ASSERT_TRUE(gfx::ReadbackTexture(c, pixels, width, height));
+    ASSERT_TRUE(width == 8 && height == 8);
+    ASSERT_TRUE(TexelAt(pixels, 8, 0, 0) == Pattern(0, 0));
+    ASSERT_TRUE(TexelAt(pixels, 8, 1, 1) == Pattern(0, 0));
+    ASSERT_TRUE(TexelAt(pixels, 8, 7, 7) == Pattern(3, 3));
+    ASSERT_TRUE(TexelAt(pixels, 8, 4, 2) == Pattern(2, 1));
+    ASSERT_TRUE(gfx::ReadbackTexture(b, pixels, width, height));
+    ASSERT_TRUE(TexelAt(pixels, 4, 0, 0) == Pattern(3, 0));
+    ASSERT_TRUE(TexelAt(pixels, 4, 3, 0) == Pattern(0, 0));
 
     // A copy within one texture, overlapping itself: a one-texel scroll to the right.
-    DC_CHECK(gfx::CopyTexture(a, {0, 0, 3, 4}, a, 1, 0));
-    DC_CHECK(gfx::ReadbackTexture(a, pixels, width, height));
-    DC_CHECK(TexelAt(pixels, 4, 0, 1) == Pattern(0, 1));
-    DC_CHECK(TexelAt(pixels, 4, 1, 1) == Pattern(0, 1));
-    DC_CHECK(TexelAt(pixels, 4, 3, 2) == Pattern(2, 2));
+    ASSERT_TRUE(gfx::CopyTexture(a, {0, 0, 3, 4}, a, 1, 0));
+    ASSERT_TRUE(gfx::ReadbackTexture(a, pixels, width, height));
+    ASSERT_TRUE(TexelAt(pixels, 4, 0, 1) == Pattern(0, 1));
+    ASSERT_TRUE(TexelAt(pixels, 4, 1, 1) == Pattern(0, 1));
+    ASSERT_TRUE(TexelAt(pixels, 4, 3, 2) == Pattern(2, 2));
 
     // Index textures copy as bytes; mixing formats is refused.
     gfx::TextureHandle index = gfx::CreateTexture({4, 1, gfx::TextureFormat::Index8, 1, true});
     uint8_t            bytes[4] = {1, 2, 3, 4};
-    DC_CHECK(gfx::UpdateTexture(index, 0, 0, 0, 4, 1, bytes));
-    DC_CHECK(gfx::CopyTexture(index, {0, 0, 2, 1}, index, 2, 0));
-    DC_CHECK(!gfx::CopyTexture(index, {0, 0, 1, 1}, a, 0, 0));
-    DC_CHECK(gfx::ReadbackTexture(index, pixels, width, height));
-    DC_CHECK(pixels.size() == 4 && pixels[0] == 1 && pixels[1] == 2 && pixels[2] == 1 && pixels[3] == 2);
+    ASSERT_TRUE(gfx::UpdateTexture(index, 0, 0, 0, 4, 1, bytes));
+    ASSERT_TRUE(gfx::CopyTexture(index, {0, 0, 2, 1}, index, 2, 0));
+    ASSERT_TRUE(!gfx::CopyTexture(index, {0, 0, 1, 1}, a, 0, 0));
+    ASSERT_TRUE(gfx::ReadbackTexture(index, pixels, width, height));
+    ASSERT_TRUE(pixels.size() == 4 && pixels[0] == 1 && pixels[1] == 2 && pixels[2] == 1 && pixels[3] == 2);
 }
 
-DC_TEST(gfx_snapshot_and_previous_frame) {
+TEST(GfxCopy, SnapshotAndPreviousFrame) {
     GfxFixture         fixture(640, 480);
     gfx::TextureHandle snapshot = gfx::CreateRenderTarget(64, 48, true);
-    DC_CHECK(snapshot != gfx::kNullTexture);
+    ASSERT_TRUE(snapshot != gfx::kNullTexture);
     fixture.Frame(kBlack, [&] {
         auto left = Quad(0, 0, 320, 480, {255, 0, 0, 0x80});
         auto right = Quad(320, 0, 320, 480, {0, 0, 255, 0x80});
         gfx::Draw2D(gfx::Primitive::Quads, left, {}, gfx::DrawState{});
         gfx::Draw2D(gfx::Primitive::Quads, right, {}, gfx::DrawState{});
-        DC_CHECK(gfx::SnapshotFrame(snapshot));
+        ASSERT_TRUE(gfx::SnapshotFrame(snapshot));
         // Drawing goes on after the snapshot, which does not see this.
         auto late = Quad(0, 0, 640, 100, {0, 255, 0, 0x80});
         gfx::Draw2D(gfx::Primitive::Quads, late, {}, gfx::DrawState{});
@@ -104,10 +106,10 @@ DC_TEST(gfx_snapshot_and_previous_frame) {
     std::vector<uint8_t> pixels;
     uint32_t             width;
     uint32_t             height;
-    DC_CHECK(gfx::ReadbackTexture(snapshot, pixels, width, height));
-    DC_CHECK(width == 64 && height == 48);
-    DC_CHECK(TexelAt(pixels, 64, 5, 5) == Rgba(255, 0, 0, 0xFF));
-    DC_CHECK(TexelAt(pixels, 64, 60, 40) == Rgba(0, 0, 255, 0xFF));
+    ASSERT_TRUE(gfx::ReadbackTexture(snapshot, pixels, width, height));
+    ASSERT_TRUE(width == 64 && height == 48);
+    ASSERT_TRUE(TexelAt(pixels, 64, 5, 5) == Rgba(255, 0, 0, 0xFF));
+    ASSERT_TRUE(TexelAt(pixels, 64, 60, 40) == Rgba(0, 0, 255, 0xFF));
 
     // The next frame samples the one before it, then draws the snapshot over a corner.
     fixture.Frame(kBlack, [&] {
@@ -122,28 +124,28 @@ DC_TEST(gfx_snapshot_and_previous_frame) {
         auto corner = Quad(600, 440, 40, 40, kNeutral, 0, 0, 64, 48);
         gfx::Draw2D(gfx::Primitive::Quads, corner, binding, gfx::DrawState{});
     });
-    DC_CHECK(fixture.PixelNear(100, 50, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(100, 300, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(500, 300, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(605, 445, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(635, 475, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(100, 50, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(100, 300, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(500, 300, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(605, 445, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(635, 475, 0, 0, 255));
 }
 
-DC_TEST(gfx_render_target_shadow_composite) {
+TEST(GfxCopy, RenderTargetShadowComposite) {
     // Render scale 2: a 160x120 logical target is 320x240 pixels.
     GfxFixture         fixture(640, 480, 2.0f);
     gfx::TextureHandle shadow = gfx::NamedRenderTarget("shadow_buf", 160, 120, false);
-    DC_CHECK(gfx::NamedRenderTarget("shadow_buf", 160, 120, false) == shadow);
-    DC_CHECK(gfx::FindNamedRenderTarget("shadow_buf") == shadow);
-    DC_CHECK(gfx::FindNamedRenderTarget("water") == gfx::kNullTexture);
+    ASSERT_TRUE(gfx::NamedRenderTarget("shadow_buf", 160, 120, false) == shadow);
+    ASSERT_TRUE(gfx::FindNamedRenderTarget("shadow_buf") == shadow);
+    ASSERT_TRUE(gfx::FindNamedRenderTarget("water") == gfx::kNullTexture);
 
     std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(shadow);
-    DC_CHECK(info && info->pixel_width == 320 && info->pixel_height == 240 && info->width == 160);
+    ASSERT_TRUE(info && info->pixel_width == 320 && info->pixel_height == 240 && info->width == 160);
 
     fixture.Frame({200, 200, 200, 0x80}, [&] {
         // Into the 24-bit target: black, then a white block. Its alpha stays 0x80 whatever is drawn.
         gfx::SetRenderTarget(shadow);
-        DC_CHECK(gfx::CurrentRenderTarget() == shadow);
+        ASSERT_TRUE(gfx::CurrentRenderTarget() == shadow);
         uint8_t black[4] = {0, 0, 0, 0};
         gfx::Clear(true, black, true, 0.0f);
         auto block = Quad(40, 30, 80, 60, {255, 255, 255, 0});
@@ -162,27 +164,27 @@ DC_TEST(gfx_render_target_shadow_composite) {
         auto whole = Quad(0, 0, 640, 480, kNeutral, 0, 0, 160, 120);
         gfx::Draw2D(gfx::Primitive::Quads, whole, binding, state);
     });
-    DC_CHECK(fixture.PixelNear(20, 20, 200, 200, 200));
-    DC_CHECK(fixture.PixelNear(320, 240, 100, 100, 100));
+    ASSERT_TRUE(fixture.PixelNear(20, 20, 200, 200, 200));
+    ASSERT_TRUE(fixture.PixelNear(320, 240, 100, 100, 100));
 
     std::vector<uint8_t> pixels;
     uint32_t             width;
     uint32_t             height;
-    DC_CHECK(gfx::ReadbackTexture(shadow, pixels, width, height));
-    DC_CHECK(TexelAt(pixels, width, 160, 120) == Rgba(255, 255, 255, 0xFF));
-    DC_CHECK(TexelAt(pixels, width, 10, 10) == Rgba(0, 0, 0, 0xFF));
+    ASSERT_TRUE(gfx::ReadbackTexture(shadow, pixels, width, height));
+    ASSERT_TRUE(TexelAt(pixels, width, 160, 120) == Rgba(255, 255, 255, 0xFF));
+    ASSERT_TRUE(TexelAt(pixels, width, 10, 10) == Rgba(0, 0, 0, 0xFF));
 
     // A new render scale keeps the target's contents.
     gfx::SetRenderScale(1.0f);
     info = gfx::GetTextureInfo(shadow);
-    DC_CHECK(info && info->pixel_width == 160 && info->pixel_height == 120);
-    DC_CHECK(gfx::ReadbackTexture(shadow, pixels, width, height));
-    DC_CHECK(TexelAt(pixels, width, 80, 60) == Rgba(255, 255, 255, 0xFF));
-    DC_CHECK(TexelAt(pixels, width, 5, 5) == Rgba(0, 0, 0, 0xFF));
+    ASSERT_TRUE(info && info->pixel_width == 160 && info->pixel_height == 120);
+    ASSERT_TRUE(gfx::ReadbackTexture(shadow, pixels, width, height));
+    ASSERT_TRUE(TexelAt(pixels, width, 80, 60) == Rgba(255, 255, 255, 0xFF));
+    ASSERT_TRUE(TexelAt(pixels, width, 5, 5) == Rgba(0, 0, 0, 0xFF));
     // Asked for at another size, the name moves to a new target.
     gfx::TextureHandle larger = gfx::NamedRenderTarget("shadow_buf", 320, 240, false);
-    DC_CHECK(larger != shadow && !gfx::GetTextureInfo(shadow).has_value());
-    DC_CHECK(gfx::FindNamedRenderTarget("shadow_buf") == larger);
+    ASSERT_TRUE(larger != shadow && !gfx::GetTextureInfo(shadow).has_value());
+    ASSERT_TRUE(gfx::FindNamedRenderTarget("shadow_buf") == larger);
     gfx::DestroyTexture(larger);
-    DC_CHECK(gfx::FindNamedRenderTarget("shadow_buf") == gfx::kNullTexture);
+    ASSERT_TRUE(gfx::FindNamedRenderTarget("shadow_buf") == gfx::kNullTexture);
 }

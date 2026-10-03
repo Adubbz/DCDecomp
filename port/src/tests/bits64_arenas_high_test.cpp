@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <cstdint>
 #include <cstring>
 
@@ -7,7 +9,6 @@
 #include "editloop.hpp"
 #include "menu_draw.hpp"
 #include "platform/memory.hpp"
-#include "test.hpp"
 
 void InitWorkBuffer();
 
@@ -25,42 +26,42 @@ int g_image_object;
 
 // The arenas are ordinary mappings, and the executable is position-independent: nothing the game
 // points at sits where a 32-bit cast would keep it.
-DC_TEST(bits64_arenas_high) {
+TEST(Bits64ArenasHigh, High) {
     BufferAllClear();
-    DC_CHECK(Above4GiB(VisualData.base));
-    DC_CHECK(Above4GiB(MotionData.base));
-    DC_CHECK(Above4GiB(TextureData.base));
-    DC_CHECK(Above4GiB(read_buffer));
-    DC_CHECK(Above4GiB(WorkBuffer->base));
-    DC_CHECK(Above4GiB(&g_image_object));
-    DC_CHECK(Above4GiB(reinterpret_cast<const void *>(&BufferAllClear)));
+    ASSERT_TRUE(Above4GiB(VisualData.base));
+    ASSERT_TRUE(Above4GiB(MotionData.base));
+    ASSERT_TRUE(Above4GiB(TextureData.base));
+    ASSERT_TRUE(Above4GiB(read_buffer));
+    ASSERT_TRUE(Above4GiB(WorkBuffer->base));
+    ASSERT_TRUE(Above4GiB(&g_image_object));
+    ASSERT_TRUE(Above4GiB(reinterpret_cast<const void *>(&BufferAllClear)));
 
     ArenaMemory memory = ArenaMemoryMap(std::size_t{1} << 20);
-    DC_CHECK(Above4GiB(memory.base));
+    ASSERT_TRUE(Above4GiB(memory.base));
     ArenaMemoryUnmap(memory);
 }
 
-DC_TEST(bits64_arenas_high_alignment_helpers) {
+TEST(Bits64ArenasHigh, AlignmentHelpers) {
     BufferAllClear();
     VisualData.used = 0;
     VisualData.Alloc(3);
     u_char *aligned = VisualData.Alloc64(10);
-    DC_CHECK(Aligned64(aligned));
-    DC_CHECK(aligned == VisualData.base + 4 * 16);
-    DC_CHECK(Above4GiB(aligned));
+    ASSERT_TRUE(Aligned64(aligned));
+    ASSERT_TRUE(aligned == VisualData.base + 4 * 16);
+    ASSERT_TRUE(Above4GiB(aligned));
 
     auto *menu = reinterpret_cast<u_long128 *>(VisualData.base + 16);
-    DC_CHECK(MenuCalcBufAlignment(menu) == reinterpret_cast<u_long128 *>(VisualData.base + 64));
+    ASSERT_TRUE(MenuCalcBufAlignment(menu) == reinterpret_cast<u_long128 *>(VisualData.base + 64));
 
     EdNPCBuffer.base = VisualData.base;
     EdNPCBuffer.limit = 1000;
     EdNPCBuffer.used = 5;
     InitWorkBuffer();
-    DC_CHECK(EdVillagerBuffer.base == VisualData.base + 5 * 16);
-    DC_CHECK(EdVillagerBuffer.limit == 995);
-    DC_CHECK(EdWorkBuffer.base == VisualData.base + 128);
-    DC_CHECK(Aligned64(EdWorkBuffer.base));
-    DC_CHECK(EdWorkBuffer.limit == 991);
-    DC_CHECK(EdMenuBuffer.base == reinterpret_cast<u_char *>(read_buffer) - 0x180000);
+    ASSERT_TRUE(EdVillagerBuffer.base == VisualData.base + 5 * 16);
+    ASSERT_TRUE(EdVillagerBuffer.limit == 995);
+    ASSERT_TRUE(EdWorkBuffer.base == VisualData.base + 128);
+    ASSERT_TRUE(Aligned64(EdWorkBuffer.base));
+    ASSERT_TRUE(EdWorkBuffer.limit == 991);
+    ASSERT_TRUE(EdMenuBuffer.base == reinterpret_cast<u_char *>(read_buffer) - 0x180000);
     std::memset(EdMenuBuffer.base, 0, 16);
 }

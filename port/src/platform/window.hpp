@@ -4,8 +4,11 @@ struct SDL_Window;
 union SDL_Event;
 
 struct WindowConfig {
-    int  width = 1280;
-    int  height = 960;
+    // 0: the primary monitor's desktop resolution. With both 0 the window is fullscreen whatever
+    // fullscreen says, so it has the monitor's pixels and shape. Headless, which has no monitor,
+    // 1280x960.
+    int  width = 0;
+    int  height = 0;
     bool headless = false;
     bool fullscreen = false;
     // False for a renderer without a surface (gfx::RendererConfig::offscreen): SDL then loads no

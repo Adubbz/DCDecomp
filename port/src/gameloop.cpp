@@ -66,6 +66,9 @@ GamePresentStats    g_stats;
 using PresentClock = std::chrono::steady_clock;
 PresentClock::time_point g_last_present;
 
+bool g_menu_chord_held = false;
+bool g_debug_r3_held = false;
+
 double SecondsSince(PresentClock::time_point start) {
     return std::chrono::duration<double>(PresentClock::now() - start).count();
 }
@@ -158,10 +161,6 @@ SV_CONFIG_SYS g_config_data;
 
 s32 *ConfigWords() {
     return static_cast<s32 *>(SaveData->GetConfigData());
-}
-
-bool DebugButtonsHeld() {
-    return GamePad.On2(PAD_R1) != 0 && GamePad.On2(PAD_R2) != 0 && GamePad.On2(PAD_L1) != 0 && GamePad.On2(PAD_L2) != 0;
 }
 
 void ModeInit(int &title_ran, int &exist_data, bool &skip_title) {
@@ -496,21 +495,45 @@ bool GameSetJump(const char *spec) {
     return true;
 }
 
-// Retail PAL: pad 2's four shoulder buttons held at any tick of the warm-up.
-bool GameDebugRequestedAtBoot() {
-    bool key = InputHostPressed(InputHostAction::DebugToggle);
-    return DebugButtonsHeld() || InputHostHeld(InputHostAction::DebugToggle) || key;
-}
-
-// Retail PAL tests pad 2's four shoulder buttons with R3's press edge after every frame. The host key
-// is not pad 2, so it works where KeyLock2 has blanked pad 2 (a boot without debug mode).
+// Retail PAL tests pad 2's four shoulder buttons with R3's press edge after every frame; here they are
+// pad 1's, as the host latched it, and count only while the config file's debug mode is on.
 void GameCheckDebugToggle() {
-    bool pad2 = DebugButtonsHeld() && GamePad.Down2(PAD_R3) != 0;
-    if (!pad2 && !InputHostPressed(InputHostAction::DebugToggle)) {
+    constexpr std::uint16_t kShoulders = kInputL1 | kInputR1 | kInputL2 | kInputR2;
+    std::uint16_t           buttons = InputGetPad(0).buttons;
+    bool                    held = (buttons & kInputR3) != 0;
+    bool                    pressed = held && !g_debug_r3_held;
+    g_debug_r3_held = held;
+    if (!pressed || (buttons & kShoulders) != kShoulders || !ConfigGet().debug_mode) {
         return;
     }
     DebugMode = !DebugMode;
     std::fprintf(stderr, "debug mode %s\n", DebugMode ? "on" : "off");
+}
+
+// The pad as the host latched it, so a mode that has locked the game's pad (an event, a fade) still
+// leaves. Only the press of the chord counts: held into the next mode, it does not leave that too.
+bool GameDeveloperMenuRequested() {
+    constexpr std::uint16_t kChord = kInputSelect | kInputStart;
+    bool                    held = (InputGetPad(0).buttons & kChord) == kChord;
+    bool                    pressed = held && !g_menu_chord_held;
+    g_menu_chord_held = held;
+    return pressed && DebugMode != 0 && mode != GAME_MODE_MENU;
+}
+
+// A mode's own exit stops its sound, unlocks the pad and clears its scissor; this does it for a mode
+// cut off mid-frame, and drops the map jump or event it had pending.
+void GameEnterDeveloperMenu() {
+    while (ReadBGSync() != 0) {
+        ClockSyncV();
+    }
+    SndExit();
+    MGScisioringForce(0);
+    GamePad.KeyLock(0);
+    MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
+    NextMapNo = -1;
+    StartEventNo = -1;
+    mode = GAME_MODE_MENU;
+    std::fprintf(stderr, "debug mode: start + select, the developer menu\n");
 }
 
 void GameSetFastLoad(bool fast) {
@@ -670,9 +693,6 @@ int RunGame(int argc, char **argv) {
     for (int tick = 0; tick < kWarmUpTicks && !g_jump.set; ++tick) {
         ClockSyncV();
         GamePad.UpDate();
-        if (GameDebugRequestedAtBoot()) {
-            DebugMode = 1;
-        }
     }
     if (DebugMode && !g_jump.set) {
         std::fprintf(stderr, "debug mode on: the developer menu\n");
@@ -760,6 +780,10 @@ int RunGame(int argc, char **argv) {
             ++g_frames;
 
             GameCheckDebugToggle();
+            if (GameDeveloperMenuRequested()) {
+                GameEnterDeveloperMenu();
+                break;
+            }
         } while (result == 0);
 
         MGBeginFrame();

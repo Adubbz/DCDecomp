@@ -19,6 +19,8 @@
 #include "savedata.hpp"
 #include "vector3.hpp"
 
+#include "platform/config.hpp"
+
 #pragma clang diagnostic ignored "-Wwritable-strings"
 
 // Retail's DrawPartsCursor. LoadObjectParts keeps a part's preview frame in CMapParts' s32
@@ -262,3 +264,174 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     }
 }
 
+
+// Retail's Draw, whose parts step down a level of detail at 50, 300, 500 and 800 from the eye.
+// None of those distances is nearer than video.detail_distance, so a part within it draws the
+// finest level the caller allows.
+void CEditGround::Draw(float time, int pass, int lowest, int highest, int fixed_lowest, int fixed_highest) {
+    sceVu0FVECTOR lod_distance = {50.0f, 300.0f, 500.0f, 800.0f};
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR ambient;
+    float         detail = ConfigDetailDistance();
+    int           i;
+
+    for (i = 0; i < 4; i++) {
+        if (lod_distance[i] < detail) {
+            lod_distance[i] = detail;
+        }
+    }
+
+    for (i = 0; i < 64; i++) {
+        if (fixed_parts[i].category_no == pass) {
+            fixed_parts[i].DrawParts(time, lod_distance, fixed_lowest, fixed_highest, NULL);
+        }
+    }
+
+    CMapParts *object = parts;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (object->category_no != pass) {
+            continue;
+        }
+
+        if (object->handle < 0) {
+            continue;
+        }
+
+        if (object->area >= 0 && area_visible[object->area] == 0) {
+            continue;
+        }
+
+        if (!(clip_plane[3] <= 0.0f)) {
+            object->GetPosition(position);
+
+            if (!(DistVector(position, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
+                continue;
+            }
+        }
+
+        sceVu0FVECTOR focus_ambient = {32.0f, 32.0f, 128.0f, 128.0f};
+        MGGetAmbient(ambient);
+
+        if (focus_parts_id == i) {
+            MGSetAmbient(focus_ambient);
+        }
+
+        object->DrawParts(time, lod_distance, lowest, highest, NULL);
+        MGSetAmbient(ambient);
+    }
+}
+
+// Retail's DrawShadow, which casts a part's shadow by its depth from the eye: EditLoop composites
+// the parts nearer than the map's shadow_near (320 by default) at shadow_mode (0x34) and those out
+// to shadow_far (740) at the fainter shadow_mode_2 (0x20), and past that a part casts none. A part
+// deeper than 300 takes the fast volume program, and one with a draw_distance casts nothing past
+// it. A part within video.shadow_distance of the eye belongs to the near band, with the precise
+// program and whatever its draw_distance, so its shadow is as dark and as exact as up close. The
+// overhead view of georama mode (pass 1) keeps its own.
+void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) {
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR view;
+    sceVu0FVECTOR clip_position;
+    int           i;
+    CMapParts    *object;
+    int           fast;
+    float         full = pass == 0 ? ConfigShadowDistance() : 0.0f;
+    float         fast_distance = full > 300.0f ? full : 300.0f;
+
+    if (near_distance < 1.0f) {
+        near_distance = -10000000;
+
+        if (far_distance < full) {
+            far_distance = full;
+        }
+    } else {
+        if (near_distance < full) {
+            near_distance = full;
+        }
+
+        if (far_distance < near_distance) {
+            far_distance = near_distance;
+        }
+    }
+
+    object = parts;
+
+    for (i = 0; i < 128; i++, object++) {
+        if (object->category_no < 0) {
+            continue;
+        }
+
+        if (object->handle < 0) {
+            continue;
+        }
+
+        if (object->area >= 0 && area_visible[object->area] == 0) {
+            continue;
+        }
+
+        if (!(clip_plane[3] <= 0.0f)) {
+            object->GetPosition(clip_position);
+
+            if (!(DistVector(clip_position, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
+                continue;
+            }
+        }
+
+        object->GetPosition(position);
+        position[3] = 1.0f;
+        sceVu0ApplyMatrix(view, mgRenderInfo.view_scaled, position);
+
+        if (!(object->draw_distance <= 0.0f) && pass == 0) {
+            float distance = DistVector(view);
+
+            if (object->draw_distance < distance && !(distance < full)) {
+                continue;
+            }
+        }
+
+        if (view[2] > near_distance && view[2] < far_distance) {
+            object->DrawShade();
+
+            if (object->shadow_frame != NULL) {
+                fast = pass != 0;
+
+                if (view[2] > fast_distance) {
+                    fast = 1;
+                }
+
+                object->DrawShadow(fast);
+            }
+        }
+    }
+
+    for (int j = 0; j < 64; j++) {
+        CMapParts *fixed = &fixed_parts[j];
+
+        if (fixed->category_no < 0) {
+            continue;
+        }
+
+        if (fixed->handle < 0) {
+            continue;
+        }
+
+        sceVu0CopyVector(position, fixed->pos);
+        position[3] = 1.0f;
+        sceVu0ApplyMatrix(view, mgRenderInfo.view_scaled, position);
+
+        if (view[2] > near_distance && view[2] < far_distance) {
+            fixed->DrawShade();
+
+            if (fixed->shadow_frame != NULL) {
+                fast = pass != 0;
+
+                if (view[2] > fast_distance) {
+                    fast = 1;
+                }
+
+                fixed->DrawShadow(fast);
+            }
+        }
+    }
+}

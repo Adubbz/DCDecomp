@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "gfx_fixture.hpp"
 
 using namespace dc::test;
@@ -9,12 +11,12 @@ constexpr std::array<uint8_t, 4> kBlack = {0, 0, 0, 0x80};
 
 } // namespace
 
-DC_TEST(gfx_textured_quad) {
+TEST(GfxDraw2d, TexturedQuad) {
     GfxFixture         fixture;
     uint32_t           texels[4] = {Rgba(255, 0, 0), Rgba(0, 255, 0), Rgba(0, 0, 255), Rgba(255, 255, 255)};
     gfx::TextureHandle texture = gfx::CreateTexture({2, 2, gfx::TextureFormat::Rgba8, 1, true});
-    DC_CHECK(texture != gfx::kNullTexture);
-    DC_CHECK(gfx::UpdateTexture(texture, 0, 0, 0, 2, 2, texels));
+    ASSERT_TRUE(texture != gfx::kNullTexture);
+    ASSERT_TRUE(gfx::UpdateTexture(texture, 0, 0, 0, 2, 2, texels));
 
     fixture.Frame(kBlack, [&] {
         gfx::TextureBinding binding;
@@ -30,21 +32,21 @@ DC_TEST(gfx_textured_quad) {
         gfx::Draw2D(gfx::Primitive::Quads, bright, binding, gfx::DrawState{});
     });
 
-    DC_CHECK(fixture.width == 640 && fixture.height == 480);
-    DC_CHECK(fixture.PixelNear(150, 150, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(250, 150, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(150, 250, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(250, 250, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(50, 50, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(450, 150, 128, 128, 128));
-    DC_CHECK(fixture.PixelNear(450, 350, 255, 255, 128));
+    ASSERT_TRUE(fixture.width == 640 && fixture.height == 480);
+    ASSERT_TRUE(fixture.PixelNear(150, 150, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(250, 150, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(150, 250, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(250, 250, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(50, 50, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(450, 150, 128, 128, 128));
+    ASSERT_TRUE(fixture.PixelNear(450, 350, 255, 255, 128));
     // Untouched pixels at the quad's edge: x 300 is outside [100, 300).
-    DC_CHECK(fixture.PixelNear(300, 150, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(299, 150, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(300, 150, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(299, 150, 0, 255, 0));
     gfx::DestroyTexture(texture);
 }
 
-DC_TEST(gfx_untextured_lines_and_strips) {
+TEST(GfxDraw2d, UntexturedLinesAndStrips) {
     GfxFixture fixture;
     fixture.Frame(kBlack, [&] {
         // Untextured colour is written as is: 0x80 is mid grey, not white.
@@ -57,28 +59,28 @@ DC_TEST(gfx_untextured_lines_and_strips) {
                                              Vertex(300, 50.5f, 0, 0, {255, 255, 0, 0x80})};
         gfx::Draw2D(gfx::Primitive::Lines, line, {}, gfx::DrawState{});
     });
-    DC_CHECK(fixture.PixelNear(60, 60, 128, 128, 128));
-    DC_CHECK(fixture.PixelNear(250, 50, 255, 255, 0));
-    DC_CHECK(fixture.PixelNear(250, 60, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(60, 60, 128, 128, 128));
+    ASSERT_TRUE(fixture.PixelNear(250, 50, 255, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(250, 60, 0, 0, 0));
 }
 
-DC_TEST(gfx_palette_quad) {
+TEST(GfxDraw2d, PaletteQuad) {
     GfxFixture         fixture;
     uint8_t            indices[4] = {0, 1, 2, 3};
     gfx::TextureHandle texture = gfx::CreateTexture({4, 1, gfx::TextureFormat::Index8, 1, true});
     gfx::TextureHandle palette = gfx::CreatePalette();
-    DC_CHECK(texture != gfx::kNullTexture && palette != gfx::kNullTexture);
-    DC_CHECK(gfx::UpdateTexture(texture, 0, 0, 0, 4, 1, indices));
+    ASSERT_TRUE(texture != gfx::kNullTexture && palette != gfx::kNullTexture);
+    ASSERT_TRUE(gfx::UpdateTexture(texture, 0, 0, 0, 4, 1, indices));
     uint32_t entries[256] = {};
     entries[0] = Rgba(255, 0, 0);
     entries[1] = Rgba(0, 255, 0);
     entries[2] = Rgba(0, 0, 255);
     entries[3] = Rgba(255, 255, 0);
-    DC_CHECK(gfx::UpdatePalette(palette, entries));
+    ASSERT_TRUE(gfx::UpdatePalette(palette, entries));
 
     gfx::TextureHandle pair = gfx::CreateTexture({2, 1, gfx::TextureFormat::Index8, 1, true});
     uint8_t            pair_index[2] = {0, 1};
-    DC_CHECK(gfx::UpdateTexture(pair, 0, 0, 0, 2, 1, pair_index));
+    ASSERT_TRUE(gfx::UpdateTexture(pair, 0, 0, 0, 2, 1, pair_index));
 
     fixture.Frame(kBlack, [&] {
         gfx::TextureBinding binding;
@@ -90,7 +92,7 @@ DC_TEST(gfx_palette_quad) {
 
         // A CLUT swap between two draws in one frame: the first keeps the old entries.
         uint32_t white = Rgba(255, 255, 255);
-        DC_CHECK(gfx::UpdatePalette(palette, &white, 0, 1));
+        ASSERT_TRUE(gfx::UpdatePalette(palette, &white, 0, 1));
         auto bottom = Quad(0, 100, 400, 100, kNeutral, 0, 0, 4, 1);
         gfx::Draw2D(gfx::Primitive::Quads, bottom, binding, gfx::DrawState{});
 
@@ -99,23 +101,23 @@ DC_TEST(gfx_palette_quad) {
         linear.texture = pair;
         linear.palette = palette;
         linear.filter = gfx::Filter::Linear;
-        DC_CHECK(gfx::UpdatePalette(palette, entries, 0, 1));
+        ASSERT_TRUE(gfx::UpdatePalette(palette, entries, 0, 1));
         auto blended = Quad(0, 300, 200, 100, kNeutral, 0, 0, 2, 1);
         gfx::Draw2D(gfx::Primitive::Quads, blended, linear, gfx::DrawState{});
     });
 
-    DC_CHECK(fixture.PixelNear(50, 50, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(150, 50, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(250, 50, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(350, 50, 255, 255, 0));
-    DC_CHECK(fixture.PixelNear(50, 150, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(150, 150, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(10, 350, 255, 0, 0, 4));
-    DC_CHECK(fixture.PixelNear(100, 350, 128, 128, 0, 4));
-    DC_CHECK(fixture.PixelNear(190, 350, 0, 255, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(50, 50, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(150, 50, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(250, 50, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(350, 50, 255, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(50, 150, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(150, 150, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(10, 350, 255, 0, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(100, 350, 128, 128, 0, 4));
+    ASSERT_TRUE(fixture.PixelNear(190, 350, 0, 255, 0, 4));
 }
 
-DC_TEST(gfx_blend_modes) {
+TEST(GfxDraw2d, BlendModes) {
     GfxFixture fixture;
     // Destination (100, 150, 200) with alpha 0x40; source (200, 100, 50) with alpha 0x40.
     const std::array<uint8_t, 4> dest = {100, 150, 200, 0x40};
@@ -149,17 +151,17 @@ DC_TEST(gfx_blend_modes) {
     });
     for (size_t i = 0; i < std::size(cases); i++) {
         std::fprintf(stderr, "case %zu\n", i);
-        DC_CHECK(
+        ASSERT_TRUE(
             fixture.PixelNear(static_cast<uint32_t>(i) * 60 + 25, 25, cases[i].r, cases[i].g, cases[i].b));
     }
 }
 
-DC_TEST(gfx_alpha_test_and_texa) {
+TEST(GfxDraw2d, AlphaTestAndTexa) {
     GfxFixture fixture;
     // A 24-bit texture: black texels drop out under TEXA AEM, the rest take TA0.
     uint32_t           texels[2] = {Rgba(0, 0, 0, 0), Rgba(255, 255, 255, 0)};
     gfx::TextureHandle texture = gfx::CreateTexture({2, 1, gfx::TextureFormat::Rgba8, 1, false});
-    DC_CHECK(gfx::UpdateTexture(texture, 0, 0, 0, 2, 1, texels));
+    ASSERT_TRUE(gfx::UpdateTexture(texture, 0, 0, 0, 2, 1, texels));
 
     fixture.Frame({0, 0, 255, 0x80}, [&] {
         gfx::TextureBinding binding;
@@ -182,14 +184,14 @@ DC_TEST(gfx_alpha_test_and_texa) {
         auto passed = Quad(300, 200, 200, 100, kNeutral, 0, 0, 2, 1);
         gfx::Draw2D(gfx::Primitive::Quads, passed, binding, state);
     });
-    DC_CHECK(fixture.PixelNear(50, 50, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(150, 50, 128, 128, 255, 3));
-    DC_CHECK(fixture.PixelNear(150, 250, 0, 0, 255));
-    DC_CHECK(fixture.PixelNear(450, 250, 128, 128, 255, 3));
-    DC_CHECK(fixture.PixelNear(350, 250, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(50, 50, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(150, 50, 128, 128, 255, 3));
+    ASSERT_TRUE(fixture.PixelNear(150, 250, 0, 0, 255));
+    ASSERT_TRUE(fixture.PixelNear(450, 250, 128, 128, 255, 3));
+    ASSERT_TRUE(fixture.PixelNear(350, 250, 0, 0, 255));
 }
 
-DC_TEST(gfx_fog_2d) {
+TEST(GfxDraw2d, Fog2d) {
     GfxFixture fixture;
     fixture.Frame(kBlack, [&] {
         gfx::DrawState state;
@@ -202,17 +204,17 @@ DC_TEST(gfx_fog_2d) {
         gfx::Draw2D(gfx::Primitive::Quads, quad, {}, state);
     });
     // (Cs * F + FOGCOL * (255 - F)) / 255 with F = 0x80.
-    DC_CHECK(fixture.PixelNear(50, 50, 127, 0, 100));
+    ASSERT_TRUE(fixture.PixelNear(50, 50, 127, 0, 100));
 }
 
-DC_TEST(gfx_letterbox) {
-    GfxFixture          fixture(800, 480);
+TEST(GfxDraw2d, Letterbox) {
+    GfxFixture fixture(800, 480);
     gfx::SetFrameLayout({gfx::AspectMode::Letterbox});
     gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
-    DC_CHECK(mapping.pixel_width == 800 && mapping.pixel_height == 480);
-    DC_CHECK_NEAR(mapping.scale_x, 1.0f, 1e-6f);
-    DC_CHECK_NEAR(mapping.offset_x, 80.0f, 1e-6f);
-    DC_CHECK_NEAR(mapping.offset_y, 0.0f, 1e-6f);
+    ASSERT_TRUE(mapping.pixel_width == 800 && mapping.pixel_height == 480);
+    ASSERT_NEAR(mapping.scale_x, 1.0f, 1e-6f);
+    ASSERT_NEAR(mapping.offset_x, 80.0f, 1e-6f);
+    ASSERT_NEAR(mapping.offset_y, 0.0f, 1e-6f);
 
     fixture.Frame(kBlack, [&] {
         auto quad = Quad(0, 0, gfx::kLogicalWidth, gfx::kLogicalHeight, {255, 255, 255, 0x80});
@@ -227,22 +229,22 @@ DC_TEST(gfx_letterbox) {
         auto green = Quad(0, 0, 640, 480, {0, 255, 0, 0x80});
         gfx::Draw2D(gfx::Primitive::Quads, green, {}, scissored);
     });
-    DC_CHECK(fixture.width == 800 && fixture.height == 480);
-    DC_CHECK(fixture.PixelNear(79, 240, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(80, 240, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(719, 240, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(720, 240, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(5, 5, 255, 0, 0));
-    DC_CHECK(fixture.PixelNear(80 + 125, 125, 0, 255, 0));
-    DC_CHECK(fixture.PixelNear(80 + 99, 125, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(80 + 150, 125, 255, 255, 255));
+    ASSERT_TRUE(fixture.width == 800 && fixture.height == 480);
+    ASSERT_TRUE(fixture.PixelNear(79, 240, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(80, 240, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(719, 240, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(720, 240, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(5, 5, 255, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(80 + 125, 125, 0, 255, 0));
+    ASSERT_TRUE(fixture.PixelNear(80 + 99, 125, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(80 + 150, 125, 255, 255, 255));
 }
 
-DC_TEST(gfx_resize) {
+TEST(GfxDraw2d, Resize) {
     GfxFixture fixture(640, 480);
     gfx::SetFrameLayout({gfx::AspectMode::Letterbox});
     fixture.Frame(kBlack, [] {});
-    DC_CHECK(fixture.width == 640 && fixture.height == 480);
+    ASSERT_TRUE(fixture.width == 640 && fixture.height == 480);
 
     SDL_SetWindowSize(WindowHandle(), 960, 600);
     SDL_SyncWindow(WindowHandle());
@@ -252,12 +254,12 @@ DC_TEST(gfx_resize) {
         auto quad = Quad(0, 0, gfx::kLogicalWidth, gfx::kLogicalHeight, {255, 255, 255, 0x80});
         gfx::Draw2D(gfx::Primitive::Quads, quad, {}, gfx::DrawState{});
     });
-    DC_CHECK(fixture.width == 960 && fixture.height == 600);
+    ASSERT_TRUE(fixture.width == 960 && fixture.height == 600);
     gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
-    DC_CHECK_NEAR(mapping.scale_x, 1.25f, 1e-6f);
-    DC_CHECK_NEAR(mapping.offset_x, 80.0f, 1e-6f);
-    DC_CHECK(fixture.PixelNear(79, 300, 0, 0, 0));
-    DC_CHECK(fixture.PixelNear(80, 300, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(879, 599, 255, 255, 255));
-    DC_CHECK(fixture.PixelNear(880, 300, 0, 0, 0));
+    ASSERT_NEAR(mapping.scale_x, 1.25f, 1e-6f);
+    ASSERT_NEAR(mapping.offset_x, 80.0f, 1e-6f);
+    ASSERT_TRUE(fixture.PixelNear(79, 300, 0, 0, 0));
+    ASSERT_TRUE(fixture.PixelNear(80, 300, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(879, 599, 255, 255, 255));
+    ASSERT_TRUE(fixture.PixelNear(880, 300, 0, 0, 0));
 }

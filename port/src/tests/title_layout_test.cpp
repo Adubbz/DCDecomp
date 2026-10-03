@@ -1,4 +1,5 @@
 #include <elf.h>
+#include <gtest/gtest.h>
 
 #include <cstdint>
 #include <cstring>
@@ -7,13 +8,12 @@
 #include <string_view>
 #include <vector>
 
-#include "fireomni.hpp"
 #include "dataread.hpp"
+#include "fireomni.hpp"
+#include "main.hpp"
 #include "map.hpp"
 #include "mapobject.hpp"
-#include "main.hpp"
 #include "objanime.hpp"
-#include "test.hpp"
 #include "water.hpp"
 
 // The title units declare these objects with PS2-sized classes of their own and the port defines
@@ -50,7 +50,7 @@ std::uint64_t LinkedSize(std::string_view name) {
             continue;
         }
         const Elf64_Shdr &string_section = sections[section.sh_link];
-        auto strings = ReadArray<char>(file, string_section.sh_offset, string_section.sh_size);
+        auto              strings = ReadArray<char>(file, string_section.sh_offset, string_section.sh_size);
         for (const Elf64_Sym &symbol : ReadArray<Elf64_Sym>(file, section.sh_offset, section.sh_size)) {
             if (ELF64_ST_TYPE(symbol.st_info) == STT_OBJECT && ELF64_ST_BIND(symbol.st_info) != STB_LOCAL &&
                 name == strings.data() + symbol.st_name) {
@@ -69,27 +69,27 @@ const void *VirtualTable(const void *object) {
 
 } // namespace
 
-DC_TEST(title_layout_shared_objects_have_host_sizes) {
-    DC_CHECK(LinkedSize("OP_GroundMap") == sizeof(CMap));
-    DC_CHECK(LinkedSize("OP_BuildingMap") == sizeof(CMap));
-    DC_CHECK(LinkedSize("OP_BuildingMap2") == sizeof(CMap));
-    DC_CHECK(LinkedSize("OP_AnimeSeq") == 32 * sizeof(OBJ_ANIME_SEQ));
-    DC_CHECK(LinkedSize("OP_NornMapObj") == 76 * sizeof(CMapObject));
-    DC_CHECK(LinkedSize("OP_NornMapObj2") == 87 * sizeof(CMapObject));
-    DC_CHECK(LinkedSize("CFire") == sizeof(CFireOmni));
-    DC_CHECK(LinkedSize("CFire__4") == sizeof(CFireOmni));
-    DC_CHECK(LinkedSize("Water") == sizeof(CWater));
-    DC_CHECK(LinkedSize("Water__2") == sizeof(CWater));
+TEST(TitleLayout, SharedObjectsHaveHostSizes) {
+    ASSERT_TRUE(LinkedSize("OP_GroundMap") == sizeof(CMap));
+    ASSERT_TRUE(LinkedSize("OP_BuildingMap") == sizeof(CMap));
+    ASSERT_TRUE(LinkedSize("OP_BuildingMap2") == sizeof(CMap));
+    ASSERT_TRUE(LinkedSize("OP_AnimeSeq") == 32 * sizeof(OBJ_ANIME_SEQ));
+    ASSERT_TRUE(LinkedSize("OP_NornMapObj") == 76 * sizeof(CMapObject));
+    ASSERT_TRUE(LinkedSize("OP_NornMapObj2") == 87 * sizeof(CMapObject));
+    ASSERT_TRUE(LinkedSize("CFire") == sizeof(CFireOmni));
+    ASSERT_TRUE(LinkedSize("CFire__4") == sizeof(CFireOmni));
+    ASSERT_TRUE(LinkedSize("Water") == sizeof(CWater));
+    ASSERT_TRUE(LinkedSize("Water__2") == sizeof(CWater));
 
     // The PS2 extents the title units' own declarations have, which the host ones must exceed for
     // the strong definitions to matter.
-    DC_CHECK(sizeof(OBJ_ANIME_SEQ) == 192 && sizeof(CMap) == 3120 && sizeof(CMapObject) == 272);
-    DC_CHECK(sizeof(CFireOmni) == 80 && sizeof(CWater) == 848);
+    ASSERT_TRUE(sizeof(OBJ_ANIME_SEQ) == 192 && sizeof(CMap) == 3120 && sizeof(CMapObject) == 272);
+    ASSERT_TRUE(sizeof(CFireOmni) == 80 && sizeof(CWater) == 848);
 }
 
 // op_a.cpp's static constructor builds OP_NornMapObj-style arrays at its own 240-byte stride over
 // the port's objects; the overlay load builds them again.
-DC_TEST(title_layout_overlay_load_constructs_the_objects) {
+TEST(TitleLayout, OverlayLoadConstructsTheObjects) {
     CMapObject fresh;
     std::memset(static_cast<void *>(OP_NornMapObj), 0xA5, sizeof(OP_NornMapObj));
     std::memset(static_cast<void *>(&OP_GroundMap), 0xA5, sizeof(OP_GroundMap));
@@ -97,23 +97,23 @@ DC_TEST(title_layout_overlay_load_constructs_the_objects) {
 
     LoadOverlay(GAME_MODE_RUSH_MOVIE);
 
-    DC_CHECK(VirtualTable(&OP_NornMapObj[75]) == VirtualTable(&fresh));
-    DC_CHECK(VirtualTable(&OP_GroundMap.object[9]) == VirtualTable(&fresh));
-    DC_CHECK(OP_GroundMap.object[9].handle == fresh.handle);
+    ASSERT_TRUE(VirtualTable(&OP_NornMapObj[75]) == VirtualTable(&fresh));
+    ASSERT_TRUE(VirtualTable(&OP_GroundMap.object[9]) == VirtualTable(&fresh));
+    ASSERT_TRUE(OP_GroundMap.object[9].handle == fresh.handle);
     for (const OBJ_ANIME_SEQ &sequence : OP_AnimeSeq) {
-        DC_CHECK(sequence.property == OBJ_ANIME_PROPERTY_NONE && sequence.frames[9] == nullptr);
+        ASSERT_TRUE(sequence.property == OBJ_ANIME_PROPERTY_NONE && sequence.frames[9] == nullptr);
     }
 }
 
 // Retail reran TITLE.BIN's constructors only when a mode needed it after DUN.BIN.
-DC_TEST(title_layout_overlay_constructs_once_per_load) {
+TEST(TitleLayout, OverlayConstructsOncePerLoad) {
     LoadOverlay(GAME_MODE_TITLE);
     OP_NornMapObj[3].handle = 1234;
     LoadOverlay(GAME_MODE_OPENING);
     LoadOverlay(GAME_MODE_EDIT);
     LoadOverlay(GAME_MODE_RUSH_MOVIE);
-    DC_CHECK(OP_NornMapObj[3].handle == 1234);
+    ASSERT_TRUE(OP_NornMapObj[3].handle == 1234);
     LoadOverlay(GAME_MODE_LOADER);
     LoadOverlay(GAME_MODE_TITLE);
-    DC_CHECK(OP_NornMapObj[3].handle != 1234);
+    ASSERT_TRUE(OP_NornMapObj[3].handle != 1234);
 }

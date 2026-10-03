@@ -270,6 +270,7 @@ struct Context {
     uint32_t             main_current = 0;
     float                render_scale = 1.0f;
     FrameLayout          layout;
+    UiAnchor             ui_anchor;
 
     VkSampler                    samplers[kSamplerCount] = {};
     VkDescriptorSetLayout        texture_set_layout = VK_NULL_HANDLE;

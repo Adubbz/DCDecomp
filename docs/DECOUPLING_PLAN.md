@@ -138,12 +138,12 @@ present
   tick-exact and independent of the presentation rate. Display frames render
   into the swapchain-sized main target from the interpolated list and sample
   the tick's targets where the list sampled the frame.
-- **Presentation rate.** `config.ini` `[video] present_mode = fifo | mailbox
-  | immediate`, `max_fps`, and `interpolation = on | off` (off replays the
+- **Presentation rate.** `config.json` `video.present_mode` (`fifo`, `mailbox`
+  or `immediate`), `max_fps`, and `interpolation` (off replays the
   canonical image, which is today's behaviour with frame duplication).
   Headless mode presents one display frame per tick at alpha 1, so the
   existing tests and screenshots are unchanged.
-- **Tick rate** stays `[game] tick_rate` (default 50; 60 is the NTSC feel).
+- **Tick rate** stays `game.tick_rate` (default 50; 60 is the NTSC feel).
   Audio is already on its own clock. Input is sampled at tick start.
 - **Spin-waits and the loading screen** keep using `ClockPump`; the loading
   screen presents through the idle hook as today, outside the display-list
@@ -158,7 +158,7 @@ present
   horizontal extent from the renderer instead of +-320.
 - 2D stays in the 640x480 logical space, anchored: elements are placed
   relative to the logical frame, which is centred in the window; a
-  `[video] ui_scale` setting scales it. A `[video] aspect = auto | 4:3`
+  `video.ui_scale` setting scales it. A `video.aspect` (`auto` or `4:3`)
   setting restores letterboxed 4:3 for everything.
 - Render targets the game sizes as 640xN are allocated at the render scale
   as today; the "frame" targets (`frame_image`, `frame_buff`) take the
@@ -187,7 +187,7 @@ setting, tests at 16:9, 21:9 and portrait sizes checking that a mesh at the
 frame's edge is visible at 16:9 and culled at 4:3, and that HUD pixels stay
 put.
 
-Status: done. `[video] aspect = auto | 4:3` and `ui_scale`; the projection,
+Status: done. `video.aspect` (`auto` or `4:3`) and `ui_scale`; the projection,
 the screen-bound cull and `MGClipVertex` follow the window; full-frame 2D and
 frame grabs cover it (`docs/PC.md`, "Window aspect"; `port/src/gfx/README.md`,
 "Aspect"); `aspect_*_test.cpp`. A window narrower than 4:3 keeps retail's

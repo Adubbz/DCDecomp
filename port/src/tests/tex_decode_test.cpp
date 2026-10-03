@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include <random>
 
 #include "tex_fixture.hpp"
@@ -114,43 +116,43 @@ Bytes Conv8to32(int width, int height, const Bytes &source) {
 
 } // namespace
 
-DC_TEST(tex_rgb32_alpha) {
+TEST(TexDecode, Rgb32Alpha) {
     TexEnv env;
     Bytes  img = Img({
         {"rgb32", Tim2({TIM2_RGB32, 2, 2, {Rgba32({Gs(255, 0, 0), Gs(0, 255, 0), Gs(0, 0, 255, 0x40), Gs(255, 0, 0, 0)})}, {}, 0})}
     });
     Enter(img, 0);
     PortTextureRef ref = Resolve("rgb32");
-    DC_CHECK(ref.valid && ref.width == 2 && ref.height == 2);
-    DC_CHECK(ref.binding.palette == gfx::kNullTexture);
+    ASSERT_TRUE(ref.valid && ref.width == 2 && ref.height == 2);
+    ASSERT_TRUE(ref.binding.palette == gfx::kNullTexture);
     env.gfx.Frame(kWhite, [&] { env.Draw(ref, 0, 0, 200, 200, 0, 0, 2, 2, AlphaBlend()); });
-    DC_CHECK(env.gfx.PixelNear(50, 50, 255, 0, 0));
-    DC_CHECK(env.gfx.PixelNear(150, 50, 0, 255, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(50, 50, 255, 0, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(150, 50, 0, 255, 0));
     // GS alpha 0x40 is half: (Cs - Cd) * As + Cd over white.
-    DC_CHECK(env.gfx.PixelNear(50, 150, 128, 128, 255, 3));
-    DC_CHECK(env.gfx.PixelNear(150, 150, 255, 255, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(50, 150, 128, 128, 255, 3));
+    ASSERT_TRUE(env.gfx.PixelNear(150, 150, 255, 255, 255));
 }
 
-DC_TEST(tex_rgb24_takes_alpha_from_texa) {
+TEST(TexDecode, Rgb24TakesAlphaFromTexa) {
     TexEnv env;
     Bytes  img = Img({
         {"rgb24", Tim2({TIM2_RGB24, 2, 1, {{255, 128, 0, 0, 0, 0}}, {}, 0})}
     });
     Enter(img, 0);
     PortTextureRef ref = Resolve("rgb24");
-    DC_CHECK(ref.valid);
+    ASSERT_TRUE(ref.valid);
     auto info = gfx::GetTextureInfo(ref.binding.texture);
-    DC_CHECK(info && !info->has_alpha);
+    ASSERT_TRUE(info && !info->has_alpha);
     sceGsTex0 tex0;
     std::memcpy(&tex0, &TexManager.GetTexture(1)->tex0, sizeof tex0);
-    DC_CHECK(tex0.PSM == SCE_GS_PSMCT24);
+    ASSERT_TRUE(tex0.PSM == SCE_GS_PSMCT24);
     // TEXA: TA0 0x80 for colour, AEM makes the black texel transparent.
     env.gfx.Frame(kWhite, [&] { env.Draw(ref, 0, 0, 200, 100, 0, 0, 2, 1, AlphaBlend()); });
-    DC_CHECK(env.gfx.PixelNear(50, 50, 255, 128, 0));
-    DC_CHECK(env.gfx.PixelNear(150, 50, 255, 255, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(50, 50, 255, 128, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(150, 50, 255, 255, 255));
 }
 
-DC_TEST(tex_rgb16_widens_and_takes_the_alpha_bit) {
+TEST(TexDecode, Rgb16WidensAndTakesTheAlphaBit) {
     TexEnv env;
     Bytes  pixels(4);
     Put16(pixels, 0, 0x8000 | (31 << 10) | (16 << 5));
@@ -160,15 +162,15 @@ DC_TEST(tex_rgb16_widens_and_takes_the_alpha_bit) {
     });
     Enter(img, 0);
     PortTextureRef ref = Resolve("rgb16");
-    DC_CHECK(ref.valid);
+    ASSERT_TRUE(ref.valid);
     env.gfx.Frame(kGreen, [&] { env.Draw(ref, 0, 0, 200, 100, 0, 0, 2, 1, AlphaBlend()); });
-    DC_CHECK(env.gfx.PixelNear(50, 50, 0, 128, 248));
-    DC_CHECK(env.gfx.PixelNear(150, 50, 0, 255, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(50, 50, 0, 128, 248));
+    ASSERT_TRUE(env.gfx.PixelNear(150, 50, 0, 255, 0));
 }
 
 // The GS reads an 8-bit CLUT in CSM1 with bits 3 and 4 of the index swapped: entry 8 is the
 // file's ninth-from-sixteen and entry 16 the file's eighth-from-eight.
-DC_TEST(tex_idtex8_reads_the_clut_in_csm1_order) {
+TEST(TexDecode, Idtex8ReadsTheClutInCsm1Order) {
     TexEnv env;
     Bytes  clut = Clut256({
         {8, Gs(255, 0, 0)},
@@ -182,32 +184,32 @@ DC_TEST(tex_idtex8_reads_the_clut_in_csm1_order) {
     });
     Enter(img, 0);
     PortTextureRef ref = Resolve("idx8");
-    DC_CHECK(ref.valid && ref.binding.palette != gfx::kNullTexture);
+    ASSERT_TRUE(ref.valid && ref.binding.palette != gfx::kNullTexture);
     CTexture *texture = TexManager.GetTexture(1);
     sceGsTex0 tex0;
     std::memcpy(&tex0, &texture->tex0, sizeof tex0);
-    DC_CHECK(tex0.PSM == SCE_GS_PSMT8 && tex0.CLD == 1 && tex0.CBP != 0);
+    ASSERT_TRUE(tex0.PSM == SCE_GS_PSMT8 && tex0.CLD == 1 && tex0.CBP != 0);
 
     uint32_t palette[256];
-    DC_CHECK(PortPaletteEntries(tex0.CBP, palette));
-    DC_CHECK(palette[8] == Rgba(0, 255, 0));
-    DC_CHECK(palette[16] == Rgba(255, 0, 0));
-    DC_CHECK(palette[0] == Rgba(0, 0, 255));
-    DC_CHECK(palette[255] == Rgba(255, 255, 255));
-    DC_CHECK(palette[31] == Rgba(255, 255, 0, 0x80));
+    ASSERT_TRUE(PortPaletteEntries(tex0.CBP, palette));
+    ASSERT_TRUE(palette[8] == Rgba(0, 255, 0));
+    ASSERT_TRUE(palette[16] == Rgba(255, 0, 0));
+    ASSERT_TRUE(palette[0] == Rgba(0, 0, 255));
+    ASSERT_TRUE(palette[255] == Rgba(255, 255, 255));
+    ASSERT_TRUE(palette[31] == Rgba(255, 255, 0, 0x80));
     for (unsigned i = 0; i < 256; i++) {
-        DC_CHECK(PortClutCsm1(PortClutCsm1(i)) == i);
+        ASSERT_TRUE(PortClutCsm1(PortClutCsm1(i)) == i);
     }
-    DC_CHECK(PortClutCsm1(8) == 16 && PortClutCsm1(15) == 23 && PortClutCsm1(40) == 48 && PortClutCsm1(7) == 7);
+    ASSERT_TRUE(PortClutCsm1(8) == 16 && PortClutCsm1(15) == 23 && PortClutCsm1(40) == 48 && PortClutCsm1(7) == 7);
 
     env.gfx.Frame({0, 0, 0, 0x80}, [&] { env.Draw(ref, 0, 0, 400, 100, 0, 0, 4, 1); });
-    DC_CHECK(env.gfx.PixelNear(50, 50, 0, 255, 0));
-    DC_CHECK(env.gfx.PixelNear(150, 50, 255, 0, 0));
-    DC_CHECK(env.gfx.PixelNear(250, 50, 0, 0, 255));
-    DC_CHECK(env.gfx.PixelNear(350, 50, 255, 255, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(50, 50, 0, 255, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(150, 50, 255, 0, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(250, 50, 0, 0, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(350, 50, 255, 255, 255));
 }
 
-DC_TEST(tex_idtex4_expands_to_index8) {
+TEST(TexDecode, Idtex4ExpandsToIndex8) {
     TexEnv env;
     Bytes  clut = Rgba32({Gs(255, 255, 255), Gs(255, 0, 0), Gs(0, 255, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                           Gs(0, 0, 255)});
@@ -216,22 +218,22 @@ DC_TEST(tex_idtex4_expands_to_index8) {
     });
     Enter(img, 0);
     PortTextureRef ref = Resolve("idx4");
-    DC_CHECK(ref.valid && ref.width == 4);
+    ASSERT_TRUE(ref.valid && ref.width == 4);
     auto info = gfx::GetTextureInfo(ref.binding.texture);
-    DC_CHECK(info && info->format == gfx::TextureFormat::Index8);
+    ASSERT_TRUE(info && info->format == gfx::TextureFormat::Index8);
     std::vector<uint8_t> indices;
     uint32_t             width;
     uint32_t             height;
-    DC_CHECK(gfx::ReadbackTexture(ref.binding.texture, indices, width, height));
-    DC_CHECK(width == 4 && indices[0] == 1 && indices[1] == 2 && indices[2] == 15 && indices[3] == 0);
+    ASSERT_TRUE(gfx::ReadbackTexture(ref.binding.texture, indices, width, height));
+    ASSERT_TRUE(width == 4 && indices[0] == 1 && indices[1] == 2 && indices[2] == 15 && indices[3] == 0);
     env.gfx.Frame({0, 0, 0, 0x80}, [&] { env.Draw(ref, 0, 0, 400, 100, 0, 0, 4, 1); });
-    DC_CHECK(env.gfx.PixelNear(50, 50, 255, 0, 0));
-    DC_CHECK(env.gfx.PixelNear(150, 50, 0, 255, 0));
-    DC_CHECK(env.gfx.PixelNear(250, 50, 0, 0, 255));
-    DC_CHECK(env.gfx.PixelNear(350, 50, 255, 255, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(50, 50, 255, 0, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(150, 50, 0, 255, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(250, 50, 0, 0, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(350, 50, 255, 255, 255));
 }
 
-DC_TEST(tex_im2_unswizzle_inverts_conv8to32) {
+TEST(TexDecode, Im2UnswizzleInvertsConv8to32) {
     std::mt19937 random(7);
     const int    sizes[][2] = {
         {16,  16 },
@@ -254,11 +256,11 @@ DC_TEST(tex_im2_unswizzle_inverts_conv8to32) {
         if (back != linear) {
             std::fprintf(stderr, "unswizzle differs at %dx%d\n", width, height);
         }
-        DC_CHECK(back == linear);
+        ASSERT_TRUE(back == linear);
     }
 }
 
-DC_TEST(tex_im2_archive_draws_unswizzled) {
+TEST(TexDecode, Im2ArchiveDrawsUnswizzled) {
     TexEnv env;
     Bytes  linear(32 * 32);
     for (int y = 0; y < 32; y++) {
@@ -284,22 +286,22 @@ DC_TEST(tex_im2_archive_draws_unswizzled) {
                     true);
     Enter(img, 0, 1);
     PortTextureRef ref = Resolve("swz");
-    DC_CHECK(ref.valid);
+    ASSERT_TRUE(ref.valid);
     std::vector<uint8_t> indices;
     uint32_t             width;
     uint32_t             height;
-    DC_CHECK(gfx::ReadbackTexture(ref.binding.texture, indices, width, height));
-    DC_CHECK(Bytes(indices.begin(), indices.end()) == linear);
+    ASSERT_TRUE(gfx::ReadbackTexture(ref.binding.texture, indices, width, height));
+    ASSERT_TRUE(Bytes(indices.begin(), indices.end()) == linear);
     auto info = gfx::GetTextureInfo(ref.binding.texture);
-    DC_CHECK(info && info->mip_levels == 2);
+    ASSERT_TRUE(info && info->mip_levels == 2);
     env.gfx.Frame({0, 0, 0, 0x80}, [&] { env.Draw(ref, 0, 0, 320, 320, 0, 0, 32, 32); });
-    DC_CHECK(env.gfx.PixelNear(80, 80, 255, 0, 0));
-    DC_CHECK(env.gfx.PixelNear(240, 80, 0, 255, 0));
-    DC_CHECK(env.gfx.PixelNear(80, 240, 0, 0, 255));
-    DC_CHECK(env.gfx.PixelNear(240, 240, 255, 255, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(80, 80, 255, 0, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(240, 80, 0, 255, 0));
+    ASSERT_TRUE(env.gfx.PixelNear(80, 240, 0, 0, 255));
+    ASSERT_TRUE(env.gfx.PixelNear(240, 240, 255, 255, 255));
 }
 
-DC_TEST(tex_mipmaps_as_supplied) {
+TEST(TexDecode, MipmapsAsSupplied) {
     TexEnv env;
     Bytes  base(8 * 8 * 4, 0x40);
     Bytes  half(4 * 4 * 4, 0x80);
@@ -310,16 +312,16 @@ DC_TEST(tex_mipmaps_as_supplied) {
     });
     Enter(img, 0, 1);
     PortTextureRef ref = Resolve("mips");
-    DC_CHECK(ref.valid);
+    ASSERT_TRUE(ref.valid);
     auto info = gfx::GetTextureInfo(ref.binding.texture);
-    DC_CHECK(info && info->mip_levels == 3);
+    ASSERT_TRUE(info && info->mip_levels == 3);
     std::string name = "mips";
     CTexture   *texture = TexManager.GetTexture(name.data(), -1);
-    DC_CHECK(texture->tex1 == SCE_GS_SET_TEX1(0, 2, 1, 5, 1, 0, -120));
-    DC_CHECK(texture->image[1] != nullptr && texture->image[2] != nullptr);
+    ASSERT_TRUE(texture->tex1 == SCE_GS_SET_TEX1(0, 2, 1, 5, 1, 0, -120));
+    ASSERT_TRUE(texture->image[1] != nullptr && texture->image[2] != nullptr);
     // TEX1 MMAG picks the filter.
-    DC_CHECK(PortTextureFromTex0(texture->tex0, texture->tex1).binding.filter == gfx::Filter::Linear);
-    DC_CHECK(PortTextureFromTex0(texture->tex0, 0).binding.filter == gfx::Filter::Nearest);
+    ASSERT_TRUE(PortTextureFromTex0(texture->tex0, texture->tex1).binding.filter == gfx::Filter::Linear);
+    ASSERT_TRUE(PortTextureFromTex0(texture->tex0, 0).binding.filter == gfx::Filter::Nearest);
 
     Bytes again = img;
     TexManager.BeginEnterTextureBlock(1);
@@ -327,7 +329,7 @@ DC_TEST(tex_mipmaps_as_supplied) {
     TexManager.EndEnterTextureBlock(1);
     name = "plain";
     CTexture *plain = TexManager.GetTexture(name.data(), 1);
-    DC_CHECK(plain != nullptr && plain->tex1 == 0);
+    ASSERT_TRUE(plain != nullptr && plain->tex1 == 0);
     auto plain_info = gfx::GetTextureInfo(PortTextureFromCTexture(plain).binding.texture);
-    DC_CHECK(plain_info && plain_info->mip_levels == 1);
+    ASSERT_TRUE(plain_info && plain_info->mip_levels == 1);
 }

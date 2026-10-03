@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "shadow_fixture.hpp"
 
 using namespace dc::test;
@@ -29,23 +31,23 @@ void DrawShadows(std::initializer_list<CFrame *> frames, Pass pass, u_char alpha
 // Pixels on the floor inside the footprint halve (Cd - Cd * 0x40 / 0x80); those whose ray passes
 // through the volume to floor beyond it, those in front of it and those beside it do not.
 void CheckFootprint(ShadowScene &scene) {
-    DC_CHECK(scene.PixelNear(320, 347, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(290, 347, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(320, 330, 200, 200, 200));
-    DC_CHECK(scene.PixelNear(320, 365, 200, 200, 200));
-    DC_CHECK(scene.PixelNear(250, 347, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(320, 347, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(290, 347, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(320, 330, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(320, 365, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(250, 347, 200, 200, 200));
 }
 
 } // namespace
 
-DC_TEST(shadow_fast_volume_on_floor) {
+TEST(ShadowVolume, FastVolumeOnFloor) {
     ShadowScene  scene;
     ShadowCaster caster(HangingBox());
     for (Pass pass : {&MGDrawShadowFast, &MGDrawShadowFast2, &MGDrawShadow}) {
         scene.Frame([&] {
             ShadowScene::Floor(20.0f);
             DrawShadows({&caster.frame}, pass);
-            DC_CHECK(gfx::CurrentRenderTarget() == gfx::kMainTarget);
+            ASSERT_TRUE(gfx::CurrentRenderTarget() == gfx::kMainTarget);
         });
         CheckFootprint(scene);
     }
@@ -55,16 +57,16 @@ DC_TEST(shadow_fast_volume_on_floor) {
         ShadowScene::Floor(20.0f);
         MGDrawShadowFast(&caster.frame, kPlanePoint, kPlaneNormal);
     });
-    DC_CHECK(scene.PixelNear(320, 347, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(320, 347, 200, 200, 200));
 
     // Nothing receives the volume where the scene is empty: front and back faces cancel.
     scene.Frame([&] { DrawShadows({&caster.frame}, &MGDrawShadowFast); });
-    DC_CHECK(scene.PixelNear(320, 347, 0, 0, 0));
+    ASSERT_TRUE(scene.PixelNear(320, 347, 0, 0, 0));
 }
 
 // A wall at z 100 standing on the floor right of x 0 hides the right half of the footprint: those
 // pixels keep the wall's colour, the left half of the footprint is still darkened.
-DC_TEST(shadow_occluder_hides_volume) {
+TEST(ShadowVolume, OccluderHidesVolume) {
     ShadowScene  scene;
     ShadowCaster caster(HangingBox());
     for (Pass pass : {&MGDrawShadowFast, &MGDrawShadow}) {
@@ -76,15 +78,15 @@ DC_TEST(shadow_occluder_hides_volume) {
                               {40, 80, 160});
             DrawShadows({&caster.frame}, pass);
         });
-        DC_CHECK(scene.PixelNear(300, 347, 100, 100, 100));
-        DC_CHECK(scene.PixelNear(340, 347, 40, 80, 160));
-        DC_CHECK(scene.PixelNear(360, 347, 40, 80, 160));
+        ASSERT_TRUE(scene.PixelNear(300, 347, 100, 100, 100));
+        ASSERT_TRUE(scene.PixelNear(340, 347, 40, 80, 160));
+        ASSERT_TRUE(scene.PixelNear(360, 347, 40, 80, 160));
     }
 }
 
 // Two casters whose footprints overlap between x 0 and 10 darken the overlap once, as retail's
 // TEXA turns any non-black count into the same alpha.
-DC_TEST(shadow_overlap_darkens_once) {
+TEST(ShadowVolume, OverlapDarkensOnce) {
     ShadowScene  scene;
     ShadowCaster left(HangingBox(-10.0f, 10.0f));
     ShadowCaster right(HangingBox(0.0f, 20.0f));
@@ -92,16 +94,16 @@ DC_TEST(shadow_overlap_darkens_once) {
         ShadowScene::Floor(20.0f);
         DrawShadows({&left.frame, &right.frame}, &MGDrawShadowFast);
     });
-    DC_CHECK(scene.PixelNear(290, 347, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(347, 347, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(390, 347, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(440, 347, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(290, 347, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(347, 347, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(390, 347, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(440, 347, 200, 200, 200));
 }
 
 // The floor rises towards the eye (y = 20 + (z - 150) / 2, row 640 - 44000 / z) and the plane is
 // far below it: the volume meets the slope over z 140 to 160, rows 326 to 365, where a caster
 // flattened onto the plane would land off the frame.
-DC_TEST(shadow_volume_follows_sloped_floor) {
+TEST(ShadowVolume, FollowsSlopedFloor) {
     ShadowScene   scene;
     ShadowCaster  caster(HangingBox());
     sceVu0FVECTOR deep = {0.0f, 200.0f, 0.0f, 1.0f};
@@ -115,18 +117,18 @@ DC_TEST(shadow_volume_follows_sloped_floor) {
             pass(&caster.frame, deep, kPlaneNormal);
             MGEndDrawShadow(0x40);
         });
-        DC_CHECK(scene.PixelNear(320, 335, 100, 100, 100));
-        DC_CHECK(scene.PixelNear(320, 347, 100, 100, 100));
-        DC_CHECK(scene.PixelNear(320, 360, 100, 100, 100));
-        DC_CHECK(scene.PixelNear(320, 318, 200, 200, 200));
-        DC_CHECK(scene.PixelNear(320, 372, 200, 200, 200));
+        ASSERT_TRUE(scene.PixelNear(320, 335, 100, 100, 100));
+        ASSERT_TRUE(scene.PixelNear(320, 347, 100, 100, 100));
+        ASSERT_TRUE(scene.PixelNear(320, 360, 100, 100, 100));
+        ASSERT_TRUE(scene.PixelNear(320, 318, 200, 200, 200));
+        ASSERT_TRUE(scene.PixelNear(320, 372, 200, 200, 200));
     }
 }
 
 // With the eye inside a volume (a caster overhead, the plane below the floor) MGDrawShadow's
 // near-plane cap keeps the count: the floor under the caster is shadowed and the floor past the
 // volume's far side (z above 200) is not. The fast program has no cap, as retail's has none.
-DC_TEST(shadow_volume_eye_inside) {
+TEST(ShadowVolume, EyeInside) {
     ShadowScene scene;
     ShadowMesh  mesh;
     mesh.Box({-50.0f, -60.0f, -50.0f}, {50.0f, -40.0f, 200.0f});
@@ -135,22 +137,22 @@ DC_TEST(shadow_volume_eye_inside) {
         ShadowScene::Floor(20.0f);
         DrawShadows({&caster.frame}, &MGDrawShadow);
     });
-    DC_CHECK(scene.PixelNear(320, 400, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(320, 340, 100, 100, 100));
-    DC_CHECK(scene.PixelNear(320, 300, 200, 200, 200));
-    DC_CHECK(scene.PixelNear(5, 300, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(320, 400, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(320, 340, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(320, 300, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(5, 300, 200, 200, 200));
 }
 
 // Whatever lands in the shadow target (MGDrawShade's meshes write their colour there as they are)
 // is depth-tested against the scene drawn before MGBeginDrawShadow.
-DC_TEST(shadow_target_shares_scene_depth) {
+TEST(ShadowVolume, TargetSharesSceneDepth) {
     ShadowScene scene;
     scene.Frame([&] {
         ShadowScene::Floor(20.0f);
         MGBeginDrawShadow(sceGsTex0{});
         gfx::TextureHandle              target = gfx::CurrentRenderTarget();
         std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(target);
-        DC_CHECK(target != gfx::kMainTarget && info && info->shares_main_depth);
+        ASSERT_TRUE(target != gfx::kMainTarget && info && info->shares_main_depth);
         // A quad at the floor's depth range but behind it (y 30) fails; one in front (y 10) lands.
         ShadowScene::Quad({
                               {{-50.0f, 30.0f, 100.0f}, {0.0f, 30.0f, 100.0f}, {0.0f, 30.0f, 200.0f}, {-50.0f, 30.0f, 200.0f}}
@@ -162,6 +164,6 @@ DC_TEST(shadow_target_shares_scene_depth) {
                           {255, 255, 255});
         MGEndDrawShadow(0x40);
     });
-    DC_CHECK(scene.PixelNear(300, 360, 200, 200, 200));
-    DC_CHECK(scene.PixelNear(330, 300, 100, 100, 100));
+    ASSERT_TRUE(scene.PixelNear(300, 360, 200, 200, 200));
+    ASSERT_TRUE(scene.PixelNear(330, 300, 100, 100, 100));
 }
