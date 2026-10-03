@@ -469,6 +469,10 @@ replacement units.
   `ClockWaitNextTick(hook)` runs a hook over and over while it waits, with the
   elapsed fraction of the tick; `MGEndFrame` presents display frames through it.
 - **Config** (`platform/config`) and **paths** (`platform/paths`): above.
+- **Overlay** (`platform/overlay`): the port's 5x7 font (the first-run screen
+  draws with it too), a line of text drawn with `gfx::Draw2D` on whole pixels
+  at the window's corner and recorded as a display list of its own, and the
+  rate meter behind the FPS counter ("The FPS counter").
 - **Audio output** (`platform/audio`): an SDL3 float stereo stream that pulls
   frames from a render callback on SDL's audio thread; `DC_AUDIO=off` or no
   device leaves the game silent.
