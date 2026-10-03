@@ -3,9 +3,12 @@
 #include <cstdint>
 #include <span>
 #include <string_view>
+#include <vector>
 
-// Host input shaped like two DualShock 2 controllers. The first gamepad and
-// the keyboard drive pad 0, the second gamepad pad 1.
+union SDL_Event;
+
+// Host input shaped like two DualShock 2 controllers. The first gamepad, the keyboard and the mouse
+// drive pad 0, the second gamepad pad 1.
 
 constexpr int kInputPadCount = 2;
 
@@ -39,6 +42,26 @@ struct InputPadState {
     std::uint8_t  left_y = kInputAxisCentre;
     std::uint8_t  right_x = kInputAxisCentre;
     std::uint8_t  right_y = kInputAxisCentre;
+    // D-pad bits the left-stick keys add only while the game is not reading the left stick: the
+    // screens that read the d-pad alone (the developer menu, the dungeon loader).
+    std::uint16_t stick_dpad = 0;
+};
+
+// What the keyboard and the mouse hold: SDL scancodes, mouse buttons (bit n-1 for Mouse n) and the
+// mouse motion over one tick in pixels, y growing downward.
+struct InputKeyboardMouse {
+    std::vector<int> keys;
+    std::uint32_t    mouse_buttons = 0;
+    float            mouse_dx = 0.0f;
+    float            mouse_dy = 0.0f;
+};
+
+struct InputMouseSettings {
+    // Stick deflection (1 is full) per pixel of motion in one tick.
+    float            sensitivity = 0.1f;
+    bool             invert_y = false;
+    bool             capture = true;
+    std::vector<int> release_scancodes;
 };
 
 struct InputRumble {
@@ -46,15 +69,30 @@ struct InputRumble {
     std::uint8_t large_motor = 0;
 };
 
-// Opens SDL's gamepad subsystem. Input works without it (keyboard only, or
-// nothing when no video subsystem pumps keyboard events either).
+// Opens SDL's gamepad subsystem, applies config.ini's [input] and watches the window's events.
+// Input works without a gamepad subsystem or a window (nothing but overrides then).
 void InputInit();
 
 void InputShutdown();
 
-// Samples the keyboard and the gamepads, opening newly connected ones.
+// Samples the gamepads, opening newly connected ones, and folds in the keyboard and mouse.
 void InputPoll();
 
+// The window event hook InputInit installs: keys, mouse buttons and motion, focus.
+void InputHandleEvent(const SDL_Event &event);
+
+// The game is about to read pad: the mouse motion since the previous read becomes the stick
+// deflection for this read, and whether the game read the left stick since then decides whether
+// stick_dpad applies to it.
+void InputLatchPad(int pad);
+
+// The game read pad 0's left stick (CGamePad::GetLX/GetLY, src/port/gamepad.cpp).
+void InputNoteLeftStickRead();
+
+// Whether the game read the left stick between the last two latches of pad 0.
+bool InputLeftStickLive();
+
+// The pad as the game reads it: the device state or the override, stick_dpad applied.
 const InputPadState &InputGetPad(int pad);
 
 void InputSetRumble(int pad, InputRumble rumble);
@@ -65,9 +103,26 @@ InputRumble InputGetRumble(int pad);
 // hands the pad back to the devices.
 void InputSetOverride(int pad, const InputPadState *state);
 
-// Rebinds one action ("cross", "up", "lx-", ...) of the keyboard map to the
-// SDL key names given. Returns false if the action or a name is unknown.
+// base with the keyboard and mouse folded in through the bindings: buttons add, and an axis takes
+// the keyboard and mouse deflection unless base deflects it past the game's dead zone.
+InputPadState InputApplyKeyboardMouse(InputPadState base, const InputKeyboardMouse &held);
+
+// The stick byte the game's AxisCalibration reads as deflection * 128, deflection in [-1, 1]: the
+// dead zone is stepped over, so any motion moves the game.
+std::uint8_t InputStickByte(float deflection);
+
+// Rebinds one action ("cross", "up", "lx-", "rx", ...) to the names given: SDL key names, Mouse1 to
+// Mouse5 (left, right, middle, X1, X2), and for the whole-axis actions lx ly rx ry MouseX or MouseY
+// with an optional sign and scale (-MouseY, MouseX*0.5). Returns false if the action or a name is
+// unknown or does not fit the action.
 bool InputBindKeys(std::string_view action, std::span<const std::string_view> keys);
 
-// Restores the default keyboard map.
+// Restores the default bindings and mouse settings.
 void InputResetBindings();
+
+void InputSetMouseSettings(const InputMouseSettings &settings);
+
+const InputMouseSettings &InputGetMouseSettings();
+
+// SDL scancode for a key name, any case; `_` stands for a space ("left_shift"). -1 if unknown.
+int InputScancodeFromName(std::string_view name);

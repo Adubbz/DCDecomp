@@ -60,3 +60,29 @@ DC_TEST(platform_config_loads_from_save_root) {
     DC_CHECK(ConfigGet().tick_rate == 60.0);
     std::filesystem::remove_all(root);
 }
+
+DC_TEST(platform_config_parses_mouse_settings_and_bindings) {
+    Config defaults = ConfigParse("");
+    DC_CHECK(defaults.mouse_sensitivity == 0.1f && !defaults.mouse_invert_y && defaults.mouse_capture);
+    DC_CHECK(defaults.mouse_release_keys.size() == 1 && defaults.mouse_release_keys[0] == "Escape");
+
+    Config config = ConfigParse("[input]\n"
+                                "mouse_sensitivity = 0.25\n"
+                                "Mouse_Invert_Y = yes\n"
+                                "mouse_capture = off\n"
+                                "mouse_release = F12, Pause\n"
+                                "rx = MouseX*2\n"
+                                "ry = -MouseY\n"
+                                "r1 = Mouse2, X\n");
+    DC_CHECK(config.mouse_sensitivity == 0.25f);
+    DC_CHECK(config.mouse_invert_y && !config.mouse_capture);
+    DC_CHECK(config.mouse_release_keys.size() == 2 && config.mouse_release_keys[1] == "Pause");
+    DC_CHECK(config.key_bindings.size() == 3);
+    DC_CHECK(config.key_bindings[0].action == "rx" && config.key_bindings[0].keys[0] == "MouseX*2");
+    DC_CHECK(config.key_bindings[1].keys[0] == "-MouseY");
+    DC_CHECK(config.key_bindings[2].keys.size() == 2 && config.key_bindings[2].keys[0] == "Mouse2");
+
+    Config bad = ConfigParse("[input]\nmouse_sensitivity = -1\nmouse_capture = maybe\n");
+    DC_CHECK(bad.mouse_sensitivity == 0.1f && bad.mouse_capture);
+    DC_CHECK(ConfigParse("[input]\nmouse_release =\n").mouse_release_keys.empty());
+}
