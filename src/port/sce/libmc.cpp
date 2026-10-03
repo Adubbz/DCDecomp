@@ -201,7 +201,7 @@ McDateTime DateTime(const fs::path &path) {
     std::error_code error;
     auto            written = fs::last_write_time(path, error);
     std::time_t     seconds = error ? std::time(nullptr)
-                                    : std::chrono::system_clock::to_time_t(std::chrono::clock_cast<std::chrono::system_clock>(written));
+                                    : std::chrono::system_clock::to_time_t(fs::file_time_type::clock::to_sys(written));
     std::tm         utc{};
     gmtime_r(&seconds, &utc);
     return {0,

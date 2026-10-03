@@ -8,6 +8,10 @@ int PathsConsumeArgs(int argc, char **argv);
 
 int PathsConsumeArgs(int argc, const char **argv);
 
+// The running executable, symlinks resolved; empty when the system cannot say and argv[0] (seen by
+// PathsConsumeArgs) is unknown.
+std::filesystem::path PathsExecutable();
+
 void PathsSetDataRoot(const std::filesystem::path &root);
 
 void PathsSetSaveRoot(const std::filesystem::path &root);
