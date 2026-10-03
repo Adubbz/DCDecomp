@@ -115,6 +115,9 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
         config.tick_rate = rate;
         return true;
     }
+    if (name == "game.debug_mode") {
+        return ParseBool(value, config.debug_mode);
+    }
     if (name == "video.present_mode") {
         return ParsePresentMode(value, config.present_mode);
     }

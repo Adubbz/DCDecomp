@@ -86,3 +86,9 @@ DC_TEST(platform_config_parses_mouse_settings_and_bindings) {
     DC_CHECK(bad.mouse_sensitivity == 0.1f && bad.mouse_capture);
     DC_CHECK(ConfigParse("[input]\nmouse_release =\n").mouse_release_keys.empty());
 }
+
+DC_TEST(platform_config_debug_mode_defaults_on) {
+    DC_CHECK(ConfigParse("").debug_mode);
+    DC_CHECK(!ConfigParse("[game]\ndebug_mode = off\n").debug_mode);
+    DC_CHECK(ConfigParse("[game]\ndebug_mode = on\n").debug_mode);
+}

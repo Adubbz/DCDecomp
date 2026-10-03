@@ -22,6 +22,7 @@
 #include "mglib_port.hpp"
 #include "nowload.hpp"
 #include "platform/clock.hpp"
+#include "platform/config.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "title/opening.hpp"
@@ -542,7 +543,7 @@ int RunGame(int argc, char **argv) {
     // mwInit is not called: the host has run every static constructor. init_all's IOP boot, CD
     // and file-system resets, DevInit's DMA reset and the DMA channel handles have no host
     // counterpart and are not called.
-    DebugMode = 0;
+    DebugMode = ConfigGet().debug_mode ? 1 : 0;
     mode = GAME_MODE_MENU;
     main_select_menu_no = 0;
     std::strcpy(main_select_param, "e01");

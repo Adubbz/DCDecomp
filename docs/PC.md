@@ -226,7 +226,9 @@ directory (and so one pipeline cache) under the build directory.
 PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
 the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
 (`MenuLoop`, `src/ps2/main.cpp`), instead of the language select, and leaves
-pad 2 unlocked. Up and down (pad 1) pick a row, left and right change its
+pad 2 unlocked. The port starts with `DebugMode` on: `[game] debug_mode = off`
+in `config.ini` gives retail's start at the language select, where the pad 2
+hold still turns it on. Up and down (pad 1) pick a row, left and right change its
 number, circle or triangle enters it:
 
 | Row | Goes to |
