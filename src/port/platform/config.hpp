@@ -25,6 +25,7 @@ struct Config {
     int                           window_width = 1280;
     int                           window_height = 960;
     bool                          fullscreen = false;
+    bool                          show_fps = true;
     float                         master_volume = 1.0f;
     std::vector<ConfigKeyBinding> key_bindings;
     float                         mouse_sensitivity = 0.1f;

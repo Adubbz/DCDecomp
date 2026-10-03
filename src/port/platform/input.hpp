@@ -124,5 +124,24 @@ void InputSetMouseSettings(const InputMouseSettings &settings);
 
 const InputMouseSettings &InputGetMouseSettings();
 
-// SDL scancode for a key name, any case; `_` stands for a space ("left_shift"). -1 if unknown.
+// SDL scancode for a key name, any case; `_` stands for a space ("left_shift"), and Grave, Backquote
+// and Backtick name the key left of 1. -1 if unknown.
 int InputScancodeFromName(std::string_view name);
+
+// Keys that drive the port rather than a pad, bound like the pad's actions ("debug_toggle",
+// "fps_toggle"), which also take Gamepad:<SDL gamepad button name> (Gamepad:guide).
+enum class InputHostAction {
+    DebugToggle,
+    FpsToggle,
+};
+
+// Whether a key, mouse button or gamepad button bound to the action is held, live or scripted.
+bool InputHostHeld(InputHostAction action);
+
+// Consumes one press of the action since the last call that returned true. Every key-down (not a
+// repeat) counts, so a press released before the next poll is not lost.
+bool InputHostPressed(InputHostAction action);
+
+// The keyboard and mouse the input script holds now; host actions read them beside the live devices,
+// and a key that becomes held counts as a press.
+void InputSetScriptedDevices(const InputKeyboardMouse &held);

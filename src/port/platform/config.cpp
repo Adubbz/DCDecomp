@@ -151,6 +151,9 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
     if (name == "video.fullscreen") {
         return ParseBool(value, config.fullscreen);
     }
+    if (name == "video.show_fps") {
+        return ParseBool(value, config.show_fps);
+    }
     if (name == "audio.master_volume") {
         float volume = 0.0f;
         if (!ParseNumber(value, volume) || !std::isfinite(volume)) {

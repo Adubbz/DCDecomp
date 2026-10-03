@@ -24,6 +24,7 @@ enum class ActionKind {
     Button,
     HalfAxis,
     Axis,
+    Host,
 };
 
 enum Axis {
@@ -44,36 +45,38 @@ struct Action {
 
 // The game-side reasons for each default are in docs/PC.md ("Keyboard and mouse").
 // clang-format off
-const Action kActions[] = {
-    {"up",       ActionKind::Button,   kInputUp,       kAxisLeftX,  0,  "Up"},
-    {"down",     ActionKind::Button,   kInputDown,     kAxisLeftX,  0,  "Down"},
-    {"left",     ActionKind::Button,   kInputLeft,     kAxisLeftX,  0,  "Left"},
-    {"right",    ActionKind::Button,   kInputRight,    kAxisLeftX,  0,  "Right"},
-    {"cross",    ActionKind::Button,   kInputCross,    kAxisLeftX,  0,  "Mouse1, Space"},
-    {"circle",   ActionKind::Button,   kInputCircle,   kAxisLeftX,  0,  "F"},
-    {"square",   ActionKind::Button,   kInputSquare,   kAxisLeftX,  0,  "E"},
-    {"triangle", ActionKind::Button,   kInputTriangle, kAxisLeftX,  0,  "Tab"},
-    {"l1",       ActionKind::Button,   kInputL1,       kAxisLeftX,  0,  "Z"},
-    {"r1",       ActionKind::Button,   kInputR1,       kAxisLeftX,  0,  "Mouse2, X"},
-    {"l2",       ActionKind::Button,   kInputL2,       kAxisLeftX,  0,  "Q"},
-    {"r2",       ActionKind::Button,   kInputR2,       kAxisLeftX,  0,  "R"},
-    {"l3",       ActionKind::Button,   kInputL3,       kAxisLeftX,  0,  "V"},
-    {"r3",       ActionKind::Button,   kInputR3,       kAxisLeftX,  0,  "Mouse3, B"},
-    {"start",    ActionKind::Button,   kInputStart,    kAxisLeftX,  0,  "Return"},
-    {"select",   ActionKind::Button,   kInputSelect,   kAxisLeftX,  0,  "Backspace, C"},
-    {"lx-",      ActionKind::HalfAxis, 0,              kAxisLeftX,  -1, "A"},
-    {"lx+",      ActionKind::HalfAxis, 0,              kAxisLeftX,  1,  "D"},
-    {"ly-",      ActionKind::HalfAxis, 0,              kAxisLeftY,  -1, "W"},
-    {"ly+",      ActionKind::HalfAxis, 0,              kAxisLeftY,  1,  "S"},
-    {"rx-",      ActionKind::HalfAxis, 0,              kAxisRightX, -1, "J"},
-    {"rx+",      ActionKind::HalfAxis, 0,              kAxisRightX, 1,  "L"},
-    {"ry-",      ActionKind::HalfAxis, 0,              kAxisRightY, -1, "I"},
-    {"ry+",      ActionKind::HalfAxis, 0,              kAxisRightY, 1,  "K"},
-    {"lx",       ActionKind::Axis,     0,              kAxisLeftX,  0,  ""},
-    {"ly",       ActionKind::Axis,     0,              kAxisLeftY,  0,  ""},
-    {"rx",       ActionKind::Axis,     0,              kAxisRightX, 0,  "MouseX"},
+constexpr Action kActions[] = {
+    {"up",           ActionKind::Button,   kInputUp,       kAxisLeftX,  0,  "Up"},
+    {"down",         ActionKind::Button,   kInputDown,     kAxisLeftX,  0,  "Down"},
+    {"left",         ActionKind::Button,   kInputLeft,     kAxisLeftX,  0,  "Left"},
+    {"right",        ActionKind::Button,   kInputRight,    kAxisLeftX,  0,  "Right"},
+    {"cross",        ActionKind::Button,   kInputCross,    kAxisLeftX,  0,  "Mouse1, Space"},
+    {"circle",       ActionKind::Button,   kInputCircle,   kAxisLeftX,  0,  "F"},
+    {"square",       ActionKind::Button,   kInputSquare,   kAxisLeftX,  0,  "E"},
+    {"triangle",     ActionKind::Button,   kInputTriangle, kAxisLeftX,  0,  "Tab"},
+    {"l1",           ActionKind::Button,   kInputL1,       kAxisLeftX,  0,  "Z"},
+    {"r1",           ActionKind::Button,   kInputR1,       kAxisLeftX,  0,  "Mouse2, X"},
+    {"l2",           ActionKind::Button,   kInputL2,       kAxisLeftX,  0,  "Q"},
+    {"r2",           ActionKind::Button,   kInputR2,       kAxisLeftX,  0,  "R"},
+    {"l3",           ActionKind::Button,   kInputL3,       kAxisLeftX,  0,  "V"},
+    {"r3",           ActionKind::Button,   kInputR3,       kAxisLeftX,  0,  "Mouse3, B"},
+    {"start",        ActionKind::Button,   kInputStart,    kAxisLeftX,  0,  "Return"},
+    {"select",       ActionKind::Button,   kInputSelect,   kAxisLeftX,  0,  "Backspace, C"},
+    {"lx-",          ActionKind::HalfAxis, 0,              kAxisLeftX,  -1, "A"},
+    {"lx+",          ActionKind::HalfAxis, 0,              kAxisLeftX,  1,  "D"},
+    {"ly-",          ActionKind::HalfAxis, 0,              kAxisLeftY,  -1, "W"},
+    {"ly+",          ActionKind::HalfAxis, 0,              kAxisLeftY,  1,  "S"},
+    {"rx-",          ActionKind::HalfAxis, 0,              kAxisRightX, -1, "J"},
+    {"rx+",          ActionKind::HalfAxis, 0,              kAxisRightX, 1,  "L"},
+    {"ry-",          ActionKind::HalfAxis, 0,              kAxisRightY, -1, "I"},
+    {"ry+",          ActionKind::HalfAxis, 0,              kAxisRightY, 1,  "K"},
+    {"lx",           ActionKind::Axis,     0,              kAxisLeftX,  0,  ""},
+    {"ly",           ActionKind::Axis,     0,              kAxisLeftY,  0,  ""},
+    {"rx",           ActionKind::Axis,     0,              kAxisRightX, 0,  "MouseX"},
     // Mouse up looks up: a negative ry lowers the follow camera (AddHeight(-GetRYf())).
-    {"ry",       ActionKind::Axis,     0,              kAxisRightY, 0,  "-MouseY"},
+    {"ry",           ActionKind::Axis,     0,              kAxisRightY, 0,  "-MouseY"},
+    {"debug_toggle", ActionKind::Host,     0,              kAxisLeftX,  0,  "Grave"},
+    {"fps_toggle",   ActionKind::Host,     0,              kAxisLeftX,  0,  "F3"},
 };
 
 struct ButtonMap {
@@ -100,6 +103,10 @@ const ButtonMap kGamepadButtons[] = {
 // clang-format on
 
 constexpr std::size_t kActionCount = std::size(kActions);
+constexpr std::size_t kFirstHostAction = kActionCount - 2;
+constexpr std::size_t kHostActionCount = kActionCount - kFirstHostAction;
+static_assert(kActions[kFirstHostAction].name == "debug_toggle" && kActions[kFirstHostAction + 1].name == "fps_toggle");
+static_assert(static_cast<std::size_t>(InputHostAction::FpsToggle) == 1);
 
 // AxisCalibration (src/ps2/gamepad.cpp): a byte within 49 above or 50 below the centre reads as
 // zero, and the remaining 78 steps each side span the game's +-128.
@@ -123,6 +130,7 @@ struct Source {
         Key,
         MouseButton,
         MouseAxis,
+        GamepadButton,
     };
 
     Kind  kind = Key;
@@ -153,6 +161,11 @@ std::int64_t                                             g_latch_serial = 0;
 std::int64_t                                             g_stick_read_serial = -1;
 bool                                                     g_stick_live = false;
 bool                                                     g_gamepad_subsystem = false;
+InputKeyboardMouse                                       g_scripted;
+// Per host action: presses not yet consumed, and whether its non-key sources (mouse and gamepad
+// buttons, the script's keys) were held at the last poll, for their press edges.
+std::array<int, kHostActionCount>  g_host_presses{};
+std::array<bool, kHostActionCount> g_host_polled{};
 
 std::string Lower(std::string_view text) {
     std::string lower(text);
@@ -194,6 +207,15 @@ bool ParseSource(std::string_view name, ActionKind kind, Source &source) {
             return false;
         }
         source = {Source::MouseAxis, text == "mousex" ? 0 : 1, sign * scale};
+        return true;
+    }
+    if (kind == ActionKind::Host && lower.starts_with("gamepad:")) {
+        std::string       button_name = lower.substr(8);
+        SDL_GamepadButton button = SDL_GetGamepadButtonFromString(button_name.c_str());
+        if (button == SDL_GAMEPAD_BUTTON_INVALID) {
+            return false;
+        }
+        source = {Source::GamepadButton, static_cast<int>(button), 1.0f};
         return true;
     }
     bool button = lower.size() == 6 && lower.starts_with("mouse");
@@ -349,6 +371,52 @@ void SendRumble(int pad) {
     slot.rumble_time = SDL_GetTicks();
 }
 
+bool GamepadButtonHeld(int button) {
+    return std::ranges::any_of(g_slots, [&](const PadSlot &slot) {
+        return slot.gamepad != nullptr && SDL_GetGamepadButton(slot.gamepad, static_cast<SDL_GamepadButton>(button));
+    });
+}
+
+bool KeyBound(std::size_t host, int scancode) {
+    return std::ranges::any_of(g_bindings[kFirstHostAction + host], [&](const Source &source) {
+        return source.kind == Source::Key && source.code == scancode;
+    });
+}
+
+// Everything but the live keys, which count their presses as their events arrive.
+bool HostPolledHeld(std::size_t host) {
+    for (const Source &source : g_bindings[kFirstHostAction + host]) {
+        bool held = false;
+        switch (source.kind) {
+            case Source::Key:
+                held = std::ranges::find(g_scripted.keys, source.code) != g_scripted.keys.end();
+                break;
+            case Source::MouseButton:
+                held = ((MouseButtons() | g_scripted.mouse_buttons) & (1u << (source.code - 1))) != 0;
+                break;
+            case Source::GamepadButton:
+                held = GamepadButtonHeld(source.code);
+                break;
+            case Source::MouseAxis:
+                break;
+        }
+        if (held) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void PollHostActions() {
+    for (std::size_t host = 0; host < kHostActionCount; ++host) {
+        bool held = HostPolledHeld(host);
+        if (held && !g_host_polled[host]) {
+            ++g_host_presses[host];
+        }
+        g_host_polled[host] = held;
+    }
+}
+
 } // namespace
 
 void InputInit() {
@@ -385,6 +453,9 @@ void InputInit() {
 void InputShutdown() {
     MouseStop();
     g_keys.fill(false);
+    g_scripted = {};
+    g_host_presses.fill(0);
+    g_host_polled.fill(false);
     for (PadSlot &slot : g_slots) {
         if (slot.gamepad != nullptr) {
             SDL_CloseGamepad(slot.gamepad);
@@ -411,6 +482,7 @@ void InputPoll() {
         g_device[pad] = state;
         Compose(pad);
     }
+    PollHostActions();
 }
 
 void InputHandleEvent(const SDL_Event &event) {
@@ -422,6 +494,14 @@ void InputHandleEvent(const SDL_Event &event) {
         case SDL_EVENT_KEY_UP:
             if (event.key.scancode < SDL_SCANCODE_COUNT) {
                 g_keys[event.key.scancode] = event.key.down;
+            }
+            if (event.key.down && !event.key.repeat) {
+                EnsureBindings();
+                for (std::size_t host = 0; host < kHostActionCount; ++host) {
+                    if (KeyBound(host, event.key.scancode)) {
+                        ++g_host_presses[host];
+                    }
+                }
             }
             break;
         case SDL_EVENT_WINDOW_FOCUS_LOST:
@@ -518,6 +598,8 @@ InputPadState InputApplyKeyboardMouse(InputPadState base, const InputKeyboardMou
                     mouse[kActions[i].axis] +=
                         source.scale * g_mouse.sensitivity * (source.code == 0 ? held.mouse_dx : mouse_y);
                     break;
+                case Source::GamepadButton:
+                    break;
             }
         }
         if (!down) {
@@ -610,6 +692,10 @@ const InputMouseSettings &InputGetMouseSettings() {
 }
 
 int InputScancodeFromName(std::string_view name) {
+    std::string lower = Lower(name);
+    if (lower == "grave" || lower == "backquote" || lower == "backtick") {
+        return SDL_SCANCODE_GRAVE;
+    }
     std::string  text(name);
     SDL_Scancode scancode = SDL_GetScancodeFromName(text.c_str());
     if (scancode == SDL_SCANCODE_UNKNOWN) {
@@ -617,4 +703,30 @@ int InputScancodeFromName(std::string_view name) {
         scancode = SDL_GetScancodeFromName(text.c_str());
     }
     return scancode == SDL_SCANCODE_UNKNOWN ? -1 : static_cast<int>(scancode);
+}
+
+bool InputHostHeld(InputHostAction action) {
+    EnsureBindings();
+    std::size_t host = static_cast<std::size_t>(action);
+    for (const Source &source : g_bindings[kFirstHostAction + host]) {
+        if (source.kind == Source::Key && g_keys[source.code]) {
+            return true;
+        }
+    }
+    return HostPolledHeld(host);
+}
+
+bool InputHostPressed(InputHostAction action) {
+    int &presses = g_host_presses[static_cast<std::size_t>(action)];
+    if (presses == 0) {
+        return false;
+    }
+    --presses;
+    return true;
+}
+
+void InputSetScriptedDevices(const InputKeyboardMouse &held) {
+    EnsureBindings();
+    g_scripted = held;
+    PollHostActions();
 }

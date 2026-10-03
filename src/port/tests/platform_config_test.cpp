@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include "../platform/config.hpp"
 #include "../platform/paths.hpp"
@@ -91,4 +92,17 @@ DC_TEST(platform_config_debug_mode_defaults_off) {
     DC_CHECK(!ConfigParse("").debug_mode);
     DC_CHECK(!ConfigParse("[game]\ndebug_mode = off\n").debug_mode);
     DC_CHECK(ConfigParse("[game]\ndebug_mode = on\n").debug_mode);
+}
+
+DC_TEST(platform_config_show_fps_and_the_host_keys) {
+    DC_CHECK(ConfigParse("").show_fps);
+    DC_CHECK(!ConfigParse("[video]\nshow_fps = off\n").show_fps);
+    DC_CHECK(ConfigParse("[video]\nshow_fps = maybe\n").show_fps);
+
+    // The toggles are [input] bindings like the pad's; their defaults (Grave, F3) are input's.
+    Config config = ConfigParse("[input]\ndebug_toggle = F12, Gamepad:guide\nfps_toggle = F4\n");
+    DC_CHECK(config.key_bindings.size() == 2);
+    DC_CHECK(config.key_bindings[0].action == "debug_toggle");
+    DC_CHECK((config.key_bindings[0].keys == std::vector<std::string>{"F12", "Gamepad:guide"}));
+    DC_CHECK(config.key_bindings[1].action == "fps_toggle" && config.key_bindings[1].keys.size() == 1);
 }

@@ -199,6 +199,16 @@ InputPadState InputScriptStateAt(const InputScript &script, int pad, std::int64_
     return held->uses_devices ? InputApplyKeyboardMouse(held->state, held->devices) : held->state;
 }
 
+InputKeyboardMouse InputScriptDevicesAt(const InputScript &script, std::int64_t frame) {
+    const InputScriptStep *held = nullptr;
+    for (const InputScriptStep &step : script.steps) {
+        if (step.pad == 0 && step.frame <= frame) {
+            held = &step;
+        }
+    }
+    return held != nullptr ? held->devices : InputKeyboardMouse{};
+}
+
 bool InputScriptDrivesPad(const InputScript &script, int pad) {
     if (pad == 0) {
         return !script.steps.empty();
@@ -225,6 +235,7 @@ void InputScriptApply(std::int64_t frame) {
             InputSetOverride(pad, &state);
         }
     }
+    InputSetScriptedDevices(InputScriptDevicesAt(g_script, frame));
 }
 
 bool InputScriptActive() {

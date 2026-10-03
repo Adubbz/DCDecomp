@@ -39,6 +39,10 @@ bool InputScriptLoad(const std::filesystem::path &path, InputScript &script, std
 // The state the script holds pad (0 or 1) in at frame.
 InputPadState InputScriptStateAt(const InputScript &script, int pad, std::int64_t frame);
 
+// The keyboard and mouse pad 1's line holds at frame, which also reach the host actions
+// (InputSetScriptedDevices): key:grave toggles debug mode as the live key does.
+InputKeyboardMouse InputScriptDevicesAt(const InputScript &script, std::int64_t frame);
+
 bool InputScriptDrivesPad(const InputScript &script, int pad);
 
 // Installs script as the override of the pads it drives; InputScriptApply then moves it to a
