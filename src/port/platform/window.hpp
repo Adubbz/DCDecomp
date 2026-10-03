@@ -8,6 +8,9 @@ struct WindowConfig {
     int  height = 960;
     bool headless = false;
     bool fullscreen = false;
+    // False for a renderer without a surface (gfx::RendererConfig::offscreen): SDL then loads no
+    // Vulkan library and asks for no surface extension.
+    bool vulkan = true;
 };
 
 // Starts SDL's video subsystem and opens the window. Headless uses SDL's offscreen driver, which

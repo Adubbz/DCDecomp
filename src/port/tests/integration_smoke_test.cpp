@@ -7,6 +7,7 @@
 #include <string>
 
 #include "exitcodes.hpp"
+#include "platform/paths.hpp"
 #include "test.hpp"
 
 // darkcloud itself, run headless the way CI runs it, with its output captured. The executable sits
@@ -29,7 +30,7 @@ fs::path Scratch(const char *name) {
 }
 
 Run RunDarkCloud(const fs::path &dir, const fs::path &data) {
-    fs::path    executable = fs::read_symlink("/proc/self/exe").parent_path() / "darkcloud";
+    fs::path    executable = PathsExecutable().parent_path() / "darkcloud";
     fs::path    log = dir / "output.txt";
     std::string command = "'" + executable.string() + "' --headless --frames 3 --screenshot '" +
                           (dir / "smoke.png").string() + "' --data '" + data.string() + "' --save '" +

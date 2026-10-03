@@ -69,19 +69,38 @@ bool ValidationAvailable() {
     });
 }
 
+bool InstanceHasExtension(const char *name) {
+    uint32_t count = 0;
+    vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
+    std::vector<VkExtensionProperties> extensions(count);
+    vkEnumerateInstanceExtensionProperties(nullptr, &count, extensions.data());
+    return std::any_of(extensions.begin(), extensions.end(), [name](const VkExtensionProperties &extension) {
+        return std::strcmp(extension.extensionName, name) == 0;
+    });
+}
+
 void CreateInstance() {
     uint32_t loader_version = VK_API_VERSION_1_0;
     vkEnumerateInstanceVersion(&loader_version);
-    if (loader_version < VK_API_VERSION_1_4) {
-        Fatal("the Vulkan loader does not support Vulkan 1.4");
+    if (loader_version < VK_API_VERSION_1_3) {
+        Fatal("the Vulkan loader does not support Vulkan 1.3");
     }
 
-    uint32_t           sdl_count = 0;
-    const char *const *sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_count);
-    if (sdl_extensions == nullptr) {
-        Fatal("SDL_Vulkan_GetInstanceExtensions: %s", SDL_GetError());
+    std::vector<const char *> extensions;
+    if (!g.config.offscreen) {
+        uint32_t           sdl_count = 0;
+        const char *const *sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_count);
+        if (sdl_extensions == nullptr) {
+            Fatal("SDL_Vulkan_GetInstanceExtensions: %s", SDL_GetError());
+        }
+        extensions.assign(sdl_extensions, sdl_extensions + sdl_count);
     }
-    std::vector<const char *> extensions(sdl_extensions, sdl_extensions + sdl_count);
+    // Drivers that implement Vulkan on another API (KosmicKrisp and MoltenVK on Metal) are only
+    // enumerated for an instance that says it handles VK_KHR_portability_subset.
+    bool portability = InstanceHasExtension(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    if (portability) {
+        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    }
     std::vector<const char *> layers;
 
     bool wanted = g.config.validation || SDL_getenv("DC_VULKAN_VALIDATION") != nullptr;
@@ -113,6 +132,7 @@ void CreateInstance() {
 
     VkInstanceCreateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    info.flags = portability ? VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : 0;
     info.pNext = validation ? &messenger : nullptr;
     info.pApplicationInfo = &app;
     info.enabledLayerCount = static_cast<uint32_t>(layers.size());
@@ -134,8 +154,10 @@ bool FindQueueFamily(VkPhysicalDevice device, uint32_t *family) {
     std::vector<VkQueueFamilyProperties> families(count);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &count, families.data());
     for (uint32_t i = 0; i < count; i++) {
-        VkBool32 present = VK_FALSE;
-        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, g.surface, &present);
+        VkBool32 present = VK_TRUE;
+        if (g.surface != VK_NULL_HANDLE) {
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, g.surface, &present);
+        }
         if ((families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) && present) {
             *family = i;
             return true;
@@ -154,45 +176,12 @@ bool HasExtension(VkPhysicalDevice device, const char *name) {
     });
 }
 
-const char *MissingFeature(VkPhysicalDevice device) {
-    VkPhysicalDeviceVulkan13Features features13 = {};
-    features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-    VkPhysicalDeviceVulkan12Features features12 = {};
-    features12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-    features12.pNext = &features13;
-    VkPhysicalDeviceFeatures2 features = {};
-    features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    features.pNext = &features12;
-    vkGetPhysicalDeviceFeatures2(device, &features);
-
-    if (!features.features.dualSrcBlend) {
-        return "dualSrcBlend";
+std::string Join(const std::vector<std::string> &items) {
+    std::string joined;
+    for (const std::string &item : items) {
+        joined += (joined.empty() ? "" : ", ") + item;
     }
-    if (!features.features.shaderClipDistance) {
-        return "shaderClipDistance";
-    }
-    if (!features.features.shaderSampledImageArrayDynamicIndexing) {
-        return "shaderSampledImageArrayDynamicIndexing";
-    }
-    VkPhysicalDeviceVulkan12Properties properties12 = {};
-    properties12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
-    VkPhysicalDeviceProperties2 properties = {};
-    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-    properties.pNext = &properties12;
-    vkGetPhysicalDeviceProperties2(device, &properties);
-    if (properties12.maxPerStageDescriptorUpdateAfterBindSampledImages < kMaxTextures ||
-        properties12.maxDescriptorSetUpdateAfterBindSampledImages < kMaxTextures) {
-        return "room for the bindless texture array";
-    }
-    if (!features12.descriptorBindingPartiallyBound ||
-        !features12.descriptorBindingSampledImageUpdateAfterBind ||
-        !features12.descriptorBindingUpdateUnusedWhilePending) {
-        return "descriptor indexing";
-    }
-    if (!features13.dynamicRendering || !features13.synchronization2) {
-        return "dynamicRendering/synchronization2";
-    }
-    return nullptr;
+    return joined;
 }
 
 void PickPhysicalDevice() {
@@ -201,41 +190,52 @@ void PickPhysicalDevice() {
     std::vector<VkPhysicalDevice> devices(count);
     vkEnumeratePhysicalDevices(g.instance, &count, devices.data());
 
-    int best = -1;
+    // The kind of GPU first, then 1.4 over 1.3: an integrated 1.3 GPU beats a 1.4 CPU rasteriser.
+    int        best = -1;
+    DeviceCaps chosen;
     for (VkPhysicalDevice device : devices) {
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(device, &properties);
-        uint32_t family;
-        if (properties.apiVersion < VK_API_VERSION_1_4 ||
-            !HasExtension(device, VK_KHR_SWAPCHAIN_EXTENSION_NAME) || !FindQueueFamily(device, &family)) {
+        DeviceCaps               caps = QueryDeviceCaps(device, g.surface);
+        std::vector<std::string> missing = MissingRequirements(caps, g.offscreen);
+        uint32_t                 family;
+        if (missing.empty() && !FindQueueFamily(device, &family)) {
+            missing.emplace_back("a graphics queue family");
+        }
+        if (!missing.empty()) {
+            Error("%s cannot be used; it lacks %s", properties.deviceName, Join(missing).c_str());
             continue;
         }
-        if (const char *missing = MissingFeature(device)) {
-            Error("%s lacks %s", properties.deviceName, missing);
-            continue;
-        }
-        int score = 0;
+        int score = properties.apiVersion >= VK_API_VERSION_1_4 ? 1 : 0;
         if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-            score = 2;
+            score += 4;
         } else if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
-            score = 1;
+            score += 2;
         }
         if (score > best) {
             best = score;
+            chosen = caps;
             g.physical_device = device;
             g.queue_family = family;
         }
     }
     if (best < 0) {
-        Fatal(
-            "no GPU supports Vulkan 1.4 with the features the renderer needs and can present to the window");
+        Fatal(g.offscreen ? "no Vulkan 1.3 device has the features the renderer needs"
+                          : "no Vulkan 1.3 device has the features the renderer needs and can present to the window");
     }
 
     vkGetPhysicalDeviceProperties(g.physical_device, &g.properties);
     vkGetPhysicalDeviceMemoryProperties(g.physical_device, &g.memory_properties);
-    std::fprintf(stderr, "Vulkan: using %s (Vulkan %u.%u.%u)\n", g.properties.deviceName,
+    g.portability_subset = chosen.portability_subset;
+    g.triangle_fans = g.config.triangle_fans && (!chosen.portability_subset || chosen.portability.triangleFans);
+    g.separate_stencil_masks =
+        g.config.separate_stencil_masks && (!chosen.portability_subset || chosen.portability.separateStencilMaskRef);
+    std::fprintf(stderr, "Vulkan: using %s (Vulkan %u.%u.%u)%s\n", g.properties.deviceName,
                  VK_API_VERSION_MAJOR(g.properties.apiVersion), VK_API_VERSION_MINOR(g.properties.apiVersion),
-                 VK_API_VERSION_PATCH(g.properties.apiVersion));
+                 VK_API_VERSION_PATCH(g.properties.apiVersion), g.offscreen ? ", offscreen" : "");
+    if (std::vector<std::string> workarounds = PortabilityWorkarounds(chosen); !workarounds.empty()) {
+        std::fprintf(stderr, "Vulkan: portability subset: %s\n", Join(workarounds).c_str());
+    }
 }
 
 bool DepthStencilUsable(VkFormat format) {
@@ -283,9 +283,18 @@ void CreateDevice() {
     dynamic3.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT;
     dynamic3.extendedDynamicState3ColorWriteMask = VK_TRUE;
 
+    // The spec requires enabling the extension wherever it is offered, and the subset features the
+    // renderer uses must then be enabled too.
+    VkPhysicalDevicePortabilitySubsetFeaturesKHR portability = {};
+    portability.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR;
+    portability.triangleFans = g.triangle_fans;
+    portability.separateStencilMaskRef = g.separate_stencil_masks;
+    portability.vertexAttributeAccessBeyondStride = VK_FALSE;
+    dynamic3.pNext = g.portability_subset ? &portability : nullptr;
+
     VkPhysicalDeviceVulkan13Features features13 = {};
     features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-    features13.pNext = g.dynamic_color_write_mask ? &dynamic3 : nullptr;
+    features13.pNext = g.dynamic_color_write_mask ? &dynamic3 : dynamic3.pNext;
     features13.dynamicRendering = VK_TRUE;
     features13.synchronization2 = VK_TRUE;
 
@@ -303,15 +312,24 @@ void CreateDevice() {
     features.features.shaderClipDistance = VK_TRUE;
     features.features.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 
-    const char *extensions[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_EXTENDED_DYNAMIC_STATE_3_EXTENSION_NAME};
+    std::vector<const char *> extensions;
+    if (!g.offscreen) {
+        extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+    }
+    if (g.dynamic_color_write_mask) {
+        extensions.push_back(VK_EXT_EXTENDED_DYNAMIC_STATE_3_EXTENSION_NAME);
+    }
+    if (g.portability_subset) {
+        extensions.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
+    }
 
     VkDeviceCreateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     info.pNext = &features;
     info.queueCreateInfoCount = 1;
     info.pQueueCreateInfos = &queue;
-    info.enabledExtensionCount = g.dynamic_color_write_mask ? 2 : 1;
-    info.ppEnabledExtensionNames = extensions;
+    info.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    info.ppEnabledExtensionNames = extensions.data();
     Check(vkCreateDevice(g.physical_device, &info, nullptr, &g.device), "vkCreateDevice");
     vkGetDeviceQueue(g.device, g.queue_family, 0, &g.queue);
     if (g.dynamic_color_write_mask) {
@@ -422,7 +440,30 @@ bool CreateSwapchain() {
     return true;
 }
 
+// Offscreen, the frame is the window's pixel size and nothing else follows it.
+bool ResizeOffscreen() {
+    int width = 0;
+    int height = 0;
+    SDL_GetWindowSizeInPixels(g.window, &width, &height);
+    g.resize_pending = false;
+    if (width <= 0 || height <= 0) {
+        return false;
+    }
+    VkExtent2D extent = {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
+    if (extent.width != g.swapchain.extent.width || extent.height != g.swapchain.extent.height) {
+        vkDeviceWaitIdle(g.device);
+        g.swapchain.extent = extent;
+        DestroyMainTargets();
+        CreateMainTargets();
+        RecreateSharedTargets();
+    }
+    return true;
+}
+
 bool RecreateSwapchain() {
+    if (g.offscreen) {
+        return ResizeOffscreen();
+    }
     vkDeviceWaitIdle(g.device);
     DestroySwapchainResources();
     if (!CreateSwapchain()) {
@@ -682,8 +723,9 @@ void RendererInit(SDL_Window *window, const RendererConfig &config) {
     g = {};
     g.window = window;
     g.config = config;
+    g.offscreen = config.offscreen;
     CreateInstance();
-    if (!SDL_Vulkan_CreateSurface(window, g.instance, nullptr, &g.surface)) {
+    if (!g.offscreen && !SDL_Vulkan_CreateSurface(window, g.instance, nullptr, &g.surface)) {
         Fatal("SDL_Vulkan_CreateSurface: %s", SDL_GetError());
     }
     PickPhysicalDevice();
@@ -691,7 +733,7 @@ void RendererInit(SDL_Window *window, const RendererConfig &config) {
     CreateFrames();
     CreatePipelineLayout();
     InitResources();
-    if (!CreateSwapchain()) {
+    if (g.offscreen || !CreateSwapchain()) {
         // A window that starts minimised still needs main targets for render-to-texture work.
         int width = 0;
         int height = 0;
@@ -742,7 +784,9 @@ void RendererShutdown() {
     }
     ShutdownMemory();
     vkDestroyDevice(g.device, nullptr);
-    SDL_Vulkan_DestroySurface(g.instance, g.surface, nullptr);
+    if (g.surface != VK_NULL_HANDLE) {
+        SDL_Vulkan_DestroySurface(g.instance, g.surface, nullptr);
+    }
     if (g.messenger != VK_NULL_HANDLE) {
         auto destroy = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
             vkGetInstanceProcAddr(g.instance, "vkDestroyDebugUtilsMessengerEXT"));
@@ -756,10 +800,42 @@ void RendererShutdown() {
 
 void RendererResize() { g.resize_pending = true; }
 
+namespace detail {
+namespace {
+
+bool OpenFrame() {
+    BeginCommands(CurrentFrame().draw_cmd);
+    g.in_frame = true;
+    g.frame_serial++;
+    g.target = kMainTarget;
+    g.rendering = false;
+    ResetDrawState();
+    return true;
+}
+
+void FinishFrame(Frame &frame) {
+    if (g.depth_queries_recorded) {
+        WaitFrame(frame);
+        HarvestDepthQueries();
+    }
+    g.main_current ^= 1;
+    AdvanceSlot();
+}
+
+} // namespace
+} // namespace detail
+
 bool BeginFrame() {
     if (g.in_frame) {
         Error("BeginFrame inside a frame");
         return true;
+    }
+    if (g.offscreen) {
+        if (g.resize_pending && !ResizeOffscreen()) {
+            SubmitUploadsAndWait();
+            return false;
+        }
+        return OpenFrame();
     }
     if ((g.resize_pending || g.swapchain.handle == VK_NULL_HANDLE) && !RecreateSwapchain()) {
         SubmitUploadsAndWait();
@@ -785,13 +861,7 @@ bool BeginFrame() {
         return false;
     }
 
-    BeginCommands(CurrentFrame().draw_cmd);
-    g.in_frame = true;
-    g.frame_serial++;
-    g.target = kMainTarget;
-    g.rendering = false;
-    ResetDrawState();
-    return true;
+    return OpenFrame();
 }
 
 void EndFrame() {
@@ -803,6 +873,17 @@ void EndFrame() {
     EndRendering();
     ReleaseTarget();
     RecordDepthQueries(cmd);
+
+    if (g.offscreen) {
+        // Every colour image rests shader-readable between operations; the next frame samples this
+        // one as kPreviousFrame.
+        ToRest(cmd, CurrentMainColor());
+        Check(vkEndCommandBuffer(cmd), "vkEndCommandBuffer");
+        Submit(true, VK_NULL_HANDLE, VK_NULL_HANDLE);
+        g.in_frame = false;
+        FinishFrame(frame);
+        return;
+    }
 
     Image  &main = CurrentMainColor();
     VkImage swapchain = g.swapchain.images[g.image_index];
@@ -842,16 +923,17 @@ void EndFrame() {
     } else {
         Check(result, "vkQueuePresentKHR");
     }
-
-    if (g.depth_queries_recorded) {
-        WaitFrame(frame);
-        HarvestDepthQueries();
-    }
-    g.main_current ^= 1;
-    AdvanceSlot();
+    FinishFrame(frame);
 }
 
 bool InFrame() { return g.in_frame; }
+
+RendererFeatures ActiveRendererFeatures() {
+    return {g.properties.apiVersion, g.offscreen, g.triangle_fans, g.separate_stencil_masks,
+            g.dynamic_color_write_mask, g.portability_subset};
+}
+
+bool HeadlessSurfaceAvailable() { return InstanceHasExtension(VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME); }
 
 uint32_t ValidationMessageCount() { return g.validation_messages; }
 

@@ -29,7 +29,11 @@ void WindowInit(const WindowConfig &config) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         Fatal("SDL_Init");
     }
-    SDL_WindowFlags flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+    // SDL3 backs a Vulkan window on macOS with a CAMetalLayer (VK_EXT_metal_surface) by itself.
+    SDL_WindowFlags flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+    if (config.vulkan) {
+        flags |= SDL_WINDOW_VULKAN;
+    }
     if (config.fullscreen && !config.headless) {
         flags |= SDL_WINDOW_FULLSCREEN;
     }

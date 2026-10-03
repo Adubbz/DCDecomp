@@ -1,9 +1,15 @@
 #include "paths.hpp"
 
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
+#endif
+
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <system_error>
 #include <vector>
@@ -18,14 +24,7 @@ std::optional<fs::path> data_root;
 std::optional<fs::path> save_root;
 fs::path                program;
 
-fs::path ExecutableDirectory() {
-    std::error_code error;
-    fs::path        self = fs::read_symlink("/proc/self/exe", error);
-    if (error && !program.empty()) {
-        self = fs::absolute(program, error);
-    }
-    return error ? fs::path() : self.parent_path();
-}
+fs::path ExecutableDirectory() { return PathsExecutable().parent_path(); }
 
 std::optional<fs::path> FromEnvironment(const char *name) {
     const char *value = std::getenv(name);
@@ -57,6 +56,33 @@ fs::path Absolute(const fs::path &path) {
 }
 
 } // namespace
+
+fs::path PathsExecutable() {
+    std::error_code error;
+#if defined(__APPLE__)
+    std::uint32_t size = 0;
+    _NSGetExecutablePath(nullptr, &size);
+    std::string path(size, '\0');
+    if (_NSGetExecutablePath(path.data(), &size) == 0) {
+        // The dyld path may run through symlinks and "..", as the process was started.
+        if (char *real = realpath(path.c_str(), nullptr)) {
+            fs::path resolved = real;
+            std::free(real);
+            return resolved;
+        }
+    }
+#elif defined(__linux__)
+    fs::path self = fs::read_symlink("/proc/self/exe", error);
+    if (!error) {
+        return self;
+    }
+#endif
+    if (program.empty()) {
+        return {};
+    }
+    fs::path absolute = fs::absolute(program, error);
+    return error ? fs::path() : absolute;
+}
 
 int PathsConsumeArgs(int argc, const char **argv) {
     if (argc > 0 && argv[0]) {

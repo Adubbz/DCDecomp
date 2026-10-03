@@ -1,6 +1,6 @@
 # gfx
 
-The port's Vulkan 1.4 renderer. `gfx.hpp` is the whole public API (namespace `gfx`); everything
+The port's Vulkan renderer (1.3 or later, see "Device"). `gfx.hpp` is the whole public API (namespace `gfx`); everything
 else is internal. No game header is reachable from here: `platform/`, `gfx/` and `audio/` build as
 `dc_host`, without `port.h` or the game's include paths. Replacement units include
 `"gfx/gfx.hpp"`.
@@ -14,6 +14,12 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
 - `BeginFrame()` / `EndFrame()` bracket a frame. Two frames are in flight. `BeginFrame` returns
   false when there is nothing to draw to (minimised); draws are then dropped and `EndFrame` does
   nothing. Every frame starts on the main target. `EndFrame` presents.
+- `config.offscreen` renders without a surface or swapchain: each frame is drawn to the main target
+  alone, at the window's pixel size, and `EndFrame` submits it and presents nothing. `ReadbackFrame`,
+  `SnapshotFrame`, `kPreviousFrame`, depth queries and resizes behave as with a swapchain, so a
+  headless run reads back the same pixels. `darkcloud --headless` uses it when the Vulkan loader has
+  no `VK_EXT_headless_surface` (SDL's offscreen driver cannot then make a Vulkan window), and
+  `--offscreen` forces it.
 - `RendererResize()` after the window's pixel size changes (`WindowPollEvents` does it); the
   swapchain and main target follow at the next `BeginFrame`. Main-target contents are lost.
 - Single-threaded: call everything from one thread.
@@ -173,10 +179,51 @@ file and a rename.
 - `ReadbackFrame` (the last presented frame) and `ReadbackTexture` are synchronous and only
   allowed outside a frame. `WritePng` writes an RGB PNG with stored (uncompressed) deflate.
 
+## Device
+
+`RendererInit` takes the best device that has everything below (a discrete GPU over an integrated
+one over the rest, and Vulkan 1.4 over 1.3 within a kind) and prints, for every device it passes
+over, each requirement that device lacks. `requirements.cpp` holds the check as a pure function of
+the device's capabilities.
+
+Nothing the renderer calls was introduced by Vulkan 1.4, so 1.3 is the floor:
+
+| Requirement | Introduced by |
+|---|---|
+| `dualSrcBlend`, `shaderClipDistance`, `shaderSampledImageArrayDynamicIndexing` | 1.0 features |
+| `vkGetPhysicalDeviceFeatures2`, `vkGetPhysicalDeviceProperties2` | 1.1 |
+| `descriptorBindingPartiallyBound`, `descriptorBindingSampledImageUpdateAfterBind`, `descriptorBindingUpdateUnusedWhilePending`; 8192 update-after-bind sampled images per stage and per set, and that many update-after-bind resources per stage | 1.2 (descriptor indexing) |
+| `dynamicRendering` (`vkCmdBeginRendering`, `VkPipelineRenderingCreateInfo`) | 1.3 feature |
+| `synchronization2` (`vkCmdPipelineBarrier2`, `vkQueueSubmit2`, the `*_2` stages and accesses) | 1.3 feature |
+| Cull mode, front face, topology, depth test/write/compare, stencil test and ops as dynamic state | 1.3 core (no feature bit) |
+| `D32_SFLOAT_S8_UINT` or `D24_UNORM_S8_UINT` as an attachment that copies both ways | format support |
+| `maxPushConstantsSize` of 56 bytes | 1.0 limit (128 guaranteed) |
+| `VK_KHR_swapchain` and a graphics queue that presents to the window | not when offscreen |
+
+Optional, used when present:
+
+- `VK_EXT_extended_dynamic_state3` with `extendedDynamicState3ColorWriteMask` (below); without it
+  the colourless pipelines are added. Chosen by the device's capability, and
+  `config.dynamic_color_write_mask = false` forces the fallback.
+- `VK_KHR_portability_enumeration` (instance), enabled with
+  `VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR` whenever the loader has it, so drivers that
+  implement Vulkan on Metal (KosmicKrisp, MoltenVK) are enumerated.
+- `VK_KHR_portability_subset` (device), enabled whenever offered, as the spec requires. Of its
+  restrictions the renderer meets two: without `triangleFans` a `Primitive::TriangleFan` is drawn as
+  an indexed list in Vulkan's fan order (identical pixels; `config.triangle_fans = false` forces
+  it), and without `separateStencilMaskRef` both faces take one reference and compare and write
+  masks (the face culling keeps; the front's when both are drawn, with one warning if they differ;
+  `config.separate_stencil_masks = false` forces it). The vertex strides (28 and 36 bytes) must be
+  multiples of `minVertexInputBindingStrideAlignment`. Point polygons, events, format swizzles and
+  reinterpretation, constant-alpha blend factors, mip LOD bias and comparison samplers are not used.
+- `VK_EXT_debug_utils` and `VK_LAYER_KHRONOS_validation` for validation.
+
+Shaders are compiled for `--target-env vulkan1.4`, which emits SPIR-V 1.6 with no capability beyond
+what 1.3 supports (`spirv-val --target-env vulkan1.3` accepts all three).
+
 ## Not done here
 
 - DATE/DATM (destination alpha test; `clsmes.cpp` MakeFukidashi) is not emulated; a stencil pass
   marking the pixels whose alpha passes, then a test against it, is the way.
 - GS mip LOD (TEX1 L and K) is ignored; filtering is standard trilinear over the supplied levels.
-- `dualSrcBlend`, `shaderClipDistance`, update-after-bind sampled images (8192) and dynamic
-  indexing are required of the device.
+- The device requirements are listed under "Device".

@@ -124,7 +124,9 @@ int PackStencilOps(const StencilFace &face) {
            static_cast<int>(face.pass) << 8 | static_cast<int>(face.depth_fail) << 12;
 }
 
-void SetStencilFace(VkCommandBuffer cmd, uint32_t index, const StencilFace &face) {
+// masks gives the reference and the compare and write masks, which a portability-subset device
+// without separateStencilMaskRef needs equal on both faces.
+void SetStencilFace(VkCommandBuffer cmd, uint32_t index, const StencilFace &face, const StencilFace &masks) {
     VkStencilFaceFlags flags = index == 0 ? VK_STENCIL_FACE_FRONT_BIT : VK_STENCIL_FACE_BACK_BIT;
     int                ops = PackStencilOps(face);
     if (g.bound.stencil_ops[index] != ops) {
@@ -132,17 +134,17 @@ void SetStencilFace(VkCommandBuffer cmd, uint32_t index, const StencilFace &face
         vkCmdSetStencilOp(cmd, flags, StencilOpOf(face.fail), StencilOpOf(face.pass), StencilOpOf(face.depth_fail),
                           static_cast<VkCompareOp>(face.compare));
     }
-    if (g.bound.stencil_reference[index] != face.reference) {
-        g.bound.stencil_reference[index] = face.reference;
-        vkCmdSetStencilReference(cmd, flags, face.reference);
+    if (g.bound.stencil_reference[index] != masks.reference) {
+        g.bound.stencil_reference[index] = masks.reference;
+        vkCmdSetStencilReference(cmd, flags, masks.reference);
     }
-    if (g.bound.stencil_compare_mask[index] != face.compare_mask) {
-        g.bound.stencil_compare_mask[index] = face.compare_mask;
-        vkCmdSetStencilCompareMask(cmd, flags, face.compare_mask);
+    if (g.bound.stencil_compare_mask[index] != masks.compare_mask) {
+        g.bound.stencil_compare_mask[index] = masks.compare_mask;
+        vkCmdSetStencilCompareMask(cmd, flags, masks.compare_mask);
     }
-    if (g.bound.stencil_write_mask[index] != face.write_mask) {
-        g.bound.stencil_write_mask[index] = face.write_mask;
-        vkCmdSetStencilWriteMask(cmd, flags, face.write_mask);
+    if (g.bound.stencil_write_mask[index] != masks.write_mask) {
+        g.bound.stencil_write_mask[index] = masks.write_mask;
+        vkCmdSetStencilWriteMask(cmd, flags, masks.write_mask);
     }
 }
 
@@ -297,8 +299,24 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
     }
     // The pipelines declare every stencil parameter dynamic, so each must be set once before
     // the first draw even while the test is off.
-    SetStencilFace(cmd, 0, state.stencil_front);
-    SetStencilFace(cmd, 1, state.stencil_back);
+    if (g.separate_stencil_masks) {
+        SetStencilFace(cmd, 0, state.stencil_front, state.stencil_front);
+        SetStencilFace(cmd, 1, state.stencil_back, state.stencil_back);
+    } else {
+        // The face culling leaves is the one whose masks matter; with both drawn the front's win.
+        const StencilFace &masks = state.cull == CullMode::Front ? state.stencil_back : state.stencil_front;
+        const StencilFace &other = state.cull == CullMode::Front ? state.stencil_front : state.stencil_back;
+        static bool        warned = false;
+        if (state.stencil_test && state.cull == CullMode::None && !warned &&
+            (other.reference != masks.reference || other.compare_mask != masks.compare_mask ||
+             other.write_mask != masks.write_mask)) {
+            warned = true;
+            Error("the device takes one stencil reference and mask pair for both faces; the back face "
+                  "uses the front's");
+        }
+        SetStencilFace(cmd, 0, state.stencil_front, masks);
+        SetStencilFace(cmd, 1, state.stencil_back, masks);
+    }
     if (g.dynamic_color_write_mask && g.bound.color_write_mask != state.color_write_mask) {
         g.bound.color_write_mask = state.color_write_mask;
         VkColorComponentFlags mask = state.color_write_mask & kWriteRgba;
@@ -524,14 +542,16 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
     if (vertices.empty()) {
         return;
     }
-    bool                lines = primitive == Primitive::Lines || primitive == Primitive::LineStrip;
+    bool lines = primitive == Primitive::Lines || primitive == Primitive::LineStrip;
+    // VK_KHR_portability_subset may lack fans (Metal has none); the same triangles go as a list.
+    bool                fan_as_list = primitive == Primitive::TriangleFan && !g.triangle_fans;
     VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     switch (primitive) {
         case Primitive::TriangleStrip:
             topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
             break;
         case Primitive::TriangleFan:
-            topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
+            topology = fan_as_list ? VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST : VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
             break;
         case Primitive::Lines:
             topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
@@ -551,6 +571,24 @@ void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const Textu
     std::memcpy(data.data, vertices.data(), vertices.size_bytes());
     BindVertices(data.buffer, data.offset);
 
+    if (fan_as_list) {
+        uint32_t triangles = vertices.size() < 3 ? 0 : static_cast<uint32_t>(vertices.size() - 2);
+        if (triangles == 0) {
+            return;
+        }
+        TransientSpan indices = AllocateTransient(triangles * 3 * sizeof(uint32_t), sizeof(uint32_t));
+        uint32_t     *index = reinterpret_cast<uint32_t *>(indices.data);
+        // Vulkan's own order for fan triangle i, so interpolation rounds as the fan's would.
+        for (uint32_t i = 0; i < triangles; i++) {
+            index[0] = i + 1;
+            index[1] = i + 2;
+            index[2] = 0;
+            index += 3;
+        }
+        vkCmdBindIndexBuffer(cmd, indices.buffer, indices.offset, VK_INDEX_TYPE_UINT32);
+        vkCmdDrawIndexed(cmd, triangles * 3, 1, 0, 0, 0);
+        return;
+    }
     if (primitive != Primitive::Quads) {
         vkCmdDraw(cmd, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
         return;

@@ -41,10 +41,35 @@ struct RendererConfig {
     // False forces the pipeline variants that stand in for a dynamic colour write mask where
     // VK_EXT_extended_dynamic_state3 lacks it, so that path can be exercised on any device.
     bool dynamic_color_write_mask = true;
+    // No surface and no swapchain: every frame is drawn to the main target alone, at the window's
+    // pixel size, and EndFrame presents nothing. The window then needs no SDL_WINDOW_VULKAN. For
+    // headless runs where the Vulkan loader has no VK_EXT_headless_surface.
+    bool offscreen = false;
+    // False draws triangle fans as indexed lists, as on a VK_KHR_portability_subset device without
+    // triangleFans, so that path can be exercised on any device.
+    bool triangle_fans = true;
+    // False sets one stencil reference and compare and write masks for both faces, as on a
+    // portability-subset device without separateStencilMaskRef.
+    bool separate_stencil_masks = true;
 };
 
-// Exits the process with a message if no Vulkan 1.4 device can drive the window.
-void RendererInit(SDL_Window *window, const RendererConfig &config);
+// What RendererInit settled on, from the config and the device.
+struct RendererFeatures {
+    uint32_t api_version;
+    bool     offscreen;
+    bool     triangle_fans;
+    bool     separate_stencil_masks;
+    bool     dynamic_color_write_mask;
+    bool     portability_subset;
+};
+
+// Exits the process with a message, naming what each device lacks, if no Vulkan 1.3 or later device
+// has what the renderer needs and can drive the window (any device with a graphics queue, offscreen).
+void             RendererInit(SDL_Window *window, const RendererConfig &config);
+RendererFeatures ActiveRendererFeatures();
+// Whether the Vulkan loader offers VK_EXT_headless_surface, which SDL's offscreen driver needs for a
+// Vulkan window; without it a headless run renders offscreen. Callable before RendererInit.
+bool HeadlessSurfaceAvailable();
 void RendererShutdown();
 // The window's pixel size changed; the swapchain and main target follow at the next BeginFrame.
 void RendererResize();

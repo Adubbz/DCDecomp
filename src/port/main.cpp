@@ -24,6 +24,7 @@
 #include "platform/config.hpp"
 #include "platform/input.hpp"
 #include "platform/input_script.hpp"
+#include "platform/memory.hpp"
 #include "platform/paths.hpp"
 #include "platform/window.hpp"
 #include "snd.hpp"
@@ -41,6 +42,8 @@ namespace {
 
 struct Options {
     bool         headless = false;
+    bool         high_arenas = false;
+    bool         offscreen = false;
     std::int64_t frames = -1;
     const char  *screenshot = nullptr;
     const char  *input = nullptr;
@@ -51,17 +54,20 @@ struct Options {
 [[noreturn]] void Usage(const char *program) {
     std::fprintf(stderr,
                  "usage: %s [--data DIR] [--save DIR] [--headless] [--frames N] [--screenshot PATH]\n"
-                 "          [--input FILE] [--width W] [--height H]\n"
+                 "          [--input FILE] [--width W] [--height H] [--offscreen] [--high-arenas]\n"
                  "  --data DIR         the extracted game data (default: DC_DATA, then ./data, then data/\n"
                  "                     beside the executable)\n"
                  "  --save DIR         saves, config.ini and the pipeline cache (default: DC_SAVE, then\n"
                  "                     ./save, then save/ beside the executable)\n"
                  "  --headless         render offscreen (SDL offscreen driver, VK_EXT_headless_surface),\n"
                  "                     no audio device, the game clock unbounded\n"
+                 "  --offscreen        --headless without a Vulkan surface: render to an image only (what\n"
+                 "                     --headless does when there is no VK_EXT_headless_surface)\n"
                  "  --frames N         stop after N frames of the game's main loop\n"
                  "  --screenshot PATH  write the last frame to PATH as a PNG on exit\n"
                  "  --input FILE       drive pad 1 from a script (default: DC_INPUT); see docs/PC.md\n"
-                 "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n",
+                 "  --width, --height  window size in pixels (default: config.ini, then 1280x960)\n"
+                 "  --high-arenas      map the arenas above 4 GiB, as macOS must (DC_HIGH_ARENAS=1)\n",
                  program);
     std::exit(kExitUsage);
 }
@@ -86,6 +92,11 @@ Options ParseOptions(int argc, const char **argv) {
         };
         if (arg == "--headless") {
             options.headless = true;
+        } else if (arg == "--offscreen") {
+            options.headless = true;
+            options.offscreen = true;
+        } else if (arg == "--high-arenas") {
+            options.high_arenas = true;
         } else if (arg == "--frames") {
             options.frames = number();
         } else if (arg == "--screenshot") {
@@ -195,6 +206,9 @@ int Screenshot(const char *path) {
 int main(int argc, const char **argv, const char **envp) {
     argc = PathsConsumeArgs(argc, argv);
     Options options = ParseOptions(argc, argv);
+    if (options.high_arenas) {
+        ArenaMemorySetHigh(true);
+    }
     RequireData();
     LoadInputScript(options.input);
 
@@ -206,6 +220,8 @@ int main(int argc, const char **argv, const char **envp) {
     window.height = options.height > 0 ? options.height : config.window_height;
     window.fullscreen = config.fullscreen;
     window.headless = options.headless;
+    bool offscreen = options.offscreen || (options.headless && !gfx::HeadlessSurfaceAvailable());
+    window.vulkan = !offscreen;
     WindowInit(window);
     InputInit();
 
@@ -213,6 +229,7 @@ int main(int argc, const char **argv, const char **envp) {
     renderer.present_mode = PresentMode(config.present_mode);
     renderer.pipeline_cache = PathsSaveRoot() / "pipeline_cache.bin";
     renderer.progress = ReportShaderProgress;
+    renderer.offscreen = offscreen;
     gfx::RendererInit(WindowHandle(), renderer);
 
     audio::DefaultMixer().SetMasterGain(config.master_volume);

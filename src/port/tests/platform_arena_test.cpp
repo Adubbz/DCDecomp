@@ -8,6 +8,7 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "platform/memory.hpp"
 #include "test.hpp"
 
 extern CDataAlloc<1, 6000> SystemMesBuffer;
@@ -18,8 +19,9 @@ bool Aligned64(const void *pointer) {
     return (reinterpret_cast<std::uintptr_t>(pointer) & 63) == 0;
 }
 
+// High arenas (macOS, DC_HIGH_ARENAS=1) promise nothing about the address.
 bool Below2GiB(const void *pointer) {
-    return reinterpret_cast<std::uintptr_t>(pointer) < 0x80000000u;
+    return !ArenaMemoryIsLow() || reinterpret_cast<std::uintptr_t>(pointer) < 0x80000000u;
 }
 
 // Runs body in a child process and returns the signal that ended it, or 0.
@@ -90,7 +92,8 @@ DC_TEST(platform_arena_overflow_aborts) {
     DC_CHECK(SignalOf([] { VisualData.Alloc64(400); }) == SIGABRT);
     DC_CHECK(SignalOf([] { VisualData.Alloc(400); }) == 0);
     // An overrun that skips the allocator runs into the guard page behind the block.
-    DC_CHECK(SignalOf([] { VisualData.base[VisualData.limit * 16] = 1; }) == SIGSEGV);
+    int guard = SignalOf([] { VisualData.base[VisualData.limit * 16] = 1; });
+    DC_CHECK(guard == SIGSEGV || guard == SIGBUS);
     DC_CHECK(SignalOf([] { SystemMesBuffer.Alloc(6001); }) == SIGABRT);
 }
 
