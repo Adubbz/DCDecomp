@@ -100,7 +100,7 @@ DC_TEST(integration_loop_results) {
     };
     for (const Case &c : cases) {
         Reset(c.mode);
-        GameApplyLoopResult(c.result);
+        GameApplyLoopResult(c.mode, c.result);
         if (mode != c.next_mode || MapNo != c.next_map_no || NextMapNo != c.map_jump) {
             std::fprintf(stderr, "mode %d result %d: mode %d MapNo %d NextMapNo %d\n", c.mode, c.result, mode, MapNo,
                          NextMapNo);
@@ -111,9 +111,16 @@ DC_TEST(integration_loop_results) {
 
 DC_TEST(integration_title_new_game_jumps_to_the_opening_town) {
     Reset(GAME_MODE_TITLE);
-    GameApplyLoopResult(1);
+    GameApplyLoopResult(GAME_MODE_TITLE, 1);
     DC_CHECK(mode == GAME_MODE_EDIT && NextMapNo == 400 && main_select_menu_no == 0);
     DC_CHECK(std::strcmp(main_select_param, "e01") == 0);
+}
+
+// MenuLoop picks the next mode itself and returns 1; the result is the menu's, which leaves it.
+DC_TEST(integration_developer_menu_keeps_the_mode_it_picked) {
+    Reset(GAME_MODE_EDIT);
+    GameApplyLoopResult(GAME_MODE_MENU, 1);
+    DC_CHECK(mode == GAME_MODE_EDIT);
 }
 
 DC_TEST(integration_frame_budget_and_stop) {

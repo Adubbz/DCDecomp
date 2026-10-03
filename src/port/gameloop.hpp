@@ -25,6 +25,8 @@ bool GameStopRequested();
 // NextMapNo, as MapJump left it, into mode, MapNo, LocalMapNo and main_select_menu_no.
 void GameFollowMapJump();
 
-// A non-zero result from the current mode's loop (or the rush movie's skip) into the next mode.
-// Title's result 1 also starts a new game and its result 2 reinitialises sound.
-void GameApplyLoopResult(int result);
+// A non-zero result from loop_mode's loop (or the rush movie's skip) into the next mode. Retail
+// handles each result in the case that ran the loop, so a loop that sets mode itself (the
+// developer menu's) is judged by the mode it ran in. Title's result 1 also starts a new game and
+// its result 2 reinitialises sound.
+void GameApplyLoopResult(int loop_mode, int result);
