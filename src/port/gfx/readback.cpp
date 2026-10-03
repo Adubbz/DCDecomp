@@ -146,10 +146,18 @@ void HarvestDepthQueries() {
         if (!query.recorded) {
             continue;
         }
+        // The depth aspect copies out as a float for D32S8 and as 24 bits in a word for D24S8.
+        bool  unorm = g.depth_format == VK_FORMAT_D24_UNORM_S8_UINT;
         float farthest = 1.0f;
         for (uint32_t i = 0; i < query.texels; i++) {
             float value;
-            std::memcpy(&value, query.data + i * sizeof(float), sizeof(float));
+            if (unorm) {
+                uint32_t word;
+                std::memcpy(&word, query.data + i * sizeof(word), sizeof(word));
+                value = static_cast<float>(word & 0xFFFFFF) / static_cast<float>(0xFFFFFF);
+            } else {
+                std::memcpy(&value, query.data + i * sizeof(float), sizeof(float));
+            }
             farthest = std::min(farthest, value);
         }
         query.result = farthest;

@@ -32,14 +32,23 @@ else is internal. No game header is reachable from here: `platform/`, `gfx/` and
 - A **render target** is `logical_width x logical_height` scaled by the render scale (pixels per
   logical texel; `config.render_scale`, 0 = `round(window height / 480)`, at least 1), offset 0.
   `SetRenderScale` recreates every render target, blitting its contents over.
+- A render target created with **`share_main_depth`** (`CreateRenderTarget`, `NamedRenderTarget`)
+  has no depth buffer of its own: drawing into it tests and writes the main target's depth and
+  stencil as drawn so far this frame, which is how the GS draws into another FRAME_1 with the same
+  ZBUF (shadow volumes counted into `shadow_buf` against the scene). Its pixels must line up with
+  the main target's, so it is the main target's pixel size and mapped like it (640x480 logical,
+  letterboxed) whatever size is asked for, ignores the render scale, and is recreated with the
+  main target on resize (contents lost). `Clear` of depth or `ClearStencil` while it is the target
+  clears the main target's.
 - **Texture coordinates** in `Draw2D` are logical texels of the texture (its `TextureDesc` size,
   or its logical size for render targets, 640x480 for `kPreviousFrame`). In `Vertex3D` they are
   normalised.
 - **Meshes** draw over the whole target (not letterboxed). `MeshConstants::mvp` (column-major)
   maps to Vulkan clip space: x right, y down, z/w in [0, 1] with **near at 1** (reverse-Z).
   Front faces are counter-clockwise as seen on the target with y down.
-- **Depth** is D32, reverse-Z: cleared to 0 (far), tests are GEQUAL/GREATER, so the game's
-  ZTST values map one to one. A `Vertex2D::z` is the same depth (1 near), so 3D sprites can test
+- **Depth** is D32 float with an 8-bit stencil (`D32_SFLOAT_S8_UINT`; `D24_UNORM_S8_UINT` where
+  the device cannot attach the former), reverse-Z: cleared to 0 (far), tests are GEQUAL/GREATER,
+  so the game's ZTST values map one to one. A `Vertex2D::z` is the same depth (1 near), so 3D sprites can test
   against meshes when the projection agrees. `ReadDepth` returns these units.
 
 ## Colour and alpha units
@@ -119,6 +128,25 @@ Where it is not exact, and why:
 - The destination alpha is the stored alpha, which is the last source alpha written (the GS does
   not blend alpha either), saturated at 0x80.
 
+## Stencil and colour writes
+
+| `DrawState` field | Meaning |
+|---|---|
+| `stencil_test` | stencil test on; off, the stencil is neither tested nor written |
+| `stencil_front`, `stencil_back` | per face (by winding, as culling tells them; lines are front): `compare` (Vulkan's order), `fail`, `pass`, `depth_fail` ops, `reference`, `compare_mask`, `write_mask` |
+| `color_write_mask` | `ColorWriteBits`; 0 writes no colour (a stencil or depth-only pass) |
+
+`ClearStencil(value, rect)` clears the current target's stencil (the main one for a target that
+shares it). Every frame's stencil keeps what the last frame left until cleared. The GS has no
+stencil; it is here for techniques the GS did with destination alpha (DATE) or colour counting.
+
+All stencil state is core dynamic state (Vulkan 1.3's `STENCIL_TEST_ENABLE` and `STENCIL_OP`, 1.0's
+masks and reference), so it adds no pipelines. The colour write mask is dynamic through
+`VK_EXT_extended_dynamic_state3` (`extendedDynamicState3ColorWriteMask`) where the device has it;
+otherwise a colourless pipeline per family, texture mode and alpha test (18) is precompiled, and a
+partial mask writes every channel. `RendererConfig::dynamic_color_write_mask = false` forces that
+path.
+
 ## Ordering
 
 Everything happens in the order it was called. An update or copy into a texture or mesh the
@@ -130,10 +158,10 @@ to is refused: snapshot it first (`SnapshotFrame`, `CopyTexture` from `kMainTarg
 ## Pipelines
 
 3 families (2D triangles, 2D lines, meshes) x 28 blend states x 3 texture modes (none, RGBA,
-index + palette) x alpha test on/off = 504 pipelines, all created in `RendererInit` on up to
-eight threads against the pipeline cache. Depth test, depth write, compare op, cull mode,
-front face, viewport, scissor and topology within a class are core dynamic state, so they add
-none. The cache file is checked against the device before use and written through a temporary
+index + palette) x alpha test on/off = 504 pipelines (522 without a dynamic colour write mask,
+above), all created in `RendererInit` on up to eight threads against the pipeline cache. Depth
+test, depth write, compare op, the whole stencil state, cull mode, front face, viewport, scissor
+and topology within a class are dynamic state, so they add none. The cache file is checked against the device before use and written through a temporary
 file and a rename.
 
 ## Readback
@@ -147,8 +175,8 @@ file and a rename.
 
 ## Not done here
 
-- DATE/DATM (destination alpha test; `clsmes.cpp` MakeFukidashi) has no equivalent: the depth
-  buffer has no stencil. A D32_S8 format and a stencil pass would be the way.
+- DATE/DATM (destination alpha test; `clsmes.cpp` MakeFukidashi) is not emulated; a stencil pass
+  marking the pixels whose alpha passes, then a test against it, is the way.
 - GS mip LOD (TEX1 L and K) is ignored; filtering is standard trilinear over the supplied levels.
 - `dualSrcBlend`, `shaderClipDistance`, update-after-bind sampled images (8192) and dynamic
   indexing are required of the device.

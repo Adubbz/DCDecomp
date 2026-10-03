@@ -238,7 +238,40 @@ void PickPhysicalDevice() {
                  VK_API_VERSION_PATCH(g.properties.apiVersion));
 }
 
+bool DepthStencilUsable(VkFormat format) {
+    VkFormatProperties properties;
+    vkGetPhysicalDeviceFormatProperties(g.physical_device, format, &properties);
+    VkFormatFeatureFlags needed = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT |
+                                  VK_FORMAT_FEATURE_TRANSFER_SRC_BIT | VK_FORMAT_FEATURE_TRANSFER_DST_BIT;
+    return (properties.optimalTilingFeatures & needed) == needed;
+}
+
+VkFormat PickDepthFormat() {
+    for (VkFormat format : {VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}) {
+        if (DepthStencilUsable(format)) {
+            return format;
+        }
+    }
+    Fatal("%s has no depth/stencil format the renderer can use", g.properties.deviceName);
+}
+
+bool SupportsDynamicColorWriteMask() {
+    if (!HasExtension(g.physical_device, VK_EXT_EXTENDED_DYNAMIC_STATE_3_EXTENSION_NAME)) {
+        return false;
+    }
+    VkPhysicalDeviceExtendedDynamicState3FeaturesEXT dynamic3 = {};
+    dynamic3.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT;
+    VkPhysicalDeviceFeatures2 features = {};
+    features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    features.pNext = &dynamic3;
+    vkGetPhysicalDeviceFeatures2(g.physical_device, &features);
+    return dynamic3.extendedDynamicState3ColorWriteMask == VK_TRUE;
+}
+
 void CreateDevice() {
+    g.depth_format = PickDepthFormat();
+    g.dynamic_color_write_mask = g.config.dynamic_color_write_mask && SupportsDynamicColorWriteMask();
+
     float                   priority = 1.0f;
     VkDeviceQueueCreateInfo queue = {};
     queue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -246,8 +279,13 @@ void CreateDevice() {
     queue.queueCount = 1;
     queue.pQueuePriorities = &priority;
 
+    VkPhysicalDeviceExtendedDynamicState3FeaturesEXT dynamic3 = {};
+    dynamic3.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT;
+    dynamic3.extendedDynamicState3ColorWriteMask = VK_TRUE;
+
     VkPhysicalDeviceVulkan13Features features13 = {};
     features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    features13.pNext = g.dynamic_color_write_mask ? &dynamic3 : nullptr;
     features13.dynamicRendering = VK_TRUE;
     features13.synchronization2 = VK_TRUE;
 
@@ -265,17 +303,22 @@ void CreateDevice() {
     features.features.shaderClipDistance = VK_TRUE;
     features.features.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 
-    const char *extensions[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    const char *extensions[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_EXTENDED_DYNAMIC_STATE_3_EXTENSION_NAME};
 
     VkDeviceCreateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     info.pNext = &features;
     info.queueCreateInfoCount = 1;
     info.pQueueCreateInfos = &queue;
-    info.enabledExtensionCount = 1;
+    info.enabledExtensionCount = g.dynamic_color_write_mask ? 2 : 1;
     info.ppEnabledExtensionNames = extensions;
     Check(vkCreateDevice(g.physical_device, &info, nullptr, &g.device), "vkCreateDevice");
     vkGetDeviceQueue(g.device, g.queue_family, 0, &g.queue);
+    if (g.dynamic_color_write_mask) {
+        g.cmd_set_color_write_mask = reinterpret_cast<PFN_vkCmdSetColorWriteMaskEXT>(
+            vkGetDeviceProcAddr(g.device, "vkCmdSetColorWriteMaskEXT"));
+        g.dynamic_color_write_mask = g.cmd_set_color_write_mask != nullptr;
+    }
 }
 
 VkSurfaceFormatKHR PickSurfaceFormat() {
@@ -390,6 +433,7 @@ bool RecreateSwapchain() {
     if (main.width != g.swapchain.extent.width || main.height != g.swapchain.extent.height) {
         DestroyMainTargets();
         CreateMainTargets();
+        RecreateSharedTargets();
     }
     return true;
 }
@@ -586,7 +630,7 @@ void CreateMainTargets() {
                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
                                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     }
-    g.main_depth = CreateImage(width, height, 1, kDepthFormat,
+    g.main_depth = CreateImage(width, height, 1, g.depth_format,
                                VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
                                    VK_IMAGE_USAGE_TRANSFER_DST_BIT);
 
@@ -600,7 +644,7 @@ void CreateMainTargets() {
             vkCmdClearColorImage(cmd, image.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &black, 1, &range);
             ToRest(cmd, image);
         }
-        VkImageSubresourceRange  depth_range = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
+        VkImageSubresourceRange  depth_range = {g.main_depth.aspect, 0, 1, 0, 1};
         VkClearDepthStencilValue far = {0.0f, 0};
         Transition(cmd, g.main_depth, TransferDst());
         vkCmdClearDepthStencilImage(cmd, g.main_depth.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &far, 1,

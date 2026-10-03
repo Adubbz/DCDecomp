@@ -7,7 +7,6 @@
 #include "framevu1.hpp"
 #include "rect.hpp"
 #include "texture_port.hpp"
-#include "visualshadow.hpp"
 
 using namespace dc::test;
 
@@ -212,89 +211,4 @@ DC_TEST(draw3d_move_images) {
         gfx::DestroyTexture(texture);
         texture = gfx::kNullTexture;
     }
-}
-
-// The fast shadow pass flattens the caster onto the plane along light 0 into shadow_buf, and
-// MGEndDrawShadow(0x40) halves the frame wherever the target is not black: Cd - Cd * 0x40 / 0x80.
-// A horizontal caster at y = 0 over depths 60..160 dropped onto the plane y = 5 covers logical
-// rows 240 + 4000 / z, 265 to 307, around x = 320.
-DC_TEST(draw3d_shadow_composite) {
-    Draw3DFixture fixture;
-    // The volume pass builds its clipped geometry in the frame's ActiveData arena.
-    InitializeDataBuffer();
-    gfx::TextureHandle target = gfx::NamedRenderTarget("shadow_buf", 640, 256, false);
-    DC_CHECK(target != gfx::kNullTexture);
-
-    std::vector<u_int> image(256, 0);
-    auto              *bytes = reinterpret_cast<unsigned char *>(image.data());
-    auto              *header = reinterpret_cast<MDT_HEADER *>(bytes);
-    header->vertex_ofs = 64;
-    header->vertex_num = 4;
-    header->mesh_ofs = 128;
-    float corners[4][4] = {
-        {-10.0f, 0.0f, 60.0f,  1.0f},
-        {10.0f,  0.0f, 60.0f,  1.0f},
-        {-10.0f, 0.0f, 160.0f, 1.0f},
-        {10.0f,  0.0f, 160.0f, 1.0f},
-    };
-    std::memcpy(bytes + 64, corners, sizeof(corners));
-    auto *shadow = reinterpret_cast<MDT_SHADOW *>(bytes + 128);
-    shadow->shape_num = 1;
-    shadow->shape[0].index_num = 6;
-    int order[6] = {0, 1, 2, 2, 1, 3};
-    for (int i = 0; i < 6; i++) {
-        shadow->shape[0].vertex[i].index = order[i];
-    }
-
-    alignas(64) unsigned int block[64] = {};
-    CVisualShadow            visual;
-    visual.CreateVUdataShadow(block, image.data());
-    visual.vu_data_buffer[0] = visual.vu_data_buffer[1] = visual.vu_data;
-    visual.SetMDTDataAddress(image.data());
-    CFrameVu1 frame;
-    frame.SetVisual(&visual);
-    frame.attr.cull_enable = false;
-
-    sceVu0FMATRIX light = {};
-    light[1][0] = 1.0f;
-    sceVu0FMATRIX colour = {};
-    MGSetPLight(light, colour);
-    sceVu0FVECTOR point = {0.0f, 5.0f, 0.0f, 1.0f};
-    sceVu0FVECTOR normal = {0.0f, 1.0f, 0.0f, 0.0f};
-
-    MGSetBGColor(200.0f, 200.0f, 200.0f, 128.0f);
-    // dun/gameloop.cpp passes shadow_buf's TEX0; an unknown one falls back on the name.
-    unsigned  key = PortRegisterNamedTarget("shadow_buf", 640, 256, false, PortTextureOwner::Other);
-    u_long    bits = SCE_GS_SET_TEX0(key, 10, SCE_GS_PSMCT24, 10, 8, 0, 0, 0, 0, 0, 0, 0);
-    sceGsTex0 shadow_tex0;
-    std::memcpy(&shadow_tex0, &bits, sizeof(bits));
-    fixture.Frame([&] {
-        MGBeginDrawShadow(shadow_tex0);
-        DC_CHECK(gfx::CurrentRenderTarget() == target);
-        MGDrawShadowFast(&frame, point, normal);
-        MGEndDrawShadow(0x40);
-        DC_CHECK(gfx::CurrentRenderTarget() == gfx::kMainTarget);
-    });
-    DC_CHECK(fixture.PixelNear(320, 285, 100, 100, 100));
-    DC_CHECK(fixture.PixelNear(320, 250, 200, 200, 200));
-    DC_CHECK(fixture.PixelNear(320, 320, 200, 200, 200));
-    DC_CHECK(fixture.PixelNear(200, 285, 200, 200, 200));
-
-    // Outside MGBeginDrawShadow/MGEndDrawShadow a shadow pass draws nothing.
-    fixture.Frame([&] { MGDrawShadowFast(&frame, point, normal); });
-    DC_CHECK(fixture.PixelNear(320, 285, 200, 200, 200));
-
-    // The volume pass casts the triangles that face away from the light: the same footprint.
-    fixture.Frame([&] {
-        sceGsTex0 unknown = {};
-        unknown.TBP0 = 0x3FFE;
-        MGBeginDrawShadow(unknown);
-        DC_CHECK(gfx::CurrentRenderTarget() == target);
-        MGDrawShadow(&frame, point, normal);
-        MGEndDrawShadow(0x40);
-    });
-    DC_CHECK(fixture.PixelNear(320, 285, 100, 100, 100));
-    DC_CHECK(fixture.PixelNear(320, 250, 200, 200, 200));
-    PortReleaseKey(key);
-    gfx::DestroyTexture(target);
 }

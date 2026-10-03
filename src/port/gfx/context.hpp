@@ -19,7 +19,6 @@ inline constexpr uint32_t kMaxTextures = 8192;
 inline constexpr uint32_t kSamplerCount = 8;
 inline constexpr uint32_t kMaxMeshes = 65535;
 inline constexpr VkFormat kColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
-inline constexpr VkFormat kDepthFormat = VK_FORMAT_D32_SFLOAT;
 inline constexpr uint32_t kFirstUserSlot = 3;
 
 [[noreturn]] void Fatal(const char *format, ...) __attribute__((format(printf, 1, 2)));
@@ -76,6 +75,7 @@ struct Image {
 ImageState RestState(const Image &image);
 Image      CreateImage(uint32_t width, uint32_t height, uint32_t mips, VkFormat format,
                        VkImageUsageFlags usage);
+bool       IsDepthFormat(VkFormat format);
 void       DestroyImage(Image &image);
 void       Transition(VkCommandBuffer cmd, Image &image, const ImageState &to);
 void       ToRest(VkCommandBuffer cmd, Image &image);
@@ -89,8 +89,9 @@ struct Texture {
     uint16_t    generation = 0;
     TextureDesc desc;
     Image       image;
-    Image       depth; // render targets only
+    Image       depth; // render targets that keep their own only
     bool        render_target = false;
+    bool        shares_main_depth = false;
     uint32_t    logical_width = 0;
     uint32_t    logical_height = 0;
     // The frame serial in which the draw command buffer last touched the image.
@@ -161,7 +162,14 @@ struct BoundState {
     int        depth_test = -1;
     int        depth_write = -1;
     int        depth_op = -1;
-    VkRect2D   scissor = {
+    int        stencil_test = -1;
+    // Per face: compare, fail, pass, depth-fail packed; reference, compare mask, write mask apart.
+    int      stencil_ops[2] = {-1, -1};
+    int      stencil_reference[2] = {-1, -1};
+    int      stencil_compare_mask[2] = {-1, -1};
+    int      stencil_write_mask[2] = {-1, -1};
+    int      color_write_mask = -1;
+    VkRect2D scissor = {
         {-1, -1},
         {0,  0 }
     };
@@ -229,8 +237,12 @@ struct Context {
     VkDevice                         device = VK_NULL_HANDLE;
     uint32_t                         queue_family = 0;
     VkQueue                          queue = VK_NULL_HANDLE;
-    Swapchain                        swapchain;
-    bool                             resize_pending = false;
+    // D32_SFLOAT_S8_UINT, or D24_UNORM_S8_UINT where the former cannot be an attachment.
+    VkFormat                      depth_format = VK_FORMAT_UNDEFINED;
+    bool                          dynamic_color_write_mask = false;
+    PFN_vkCmdSetColorWriteMaskEXT cmd_set_color_write_mask = nullptr;
+    Swapchain                     swapchain;
+    bool                          resize_pending = false;
 
     std::array<Frame, kFramesInFlight> frames;
     uint32_t                           frame_slot = 0;
@@ -304,12 +316,17 @@ Image   *ColorImageOf(TextureHandle handle);
 VkCommandBuffer CommandsForWrite(uint64_t &last_draw_use);
 uint32_t        SamplerIndex(Filter filter, Wrap wrap_u, Wrap wrap_v);
 void            RecreateRenderTargets();
+// The targets that share the main depth buffer, at the main target's new size (contents lost).
+void           RecreateSharedTargets();
+LogicalMapping TextureMapping(const Texture &texture);
 
 // pipelines.cpp
-void         CreatePipelineLayout();
-void         CreatePipelines();
-void         DestroyPipelines();
-uint32_t     PipelineIndex(PipelineFamily family, uint32_t blend_slot, TextureMode mode, bool alpha_test);
+void     CreatePipelineLayout();
+void     CreatePipelines();
+void     DestroyPipelines();
+uint32_t PipelineIndex(PipelineFamily family, uint32_t blend_slot, TextureMode mode, bool alpha_test);
+// Without a dynamic colour write mask: the pipelines that write no colour, after the others.
+uint32_t     NoColorPipelineIndex(PipelineFamily family, TextureMode mode, bool alpha_test);
 BlendMapping MapBlend(const GsBlend &blend, bool enable);
 
 // draw.cpp

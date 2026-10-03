@@ -20,16 +20,6 @@ struct Target {
     bool           has_alpha = true;
 };
 
-LogicalMapping TextureMapping(const Texture &texture) {
-    return LogicalMapping{static_cast<float>(texture.image.width) / static_cast<float>(texture.logical_width),
-                          static_cast<float>(texture.image.height) /
-                              static_cast<float>(texture.logical_height),
-                          0.0f,
-                          0.0f,
-                          texture.image.width,
-                          texture.image.height};
-}
-
 Target ResolveTarget(TextureHandle handle) {
     Target target;
     if (handle == kMainTarget) {
@@ -41,7 +31,7 @@ Target ResolveTarget(TextureHandle handle) {
     Texture *texture = LookupTexture(handle);
     if (texture != nullptr && texture->render_target) {
         target.color = &texture->image;
-        target.depth = &texture->depth;
+        target.depth = texture->shares_main_depth ? &g.main_depth : &texture->depth;
         target.texture = texture;
         target.mapping = TextureMapping(*texture);
         target.has_alpha = texture->desc.has_alpha;
@@ -55,7 +45,7 @@ ImageState ColorAttachment() {
 }
 
 ImageState DepthAttachment() {
-    return {VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+    return {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
             VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT,
             VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT};
 }
@@ -84,7 +74,7 @@ void EnsureRendering(Target &target) {
     color.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     VkRenderingAttachmentInfo depth = color;
     depth.imageView = target.depth->view;
-    depth.imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+    depth.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
     VkRenderingInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
@@ -93,6 +83,7 @@ void EnsureRendering(Target &target) {
     info.colorAttachmentCount = 1;
     info.pColorAttachments = &color;
     info.pDepthAttachment = &depth;
+    info.pStencilAttachment = &depth;
     vkCmdBeginRendering(cmd, &info);
     g.rendering = true;
 
@@ -124,6 +115,35 @@ VkRect2D PixelRect(const LogicalMapping &mapping, const LogicalRect &rect) {
 bool SameRect(const VkRect2D &a, const VkRect2D &b) {
     return a.offset.x == b.offset.x && a.offset.y == b.offset.y && a.extent.width == b.extent.width &&
            a.extent.height == b.extent.height;
+}
+
+VkStencilOp StencilOpOf(StencilOp op) { return static_cast<VkStencilOp>(op); }
+
+int PackStencilOps(const StencilFace &face) {
+    return static_cast<int>(face.compare) | static_cast<int>(face.fail) << 4 |
+           static_cast<int>(face.pass) << 8 | static_cast<int>(face.depth_fail) << 12;
+}
+
+void SetStencilFace(VkCommandBuffer cmd, uint32_t index, const StencilFace &face) {
+    VkStencilFaceFlags flags = index == 0 ? VK_STENCIL_FACE_FRONT_BIT : VK_STENCIL_FACE_BACK_BIT;
+    int                ops = PackStencilOps(face);
+    if (g.bound.stencil_ops[index] != ops) {
+        g.bound.stencil_ops[index] = ops;
+        vkCmdSetStencilOp(cmd, flags, StencilOpOf(face.fail), StencilOpOf(face.pass), StencilOpOf(face.depth_fail),
+                          static_cast<VkCompareOp>(face.compare));
+    }
+    if (g.bound.stencil_reference[index] != face.reference) {
+        g.bound.stencil_reference[index] = face.reference;
+        vkCmdSetStencilReference(cmd, flags, face.reference);
+    }
+    if (g.bound.stencil_compare_mask[index] != face.compare_mask) {
+        g.bound.stencil_compare_mask[index] = face.compare_mask;
+        vkCmdSetStencilCompareMask(cmd, flags, face.compare_mask);
+    }
+    if (g.bound.stencil_write_mask[index] != face.write_mask) {
+        g.bound.stencil_write_mask[index] = face.write_mask;
+        vkCmdSetStencilWriteMask(cmd, flags, face.write_mask);
+    }
 }
 
 VkCompareOp DepthOp(DepthTest test) {
@@ -179,8 +199,14 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
             texture->last_draw_use = g.frame_serial;
             push.texture_slot = binding.texture & kSlotMask;
             if (family != kFamilyMesh) {
-                push.uv_xform[0] = 1.0f / static_cast<float>(texture->logical_width);
-                push.uv_xform[1] = 1.0f / static_cast<float>(texture->logical_height);
+                // Logical texels land on the image through its mapping, letterbox offset included.
+                LogicalMapping mapping = TextureMapping(*texture);
+                float          width = static_cast<float>(texture->image.width);
+                float          height = static_cast<float>(texture->image.height);
+                push.uv_xform[0] = mapping.scale_x / width;
+                push.uv_xform[1] = mapping.scale_y / height;
+                push.uv_xform[2] = mapping.offset_x / width;
+                push.uv_xform[3] = mapping.offset_y / height;
             }
             if (texture->desc.format == TextureFormat::Index8) {
                 Texture *palette = LookupTexture(binding.palette);
@@ -203,7 +229,9 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
     VkCommandBuffer cmd = DrawCommands();
 
     BlendMapping blend = MapBlend(state.alpha, state.blend);
-    uint32_t     pipeline = PipelineIndex(family, blend.slot, mode, state.alpha_test);
+    uint32_t     pipeline = !g.dynamic_color_write_mask && state.color_write_mask == 0
+                                ? NoColorPipelineIndex(family, mode, state.alpha_test)
+                                : PipelineIndex(family, blend.slot, mode, state.alpha_test);
     if (g.bound.pipeline != g.pipelines[pipeline]) {
         g.bound.pipeline = g.pipelines[pipeline];
         vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, g.bound.pipeline);
@@ -261,6 +289,20 @@ bool Prepare(PipelineFamily family, VkPrimitiveTopology topology, const TextureB
     if (g.bound.depth_op != op) {
         g.bound.depth_op = op;
         vkCmdSetDepthCompareOp(cmd, static_cast<VkCompareOp>(op));
+    }
+    int stencil = state.stencil_test ? 1 : 0;
+    if (g.bound.stencil_test != stencil) {
+        g.bound.stencil_test = stencil;
+        vkCmdSetStencilTestEnable(cmd, stencil);
+    }
+    // The pipelines declare every stencil parameter dynamic, so each must be set once before
+    // the first draw even while the test is off.
+    SetStencilFace(cmd, 0, state.stencil_front);
+    SetStencilFace(cmd, 1, state.stencil_back);
+    if (g.dynamic_color_write_mask && g.bound.color_write_mask != state.color_write_mask) {
+        g.bound.color_write_mask = state.color_write_mask;
+        VkColorComponentFlags mask = state.color_write_mask & kWriteRgba;
+        g.cmd_set_color_write_mask(cmd, 0, 1, &mask);
     }
     if (g.bound.topology != static_cast<int>(topology)) {
         g.bound.topology = static_cast<int>(topology);
@@ -605,6 +647,28 @@ void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float dep
         count++;
     }
     vkCmdClearAttachments(DrawCommands(), count, attachments, 1, &clear);
+}
+
+void ClearStencil(uint8_t value, const LogicalRect *rect) {
+    if (!g.in_frame) {
+        return;
+    }
+    Target target;
+    EnsureRendering(target);
+    VkClearRect clear = {};
+    clear.rect = rect ? PixelRect(target.mapping, *rect)
+                      : VkRect2D{
+                            {0,                          0                          },
+                            {target.mapping.pixel_width, target.mapping.pixel_height}
+    };
+    clear.layerCount = 1;
+    if (clear.rect.extent.width == 0 || clear.rect.extent.height == 0) {
+        return;
+    }
+    VkClearAttachment attachment = {};
+    attachment.aspectMask = VK_IMAGE_ASPECT_STENCIL_BIT;
+    attachment.clearValue.depthStencil = {0.0f, value};
+    vkCmdClearAttachments(DrawCommands(), 1, &attachment, 1, &clear);
 }
 
 bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t dst_x, int32_t dst_y) {
