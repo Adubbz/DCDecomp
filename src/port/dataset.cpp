@@ -1,8 +1,5 @@
 #include "dataset.hpp"
 
-#include <sys/mman.h>
-#include <unistd.h>
-
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -12,6 +9,7 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "mglib.hpp"
+#include "platform/memory.hpp"
 
 namespace {
 
@@ -20,12 +18,8 @@ namespace {
 constexpr std::size_t kReadBufferLead = 0x180000;
 
 struct Block {
-    const void    *owner;
-    unsigned char *map;
-    std::size_t    map_size;
-    unsigned char *base;
-    std::size_t    capacity;
-    std::size_t    lead;
+    const void *owner;
+    LowBlock    memory;
 };
 
 std::vector<Block> g_blocks;
@@ -33,31 +27,10 @@ std::vector<Block> g_blocks;
 // pointer the game kept into an old arena reads zeroes rather than faulting.
 std::vector<Block> g_retired;
 
-std::size_t PageSize() {
-    static const std::size_t size = static_cast<std::size_t>(sysconf(_SC_PAGESIZE));
-    return size;
-}
-
-std::size_t RoundUp(std::size_t value, std::size_t to) {
-    return (value + to - 1) / to * to;
-}
-
-void Zero(const Block &block) {
-    madvise(block.map, block.map_size - PageSize(), MADV_DONTNEED);
-}
-
 Block MapBlock(const void *owner, std::size_t bytes, std::size_t lead) {
-    std::size_t page = PageSize();
-    std::size_t capacity = RoundUp(bytes == 0 ? 64 : bytes, 64);
-    std::size_t map_size = RoundUp(lead + capacity, page) + page;
-    void       *map = mmap(nullptr, map_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE | MAP_32BIT, -1, 0);
-    if (map == MAP_FAILED) {
-        std::fprintf(stderr, "arena: cannot map %zu bytes below 2 GiB\n", map_size);
-        std::abort();
-    }
-    auto *bytes_map = static_cast<unsigned char *>(map);
-    mprotect(bytes_map + map_size - page, page, PROT_NONE);
-    return {owner, bytes_map, map_size, bytes_map + map_size - page - capacity, capacity, lead};
+    Block block{owner, LowMemoryMap(bytes, lead)};
+    PortAssertLow(block.memory.map, block.memory.map_size);
+    return block;
 }
 
 void Carve(CDataAlloc2<1> *arena, int quads) {
@@ -87,22 +60,28 @@ unsigned char *ArenaBlock(const void *owner, std::size_t bytes, std::size_t lead
         if (block.owner != owner) {
             continue;
         }
-        if (block.capacity >= bytes && block.lead >= lead) {
-            return block.base;
+        if (block.memory.capacity >= bytes && block.memory.lead >= lead) {
+            return block.memory.base;
         }
-        Zero(block);
+        LowMemoryZero(block.memory);
         g_retired.push_back(block);
         block = MapBlock(owner, bytes, lead);
-        return block.base;
+        return block.memory.base;
     }
     g_blocks.push_back(MapBlock(owner, bytes, lead));
-    return g_blocks.back().base;
+    return g_blocks.back().memory.base;
 }
 
 void ArenaClearAll() {
     for (const Block &block : g_blocks) {
-        Zero(block);
+        LowMemoryZero(block.memory);
     }
+}
+
+void PortHighPointer(const void *pointer, std::size_t bytes, const char *file, int line) {
+    std::fprintf(stderr, "%s:%d: %p (%zu bytes) is above 2 GiB, where the game's int casts lose it\n", file, line,
+                 pointer, bytes);
+    std::abort();
 }
 
 void ArenaOverflow(const void *arena, int used, int limit) {

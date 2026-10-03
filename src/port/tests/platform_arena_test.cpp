@@ -90,7 +90,8 @@ DC_TEST(platform_arena_overflow_aborts) {
     DC_CHECK(SignalOf([] { VisualData.Alloc64(400); }) == SIGABRT);
     DC_CHECK(SignalOf([] { VisualData.Alloc(400); }) == 0);
     // An overrun that skips the allocator runs into the guard page behind the block.
-    DC_CHECK(SignalOf([] { VisualData.base[VisualData.limit * 16] = 1; }) == SIGSEGV);
+    int guard = SignalOf([] { VisualData.base[VisualData.limit * 16] = 1; });
+    DC_CHECK(guard == SIGSEGV || guard == SIGBUS);
     DC_CHECK(SignalOf([] { SystemMesBuffer.Alloc(6001); }) == SIGABRT);
 }
 
