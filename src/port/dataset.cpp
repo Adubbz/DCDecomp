@@ -28,7 +28,9 @@ std::vector<Block> g_blocks;
 std::vector<Block> g_retired;
 
 Block MapBlock(const void *owner, std::size_t bytes, std::size_t lead) {
-    return {owner, ArenaMemoryMap(bytes, lead)};
+    Block block{owner, ArenaMemoryMap(bytes, lead)};
+    PortAssertLow(block.memory.map, block.memory.map_size);
+    return block;
 }
 
 void Carve(CDataAlloc2<1> *arena, int quads) {
@@ -80,6 +82,14 @@ void PortHighPointer(const void *pointer, std::size_t bytes, const char *file, i
     std::fprintf(stderr, "%s:%d: %p (%zu bytes) is above 2 GiB, where the game's int casts lose it\n", file, line,
                  pointer, bytes);
     std::abort();
+}
+
+void *PortImagePointer(std::int32_t truncated) {
+    static const char anchor = 0;
+    if (truncated == 0) {
+        return nullptr;
+    }
+    return reinterpret_cast<void *>(WidenNear(reinterpret_cast<std::uintptr_t>(&anchor), static_cast<std::uint32_t>(truncated)));
 }
 
 void ArenaOverflow(const void *arena, int used, int limit) {

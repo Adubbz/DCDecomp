@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 #include "platform/memory.hpp"
 
@@ -39,3 +40,21 @@ inline void PortCheckLow(const void *pointer, const char *file, int line, std::s
     }
 }
 #endif
+
+// The image is far smaller than 2 GiB, so of the addresses that end in the 32 bits the game kept,
+// the one nearest an address inside the image is the one that was truncated. Exact wherever the
+// image sits, below 4 GiB (Linux, no PIE) or above (PIE, macOS).
+inline std::uintptr_t WidenNear(std::uintptr_t anchor, std::uint32_t low) {
+    constexpr std::uintptr_t kWindow = std::uintptr_t{1} << 32;
+    std::uintptr_t           candidate = (anchor & ~(kWindow - 1)) | low;
+    if (candidate > anchor && candidate - anchor > kWindow / 2 && candidate >= kWindow) {
+        candidate -= kWindow;
+    } else if (candidate < anchor && anchor - candidate > kWindow / 2) {
+        candidate += kWindow;
+    }
+    return candidate;
+}
+
+// A pointer into the executable's image (a global, a static, a literal) back from the int the game
+// stored it in; null for 0.
+void *PortImagePointer(std::int32_t truncated);
