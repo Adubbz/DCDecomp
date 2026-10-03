@@ -7,39 +7,76 @@ replacement, no PS2 emulation, no edits under `src/ps2`.
 
 ## 1. What KosmicKrisp is, and what must be checked
 
-KosmicKrisp is LunarG's Vulkan driver in Mesa (merged for Mesa 25.3) that
+KosmicKrisp is LunarG's Vulkan driver in Mesa (first released in Mesa 26.0;
+`mesa-25.3.0`'s `meson.options` does not list it) that
 implements Vulkan on Apple's Metal API, with shaders compiled from NIR to the
 Metal Shading Language. It is a normal Mesa ICD, loaded by the Khronos Vulkan
 loader on macOS like any other driver, and it was announced as Vulkan 1.3
 conformant on Apple Silicon. The documentation (`docs.mesa3d.org/drivers/kosmickrisp.html`)
 and the Mesa tree were not reachable from the environment this plan was written
 in, so the implementing agents verify, against the Mesa source they build, every
-item marked **[verify]**:
+item marked **[verify]**. The items below were since read from `mesa-26.2.4`
+(the tag `scripts/host/mesa-macos.sh` pins) through the GitHub mirror
+`FireBurn/mesa` (`gitlab.freedesktop.org`, `docs.mesa3d.org` and the
+`Mesa3D/mesa` mirror were not reachable); `docs/MACOS.md` has the details.
+Source-read is not run: what only a Mac can show stays **[verify]**.
 
-- **[verify]** The Vulkan API version KosmicKrisp reports (1.3, or 1.4 in a
+- **[verified: 1.4]** The Vulkan API version KosmicKrisp reports (1.3, or 1.4 in a
   newer Mesa). The renderer currently requires 1.4 (section 4.2).
-- **[verify]** Device features the renderer requires: `dualSrcBlend`,
+  The device reports `VK_MAKE_VERSION(1, 4, VK_HEADER_VERSION)`
+  (`kk_physical_device.c`, `kk_get_vk_version`) and the manifest says 1.4;
+  the driver's own `vkEnumerateInstanceVersion` says 1.3.
+- **[verified, one absent]** Device features the renderer requires: `dualSrcBlend`,
   `shaderClipDistance`, descriptor indexing with update-after-bind sampled
   images (8192), dynamic rendering, synchronization2, `D32_SFLOAT_S8_UINT` as a
   depth/stencil attachment, and the optional
   `VK_EXT_extended_dynamic_state3` colour write mask (a pipeline-variant
   fallback exists).
-- **[verify]** Whether it reports `VK_KHR_portability_subset`; if so the
+  All advertised (update-after-bind sampled image limits are 2^20;
+  `D32_SFLOAT_S8_UINT` is Metal's native depth32/stencil8, and there is no
+  D24S8) except `extendedDynamicState3ColorWriteMask`: EDS3 is exposed for
+  depth clamp, depth clip -1..1, line rasterization mode, sample locations
+  and tessellation origin only, so the pipeline-variant fallback is the path
+  taken on KosmicKrisp.
+- **[verified: no]** Whether it reports `VK_KHR_portability_subset`; if so the
   instance must enable `VK_KHR_portability_enumeration` and set
   `VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR`, and the subset's
   restrictions must be checked against the renderer's use (point size,
   triangle fans, separate stencil masks, image view formats).
-- **[verify]** Surface support: `VK_EXT_metal_surface` through SDL3 (SDL3's
+  Not in its device extensions, and its manifest is not generated with
+  `is_portability_driver`, so the loader enumerates it without the
+  portability bit. Enabling portability enumeration when the extension
+  exists is still right for MoltenVK.
+- **[verified: metal yes, headless no]** Surface support: `VK_EXT_metal_surface` through SDL3 (SDL3's
   macOS Vulkan path), and whether `VK_EXT_headless_surface` exists; if not,
   headless runs need the renderer's own surface-less mode (section 4.3).
-- **[verify]** The meson options and macOS/Xcode minimums
+  `kk_instance.c` advertises `VK_EXT_headless_surface` only
+  `#ifndef VK_USE_PLATFORM_METAL_EXT`, i.e. never in a `-Dplatforms=macos`
+  build: headless runs on KosmicKrisp need the surface-less mode. Lavapipe
+  built the same way has both. SDL3's Metal path itself is **[verify]**.
+- **[verified]** The meson options and macOS/Xcode minimums
   (`-Dvulkan-drivers=kosmickrisp`, plus `swrast` for lavapipe on macOS), the
   installed ICD name (`kosmickrisp_icd.json`) and where the loader looks for
   it (`/usr/local/share/vulkan/icd.d`, `~/.local/share/vulkan/icd.d`,
   `VK_DRIVER_FILES`).
+  KosmicKrisp is built on Metal 4 and needs **macOS 26** (Mesa's
+  `docs/drivers/kosmickrisp.rst`), plus Xcode, meson 1.9.1+, LLVM 20.1.8+,
+  libclc, SPIRV-LLVM-Translator and SPIRV-Tools; the documented options are
+  `-Dplatforms=macos -Dvulkan-drivers=kosmickrisp -Dgallium-drivers=
+  -Dopengl=false -Dzstd=disabled --prefer-static`. The manifest is
+  `kosmickrisp_mesa_icd.<cpu>.json` (not `kosmickrisp_icd.json`) in
+  `<prefix>/share/vulkan/icd.d`. The loader's macOS search order (Vulkan-Loader
+  `docs/LoaderDriverInterface.md` at v1.4.321) is the bundle's
+  `Contents/Resources/vulkan/icd.d`, then `~/.config`, `/etc/xdg`,
+  `/usr/local/etc`, `/etc`, `~/.local/share`, `/usr/local/share`,
+  `/usr/share` (each `+ /vulkan/icd.d`); `VK_DRIVER_FILES` replaces it.
+  Which Xcode version a Metal 4 build needs is **[verify]** (the CI runner's
+  default Xcode on `macos-26`).
 - **[verify]** Pipeline compilation cost: NIR to MSL plus Metal's own compile
   makes the 504 startup pipelines slower than on lavapipe; the on-disk
   `VkPipelineCache` must demonstrably work (Metal binary archives behind it).
+  Needs a run; the CI job's KosmicKrisp log records the `compiling shaders`
+  progress.
 
 MoltenVK is not used: the point of this work is a Mesa driver with a shared
 shader compiler and Vulkan 1.3 conformance; MoltenVK stays an undocumented
@@ -49,18 +86,18 @@ alternative that may happen to work through the same loader.
 
 | Area | File | Linux assumption | macOS answer |
 |---|---|---|---|
-| Arenas | `src/port/dataset.cpp` | `mmap(MAP_32BIT)` keeps arenas below 2 GiB so the game's `(int)` pointer casts survive; `madvise(MADV_DONTNEED)` zeroes | Impossible on arm64 (section 3): arenas live wherever `mmap` puts them and every pointer round trip is widened instead; zero with `memset` or `MADV_FREE_REUSABLE` |
+| Arenas | `src/port/dataset.cpp` | `mmap(MAP_32BIT)` keeps arenas below 2 GiB so the game's `(int)` pointer casts survive; `madvise(MADV_DONTNEED)` zeroes | No `MAP_32BIT`. ~~Shrink `__PAGEZERO` (`-Wl,-pagezero_size,0x1000`) and map with a hint address~~: **not possible on arm64**. XNU refuses to exec a 64-bit arm64 image whose page zero is under 4 GiB (`mach_loader.c`, macOS 13 to 26), so nothing maps below 4 GiB; see `docs/MACOS.md`, "The 4 GiB page zero". Only an x86_64 build under Rosetta can (`DC_MACOS_PAGEZERO_SIZE`, default `0x1000` there) |
 | Executable path | `src/port/platform/paths.cpp` | `/proc/self/exe` | `_NSGetExecutablePath` + `realpath` |
 | Executable layout | `src/port/CMakeLists.txt` | `-no-pie` keeps `.data`/`.bss` below 4 GiB | arm64 macOS is PIE-only, loads images above 4 GiB and forbids low mappings; nothing may depend on a 32-bit round trip (section 3) |
-| Weakening | `src/port/CMakeLists.txt` | `ld.lld -r` then `llvm-objcopy --weaken` on ELF | `ld -r` works on Mach-O; `--weaken` on Mach-O is **[verify]**. Fallback: `tools/weaken`, a small Mach-O symbol-table patcher that sets `N_WEAK_DEF` on every defined symbol of the merged object |
-| Interposition | `-fsemantic-interposition` | ELF-only flag; stops clang inlining calls to functions the port replaces | Mach-O has no equivalent flag. Compile `src/ps2` with `-fno-inline-functions -fno-inline-small-functions` (or `-fno-inline`) on macOS and add a build check that disassembles `dc_ps2.o` for direct calls into replaced symbols |
-| Link flags | `-fuse-ld=lld -Wl,--gc-sections -Wl,--defsym=…` | GNU-style | `-Wl,-dead_strip`; `--defsym` aliases become `-Wl,-alias,_from,_to` (ld64) or `ld64.lld` equivalents; `--error-limit` dropped |
+| Weakening | `src/port/CMakeLists.txt` | `ld.lld -r` then `llvm-objcopy --weaken` on ELF | Apple's `ld -r` (`ld64.lld` has no `-r`); `llvm-objcopy --weaken` on Mach-O **[verified]** with LLVM 20 on an arm64 object (sets `N_WEAK_DEF`, leaves references alone). `tools/weaken` writes the same bytes and is selectable with `DC_MACHO_WEAKEN=tool` |
+| Interposition | `-fsemantic-interposition` | ELF-only flag; stops clang inlining calls to functions the port replaces | The driver drops it for Mach-O, but `-Xclang -fsemantic-interposition` works there (Mach-O definitions are not `dso_local`); `-fno-inline-functions` alone is not enough, IPO still folds or deletes calls. Both are used, and `ps2_interposition_check` disassembles `dc_ps2.o` on every build, Linux included |
+| Link flags | `-fuse-ld=lld -Wl,--gc-sections -Wl,--defsym=…` | GNU-style | `-Wl,-dead_strip`; `--defsym` aliases become `-Wl,-alias,_from,_to`; `EditGaijiTbl` (an offset, which `-alias` cannot express) is a port-side table in `linknames.cpp` on both platforms; `--error-limit` dropped |
 | Toolchain | clang 20 from apt | | Homebrew `llvm` (20+) and `lld`; Apple clang is not current enough for C++26 |
 | Shader build | `glslangValidator` from apt | | Homebrew `glslang` |
 | Dependencies | SDL3 and Vulkan from `/usr/local` | | Homebrew `sdl3`, `vulkan-headers`, `vulkan-loader`, `vulkan-validationlayers`; Mesa built from source for KosmicKrisp and lavapipe |
 | Floating point | x86-64 SSE, no FMA contraction by default | | arm64 clang contracts `a*b+c` into FMA by default; `src/ps2` must be compiled with `-ffp-contract=off` so game math matches the x86-64 build bit for bit |
 | `strings.h` | `include/port/port.h` | glibc | present on macOS; keep |
-| CI | `.github/workflows/pc.yml` Ubuntu | | add a `macos-15` (Apple Silicon) job |
+| CI | `.github/workflows/pc.yml` Ubuntu | | a `macos-26` (Apple Silicon) job: KosmicKrisp needs Metal 4, which `macos-15` lacks |
 
 ## 3. The 32-bit pointer problem on arm64 macOS
 
@@ -110,7 +147,9 @@ No memory mapping of PS2 address ranges is introduced on any platform.
 
 - `CMakePresets.json`: `linux-x64` (today's build) and `macos-arm64`
   (Homebrew LLVM, `-DCMAKE_OSX_ARCHITECTURES=arm64`, deployment target the
-  Mesa build needs **[verify]**, Homebrew prefix for SDL3, Vulkan and glslang).
+  Mesa build needs **[verified]**: the executable does not link Metal, so it
+  targets 14.0, the oldest macOS with Homebrew bottles; KosmicKrisp needs 26
+  at run time; Homebrew prefix for SDL3, Vulkan and glslang).
 - `src/port/CMakeLists.txt` split per platform: the merge-and-weaken step
   (`ld -r` + `llvm-objcopy --weaken` or `tools/weaken`), link flags
   (`-dead_strip`, `-alias` for `ItemPutListTbl12_bytes`, `draw_rect`,
@@ -123,7 +162,7 @@ No memory mapping of PS2 address ranges is introduced on any platform.
 - `scripts/host/mesa-macos.sh`: builds a pinned Mesa tag with meson for
   `kosmickrisp` and `swrast`, installs under a prefix, writes the ICD files,
   prints the `VK_DRIVER_FILES` line. Everything pinned.
-- `.github/workflows/pc.yml`: a `macos-15` job that installs Homebrew
+- `.github/workflows/pc.yml`: a `macos-26` job that installs Homebrew
   dependencies, builds Mesa through the script (cached by Mesa tag), builds
   the port with the preset, runs `ctest` headless on lavapipe, then runs
   `darkcloud --headless --frames 3 --screenshot` on KosmicKrisp with

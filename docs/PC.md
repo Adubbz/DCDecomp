@@ -1,7 +1,8 @@
 # PC port
 
 `PLATFORM=PC` builds the game's code as a native x64 Linux program with clang
-20, as C++26, on SDL3 and Vulkan 1.4. The port is always the PAL release;
+20, as C++26, on SDL3 and Vulkan 1.4 (`docs/MACOS.md` covers macOS on Apple
+Silicon). The port is always the PAL release;
 there is no region setting. `docs/PC_PORT_PLAN.md` is the plan it was built
 to and records the phases; this document describes what is built.
 
@@ -17,7 +18,12 @@ ninja -C build/pc
 The `integration_real_data_*` cases run `darkcloud` on the extracted data
 and are skipped unless `DC_DATA` names it.
 
-It needs clang 20 with lld and `llvm-objcopy`, CMake 3.28, Ninja,
+`cmake --preset linux-x64` (and `linux-x64-release`, in `build/pc-release`)
+with `cmake --build --preset` and `ctest --preset` of the same name does the
+same.
+
+It needs clang 20 with lld and the LLVM binary tools (`llvm-objcopy`,
+`llvm-nm`, `llvm-objdump`, `llvm-readobj`, `llvm-lipo`), Python 3, CMake 3.28, Ninja,
 `glslangValidator`, SDL3 (3.2) and the Vulkan 1.4 headers and loader, and at
 run time a device with Vulkan 1.4, `dualSrcBlend` and `shaderClipDistance`
 (any desktop driver; Mesa's lavapipe in CI). `.github/workflows/pc.yml` is a
@@ -480,7 +486,8 @@ The root `CMakeLists.txt` only picks the platform:
 
 1. Every unit in `src/ps2` is compiled as it is, with `PORT` defined.
 2. The objects are merged into one relocatable object, `build/pc/dc_ps2.o`,
-   and `llvm-objcopy --weaken` makes every definition in it weak. References
+   and `llvm-objcopy --weaken` makes every definition in it weak. Two units
+   defining the same strong name fail the merge. References
    stay strong, so a missing function is still a link error.
 3. The units in `src/port` are compiled and linked with it. Their definitions
    are strong, so any function or variable `src/port` defines replaces the
@@ -488,7 +495,11 @@ The root `CMakeLists.txt` only picks the platform:
 
 `src/ps2` units are compiled with `-fPIC -fsemantic-interposition`. That stops
 clang from inlining or folding a call to a function `src/port` may replace, so
-calls inside a `src/ps2` unit reach the replacement too.
+calls inside a `src/ps2` unit reach the replacement too. `ps2_interposition_check`
+(`tools/weaken/interposition_check.py`, part of every build) disassembles
+`dc_ps2.o` and fails if a call to a replaced function was bound inside it or
+a definition in it is still strong. macOS does the same with other tools
+(`docs/MACOS.md`).
 
 To replace a function, define it with the same signature in `src/port`. By
 convention it goes in the file that mirrors its unit: `src/port/mglib.cpp`
@@ -559,14 +570,17 @@ linker script rather than through the source. The port reproduces each:
   `set2DSprite` overloads, plus op_c's `CWater::DrawVu1` and main's
   `MAP_NPC_MODEL::operator=`: weak definitions and forwarders in
   `src/port/linknames.cpp`.
-- **Aliases**, by `--defsym` in `src/port/CMakeLists.txt`:
-  `ItemPutListTbl12_bytes` = `ItemPutListTbl12`, `draw_rect` =
-  `draw_rect_store`, `WorkBuffer__2` = `WorkBuffer`, and `EditGaijiTbl` =
-  `GaijiDataTbl + 0x601C`. The linker script places `EditGaijiTbl` inside
-  `EditPartsData`, but the codes `clsmes.cpp` indexes it with (-0x300 and
-  up) only ever land on the last word of a `GaijiDataTbl` entry, and
-  `GaijiDataTbl` keeps its layout on the host where `EditPartsData`'s
-  pointers grow.
+- **Aliases**, by `--defsym` (ld64's `-alias` on macOS) in
+  `src/port/CMakeLists.txt`: `ItemPutListTbl12_bytes` = `ItemPutListTbl12`,
+  `draw_rect` = `draw_rect_store` and `WorkBuffer__2` = `WorkBuffer`.
+  `EditGaijiTbl` is `GaijiDataTbl + 0x601C` on the PS2 link. The linker
+  script places it inside `EditPartsData`, but the codes `clsmes.cpp`
+  indexes it with (-0x300 and up) only ever land on the last word of a
+  `GaijiDataTbl` entry, and `GaijiDataTbl` keeps its layout on the host
+  where `EditPartsData`'s pointers grow. ld64 cannot alias with an offset,
+  so `linknames.cpp` defines it on every platform: storage for the 0x300
+  entries below it, filled from `GaijiDataTbl` before `main`, with
+  `EditGaijiTbl` an assembler alias of the storage's end.
 
 Data the title overlay's units type themselves with PS2 layouts: see "The
 title overlay's own class declarations".
