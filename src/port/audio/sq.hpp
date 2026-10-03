@@ -54,7 +54,10 @@ struct SqEvent {
     std::span<const std::uint8_t> payload;
 };
 
-// SMF-style track data: variable-length deltas, running status, meta and SysEx events.
+// Sony's SQ track data: SMF-style variable-length deltas, running status, meta and SysEx events,
+// with two differences every sequence on the disc relies on. A note-off carries only its note
+// number. Bit 7 of a channel message's last data byte means the next event follows at once and
+// its delta is left out.
 class SqReader {
 public:
     SqReader() = default;
@@ -64,14 +67,21 @@ public:
     // Reads the next event; a truncated stream reads as End.
     SqEvent Next();
 
-    std::size_t Position() const { return position_; }
+    struct State {
+        std::size_t  position = 0;
+        std::uint8_t running = 0;
+        bool         no_delta = false;
+    };
 
-    std::uint8_t RunningStatus() const { return running_; }
+    State Save() const { return {position_, running_, no_delta_}; }
 
-    void Seek(std::size_t position, std::uint8_t running) {
-        position_ = position;
-        running_ = running;
+    void Restore(const State &state) {
+        position_ = state.position;
+        running_ = state.running;
+        no_delta_ = state.no_delta;
     }
+
+    static int DataBytes(std::uint8_t status);
 
 private:
     bool ReadVarLen(std::uint32_t &value);
@@ -79,6 +89,7 @@ private:
     std::span<const std::uint8_t> events_;
     std::size_t                   position_ = 0;
     std::uint8_t                  running_ = 0;
+    bool                          no_delta_ = false;
 };
 
 } // namespace audio

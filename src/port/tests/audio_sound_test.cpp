@@ -59,7 +59,7 @@ void LoadTestPack(bool init = true) {
     setenv("DC_AUDIO", "off", 1);
     const auto bank = BuildBank();
     Track      song;
-    song.Event(0, {0xC0, 0}).Event(0, {0xB0, 7, 127}).Event(0, {0x90, 60, 127}).Event(480, {0x80, 60, 0}).End(0);
+    song.Event(0, {0xC0, 0}).Event(0, {0xB0, 7, 127}).Event(0, {0x90, 60, 127}).Event(480, {0x80, 60}).End(0);
     static std::vector<unsigned int> pack = BuildPack({
         {"bgm00.txt", Text("bgm00a.hd\r\nbgm00a.sq\r\nsnd00c.hd\r\n")},
         {"bgm00a.hd", bank.hd                                        },
@@ -155,7 +155,8 @@ DC_TEST(audio_csound_effects) {
     CSnd.SE_Play(MIDI_PORT_SE_TITLE, 0, 60, 0x10, 0);
     CSnd.Step();
     DC_CHECK(audio::DefaultMixer().ActiveVoices() == 1);
-    CSnd.StopVoice(1);
+    // The fixture's sample pins its voices to core 0, whatever port plays it.
+    CSnd.StopVoice(0);
     Pull(0.1);
     DC_CHECK(audio::DefaultMixer().ActiveVoices() == 0);
 

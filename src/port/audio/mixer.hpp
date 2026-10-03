@@ -130,6 +130,7 @@ private:
     bool                       reverb_enabled_ = true;
     float                      master_ = 1.0f;
     std::vector<float>         core_buffers_[kCores];
+    std::uint64_t              rendered_ = 0;
 };
 
 // The mixer the game's sound driver plays through.
