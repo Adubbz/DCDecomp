@@ -65,7 +65,8 @@ double SecondsSince(PresentClock::time_point start) {
 
 bool DisplayFrame(float alpha, bool present) {
     PresentClock::time_point start = PresentClock::now();
-    bool                     shown = gfx::RenderList(*g_list, alpha, {.previous = g_previous_list.get(), .present = present});
+    gfx::RenderOptions       options = {.previous = g_previous_list.get(), .present = present};
+    bool                     shown = gfx::RenderList(*g_list, alpha, options);
     if (shown) {
         g_stats.display_frames++;
         g_stats.display_seconds += SecondsSince(start);

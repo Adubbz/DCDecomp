@@ -192,10 +192,11 @@ Projection Project(const RenderInfo &info, float (*matrix)[4]) {
     Draw3DMul(projection.drop_to_eye, info.view_scaled, drop);
     Draw3DEyeToClip(info, projection.eye_to_clip);
     projection.transform = gfx::IdentityMeshTransform();
-    std::memcpy(projection.transform.projection, projection.eye_to_clip, sizeof(projection.transform.projection));
-    std::memcpy(projection.transform.view, info.view_scaled, sizeof(projection.transform.view));
-    std::memcpy(projection.transform.model, matrix, sizeof(projection.transform.model));
-    projection.has_transform = gfx::InvertAffineTransform(&projection.model_to_eye[0][0], projection.transform.local);
+    gfx::MeshTransform &transform = projection.transform;
+    std::memcpy(transform.projection, projection.eye_to_clip, sizeof(transform.projection));
+    std::memcpy(transform.view, info.view_scaled, sizeof(transform.view));
+    std::memcpy(transform.model, matrix, sizeof(transform.model));
+    projection.has_transform = gfx::InvertAffineTransform(&projection.model_to_eye[0][0], transform.local);
     Vec3 light = {info.light_direction[0][0], info.light_direction[1][0], info.light_direction[2][0]};
     projection.local_light = {Dot({matrix[0][0], matrix[0][1], matrix[0][2]}, light),
                               Dot({matrix[1][0], matrix[1][1], matrix[1][2]}, light),

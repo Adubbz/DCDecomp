@@ -317,6 +317,15 @@ present one canonical image per tick, so screenshots are those images.
 The loading screen still presents from the idle hook as immediate frames; once
 it has, display frames stop until the next tick's canonical render.
 
+A display frame costs what drawing the tick costs on the GPU, plus little on the
+CPU: in the opening's first scene (about 2,100 mesh draws and 100 2D draws per
+tick, all of them keyed), a release build spends 1.6 ms interpolating and 1.8 ms
+replaying a list, and lavapipe about 150 ms rasterising it at 1280x960. The
+canonical render is the frame the port drew before, and the only one that pays
+for copies and readbacks. `darkcloud --headless --display-per-tick 4` leaves
+every screenshot of the title, the attract movie and the opening byte for byte
+the same.
+
 Overlays are not re-initialised: `TITLE.BIN` and `DUN.BIN` are linked in
 once, where retail reloaded the overlay's data, zeroed its `.bss` and re-ran
 its static constructors on every switch between the title and the dungeon.

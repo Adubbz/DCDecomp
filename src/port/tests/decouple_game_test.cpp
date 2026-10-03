@@ -47,7 +47,9 @@ bool LitAt(GfxFixture &fixture, uint32_t x) {
            fixture.PixelNear(x + 100, 240, 0, 0, 0);
 }
 
-std::chrono::steady_clock::time_point Later() { return std::chrono::steady_clock::now() + std::chrono::hours(1); }
+std::chrono::steady_clock::time_point Later() {
+    return std::chrono::steady_clock::now() + std::chrono::hours(1);
+}
 
 struct PresentScope {
     explicit PresentScope(const GamePresentSettings &settings) { GameSetPresentSettings(settings); }

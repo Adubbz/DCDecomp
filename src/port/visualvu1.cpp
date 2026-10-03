@@ -223,7 +223,8 @@ void Draw3DDrawVisual(const Draw3DVisual &visual, const float model[4][4], const
                                    std::span<const uint32_t>(visual.indices).subspan(strip.first_index, strip.index_count),
                                    constants, binding, state, &transform);
         } else {
-            gfx::DrawMesh(visual.mesh, strip.first_index, strip.index_count, constants, binding, state, &transform);
+            gfx::DrawMesh(visual.mesh, strip.first_index, strip.index_count, constants, binding, state,
+                          &transform);
         }
     }
     if (unkeyed) {

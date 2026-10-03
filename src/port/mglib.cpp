@@ -168,7 +168,8 @@ void CheckCameraCut(sceVu0FMATRIX view) {
     }
     float before[16];
     float after[16];
-    if (!gfx::InvertAffineTransform(&g_tick_view[0][0], before) || !gfx::InvertAffineTransform(&view[0][0], after)) {
+    if (!gfx::InvertAffineTransform(&g_tick_view[0][0], before) ||
+        !gfx::InvertAffineTransform(&view[0][0], after)) {
         return;
     }
     float dx = after[12] - before[12];
@@ -177,7 +178,8 @@ void CheckCameraCut(sceVu0FMATRIX view) {
     float forward = before[8] * after[8] + before[9] * after[9] + before[10] * after[10];
     float lengths = std::sqrt((before[8] * before[8] + before[9] * before[9] + before[10] * before[10]) *
                               (after[8] * after[8] + after[9] * after[9] + after[10] * after[10]));
-    if (std::sqrt(dx * dx + dy * dy + dz * dz) > kCameraCutDistance || forward < kCameraCutCosine * lengths) {
+    float moved = std::sqrt(dx * dx + dy * dy + dz * dz);
+    if (moved > kCameraCutDistance || forward < kCameraCutCosine * lengths) {
         gfx::CutCameraInterpolation();
     }
 }

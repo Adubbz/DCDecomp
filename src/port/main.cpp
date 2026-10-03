@@ -212,15 +212,15 @@ void ReportPresentStats() {
         return;
     }
     double ticks = static_cast<double>(stats.ticks);
+    double displays = static_cast<double>(std::max<std::uint64_t>(stats.display_frames, 1));
     std::fprintf(stderr,
-                 "present: %llu ticks, per tick %.1f mesh draws (%.1f keyed), %.1f 2D draws, %.1f stateful, "
-                 "at most %llu draws; canonical %.2f ms per tick; %llu display frames, %.2f ms each\n",
-                 static_cast<unsigned long long>(stats.ticks), static_cast<double>(stats.mesh_draws) / ticks,
+                 "present: %.0f ticks, per tick %.1f mesh draws (%.1f keyed), %.1f 2D draws, %.1f stateful, "
+                 "at most %.0f draws; canonical %.2f ms per tick; %.0f display frames, %.2f ms each\n",
+                 ticks, static_cast<double>(stats.mesh_draws) / ticks,
                  static_cast<double>(stats.keyed_mesh_draws) / ticks, static_cast<double>(stats.draws_2d) / ticks,
-                 static_cast<double>(stats.stateful) / ticks, static_cast<unsigned long long>(stats.max_draws),
-                 stats.canonical_seconds * 1000.0 / ticks, static_cast<unsigned long long>(stats.display_frames),
-                 stats.display_frames ? stats.display_seconds * 1000.0 / static_cast<double>(stats.display_frames)
-                                      : 0.0);
+                 static_cast<double>(stats.stateful) / ticks, static_cast<double>(stats.max_draws),
+                 stats.canonical_seconds * 1000.0 / ticks, static_cast<double>(stats.display_frames),
+                 stats.display_seconds * 1000.0 / displays);
 }
 
 int Screenshot(const char *path) {

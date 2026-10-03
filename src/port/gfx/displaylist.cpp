@@ -75,9 +75,9 @@ Quat QuatFromRotation(const Mat3 &m) {
 Mat3 RotationFromQuat(Quat q) {
     float x = q.x, y = q.y, z = q.z, w = q.w;
     // Columns.
-    return {1 - 2 * (y * y + z * z), 2 * (x * y + w * z),     2 * (x * z - w * y),
-            2 * (x * y - w * z),     1 - 2 * (x * x + z * z), 2 * (y * z + w * x),
-            2 * (x * z + w * y),     2 * (y * z - w * x),     1 - 2 * (x * x + y * y)};
+    return {1 - 2 * (y * y + z * z), 2 * (x * y + w * z), 2 * (x * z - w * y),
+            2 * (x * y - w * z), 1 - 2 * (x * x + z * z), 2 * (y * z + w * x),
+            2 * (x * z + w * y), 2 * (y * z - w * x), 1 - 2 * (x * x + y * y)};
 }
 
 Quat Slerp(Quat a, Quat b, float t) {
@@ -134,7 +134,10 @@ bool Decompose(const Mat4 &m, Decomposed &out) {
     Mat3 exact = RotationFromQuat(out.rotation);
     Vec3 columns[3] = {c0, c1, c2};
     Vec3 axes[3] = {
-        {exact[0], exact[1], exact[2]}, {exact[3], exact[4], exact[5]}, {exact[6], exact[7], exact[8]}};
+        {exact[0], exact[1], exact[2]},
+        {exact[3], exact[4], exact[5]},
+        {exact[6], exact[7], exact[8]}
+    };
     for (int c = 0; c < 3; c++) {
         for (int r = 0; r < 3; r++) {
             out.rest[c * 3 + r] = Dot(axes[r], columns[c]);
@@ -295,6 +298,11 @@ void Interpolated(const DisplayList &list, const DisplayList &previous, float al
 
     out.index.assign(list.records.size(), -1);
     out.constants.clear();
+    const Mat4 *last_before = nullptr;
+    const Mat4 *last_after = nullptr;
+    Mat4        last_model;
+    Mat3        last_delta = {};
+    bool        last_turned = false;
     for (const Entry &entry : list.entries) {
         const MeshEntry *mesh = std::get_if<MeshEntry>(&entry);
         if (mesh == nullptr) {
@@ -305,18 +313,25 @@ void Interpolated(const DisplayList &list, const DisplayList &previous, float al
             continue;
         }
         Mat4    model = record.model;
-        Mat3    delta;
-        bool    turned = false;
         int32_t match = cache.match[mesh->record];
         if (match >= 0 && previous.records[match].model != record.model) {
-            turned = Interpolate(previous.records[match].model, record.model, alpha, model, &delta);
+            // A model's strips and passes come one after another with the same pair of matrices.
+            const Mat4 &before = previous.records[match].model;
+            if (last_before == nullptr || *last_before != before || *last_after != record.model) {
+                last_before = &before;
+                last_after = &record.model;
+                last_turned = Interpolate(before, record.model, alpha, last_model, &last_delta);
+            }
+            model = last_model;
         }
+        bool        turned = match >= 0 && previous.records[match].model != record.model && last_turned;
+        const Mat3 &delta = last_delta;
         if (!turned && !moved[record.camera]) {
             continue;
         }
         MeshConstants constants = mesh->constants;
-        Mat4 mvp = Multiply(Multiply(Multiply(record.projection, views[record.camera]), record.middle),
-                            Multiply(model, record.local));
+        Mat4          world_to_clip = Multiply(Multiply(record.projection, views[record.camera]), record.middle);
+        Mat4          mvp = Multiply(world_to_clip, Multiply(model, record.local));
         std::memcpy(constants.mvp, mvp.data(), sizeof(constants.mvp));
         if (turned) {
             for (int c = 0; c < 3; c++) {
@@ -577,8 +592,8 @@ bool RenderList(const DisplayList &list, float alpha, const RenderOptions &optio
         return false;
     }
     Overrides overrides;
-    bool interpolate = options.previous != nullptr && options.previous->instance == g.renderer_instance &&
-                       alpha < 1.0f && !list.cut;
+    bool      interpolate = options.previous != nullptr && options.previous->instance == g.renderer_instance;
+    interpolate = interpolate && alpha < 1.0f && !list.cut;
     if (interpolate) {
         Interpolated(list, *options.previous, std::max(alpha, 0.0f), overrides);
     }
