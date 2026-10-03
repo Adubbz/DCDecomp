@@ -29,7 +29,7 @@ same.
 
 It needs clang 20 with lld and the LLVM binary tools (`llvm-objcopy`,
 `llvm-nm`, `llvm-objdump`, `llvm-readobj`, `llvm-lipo`), Python 3, CMake 3.28, Ninja,
-`glslangValidator`, SDL3 (3.2) and the Vulkan 1.4 headers and loader, and at
+`glslangValidator`, SDL3 (3.4) and the Vulkan 1.4 headers and loader, and at
 run time a device with Vulkan 1.3 or later, `dualSrcBlend` and `shaderClipDistance`
 (any desktop driver; Mesa's lavapipe in CI; `port/src/gfx/README.md`, "Device", has the whole list). `.github/workflows/pc.yml` is a
 complete recipe on Ubuntu 24.04.
