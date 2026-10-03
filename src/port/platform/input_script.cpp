@@ -53,6 +53,36 @@ std::vector<std::string_view> Tokens(std::string_view line) {
     return tokens;
 }
 
+bool ParseDeviceToken(std::string_view token, std::string_view lower, InputScriptStep &step, bool &device,
+                      std::string &why) {
+    device = true;
+    if (lower.starts_with("key:")) {
+        int scancode = InputScancodeFromName(token.substr(4));
+        if (scancode < 0) {
+            why = "unknown key \"" + std::string(token.substr(4)) + "\"";
+            return false;
+        }
+        step.devices.keys.push_back(scancode);
+        return true;
+    }
+    if (lower.starts_with("mouse:")) {
+        std::string_view motion = lower.substr(6);
+        std::size_t      comma = motion.find(',');
+        if (comma == std::string_view::npos || !ParseNumber(motion.substr(0, comma), step.devices.mouse_dx) ||
+            !ParseNumber(motion.substr(comma + 1), step.devices.mouse_dy)) {
+            why = "mouse motion is mouse:dx,dy";
+            return false;
+        }
+        return true;
+    }
+    if (lower.size() == 6 && lower.starts_with("mouse") && lower[5] >= '1' && lower[5] <= '5') {
+        step.devices.mouse_buttons |= 1u << (lower[5] - '1');
+        return true;
+    }
+    device = false;
+    return true;
+}
+
 bool ParseLine(std::string_view line, InputScriptStep &step, std::string &why) {
     std::vector<std::string_view> tokens = Tokens(line);
     if (!ParseNumber(tokens[0], step.frame) || step.frame < 0) {
@@ -72,6 +102,18 @@ bool ParseLine(std::string_view line, InputScriptStep &step, std::string &why) {
         }
         std::string lower(tokens[i]);
         std::ranges::transform(lower, lower.begin(), [](unsigned char c) { return std::tolower(c); });
+        bool device = false;
+        if (!ParseDeviceToken(tokens[i], lower, step, device, why)) {
+            return false;
+        }
+        if (device) {
+            if (step.pad != 0) {
+                why = "keys and the mouse drive pad 1 only";
+                return false;
+            }
+            step.uses_devices = true;
+            continue;
+        }
         auto found = std::ranges::find(kButtonNames, std::string_view(lower), &ButtonName::name);
         if (found == std::end(kButtonNames)) {
             why = "unknown button \"" + std::string(tokens[i]) + "\"";
@@ -145,13 +187,16 @@ bool InputScriptLoad(const std::filesystem::path &path, InputScript &script, std
 }
 
 InputPadState InputScriptStateAt(const InputScript &script, int pad, std::int64_t frame) {
-    InputPadState state = Released();
+    const InputScriptStep *held = nullptr;
     for (const InputScriptStep &step : script.steps) {
         if (step.pad == pad && step.frame <= frame) {
-            state = step.state;
+            held = &step;
         }
     }
-    return state;
+    if (held == nullptr) {
+        return Released();
+    }
+    return held->uses_devices ? InputApplyKeyboardMouse(held->state, held->devices) : held->state;
 }
 
 bool InputScriptDrivesPad(const InputScript &script, int pad) {
