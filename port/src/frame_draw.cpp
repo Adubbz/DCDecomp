@@ -92,9 +92,9 @@ unsigned int g_cursor[64];
 
 } // namespace
 
-Draw3DIdentityScope::Draw3DIdentityScope(const void *object, float teleport_distance)
+Draw3DIdentityScope::Draw3DIdentityScope(const void *object, float teleport_distance, bool blend_vertices)
     : key_(gfx::CurrentInterpKey()), no_interpolation_(gfx::CurrentNoInterpolation()) {
-    gfx::SetInterpKey(reinterpret_cast<uintptr_t>(object), false, teleport_distance);
+    gfx::SetInterpKey(reinterpret_cast<uintptr_t>(object), false, teleport_distance, blend_vertices);
 }
 
 Draw3DIdentityScope::~Draw3DIdentityScope() {

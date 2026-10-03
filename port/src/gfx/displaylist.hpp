@@ -86,6 +86,7 @@ struct MeshRecord {
     uint32_t  entry = 0; // its MeshEntry in DisplayList::entries
     bool      no_interpolation = false;
     float     teleport_distance = INFINITY;
+    bool      blend_vertices = false;
     bool      has_transform = false;
     uint32_t  camera = 0;
     Mat4      projection = {};

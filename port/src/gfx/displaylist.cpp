@@ -307,6 +307,7 @@ void BuildMatches(const DisplayList &list, const DisplayList &previous) {
         if (!(std::sqrt(dx * dx + dy * dy + dz * dz) > record.teleport_distance)) {
             cache.match[i] = it->second;
             cache.blend[i] =
+                record.blend_vertices && previous.records[it->second].blend_vertices &&
                 VerticesBlend(std::get<MeshEntry>(previous.entries[previous.records[it->second].entry]),
                               std::get<MeshEntry>(list.entries[record.entry]), record.teleport_distance);
         }
@@ -520,6 +521,7 @@ void RecordMesh(MeshEntry &&entry, const MeshTransform *transform) {
     record.key = g.interp_key;
     record.no_interpolation = g.interp_no_interpolation;
     record.teleport_distance = g.interp_teleport_distance;
+    record.blend_vertices = g.interp_blend_vertices;
     if (record.key != 0) {
         record.occurrence = list.occurrences[record.key]++;
     }
@@ -584,10 +586,11 @@ bool InvertAffineTransform(const float matrix[16], float inverse[16]) {
     return true;
 }
 
-void SetInterpKey(InterpKey key, bool no_interpolation, float teleport_distance) {
+void SetInterpKey(InterpKey key, bool no_interpolation, float teleport_distance, bool blend_vertices) {
     g.interp_key = key;
     g.interp_no_interpolation = no_interpolation;
     g.interp_teleport_distance = teleport_distance;
+    g.interp_blend_vertices = blend_vertices;
 }
 
 InterpKey CurrentInterpKey() { return g.interp_key; }
@@ -610,6 +613,7 @@ void BeginRecording() {
     g.interp_key = 0;
     g.interp_no_interpolation = false;
     g.interp_teleport_distance = INFINITY;
+    g.interp_blend_vertices = false;
 }
 
 DisplayListRef EndRecording() {

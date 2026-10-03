@@ -450,11 +450,14 @@ using DisplayListRef = std::shared_ptr<const DisplayList>;
 // Identity of the object the following mesh draws belong to, so a display frame can match each one
 // with the same object's draw in the previous tick (the n-th draw with a key matches the n-th with
 // it). 0 is none. no_interpolation draws them at this tick's transform, as does a model whose
-// translation moved more than teleport_distance since the previous tick (a teleport). A matched
-// DrawMeshImmediate with the same vertex count has its vertices interpolated too, unless one moved
-// more than teleport_distance.
+// translation moved more than teleport_distance since the previous tick (a teleport). With
+// blend_vertices a matched DrawMeshImmediate with the same vertex count has its vertices
+// interpolated too, unless one moved more than teleport_distance: for vertices that are the same
+// points of the same space from tick to tick (the cloth's), not for geometry rebuilt in a space or
+// an order of its own every tick (the shadow volumes).
 using InterpKey = uint64_t;
-void      SetInterpKey(InterpKey key, bool no_interpolation = false, float teleport_distance = INFINITY);
+void      SetInterpKey(InterpKey key, bool no_interpolation = false, float teleport_distance = INFINITY,
+                       bool blend_vertices = false);
 InterpKey CurrentInterpKey();
 bool      CurrentNoInterpolation();
 

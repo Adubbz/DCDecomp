@@ -150,8 +150,9 @@ DC_TEST(decouple_mesh_interpolates_between_ticks) {
     DC_CHECK(SquareAt(fixture, 480));
 }
 
-// A keyed immediate mesh under an identity model (the cloth) has its vertices interpolated; a
-// vertex that moved past the teleport distance, or a different vertex count, leaves it as recorded.
+// A keyed immediate mesh tagged for it (the cloth) has its vertices interpolated; a vertex that
+// moved past the teleport distance, a different vertex count, or no tag (the shadow volumes) leaves
+// it as recorded.
 DC_TEST(decouple_immediate_mesh_vertices_interpolate) {
     GfxFixture fixture;
     auto       draw = [](float x, int copies = 1) {
@@ -177,11 +178,11 @@ DC_TEST(decouple_immediate_mesh_vertices_interpolate) {
         gfx::DrawMeshImmediate(vertices, indices, constants, {}, {}, &transform);
     };
     gfx::DisplayListRef first = Tick([&] {
-        gfx::SetInterpKey(7);
+        gfx::SetInterpKey(7, false, INFINITY, true);
         draw(-0.5f);
     });
     gfx::DisplayListRef second = Tick([&] {
-        gfx::SetInterpKey(7);
+        gfx::SetInterpKey(7, false, INFINITY, true);
         draw(0.5f);
     });
     Display(fixture, second, first, 0.5f);
@@ -192,17 +193,24 @@ DC_TEST(decouple_immediate_mesh_vertices_interpolate) {
     DC_CHECK(SquareAt(fixture, 480));
 
     gfx::DisplayListRef jumped = Tick([&] {
-        gfx::SetInterpKey(7, false, 0.9f);
+        gfx::SetInterpKey(7, false, 0.9f, true);
         draw(-0.5f);
     });
     Display(fixture, jumped, second, 0.5f);
     DC_CHECK(SquareAt(fixture, 160));
 
     gfx::DisplayListRef resized = Tick([&] {
-        gfx::SetInterpKey(7);
+        gfx::SetInterpKey(7, false, INFINITY, true);
         draw(0.5f, 2);
     });
     Display(fixture, resized, jumped, 0.5f);
+    DC_CHECK(SquareAt(fixture, 480));
+
+    gfx::DisplayListRef untagged = Tick([&] {
+        gfx::SetInterpKey(7);
+        draw(0.5f);
+    });
+    Display(fixture, untagged, first, 0.5f);
     DC_CHECK(SquareAt(fixture, 480));
 }
 

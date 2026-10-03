@@ -298,6 +298,7 @@ struct Context {
     InterpKey                    interp_key = 0;
     bool                         interp_no_interpolation = false;
     float                        interp_teleport_distance = INFINITY;
+    bool                         interp_blend_vertices = false;
     bool                         replaying = false;
     bool                         display_pass = false;
     // Errors are reported by the canonical render; display renders of the same list stay quiet.

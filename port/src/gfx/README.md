@@ -229,10 +229,12 @@ renders one.
   list after `CutInterpolation()`, the views after `CutCameraInterpolation()`, non-affine or
   singular matrices, and anything 2D, including 3D sprites (2D vertices with depth): they replay as
   recorded. Vertex animation (skinning written with `UpdateMeshVertices`) shows the tick's pose.
-  A matched immediate mesh (`DrawMeshImmediate`: the cloth, simulated in world space under an
-  identity model) with as many vertices as its predecessor has them interpolated instead:
-  positions lerped, normals lerped and normalised, unless one moved further than the teleport
-  distance.
+  A matched immediate mesh (`DrawMeshImmediate`) tagged `blend_vertices` in both ticks, with as
+  many vertices as its predecessor, has them interpolated instead: positions lerped, normals lerped
+  and normalised, unless one moved further than the teleport distance. The cloth asks for it: its
+  vertices are the same grid points in world space, under an identity model, every tick. The shadow
+  volumes must not: they are rebuilt in each tick's eye space with the faces sorted by which way
+  they turn, so a vertex of one tick is not the same point as that vertex of the next.
 
 ## Device
 

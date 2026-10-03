@@ -69,7 +69,7 @@ int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PRO
     CreateVUData(vu_block[DBuffID]);
     vu_data = vu_block[DBuffID];
     if (const Draw3DVisual *visual = Draw3DFindVisual(vu_data)) {
-        Draw3DIdentityScope identity(this, kDraw3DTeleportDistance);
+        Draw3DIdentityScope identity(this, kDraw3DTeleportDistance, true);
         Draw3DDrawVisual(*visual, matrix, *info, program);
     }
     return 0;

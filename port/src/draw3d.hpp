@@ -71,10 +71,11 @@ void Draw3DSceneConstants(gfx::MeshConstants &constants, const RenderInfo &info,
 inline constexpr float kDraw3DTeleportDistance = 200.0f;
 
 // Identity of the mesh draws a CFrame makes, for interpolating them between ticks: set around the
-// frame's visual draw, restored after.
+// frame's visual draw, restored after. blend_vertices is for an object whose immediate vertices
+// are the same points of the same space every tick (the cloth), which are then interpolated too.
 class Draw3DIdentityScope {
 public:
-    Draw3DIdentityScope(const void *object, float teleport_distance);
+    Draw3DIdentityScope(const void *object, float teleport_distance, bool blend_vertices = false);
     ~Draw3DIdentityScope();
 
     Draw3DIdentityScope(const Draw3DIdentityScope &) = delete;
