@@ -43,6 +43,17 @@ gfx::TextureHandle Draw3DLastFrameCopy();
 // the former picked; with no target they are dropped rather than brightening the frame.
 bool Draw3DShadowTargetActive();
 
+// The shadow microprogram the running MGDrawShadow* call stands for. All three extrude caster
+// triangles into prisms down to the shadow plane: Vu_shadow (MGDrawShadowFast) every triangle of
+// the shadow mesh, Vu_shadow3 (MGDrawShadowFast2) those facing away from light 0, Vu_shadow2
+// (MGDrawShadow) the records CreateVUdataShadowCLIP selects, with a near-plane cap.
+enum class Draw3DShadowProgram {
+    Every,
+    AwayFromLight,
+    Clipped,
+};
+Draw3DShadowProgram Draw3DCurrentShadowProgram();
+
 // 4x4 matrices are column-major [column][row], as sceVu0FMATRIX.
 void Draw3DMul(float out[4][4], const float a[4][4], const float b[4][4]);
 
