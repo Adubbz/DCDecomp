@@ -47,17 +47,19 @@ build/pc/darkcloud --data data --save save
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
 | `--offscreen` | `--headless` without a Vulkan surface: frames are drawn to an image only (what `--headless` does by itself when the loader has no `VK_EXT_headless_surface`) |
 | `--frames N` | stop after N frames of the game's main loop |
-| `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
+| `--screenshot PATH` | after the run, write the last tick's canonical image (or the loading screen's frame, if it presented since) to PATH as a PNG; never a display frame, so never the FPS counter |
 | `--input FILE` | drive the pads from a script (default: `DC_INPUT`; see "Scripted input") |
 | `--width W`, `--height H` | window size in pixels, over `config.ini` |
 | `--jump MODE[:MAP]` | test hook: start in a mode (see "Test hooks"); also `DC_JUMP` |
 | `--fast-load` | test hook: loading-screen holds and fades of a few ticks; also `DC_FAST_LOAD=1` |
 | `--display-per-tick N` | headless test aid: render N interpolated display frames per tick (offscreen, not presented) before presenting the tick's canonical image |
+| `--show-fps` | draw the FPS counter when headless too (a headless run leaves `show_fps` off) |
 
 Environment: `DC_DATA` and `DC_SAVE` (above), `DC_INPUT` (above), `DC_AUDIO=off` (no audio
-device), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
+device), `DC_AUDIO_WAV` and `DC_AUDIO_TRACE` (see "Audio"), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
 release build; a debug build always asks for it), `DC_PRESENT_STATS=1` (print
-draws per tick and render times at exit), and SDL's own variables.
+draws per tick and render times at exit, and what the FPS counter said last
+when it is on), and SDL's own variables.
 
 Exit statuses (`src/port/exitcodes.hpp`): 0 when the window was closed or
 `--frames` ran out, 1 when the window, the renderer or the screenshot failed,
@@ -73,6 +75,7 @@ values are reported and ignored):
 ```ini
 [game]
 tick_rate = 50          ; logic ticks (the game's VSyncs) per second
+debug_mode = false      ; true: start with DebugMode on, in the developer menu
 [video]
 present_mode = fifo     ; fifo, mailbox or immediate (each falls back to the next safer one)
 vsync = true            ; shorthand: true is fifo, false immediate
@@ -81,6 +84,7 @@ max_fps = 0             ; display frames per second at most; 0: as the present m
 width = 1280
 height = 960
 fullscreen = false
+show_fps = true         ; the FPS counter at the window's top-left corner (headless: --show-fps)
 [audio]
 master_volume = 1.0     ; 0 to 1
 [input]
@@ -90,6 +94,8 @@ mouse_sensitivity = 0.1 ; right-stick deflection (1 = full) per pixel moved in o
 mouse_invert_y = false
 mouse_capture = true    ; SDL relative mouse mode while the window has focus
 mouse_release = Escape  ; keys that give the cursor back in a window (empty: none)
+debug_toggle = Grave    ; the key left of 1: DebugMode (see "Developer menu")
+fps_toggle = F3         ; the FPS counter on and off
 ```
 
 ### Keyboard and mouse
@@ -117,6 +123,8 @@ dungeon's `PadInput_OK` is cross and `PadInput_NO` circle,
 | arrows | d-pad | left and right pick the active item in the dungeon (`dun/gameloop.cpp:3218`); menus |
 | V; middle click, B | L3; R3 | debug and editor functions only |
 | IJKL | right stick | the camera from the keyboard |
+| `` ` `` (Grave) | none | debug mode: held or pressed while the game starts, the developer menu; later, toggles `DebugMode` (see "Developer menu") |
+| F3 | none | the FPS counter on and off (see "The FPS counter") |
 
 The square button is not a guard in this game: the guard is R1 held while
 locked on, so right click is R1. The camera turns the way the view moves on
@@ -127,10 +135,16 @@ the view right; a positive RY lowers the camera, which looks up, so the
 default `ry = -MouseY` makes mouse up look up and `mouse_invert_y` flips it.
 
 The actions are `up down left right cross circle square triangle l1 r1 l2
-r2 l3 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+ lx ly rx ry`. Keys are
-SDL names (any case, `_` for a space); `Mouse1` to `Mouse5` are left, right,
-middle and the two side buttons. A gamepad axis deflected past the game's
+r2 l3 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+ lx ly rx ry`, and the
+port's own `debug_toggle` and `fps_toggle`, which press no pad button. Keys are
+SDL names (any case, `_` for a space; `Grave`, `Backquote` or `Backtick` for
+the key left of 1); `Mouse1` to `Mouse5` are left, right,
+middle and the two side buttons. The two toggles also take
+`Gamepad:<button>` with SDL's gamepad button names (`Gamepad:guide`,
+`Gamepad:misc1`), on any connected gamepad; the pad actions take a gamepad's
+buttons from the gamepad itself. A gamepad axis deflected past the game's
 dead zone wins over the keyboard and mouse on that axis; buttons add.
+Each key-down of a toggle's key counts once, however briefly it is held.
 
 - **Sticks.** A key is full deflection; two keys at right angles make a
   diagonal of the same length. Values go through the inverse of the game's
@@ -175,7 +189,8 @@ r1 l2 r2 l3 r3 up down left right`, any case) and the four stick bytes
 says `pad2`, from that frame until the pad's next line. On pad 1 lines,
 `key:NAME` (an SDL key name, `_` for a space), `mouse1` to `mouse5` and
 `mouse:DX,DY` (pixels per tick) go through the keyboard and mouse bindings
-as live input does, d-pad rule included. A line with no
+as live input does, d-pad rule included, and reach the two toggles too: a
+line that starts holding `key:grave` is one press of `debug_toggle`. A line with no
 button releases everything. Frames count the game's main loop as
 `--frames` does; frame 0 also covers the 60-tick warm-up and the loading
 screens before the first frame. `#` starts a comment; a pad's frames must
@@ -226,8 +241,42 @@ directory (and so one pipeline cache) under the build directory.
 PAL retail's `main` sets `DebugMode` when pad 2 holds L1+R1+L2+R2 through
 the warm-up; the game then starts in `GAME_MODE_MENU`, the developer menu
 (`MenuLoop`, `src/ps2/main.cpp`), instead of the language select, and leaves
-pad 2 unlocked. Up and down (pad 1) pick a row, left and right change its
-number, circle or triangle enters it:
+pad 2 unlocked. The port starts at the language select as retail does. Three
+things start it in the developer menu: the pad 2 hold, the debug key
+(`` ` ``, `[input] debug_toggle`) held or pressed while the game starts (the
+60-tick warm-up, or before it while the shaders compile), and
+`[game] debug_mode = on` in `config.ini`. `darkcloud` prints
+`debug mode on: the developer menu` when it does.
+
+After start-up, retail PAL flips `DebugMode` after every frame of the main
+loop where pad 2 holds L1+R1+L2+R2 and R3 is pressed (`src/ps2/main.cpp:963`);
+the port does the same, and a press of the debug key flips it there too,
+printing `debug mode on` or `debug mode off`. Neither moves the game anywhere:
+`DebugMode` is a flag the modes read. What it does once set:
+
+- The town (`EditLoop`, `src/ps2/editloop.cpp:2041`) and the dungeon
+  (`GameLoop`, `src/ps2/dun/gameloop.cpp:2087`) leave on Select held with
+  Start (in the town after a fade); their loop results send the game to
+  `GAME_MODE_MENU` (`GameApplyLoopResult`: the town's result 1, any dungeon
+  result), and the top of `main`'s loop runs the developer menu there only
+  while `DebugMode` is set (otherwise the attract movie, `src/ps2/main.cpp:571`).
+  This is the one way back to the developer menu after start-up. The
+  interior (`EditInLoop`) leaves the same way to the title, not the menu.
+- In the town L3 shows the editor's debug overlay and R3 opens its debug
+  menu (`editloop.cpp:1849`); in an interior Select walks out of the door
+  (`edit_in.cpp:1342`); in the dungeon R3 opens the debug options outside an
+  event (`dun/gameloop.cpp:3109`); a town event pauses on Start and stops on
+  R3 (`editloop3.cpp:8678`); shops, menus and battles have their own, some
+  on pad 2.
+- Nothing on the language select, the attract movie, the title or the
+  opening reads it, so from there the game has to reach a town or a dungeon
+  first.
+
+A boot without debug mode locks pad 2 (`GamePad.KeyLock2(1)`, as retail),
+so the pad 2 combination never reaches the game after it, and the debug
+functions that read pad 2 stay dead; the key is not pad 2 and still
+toggles `DebugMode`. In the developer menu, up and down (pad 1) pick a row,
+left and right change its number, circle or triangle enters it:
 
 | Row | Goes to |
 |---|---|
@@ -250,7 +299,8 @@ number, circle or triangle enters it:
 22
 ```
 
-enters town 1 (Norune).
+enters town 1 (Norune); `0 key:grave` with `1` releasing it does the same
+from the keyboard.
 
 ## Start-up and the main loop
 
@@ -340,6 +390,31 @@ present one canonical image per tick, so screenshots are those images.
 The loading screen still presents from the idle hook as immediate frames; once
 it has, display frames stop until the next tick's canonical render.
 
+### The FPS counter
+
+With `[video] show_fps` (on by default; `fps_toggle`, F3, flips it at any
+time), every presented frame carries one line at the window's top-left
+corner, in the port's own 5x7 font (`src/port/platform/overlay.cpp`, white
+on a translucent black backdrop, on whole pixels: one per logical unit,
+rounded):
+
+```
+FPS 143.9  TICK 50.0/50  DRAWS 412
+```
+
+the frames presented per second and the logic ticks rendered per second,
+each over the last half second or so, the configured tick rate, and the
+newest tick's mesh and 2D draws. It is drawn with `gfx::Draw2D` into a
+display list of its own, recorded only when the text or the window's mapping
+changes, never into a tick's list: a display frame draws it after the tick's
+list and before the present (`gfx::RenderOptions::overlay`), and a tick
+presented as its canonical image is presented as a display render of the
+counter alone, which starts from that image. So the canonical image, which
+`kPreviousFrame`, frame copies, pick-Z and `--screenshot` read, never holds
+it, and screenshots are the same byte for byte with it on or off. The
+loading screen's own presents do not carry it. Headless runs leave it off
+unless `--show-fps` is given.
+
 A display frame costs what drawing the tick costs on the GPU, plus little on the
 CPU: in the opening's first scene (about 2,100 mesh draws and 100 2D draws per
 tick, all of them keyed), a release build spends 1.6 ms interpolating and 1.8 ms
@@ -394,6 +469,10 @@ replacement units.
   `ClockWaitNextTick(hook)` runs a hook over and over while it waits, with the
   elapsed fraction of the tick; `MGEndFrame` presents display frames through it.
 - **Config** (`platform/config`) and **paths** (`platform/paths`): above.
+- **Overlay** (`platform/overlay`): the port's 5x7 font (the first-run screen
+  draws with it too), a line of text drawn with `gfx::Draw2D` on whole pixels
+  at the window's corner and recorded as a display list of its own, and the
+  rate meter behind the FPS counter ("The FPS counter").
 - **Audio output** (`platform/audio`): an SDL3 float stereo stream that pulls
   frames from a render callback on SDL's audio thread; `DC_AUDIO=off` or no
   device leaves the game silent.
@@ -465,6 +544,55 @@ stop, fades, volumes, effect messages) on that mixer, and
 `gameutil_midi.cpp` answers the EZMIDI RPC commands for anything that still
 sends them. `main` starts the output; `CSound::Init` starts it too if it is
 not running.
+
+The formats and the synth's arithmetic were checked against every bank and
+sequence on the PAL disc and against the IOP modules the game loads
+(`EZMIDI.IRX`, `MODMIDI.IRX`, `MODHSYN.IRX`):
+
+- **SQ** (`sq.cpp`): `SCEIVers`, `SCEISequ`, then `SCEIMidi` with a song table
+  (offsets from the chunk) whose blocks start with a 32-bit data offset (always
+  6) and a 16-bit division (always 480). The events are SMF-like with running
+  status, but a note-off carries only its note number, and bit 7 on a channel
+  message's last data byte means the next event has no delta. All 93
+  sequences parse to their end-of-track meta exactly at the chunk's end.
+- **Loops** (`sequencer.cpp`): NRPN 0 (`B0 63 00`) with data entry `n` opens loop
+  `n` just after that data entry; NRPN 1 with data entry `n` and data entry LSB
+  (controller 38) `c` jumps back `c` more times, forever for 0. Every sequence
+  on the disc has one endless loop.
+- **HD** (`hdbank.cpp`): the `SCEIHead` addresses, 36-byte programs, 20-byte
+  splits, 4+2n-byte sample sets, 42-byte samples and 8-byte VAG entries as
+  laid out there. Split bend ranges and every detune are in 128ths of a
+  semitone (most splits say 0x600, an octave). A sample set's first byte picks
+  a velocity curve (linear, inverse, squared and their mirrors). A sample's
+  last byte is its SPU attribute: bits 4-5 pin its voices to core 0 or 1 (or
+  either, whichever has more free voices), bits 0-3 are its dry left/right and
+  effect-send left/right switches, so only those samples feed the core's reverb.
+- **Volume**: a voice sounds at velocity (through the curve) x program x split
+  x sample volume, each a fraction of 128, x channel volume x expression, each
+  a fraction of 128, x port volume / 256 (`ezMidi(0xB0 + port)`, so the SE
+  ports' 256 is unity and a sequence plays at its `sqtbl.txt` volume over 256).
+  The pan law keeps the near side at full scale and fades the far side to
+  silence 63 steps from the centre.
+- **Pitch**: 4096 x rate / 48000 x 2^((note + transposes - base note + fine / 128
+  + bend x range / 8192 / 128) / 12), at most 0x3FFF, as the SPU2 pitch register.
+
+`DC_AUDIO_TRACE=1` prints every `CSound` call (bank and sequence loads with
+their names, `SQ_Play` with its table volume, `SetVol`, `SE_Play`, fades,
+reverb), every `ezMidi` command, every channel message a sequence sends with
+its output time, every key-on's resolved sample, pitch, gain and core, and the
+sequencer's tempo and loop events. `DC_AUDIO_WAV=<path>` opens no device and
+instead pulls the mixer on the game thread as the clock ticks, writing 16-bit
+stereo at 48 kHz: N ticks write N/50 s whatever the run's real speed, so
+`DC_AUDIO_WAV=title.wav darkcloud --headless --jump title --fast-load --frames
+600` records what the title would have played. `audio_real_title_*` render the
+title pack's music on the real data (`DC_DATA`); with `DC_AUDIO_TEST_WAV=<dir>`
+they also write what they rendered there.
+
+What still differs from the PS2: the reverb is a generic room, not the SPU2's
+effect programs and work area; core 0's output does not pass through core 1;
+the ADSR runs at the SPU's rate but key follow of the envelope, LFOs, velocity
+crossfades and per-key pan follow are not applied; effect messages resolve
+their tone by key range, then split index.
 
 ## Saves and host files
 

@@ -73,10 +73,27 @@ bool SqReader::ReadVarLen(std::uint32_t &value) {
     return true;
 }
 
+int SqReader::DataBytes(std::uint8_t status) {
+    switch (status & 0xF0) {
+        case 0x80:
+        case 0xC0:
+        case 0xD0:
+            return 1;
+        default:
+            return 2;
+    }
+}
+
 SqEvent SqReader::Next() {
     SqEvent event;
     while (true) {
-        if (!ReadVarLen(event.delta) || position_ >= events_.size()) {
+        if (no_delta_) {
+            event.delta = 0;
+            no_delta_ = false;
+        } else if (!ReadVarLen(event.delta)) {
+            return SqEvent{};
+        }
+        if (position_ >= events_.size()) {
             return SqEvent{};
         }
         std::uint8_t status = events_[position_];
@@ -126,7 +143,7 @@ SqEvent SqReader::Next() {
         }
 
         running_ = status;
-        const int length = (status & 0xE0) == 0xC0 ? 1 : 2;
+        const int length = DataBytes(status);
         if (position_ + length > events_.size()) {
             return SqEvent{};
         }
@@ -135,6 +152,7 @@ SqEvent SqReader::Next() {
         for (int i = 0; i < length; i++) {
             event.data[i] = events_[position_++] & 0x7F;
         }
+        no_delta_ = (events_[position_ - 1] & 0x80) != 0;
         return event;
     }
 }

@@ -115,6 +115,9 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
         config.tick_rate = rate;
         return true;
     }
+    if (name == "game.debug_mode") {
+        return ParseBool(value, config.debug_mode);
+    }
     if (name == "video.present_mode") {
         return ParsePresentMode(value, config.present_mode);
     }
@@ -166,6 +169,9 @@ bool Apply(Config &config, std::string_view section, std::string_view key, std::
         }
         config.ui_scale = scale;
         return true;
+    }
+    if (name == "video.show_fps") {
+        return ParseBool(value, config.show_fps);
     }
     if (name == "audio.master_volume") {
         float volume = 0.0f;

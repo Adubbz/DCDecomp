@@ -2,6 +2,8 @@
 
 #include <chrono>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 #include "gfx/gfx.hpp"
 
@@ -26,6 +28,14 @@ std::int64_t GameFrameCount();
 bool GameSetJump(const char *spec);
 void GameSetFastLoad(bool fast);
 bool GameFastLoad();
+
+// DebugMode from the pads and the host's debug key ([input] debug_toggle), factored out of RunGame
+// for the tests. GameDebugRequestedAtBoot is the warm-up's test, once per tick: pad 2's L1+R1+L2+R2
+// held, as retail PAL, or the key held or pressed since the last test. GameCheckDebugToggle runs after
+// every frame of the main loop and flips DebugMode on pad 2's L1+R1+L2+R2 held with R3 pressed, as
+// retail PAL, or on a press of the key.
+bool GameDebugRequestedAtBoot();
+void GameCheckDebugToggle();
 
 // Honoured at the next frame boundary of the main loop.
 void GameRequestStop();
@@ -60,6 +70,10 @@ struct GamePresentSettings {
     // Unbounded clock only (headless tests): display renders made per tick, at alphas k / n, before
     // the canonical image is presented.
     int display_per_tick = 0;
+    // The FPS counter over every presented frame, at first; [input] fps_toggle flips it. It is drawn
+    // after the list into the presented image only, never into a canonical image, so it is not in
+    // kPreviousFrame, frame copies or GameScreenshot.
+    bool show_fps = false;
 };
 
 void GameSetPresentSettings(const GamePresentSettings &settings);
@@ -78,6 +92,20 @@ struct GamePresentStats {
     std::uint64_t draws_2d;
     std::uint64_t stateful;
     std::uint64_t max_draws;
+    // Mesh and 2D draws of the newest tick.
+    std::uint64_t last_draws;
 };
 
 GamePresentStats GamePresentStatistics();
+
+// Whether the FPS counter is drawn now.
+bool GameShowingFps();
+
+// What the FPS counter says: presented frames per second, the measured and configured tick rates and
+// the newest tick's draws.
+std::string GameFpsText();
+
+// The newest canonical image (or the loading screen's frame, if it presented since), RGBA8 rows top
+// to bottom: what --screenshot writes. A display frame, and so the FPS counter, never is. Outside a
+// frame only.
+bool GameScreenshot(std::vector<std::uint8_t> &rgba, std::uint32_t &width, std::uint32_t &height);

@@ -23,6 +23,7 @@ struct ConfigKeyBinding {
 
 struct Config {
     double                        tick_rate = 50.0;
+    bool                          debug_mode = false;
     ConfigPresentMode             present_mode = ConfigPresentMode::Fifo;
     bool                          interpolation = true;
     double                        max_fps = 0.0;
@@ -31,6 +32,7 @@ struct Config {
     bool                          fullscreen = false;
     ConfigAspect                  aspect = ConfigAspect::Auto;
     float                         ui_scale = 1.0f;
+    bool                          show_fps = true;
     float                         master_volume = 1.0f;
     std::vector<ConfigKeyBinding> key_bindings;
     float                         mouse_sensitivity = 0.1f;

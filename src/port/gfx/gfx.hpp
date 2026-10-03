@@ -509,6 +509,9 @@ struct RenderOptions {
     const DisplayList *previous = nullptr;
     // Display renders: present the result.
     bool present = false;
+    // Display renders: drawn over the list, as recorded, on kMainTarget, before the result is
+    // presented (a host overlay). Never part of a canonical image.
+    const DisplayList *overlay = nullptr;
 };
 
 // False when nothing was rendered: the list belongs to another renderer, a frame is open, or a

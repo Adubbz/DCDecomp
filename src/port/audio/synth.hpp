@@ -15,6 +15,14 @@ constexpr int    kCoreVoices = 24;
 constexpr int    kVoices = kCores * kCoreVoices;
 constexpr int    kEnvelopeMax = 0x7FFF;
 
+enum VoiceMix : std::uint8_t {
+    kMixDryLeft = 0x01,
+    kMixDryRight = 0x02,
+    kMixWetLeft = 0x04,
+    kMixWetRight = 0x08,
+    kMixAll = 0x0F,
+};
+
 // The SPU2 ADSR as the hardware runs it: per-tick level steps whose size and period come from a
 // 5-bit shift and 2-bit step, with exponential modes scaling by level.
 class Envelope {
@@ -94,7 +102,11 @@ struct Voice {
     double   ticks = 0.0;
     Envelope envelope;
 
-    int Core() const { return port == 0 ? 0 : 1; }
+    // The sample's SPU attribute: the core it sounds on and its VMIXL/VMIXR/VMIXEL/VMIXER bits.
+    int          core = 0;
+    std::uint8_t mix = kMixAll;
+
+    int Core() const { return core; }
 };
 
 class Synth {
@@ -106,6 +118,8 @@ public:
     // Takes a free voice on core, or steals the quietest released one, or the oldest.
     Voice &Allocate(int core);
 
+    int FreeVoices(int core) const;
+
     void Start(Voice &voice, std::uint16_t adsr1, std::uint16_t adsr2);
 
     std::array<Voice, kVoices> &Voices() { return voices_; }
@@ -114,11 +128,12 @@ public:
 
     int ActiveVoices() const;
 
-    // Adds frames of each core's voices into out[core], interleaved stereo.
-    void Render(int frames, float *const out[kCores]);
+    // Adds frames of every voice into dry and of each core's voices into that core's effect send,
+    // as each voice's mix bits allow; all interleaved stereo.
+    void Render(int frames, float *dry, float *const send[kCores]);
 
 private:
-    void RenderVoice(Voice &voice, int frames, float *out);
+    void RenderVoice(Voice &voice, int frames, float *dry, float *send);
 
     int                        rate_;
     std::uint64_t              serial_ = 0;

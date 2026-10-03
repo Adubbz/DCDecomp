@@ -2,6 +2,7 @@
 #include <cstring>
 
 #include "audio/mixer.hpp"
+#include "audio/trace.hpp"
 #include "gameutil.hpp"
 
 // The EZMIDI RPC as the port's mixer answers it. CSound (src/port/sound.cpp) talks to the mixer
@@ -21,6 +22,7 @@ int ezMidiInit() {
 int ezMidi(int command, int argument) {
     audio::Mixer &mixer = audio::DefaultMixer();
     const int     port = command & 0x0F;
+    audio::Trace("ezMidi 0x%X 0x%X", command, argument);
     switch (command & ~0x0F) {
         case 0x00:
             mixer.Play(port);

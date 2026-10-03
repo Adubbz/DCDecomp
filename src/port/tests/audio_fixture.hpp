@@ -127,6 +127,8 @@ struct SampleSpec {
     int           rate = 44100;
     int           key_low = 0;
     int           key_high = 127;
+    std::uint8_t  spu_attr = 0x1F;
+    int           bend_range = 2 * audio::kFinePerSemitone;
 };
 
 struct Bank {
@@ -181,8 +183,8 @@ inline Bank BuildBank(int program_index = 0, SampleSpec spec = {}) {
     w.U8(0);
     w.U8(spec.key_high);
     w.U8(0);
-    w.U16(2);
-    w.U16(2);
+    w.U16(spec.bend_range);
+    w.U16(spec.bend_range);
     for (int i = 0; i < 6; i++) {
         w.U8(0);
     }
@@ -226,9 +228,10 @@ inline Bank BuildBank(int program_index = 0, SampleSpec spec = {}) {
     w.U8(0);
     w.U16(spec.adsr1);
     w.U16(spec.adsr2);
-    while (w.Size() < sample + 0x2A) {
+    while (w.Size() < sample + audio::hd::kSampleSpuAttr) {
         w.U8(0);
     }
+    w.U8(spec.spu_attr);
     w.EndChunk(smpl);
     w.Pad(4);
 
