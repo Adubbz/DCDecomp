@@ -7,6 +7,10 @@
 # cached by their versions. kisak-mesa provides a lavapipe new enough to
 # report Vulkan 1.4. No game data is needed: the smoke tests build their own
 # fixtures.
+#
+# The macOS job (docs/MACOS.md) builds Mesa's KosmicKrisp and lavapipe with
+# scripts/host/mesa-macos.sh, cached by Mesa tag, runs the tests on lavapipe
+# and then darkcloud on KosmicKrisp, which needs Metal 4 and so macOS 26.
 name: PC port
 
 on:
@@ -78,3 +82,99 @@ jobs:
       - name: Test
         working-directory: build/pc
         run: ctest --output-on-failure -j4
+
+  macos:
+    name: Build and test (macOS arm64)
+    runs-on: macos-26
+    env:
+      MESA_TAG: mesa-26.2.4
+      MESA_PREFIX: ${{ github.workspace }}/../mesa
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the toolchain and libraries
+        run: |
+          brew install llvm lld cmake ninja python glslang sdl3 vulkan-headers vulkan-loader vulkan-tools
+          # SDL loads the Vulkan loader by name, and dyld does not search Homebrew's prefix.
+          echo "SDL_VULKAN_LIBRARY=$(brew --prefix vulkan-loader)/lib/libvulkan.1.dylib" >> "$GITHUB_ENV"
+
+      # Saved right after the build rather than at the end, so a failing test run does not throw away
+      # the half hour Mesa takes.
+      - name: Restore Mesa
+        id: mesa
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.MESA_PREFIX }}
+          key: mesa-${{ runner.os }}-${{ runner.arch }}-${{ env.MESA_TAG }}-${{ hashFiles('scripts/host/mesa-macos.sh') }}
+
+      - name: Build Mesa (KosmicKrisp and lavapipe)
+        run: scripts/host/mesa-macos.sh "$MESA_PREFIX"
+
+      - name: Save Mesa
+        if: steps.mesa.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.MESA_PREFIX }}
+          key: ${{ steps.mesa.outputs.cache-primary-key }}
+
+      - name: Point the loader at the drivers
+        run: |
+          icd_dir="$MESA_PREFIX/share/vulkan/icd.d"
+          echo "KOSMICKRISP_ICD=$(find "$icd_dir" -name 'kosmickrisp_mesa_icd*.json' -print -quit)" >> "$GITHUB_ENV"
+          echo "LAVAPIPE_ICD=$(find "$icd_dir" -name 'lvp_icd*.json' -print -quit)" >> "$GITHUB_ENV"
+
+      - name: Describe the Vulkan drivers
+        if: always()
+        run: |
+          mkdir -p artifacts
+          VK_DRIVER_FILES="$LAVAPIPE_ICD" vulkaninfo --summary > artifacts/vulkaninfo-lavapipe.txt 2>&1 || true
+          VK_DRIVER_FILES="$KOSMICKRISP_ICD" vulkaninfo --summary > artifacts/vulkaninfo-kosmickrisp.txt 2>&1 || true
+          cat artifacts/vulkaninfo-*.txt
+
+      - name: Configure
+        run: cmake --preset macos-arm64
+
+      - name: Build
+        run: cmake --build --preset macos-arm64
+
+      - name: Test on lavapipe
+        run: VK_DRIVER_FILES="$LAVAPIPE_ICD" VK_ICD_FILENAMES="$LAVAPIPE_ICD" ctest --preset macos-arm64
+
+      # Until the first run on KosmicKrisp is green these report without failing the job. No game data:
+      # one stand-in file gets darkcloud through renderer start-up and pipeline compilation to the
+      # game's first asset load, which fails with status 4 naming the file.
+      - name: Run darkcloud headless on KosmicKrisp
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts run/data/unrelated run/save
+          echo x > run/data/unrelated/file.bin
+          set +e
+          VK_DRIVER_FILES="$KOSMICKRISP_ICD" VK_ICD_FILENAMES="$KOSMICKRISP_ICD" DC_AUDIO=off \
+            build/macos-arm64/darkcloud --headless --frames 3 --screenshot artifacts/shot-headless.png \
+            --data run/data --save run/save > artifacts/darkcloud-headless.txt 2>&1
+          status=$?
+          cat artifacts/darkcloud-headless.txt
+          echo "darkcloud exited $status"
+          [ "$status" -eq 0 ] || [ "$status" -eq 4 ]
+
+      - name: Run darkcloud in a window on KosmicKrisp
+        continue-on-error: true
+        run: |
+          set +e
+          VK_DRIVER_FILES="$KOSMICKRISP_ICD" VK_ICD_FILENAMES="$KOSMICKRISP_ICD" DC_AUDIO=off \
+            build/macos-arm64/darkcloud --frames 3 --screenshot artifacts/shot-window.png \
+            --data run/data --save run/save > artifacts/darkcloud-window.txt 2>&1
+          status=$?
+          cat artifacts/darkcloud-window.txt
+          echo "darkcloud exited $status"
+          [ "$status" -eq 0 ] || [ "$status" -eq 4 ]
+
+      - name: Upload screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-kosmickrisp
+          path: artifacts/
+          if-no-files-found: warn
