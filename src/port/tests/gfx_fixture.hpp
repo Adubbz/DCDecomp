@@ -15,17 +15,39 @@
 
 namespace dc::test {
 
+// DC_GFX_OFFSCREEN=1 runs every gfx test on the renderer's surface-less path.
+inline bool OffscreenByDefault() {
+    const char *setting = std::getenv("DC_GFX_OFFSCREEN");
+    return setting != nullptr && *setting != '\0' && *setting != '0';
+}
+
+// What a fixture changes in gfx::RendererConfig beyond its size and scale.
+struct GfxOptions {
+    bool dynamic_color_write_mask = true;
+    bool offscreen = OffscreenByDefault();
+    bool triangle_fans = true;
+    bool separate_stencil_masks = true;
+};
+
 // A headless window and renderer with validation on. Any validation message fails the test.
 struct GfxFixture {
     explicit GfxFixture(int width = 640, int height = 480, float render_scale = 1.0f,
-                        bool dynamic_color_write_mask = true) {
+                        bool dynamic_color_write_mask = true)
+        : GfxFixture(width, height, render_scale, GfxOptions{.dynamic_color_write_mask = dynamic_color_write_mask}) {}
+
+    GfxFixture(int width, int height, float render_scale, const GfxOptions &options) {
         // Synchronization validation too, unless the environment already chose layer features.
         setenv("VK_LAYER_ENABLES", "VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT", 0);
-        WindowInit(WindowConfig{width, height, true});
+        WindowConfig window{width, height, true};
+        window.vulkan = !options.offscreen;
+        WindowInit(window);
         gfx::RendererConfig config;
         config.validation = true;
         config.render_scale = render_scale;
-        config.dynamic_color_write_mask = dynamic_color_write_mask;
+        config.dynamic_color_write_mask = options.dynamic_color_write_mask;
+        config.offscreen = options.offscreen;
+        config.triangle_fans = options.triangle_fans;
+        config.separate_stencil_masks = options.separate_stencil_masks;
         config.pipeline_cache = std::filesystem::temp_directory_path() / "dc_gfx_test" / "pipeline_cache.bin";
         config.progress = [this](uint32_t done, uint32_t total) {
             progress_calls++;

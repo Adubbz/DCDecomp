@@ -15,8 +15,8 @@ ninja -C build/pc
 
 It needs clang 20 with lld and `llvm-objcopy`, CMake 3.28, Ninja,
 `glslangValidator`, SDL3 (3.2) and the Vulkan 1.4 headers and loader, and at
-run time a device with Vulkan 1.4, `dualSrcBlend` and `shaderClipDistance`
-(any desktop driver; Mesa's lavapipe in CI). `.github/workflows/pc.yml` is a
+run time a device with Vulkan 1.3 or later, `dualSrcBlend` and `shaderClipDistance`
+(any desktop driver; Mesa's lavapipe in CI; `src/port/gfx/README.md`, "Device", has the whole list). `.github/workflows/pc.yml` is a
 complete recipe on Ubuntu 24.04.
 
 The game's files come from the disc (see "Game data"):
@@ -33,6 +33,8 @@ build/pc/darkcloud --data data --save save
 | `--data DIR` | the extracted data (default: `DC_DATA`, then `./data`, then `data/` beside the executable) |
 | `--save DIR` | memory cards, `config.ini`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable); created on first use |
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
+| `--offscreen` | `--headless` without a Vulkan surface: frames are drawn to an image only (what `--headless` does by itself when the loader has no `VK_EXT_headless_surface`) |
+| `--high-arenas` | map the arenas above 4 GiB, as macOS must (also `DC_HIGH_ARENAS=1`); shows the game's pointer round trips through `int` on Linux |
 | `--frames N` | stop after N frames of the game's main loop |
 | `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
 | `--width W`, `--height H` | window size in pixels, over `config.ini` |
@@ -163,7 +165,7 @@ replacement units.
 
 ## Rendering
 
-`src/port/gfx` is a Vulkan 1.4 renderer: one graphics queue that presents,
+`src/port/gfx` is a Vulkan 1.3+ renderer: one graphics queue that presents,
 two frames in flight, dynamic rendering, synchronization2, a bindless texture
 array, every pipeline created at start-up against the on-disk pipeline
 cache, reverse-Z D32 depth with stencil, an immediate 2D API in the game's 640x480 logical
@@ -242,7 +244,9 @@ device prefix stripped (the debug dump `edit.cpp` writes to `host0:`), and
 `CDataAlloc2<1>::Alloc/Alloc64/Align64` and the carving in
 `InitializeDataBuffer`, `BufferAllClear`, `SetDataBuffer` and
 `SetPacketReadBuffer` (`dataset.cpp`, `dataalloc2_1.cpp`) give each arena its
-own block below 2 GiB (the game casts arena pointers to `int`) sized at four
+own block below 2 GiB on Linux (the game casts arena pointers to `int`;
+`src/port/platform/memory.hpp`, and `docs/port/truncations.md` for macOS, where nothing can be
+mapped there) sized at four
 times the quadwords retail asked for (`kArenaHeadroom`, `src/port/arena.hpp`),
 because the game sizes allocations with the host's larger `sizeof`s. A guard
 page follows each block, and an overflow aborts naming the arena instead of

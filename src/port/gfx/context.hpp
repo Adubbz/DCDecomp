@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 #include <array>
 #include <cstdint>
 #include <functional>
@@ -10,6 +8,7 @@
 #include <vector>
 
 #include "gfx.hpp"
+#include "requirements.hpp"
 
 namespace gfx::detail {
 
@@ -240,6 +239,10 @@ struct Context {
     // D32_SFLOAT_S8_UINT, or D24_UNORM_S8_UINT where the former cannot be an attachment.
     VkFormat                      depth_format = VK_FORMAT_UNDEFINED;
     bool                          dynamic_color_write_mask = false;
+    bool                          offscreen = false;
+    bool                          triangle_fans = true;
+    bool                          separate_stencil_masks = true;
+    bool                          portability_subset = false;
     PFN_vkCmdSetColorWriteMaskEXT cmd_set_color_write_mask = nullptr;
     Swapchain                     swapchain;
     bool                          resize_pending = false;
