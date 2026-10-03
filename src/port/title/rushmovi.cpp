@@ -15,6 +15,7 @@
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "fireomni.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
@@ -22,7 +23,9 @@
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
+#include "objanime.hpp"
 #include "object.hpp"
+#include "runeffect.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
@@ -33,6 +36,7 @@
 #include "title/rushmovi.hpp"
 #include "title/script.hpp"
 #include "vutext.hpp"
+#include "water.hpp"
 #include "wind.hpp"
 
 // The bodies are retail's, which pass string literals as char *.
@@ -41,124 +45,6 @@
 // Retail's RushInit, RushLoop and the static processes they share state with. The VU1 program upload
 // in DrawProcess is gone. The unit's FaceChange is FaceChangeMovie here, the name op_d calls it by
 // and the PS2 build binds to it (config/pal/object_fixups.json).
-
-class OBJ_ANIME_SEQ {
-public:
-    char          name[16]; /**< Name of the frame the animation drives. */
-    int           type;     /**< Kind of animation the sequence plays. */
-    int           number;   /**< Animation number selected within that kind. */
-    char          unk_18[8];
-    sceVu0FVECTOR start; /**< Value the animation starts from. */
-    sceVu0FVECTOR unk_30;
-    float         step_x; /**< Amount the first component advances each step. */
-    float         step_y; /**< Amount the second component advances each step. */
-    float         step_z; /**< Amount the third component advances each step. */
-    char          unk_4C[60];
-
-    void Initialize();
-};
-
-/* The classes this movie places in the world, declared here rather than reached through headers of
-   their own because each is another unit's to type. Only the members this file touches are named;
-   the extents are the sizes the executable gives the objects below. */
-
-/* The rippling water plane the outdoor scenes stand on. The frame is where the plane sits in the
-   world. */
-class CWater {
-public:
-    char      unk_00[176];
-    CFrameVu1 frame; /**< Frame that places the plane in the world. */
-
-    CWater();
-
-    void SetVertex(float *v0, float *v1, float *v2, float *v3);
-    void SetSize(int x, int y, CDataAlloc2<1> *buffer);
-    void SetParam(float wave_speed, float damping, float height_scale, float distortion);
-    void SetColor(u_char r, u_char g, u_char b, u_char a);
-    void Shake(int x, int y, float power);
-    void Hamon();
-    int  DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
-};
-
-/* Named rather than included, because a unit's include list is a dial on the order a call's
-   floating-point arguments are set up in and nothing here needs the definition: adding
-   renderinfo.h alone takes RushInit's three-float SetFollow out of the order the image has. */
-
-/* A frame parented to an object, which is what lets the world transform drive a model. */
-class CObjectFrame : public CObject {
-public:
-    virtual void FrameObjectOnOff(char *name, int on);
-    virtual void Draw();
-
-    void SetFrame(CFrameVu1 *frame, int level);
-};
-
-/* One piece of scenery. The movie builds a table of them, hands each its model, and drives them
-   through the object dispatch like anything else in the world. */
-class CMapObject : public CObjectFrame {
-public:
-    char       unk_18[36];
-    CFrameVu1 *unk_D4;
-    char       unk_4C[8];
-    float      unk_E0;
-    int        unk_E4;
-    int        unk_E8;
-    char       unk_EC[4];
-
-    CMapObject();
-
-    virtual void Draw();
-
-    void Initialize();
-    void DrawShadow(int fast);
-};
-
-/* The dust the running feet kick up, declared here for the same reason. */
-class CRunEffect {
-public:
-    char unk_00[208];
-
-    CRunEffect();
-
-    void Lighting(int on);
-    void Set(float *position);
-    void Step();
-    void Draw();
-};
-
-/* The movie's one fire, which is a light rather than a model. */
-class CFireOmni {
-public:
-    char          unk_18[32];
-    sceVu0FVECTOR position; /**< World position the fire draws at. */
-    char          unk_4C[16];
-
-    CFireOmni();
-
-    void FireStep();
-    void FireCreate();
-
-    void SetPosition(float x, float y, float z) {
-        position[0] = 10.0f * x;
-        position[1] = 10.0f * y;
-        position[2] = 10.0f * z;
-        position[3] = 1.0f;
-    }
-
-    void DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale, int layers, float camera_offset);
-};
-
-/* A run of frames the world draws as one. */
-class CMap {
-public:
-    char unk_00[2800];
-
-    void        Initialize();
-    CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
-    CMapObject *SetObject(int no, CFrameVu1 *frame, int category_no, int handle);
-    CMapObject *GetObject(int no);
-    void        Draw();
-};
 
 /* The overlay's own rectangle. Its constructor assigns x, y, w, h in that order, where
    rect.h's assigns them in the other; the same split title.cpp and opening.cpp carry. */
@@ -190,8 +76,6 @@ struct MAP_INFO {
 
 void wait_now_loading_vsync();
 void InitializeDataBuffer();
-void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
-void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
 void MGMoveImage(sceGsTex0 *src, const CRect<int> &rect, sceGsTex0 *dst, int dsax, int dsay, int dir);
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char alpha);
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
@@ -200,10 +84,10 @@ void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRec
 
 extern CCameraFollow   MainCamera__3;
 static CDispFade      DispFade;
-extern CFireOmni      CFire__4;
+CFireOmni             CFire__4;
 extern class CScript  CScript;
 extern CWind          Wind__4;
-extern CWater         Water__2;
+CWater                Water__2;
 extern char           CharaTex[9];
 extern CDataAlloc2<1> CharaDataBuffer;
 static tagFRAME_INF   frame_info_cam[300];
@@ -1169,3 +1053,54 @@ static void SoundProcess() {
     }
 }
 
+
+void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step) {
+    OBJ_ANIME_SEQ &sequence = OP_AnimeSeq[OP_AnimeSeqRot];
+    sequence.Initialize();
+    sequence.property = OBJ_ANIME_PROPERTY_ROTATION;
+    sequence.mode = OBJ_ANIME_MODE_LINEAR;
+    sequence.from[0] = start[0];
+    sequence.from[1] = start[1];
+    sequence.from[2] = start[2];
+    sequence.step[0] = step[0];
+    sequence.step[1] = step[1];
+    sequence.step[2] = step[2];
+    strcpy(sequence.frame_name, name);
+    InitObjAnime(frame, &sequence);
+    OP_AnimeSeqRot++;
+}
+
+void WaterProcess() {
+    sceGsTex0 frame_tex;
+    sceGsTex0 water_tex;
+    sceGsZbuf zbuf;
+
+    MGGetFBuffTex(&frame_tex);
+
+    CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
+
+    water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
+    MGMoveImage(&frame_tex, rect, &water_tex, 0, 0, 0);
+
+    zbuf = mgZBuffer;
+    zbuf.bits.zmsk = 1;
+    MGSetGsZBUF(&zbuf);
+
+    if (CScript.scene == RUSH_SCENE_B) {
+        sceVu0FVECTOR position = {0.0f, -0.4f, 0.0f, 0.0f};
+
+        Water__2.frame.SetPosition(position);
+        Water__2.Shake(12, 4, (float) rand() * 4.5 / 2147483647.0 + 0.5);
+    } else {
+        sceVu0FVECTOR ref;
+
+        MainCamera__3.GetRef(ref);
+        ref[1] = 0.0f;
+        Water__2.frame.SetPosition(ref);
+        Water__2.Shake((int) (rand() * 32.0f / 2147483648.0f), (int) (rand() * 32.0f / 2147483648.0f), -0.5f);
+    }
+
+    Water__2.Hamon();
+    DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(&Water__2, &mgRenderInfo, GetVif1Packet(), nullptr);
+    MGSetGsZBUF(&mgZBuffer);
+}

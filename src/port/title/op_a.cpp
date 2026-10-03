@@ -12,13 +12,18 @@
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "effect.hpp"
+#include "effectgroup.hpp"
+#include "fireomni.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "main.hpp"
 #include "mainselect.hpp"
+#include "map.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
+#include "objanime.hpp"
 #include "renderinfo.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
@@ -63,104 +68,6 @@ public:
     }
 } __attribute__((aligned(16)));
 
-/* One row of the table a map sorts its scenery by, and one piece of scenery. Both are another
-   unit's to type; this file holds three maps and so has to construct them, which is what needs
-   their extents and their constructors and nothing else. */
-class CategoryAttr {
-public:
-    char unk_00[24];
-
-    CategoryAttr();
-};
-
-class CMapObject {
-public:
-    char unk_00[240];
-
-    CMapObject();
-} __attribute__((aligned(16)));
-
-/* The scene's own map, of which this file keeps three — the ground, the buildings standing on it
-   and a second set of buildings nothing here draws. Initialize is called from the constructor
-   rather than by the scene, which is why the three are ready before OpA_InitProcess clears them. */
-class CMap {
-public:
-    CategoryAttr category[16]; /**< Category rows the scenery is sorted by. */
-    CMapObject   object[10];   /**< Scenery pieces the map holds. */
-    char         unk_AE0[16];
-
-    CMap() { Initialize(); }
-
-    void Initialize();
-    void Draw();
-};
-
-/* The scene's one fire, which is a light rather than a model. */
-class CFireOmni {
-public:
-    char          unk_00[32];
-    sceVu0FVECTOR pos; /**< World position DrawFire draws the next fire at. */
-    char          unk_30[16];
-
-    CFireOmni();
-
-    void FireStep();
-    void FireCreate();
-    void DrawFire(int unknown0, int unknown1, CCamera *camera, float *eye, float scale, int unknown2, float unknown3);
-};
-
-/* One particle of the smoke the chimney gives off, and the pool the group hands them out of. Both
-   classes are another unit's to type; this file only sizes the pool and names the group. */
-class CEffect;
-class CEffectParam;
-
-class CEffectGroup {
-public:
-    char unk_00[8];
-
-    CEffectGroup() { Initialize(0, 0); }
-
-    void Initialize(CEffect *table, int max);
-    void Clear();
-    void EnterEffect(CEffectParam *param);
-    void Step(int unknown0);
-    void Draw();
-};
-
-/* What one particle is entered with. Only the fields the smoke sets are named; the rectangle is a
-   member rather than filler because the block's own construction zeroes it. */
-class CEffectParam {
-public:
-    int           lifetime;                   /**< Frames before the particle is retired. */
-    int           position_oscillation_flags; /**< Bit zero sways the particle's position. */
-    float         unk_08;                     /**< Unscaled sprite width. */
-    float         height;                     /**< Unscaled sprite height. */
-    char          unk_10[16];
-    sceVu0FVECTOR position; /**< World position the particle starts at. */
-    char          unk_30[4];
-    float         velocity_y; /**< Height the particle rises each step. */
-    char          unk_38[24];
-    float         position_oscillation_x; /**< Horizontal sway amplitude. */
-    char          unk_54[12];
-    float         position_oscillation_rate_x; /**< Phase advance of the horizontal sway each step. */
-    char          unk_64[28];
-    float         scale_velocity_x; /**< Width scale added each step. */
-    float         scale_velocity_y; /**< Height scale added each step. */
-    char          unk_88[40];
-    int           opacity_mode; /**< How the opacity changes over the particle's life. */
-    int           render_flags; /**< Alpha and depth-buffer state the particle draws with. */
-    float         opacity;      /**< Starting opacity from zero to one. */
-    CTexture     *texture;      /**< Texture the particle draws. */
-    CRect<int>    texel;        /**< Rectangle sampled from the texture. */
-    char          unk_D0[4];
-    int           texture_frame_period; /**< Modulus applied before a texture frame is chosen. */
-    char          unk_D8[8];
-
-    CEffectParam() {}
-
-    void Initialize();
-};
-
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
    stacked bottom-up in one 256-wide texture — the eyes down the left half and the mouth down the
    right — and a tick copies the current frame of each over the plate the model draws with. The two
@@ -180,29 +87,7 @@ struct FACE_INFO {
     int   blink;        /**< Blink phase: zero idle, one closing, two opening. */
 };
 
-/* One looping object animation the scene's configuration file registers: a frame is found by name
-   and one of its properties is driven from a start value towards an end value by a step each
-   tick. Only the extent is read here — this file plays the table and never builds a row of it. */
-class OBJ_ANIME_SEQ {
-public:
-    char          name[16]; /**< Name of the frame the animation drives. */
-    int           property; /**< Property animated: rotation, position, scale or colour. */
-    int           mode;     /**< How the value moves between its two ends. */
-    char          unk_18[8];
-    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
-    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
-    float         step_x;      /**< Amount added to the first component each tick. */
-    float         step_y;      /**< Amount added to the second component each tick. */
-    float         step_z;      /**< Amount added to the third component each tick. */
-    char          unk_4C[60];
-
-    OBJ_ANIME_SEQ();
-
-    void Initialize();
-};
-
 void wait_now_loading_vsync();
-void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
 void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect, int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &src, const CRect<int> &dst, u_char alpha);
 void DepthOfField(float *dist, int level, int alpha, int blur);
@@ -236,10 +121,10 @@ extern tagMOTION_KEY dancer[10];
 /* The scene's own world, and the objects the configuration file fills in. Both frame pointers are
    typed from the loader that writes them rather than from anything here: title/opdata assigns
    LoadCollisionFile's and LoadMDSFile's results to them, and nothing in this file reads either. */
-extern CMap          OP_BuildingMap;
-extern CMap          OP_BuildingMap2;
-extern CMap          OP_GroundMap;
-extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
+CMap                 OP_BuildingMap;
+CMap                 OP_BuildingMap2;
+CMap                 OP_GroundMap;
+OBJ_ANIME_SEQ        OP_AnimeSeq[32];
 extern int           OP_AnimeSeqRot;
 extern int           OP_FireList;
 extern sceVu0FVECTOR OP_FirePosition[96];
@@ -250,7 +135,7 @@ extern CFrameVu1    *OP_SkyFrame;
 extern CFrame       *OP_CharaFrame__2;
 extern char          CloudFlag;
 
-extern CFireOmni            CFire;
+CFireOmni            CFire;
 static sceVu0FVECTOR DancerPos[35];
 static sceVu0FVECTOR DancerRot[35];
 static CCharacter    Cloud;
@@ -462,7 +347,8 @@ static void LoadData() {
     Cloud.frame = LoadMDSFile(GetPackFile(read_buffer, "01cloud.mds", 0), 2, 0);
     Cloud.SetPosition(0.0f, 50.0f, 20.0f);
 
-    EffectTable = (CEffect *) MapDataBuffer.Alloc(12800);
+    // Retail asked for 12800 bytes, fifty of the PS2's 256-byte CEffect.
+    EffectTable = (CEffect *) MapDataBuffer.Alloc(50 * sizeof(CEffect));
     Smoke.Initialize(EffectTable, 50);
     Smoke.Clear();
 
@@ -954,18 +840,18 @@ static void SmokeProcess() {
         }
 
         param.position_oscillation_flags = 1;
-        param.position_oscillation_x = 0.5f * (float) rand() / 2147483648.0f;
-        param.position_oscillation_rate_x = (float) PI_D / (20.0f + (float) (rand() * 10) / 2147483648.0f);
+        param.position_oscillation_scale[0] = 0.5f * (float) rand() / 2147483648.0f;
+        param.position_oscillation_rate[0] = (float) PI_D / (20.0f + (float) (rand() * 10) / 2147483648.0f);
         param.opacity_mode = 2;
         param.render_flags = 2;
         param.opacity = 0.07f;
-        param.velocity_y = 1.5f + 0.2f * (float) rand() / 2147483648.0f;
-        param.scale_velocity_x = 0.04f;
-        param.scale_velocity_y = 0.04f;
+        param.velocity[1] = 1.5f + 0.2f * (float) rand() / 2147483648.0f;
+        param.scale_velocity[0] = 0.04f;
+        param.scale_velocity[1] = 0.04f;
         param.lifetime = 120;
         param.texture = TexManager.GetTexture("cloud2", -1);
-        param.texel = CRect<int>(0, 0, 128, 128);
-        param.unk_08 = 30.0f;
+        param.texel = CRect_i_(0, 0, 128, 128);
+        param.width = 30.0f;
         param.height = 13.0f;
         param.texture_frame_period = 60;
         Smoke.EnterEffect(&param);
