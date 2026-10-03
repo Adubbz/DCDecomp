@@ -83,8 +83,8 @@ uint64_t LastTickDraws() {
 // 747, so the frame's cull keeps it and it lands at pixels 755 to 819; at 640x480 retail's cull
 // drops it before it is drawn.
 DC_TEST(aspect_edge_mesh_visible_at_16_9) {
-    Draw3DFixture fixture(854, 480);
-    CulledModel   model(41.0f, -5.0f, 49.0f, 5.0f, 100.0f);
+    Draw3DFixture       fixture(854, 480);
+    CulledModel         model(41.0f, -5.0f, 49.0f, 5.0f, 100.0f);
     gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
     DC_CHECK(mapping.scale_x == 1.0f && mapping.offset_x == 107.0f);
 
@@ -165,8 +165,8 @@ DC_TEST(aspect_projection_keeps_the_vertical_field_of_view) {
     {
         // Portrait: 480x854 maps 640 logical columns onto 480 pixels (0.75) and centres the frame
         // vertically at (854 - 360) / 2 = 247.
-        Draw3DFixture fixture(480, 854);
-        CulledModel   model(-10.0f, -5.0f, 10.0f, 5.0f, 100.0f);
+        Draw3DFixture       fixture(480, 854);
+        CulledModel         model(-10.0f, -5.0f, 10.0f, 5.0f, 100.0f);
         gfx::LogicalMapping mapping = gfx::GetLogicalMapping(gfx::kMainTarget);
         DC_CHECK(mapping.scale_y == 0.75f && mapping.offset_x == 0.0f && mapping.offset_y == 247.0f);
         fixture.Frame([&] { MGDraw(&model.frame); });

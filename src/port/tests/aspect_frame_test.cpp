@@ -76,6 +76,7 @@ DC_TEST(aspect_hud_pixels_fixed_across_aspects) {
         int width;
         int height;
     };
+
     const Size sizes[] = {
         {640,  480},
         {854,  480},
@@ -141,7 +142,7 @@ DC_TEST(aspect_ui_scale_about_the_centre) {
 // A fade over the logical frame, whole or tiled, covers a 16:9 window edge to edge; a box that
 // stops short of the frame's edge does not grow.
 DC_TEST(aspect_full_frame_fade_covers_16_9) {
-    GfxFixture fixture(1280, 720);
+    GfxFixture     fixture(1280, 720);
     gfx::DrawState fade;
     fade.blend = true;
     fade.alpha = {0, 1, 0, 1, 0x80};
@@ -150,7 +151,14 @@ DC_TEST(aspect_full_frame_fade_covers_16_9) {
         auto whole = Quad(0.0f, 0.0f, gfx::kLogicalWidth, gfx::kLogicalHeight, kHalfWhite);
         gfx::Draw2D(gfx::Primitive::Quads, whole, {}, fade);
     });
-    for (auto [x, y] : {std::array<int, 2>{0, 0}, {1279, 0}, {0, 719}, {1279, 719}, {640, 360}, {80, 360}}) {
+    for (auto [x, y] : {
+             std::array<int, 2>{0,    0  },
+              {1279, 0  },
+              {0,    719},
+              {1279, 719},
+              {640,  360},
+              {80,   360}
+    }) {
         DC_CHECK(Near(fixture, x, y, {0x80, 0x80, 0x80, 0}, 3));
     }
 
@@ -166,7 +174,13 @@ DC_TEST(aspect_full_frame_fade_covers_16_9) {
         auto inset = Quad(4.0f, 300.0f, 100.0f, 20.0f, kHud);
         gfx::Draw2D(gfx::Primitive::Quads, inset, {}, gfx::DrawState{});
     });
-    for (auto [x, y] : {std::array<int, 2>{0, 0}, {1279, 0}, {0, 719}, {1279, 719}, {150, 100}}) {
+    for (auto [x, y] : {
+             std::array<int, 2>{0,    0  },
+              {1279, 0  },
+              {0,    719},
+              {1279, 719},
+              {150,  100}
+    }) {
         DC_CHECK(Near(fixture, x, y, {0x80, 0x80, 0x80, 0}, 3));
     }
     DC_CHECK(Near(fixture, 160 + 10, 460, kHud));
@@ -179,7 +193,7 @@ DC_TEST(aspect_previous_frame_and_frame_grab_cover_the_sides) {
     for (gfx::AspectMode mode : {gfx::AspectMode::Fill, gfx::AspectMode::Letterbox}) {
         GfxFixture fixture(1280, 720);
         gfx::SetFrameLayout({mode});
-        bool fill = mode == gfx::AspectMode::Fill;
+        bool               fill = mode == gfx::AspectMode::Fill;
         gfx::TextureHandle grab = gfx::CreateRenderTarget(640, 480, true, false, true);
         DC_CHECK(gfx::GetTextureInfo(grab)->pixel_width == (fill ? 1280u : 640u));
 
@@ -233,7 +247,7 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
     GfxFixture fixture(width, height);
     gfx::SetFrameLayout({mode});
     gfx::TextureHandle grab = gfx::CreateRenderTarget(640, 480, true, false, true);
-    auto record = [&](bool second) {
+    auto               record = [&](bool second) {
         gfx::BeginRecording();
         constexpr std::array<uint8_t, 4> kBlack = {0, 0, 0, 0x80};
         gfx::Clear(true, kBlack.data(), true, 0.0f);
@@ -242,7 +256,7 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
         if (second) {
             gfx::TextureBinding previous;
             previous.texture = gfx::kPreviousFrame;
-            auto back = Quad(0.0f, 0.0f, 640.0f, 480.0f, {0x80, 0x80, 0x80, 0x40}, 0.0f, 0.0f, 640.0f, 480.0f);
+            auto           back = Quad(0.0f, 0.0f, 640.0f, 480.0f, {0x80, 0x80, 0x80, 0x40}, 0.0f, 0.0f, 640.0f, 480.0f);
             gfx::DrawState blended;
             blended.blend = true;
             gfx::Draw2D(gfx::Primitive::Quads, back, previous, blended);

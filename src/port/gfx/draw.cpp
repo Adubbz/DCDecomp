@@ -165,6 +165,7 @@ VkCompareOp DepthOp(DepthTest test) {
 // A span reaches an edge of the logical frame from inside it: what lies wholly in a bar (the host's
 // overlay) is not carried anywhere.
 bool ReachesLow(float low, float high, float edge) { return low <= edge && high > edge; }
+
 bool ReachesHigh(float low, float high, float edge) { return high >= edge && low < edge; }
 
 // A scissor or clear rect on the current target.
