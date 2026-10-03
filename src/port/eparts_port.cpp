@@ -66,8 +66,8 @@ EPARTS_INFO_HEADER *EPartsLoad(const void *record, CDataAlloc2<1> *arena) {
     }
 
     header->func_count = source.func_count;
-    header->func = Carve<EPARTS_FUNC_DATA>(
-        arena, sizeof(EPARTS_FUNC_DATA) * static_cast<std::size_t>(source.func_count > 0 ? source.func_count : 0));
+    std::size_t count = static_cast<std::size_t>(source.func_count > 0 ? source.func_count : 0);
+    header->func = Carve<EPARTS_FUNC_DATA>(arena, sizeof(EPARTS_FUNC_DATA) * count);
 
     for (int i = 0; i < source.func_count; i++) {
         EPartsReadFunc(record, i, &header->func[i]);

@@ -127,7 +127,8 @@ DC_TEST(bits64_eparts_load_builds_host_records) {
     }
     auto *begin = reinterpret_cast<u_char *>(arena.storage.data());
     auto *end = begin + arena.alloc.used * 16;
-    DC_CHECK(reinterpret_cast<u_char *>(header) >= begin && reinterpret_cast<u_char *>(&header->func[1] + 1) <= end);
+    DC_CHECK(reinterpret_cast<u_char *>(header) >= begin);
+    DC_CHECK(reinterpret_cast<u_char *>(&header->func[1] + 1) <= end);
     DC_CHECK(reinterpret_cast<unsigned char *>(header->cell) != disc.data() + kCells);
 }
 
@@ -163,12 +164,13 @@ DC_TEST(bits64_eparts_init_header_keeps_the_host_fields) {
     int                    size = EdInitToEPInfo(&init, header);
 
     DC_CHECK(header->header_size == static_cast<int>(sizeof(EPARTS_INFO_HEADER)));
-    DC_CHECK(reinterpret_cast<u8 *>(header->cell) == reinterpret_cast<u8 *>(header) + sizeof(EPARTS_INFO_HEADER));
+    DC_CHECK(header->cell == reinterpret_cast<u8 *>(header) + sizeof(EPARTS_INFO_HEADER));
     for (int i = 0; i < 4; i++) {
         DC_CHECK(header->cell[i] == 0x40 + i);
         DC_CHECK(header->element_id[i] == i);
     }
     DC_CHECK(std::strcmp(header->element_name[0], "roof") == 0);
     DC_CHECK(header->element_name[5][0] == '\0');
-    DC_CHECK(size == header->data_size && size == static_cast<int>(sizeof(EPARTS_INFO_HEADER)) + 4 + (4 + 2) + 5 * 2);
+    DC_CHECK(size == header->data_size);
+    DC_CHECK(size == static_cast<int>(sizeof(EPARTS_INFO_HEADER)) + 4 + (4 + 2) + 5 * 2);
 }
