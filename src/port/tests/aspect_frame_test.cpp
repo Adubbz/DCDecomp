@@ -25,8 +25,8 @@ bool Near(const GfxFixture &fixture, int x, int y, std::array<uint8_t, 4> colour
     std::array<uint8_t, 4> p = fixture.Pixel(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
     for (int c = 0; c < 3; c++) {
         if (std::abs(p[c] - colour[c]) > tolerance) {
-            std::fprintf(stderr, "pixel %d,%d is %d,%d,%d, expected %d,%d,%d\n", x, y, p[0], p[1], p[2], colour[0],
-                         colour[1], colour[2]);
+            std::fprintf(stderr, "pixel %d,%d is %d,%d,%d, expected %d,%d,%d\n", x, y, p[0], p[1], p[2],
+                         colour[0], colour[1], colour[2]);
             return false;
         }
     }
@@ -256,13 +256,15 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
         if (second) {
             gfx::TextureBinding previous;
             previous.texture = gfx::kPreviousFrame;
-            auto           back = Quad(0.0f, 0.0f, 640.0f, 480.0f, {0x80, 0x80, 0x80, 0x40}, 0.0f, 0.0f, 640.0f, 480.0f);
+            auto           back =
+                Quad(0.0f, 0.0f, 640.0f, 480.0f, {0x80, 0x80, 0x80, 0x40}, 0.0f, 0.0f, 640.0f, 480.0f);
             gfx::DrawState blended;
             blended.blend = true;
             gfx::Draw2D(gfx::Primitive::Quads, back, previous, blended);
             gfx::TextureBinding grabbed;
             grabbed.texture = grab;
-            auto strip = Quad(0.0f, 400.0f, 640.0f, 80.0f, {0x80, 0x80, 0x80, 0x80}, 0.0f, 0.0f, 640.0f, 80.0f);
+            auto strip =
+                Quad(0.0f, 400.0f, 640.0f, 80.0f, {0x80, 0x80, 0x80, 0x80}, 0.0f, 0.0f, 640.0f, 80.0f);
             gfx::Draw2D(gfx::Primitive::Quads, strip, grabbed, gfx::DrawState{});
         }
         gfx::DrawState sprite;
@@ -284,7 +286,8 @@ std::vector<uint8_t> LayoutScene(int width, int height, gfx::AspectMode mode, ui
         auto dim = Quad(0.0f, 0.0f, 640.0f, 480.0f, {0, 0, 0, 0x20});
         gfx::Draw2D(gfx::Primitive::Quads, dim, {}, fade);
         if (!second) {
-            gfx::BlitTexture(gfx::kMainTarget, {0, 0, 640, 480}, grab, {0, 0, 640, 480}, gfx::Filter::Nearest);
+            gfx::BlitTexture(gfx::kMainTarget, {0, 0, 640, 480}, grab, {0, 0, 640, 480},
+                             gfx::Filter::Nearest);
         }
         return gfx::EndRecording();
     };

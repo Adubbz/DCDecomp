@@ -61,7 +61,9 @@ PixelBox BoxOf(const Draw3DFixture &fixture, std::array<int, 3> colour) {
     for (uint32_t y = 0; y < fixture.height; y++) {
         for (uint32_t x = 0; x < fixture.width; x++) {
             std::array<uint8_t, 4> p = fixture.Pixel(x, y);
-            if (std::abs(p[0] - colour[0]) <= 2 && std::abs(p[1] - colour[1]) <= 2 && std::abs(p[2] - colour[2]) <= 2) {
+            bool match = std::abs(p[0] - colour[0]) <= 2 && std::abs(p[1] - colour[1]) <= 2 &&
+                         std::abs(p[2] - colour[2]) <= 2;
+            if (match) {
                 box.left = std::min(box.left, static_cast<int>(x));
                 box.top = std::min(box.top, static_cast<int>(y));
                 box.right = std::max(box.right, static_cast<int>(x));
