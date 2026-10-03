@@ -85,6 +85,24 @@ std::vector<std::string> SplitList(std::string_view text) {
 
 bool Apply(Config &config, std::string_view section, std::string_view key, std::string_view value) {
     std::string name = Lower(section) + "." + Lower(key);
+    if (name == "input.mouse_sensitivity") {
+        float sensitivity = 0.0f;
+        if (!ParseNumber(value, sensitivity) || !(sensitivity > 0.0f) || !std::isfinite(sensitivity)) {
+            return false;
+        }
+        config.mouse_sensitivity = sensitivity;
+        return true;
+    }
+    if (name == "input.mouse_invert_y") {
+        return ParseBool(value, config.mouse_invert_y);
+    }
+    if (name == "input.mouse_capture") {
+        return ParseBool(value, config.mouse_capture);
+    }
+    if (name == "input.mouse_release") {
+        config.mouse_release_keys = SplitList(value);
+        return true;
+    }
     if (Lower(section) == "input") {
         config.key_bindings.push_back({Lower(key), SplitList(value)});
         return true;

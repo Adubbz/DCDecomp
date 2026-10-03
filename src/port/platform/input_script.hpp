@@ -10,17 +10,21 @@
 
 // Scripted input for headless runs. Each line is
 //
-//     <frame> [pad1|pad2] [button ...] [lx ly rx ry]
+//     <frame> [pad1|pad2] [button ...] [key:<name> ...] [mouseN ...] [mouse:dx,dy] [lx ly rx ry]
 //
 // and holds those buttons (and sticks, centred when omitted) on that pad (pad 1 when omitted) from
-// that frame of the game's main loop until the pad's next line. Frame 0 covers the start-up
+// that frame of the game's main loop until the pad's next line. Keys (SDL names), mouse buttons and
+// mouse motion (pixels per tick) go through the keyboard and mouse bindings as live input does, on
+// pad 1 only. Frame 0 covers the start-up
 // warm-up too. `#` starts a comment. Pad 1 is held released before its first line; pad 2 is left to
 // its device unless a line names it.
 
 struct InputScriptStep {
-    std::int64_t  frame = 0;
-    int           pad = 0;
-    InputPadState state;
+    std::int64_t       frame = 0;
+    int                pad = 0;
+    InputPadState      state;
+    InputKeyboardMouse devices;
+    bool               uses_devices = false;
 };
 
 struct InputScript {
