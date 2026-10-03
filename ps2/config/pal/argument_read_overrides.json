@@ -2415,6 +2415,49 @@
     }
    ]
   },
+  "shot_effect.cpp": {
+   "Set__12CSHOT_EFFECTFPfPfiiiP6CFramei": [
+    {
+     "ordinal": 22,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 23,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 29,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "Step__15CSHOT_MACHINGUNFv": [
+    {
+     "ordinal": 14,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "step__5CSHOTFv": [
+    {
+     "ordinal": 5,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 11,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 12,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ]
+  },
   "shot_freefuncs.cpp": {
    "BtStatusErrStep__Fv": [
     {
