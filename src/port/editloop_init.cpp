@@ -559,3 +559,21 @@ int EditInit(void *param) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
+
+// Retail's, with the 64-byte rounding of the work arena's start done on the whole pointer.
+void InitWorkBuffer() {
+    int     quads = EdNPCBuffer.used;
+    u_char *free_start = EdNPCBuffer.base + quads * 16;
+    quads = EdNPCBuffer.limit - quads;
+    EdVillagerBuffer.base = free_start;
+    EdVillagerBuffer.limit = quads;
+    EdVillagerBuffer.used = 0;
+    free_start = (u_char *) ((((std::uintptr_t) free_start >> 6) + 1) << 6);
+    EdWorkBuffer.base = free_start;
+    EdWorkBuffer.limit = quads - 4;
+    EdWorkBuffer.used = 0;
+    free_start = (u_char *) read_buffer;
+    EdMenuBuffer.base = free_start - 0x180000;
+    EdMenuBuffer.limit = 0x3A2E0;
+    EdMenuBuffer.used = 0;
+}
