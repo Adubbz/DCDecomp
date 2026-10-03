@@ -4,7 +4,6 @@
 #include <cctype>
 #include <charconv>
 #include <fstream>
-#include <iterator>
 #include <sstream>
 
 namespace {
@@ -62,6 +61,10 @@ bool ParseLine(std::string_view line, InputScriptStep &step, std::string &why) {
     }
     step.state = Released();
     std::size_t i = 1;
+    if (i < tokens.size() && (tokens[i] == "pad1" || tokens[i] == "pad2")) {
+        step.pad = tokens[i] == "pad2" ? 1 : 0;
+        ++i;
+    }
     for (; i < tokens.size(); ++i) {
         unsigned axis = 0;
         if (ParseNumber(tokens[i], axis)) {
@@ -115,7 +118,9 @@ bool InputScriptParse(std::string_view text, InputScript &script, std::string &e
             error = "line " + std::to_string(number) + ": " + why;
             return false;
         }
-        if (!script.steps.empty() && step.frame < script.steps.back().frame) {
+        auto same_pad = [&](const InputScriptStep &other) { return other.pad == step.pad; };
+        auto previous = std::ranges::find_last_if(script.steps, same_pad);
+        if (!previous.empty() && step.frame < previous.front().frame) {
             error = "line " + std::to_string(number) + ": frames must not decrease";
             return false;
         }
@@ -139,30 +144,40 @@ bool InputScriptLoad(const std::filesystem::path &path, InputScript &script, std
     return true;
 }
 
-InputPadState InputScriptStateAt(const InputScript &script, std::int64_t frame) {
-    auto after = std::ranges::upper_bound(script.steps, frame, {}, &InputScriptStep::frame);
-    if (after == script.steps.begin()) {
-        return Released();
+InputPadState InputScriptStateAt(const InputScript &script, int pad, std::int64_t frame) {
+    InputPadState state = Released();
+    for (const InputScriptStep &step : script.steps) {
+        if (step.pad == pad && step.frame <= frame) {
+            state = step.state;
+        }
     }
-    return std::prev(after)->state;
+    return state;
+}
+
+bool InputScriptDrivesPad(const InputScript &script, int pad) {
+    return pad == 0 ? !script.steps.empty()
+                    : std::ranges::any_of(script.steps, [&](const InputScriptStep &step) { return step.pad == pad; });
 }
 
 void InputScriptInstall(InputScript script) {
     g_script = std::move(script);
     g_active = !g_script.steps.empty();
-    if (g_active) {
-        InputScriptApply(0);
-    } else {
-        InputSetOverride(0, nullptr);
+    for (int pad = 0; pad < kInputPadCount; ++pad) {
+        InputSetOverride(pad, nullptr);
     }
+    InputScriptApply(0);
 }
 
 void InputScriptApply(std::int64_t frame) {
     if (!g_active) {
         return;
     }
-    InputPadState state = InputScriptStateAt(g_script, frame);
-    InputSetOverride(0, &state);
+    for (int pad = 0; pad < kInputPadCount; ++pad) {
+        if (InputScriptDrivesPad(g_script, pad)) {
+            InputPadState state = InputScriptStateAt(g_script, pad, frame);
+            InputSetOverride(pad, &state);
+        }
+    }
 }
 
 bool InputScriptActive() {
