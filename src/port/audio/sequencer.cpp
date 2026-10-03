@@ -1,5 +1,7 @@
 #include "sequencer.hpp"
 
+#include "trace.hpp"
+
 namespace audio {
 
 void Sequencer::SetSequence(std::shared_ptr<const SqFile> file) {
@@ -12,8 +14,10 @@ void Sequencer::SetSequence(std::shared_ptr<const SqFile> file) {
 void Sequencer::Rewind(int song) {
     has_pending_ = false;
     tempo_ = 500000;
-    loop_count_ = kNoLoop;
-    loop_entry_ = false;
+    tick_ = 0;
+    nrpn_ = kNone;
+    data_entry_ = kNone;
+    loops_ = {};
     song_ = nullptr;
     reader_ = SqReader{};
     if (file_ == nullptr || song < 0 || song >= static_cast<int>(file_->Songs().size())) {
@@ -47,6 +51,7 @@ void Sequencer::DispatchDue(int rate, MidiSink &sink) {
         due_ = 0.0;
         if (!Fetch(rate)) {
             playing_ = false;
+            Trace("port %d: sequence ended at tick %llu", trace_port_, Ticks());
             return;
         }
     }
@@ -56,10 +61,79 @@ void Sequencer::DispatchDue(int rate, MidiSink &sink) {
             playing_ = false;
             break;
         }
+        tick_ += pending_.delta;
         Handle(pending_, sink);
         if (!Fetch(rate)) {
             playing_ = false;
+            Trace("port %d: sequence ended at tick %llu", trace_port_, Ticks());
         }
+    }
+}
+
+unsigned long long Sequencer::Ticks() const {
+    return tick_;
+}
+
+Sequencer::Loop *Sequencer::FindLoop(std::uint8_t id) {
+    for (Loop &loop : loops_) {
+        if (loop.id == id) {
+            return &loop;
+        }
+    }
+    return nullptr;
+}
+
+void Sequencer::Controller(int controller, int value) {
+    switch (controller) {
+        case 99:
+            nrpn_ = static_cast<std::uint8_t>(value);
+            data_entry_ = kNone;
+            return;
+        case 6: {
+            data_entry_ = static_cast<std::uint8_t>(value);
+            if (nrpn_ != kNrpnLoopStart) {
+                return;
+            }
+            Loop *loop = FindLoop(data_entry_);
+            if (loop == nullptr) {
+                loop = FindLoop(kNone);
+            }
+            if (loop == nullptr) {
+                Trace("port %d: loop table full", trace_port_);
+                return;
+            }
+            loop->id = data_entry_;
+            loop->remaining = kNone;
+            loop->resume = reader_.Save();
+            Trace("port %d: tick %llu loop %d start", trace_port_, Ticks(), value);
+            return;
+        }
+        case 38: {
+            if (nrpn_ != kNrpnLoopEnd || data_entry_ == kNone) {
+                return;
+            }
+            Loop *loop = FindLoop(data_entry_);
+            if (loop == nullptr) {
+                Trace("port %d: loop %d ends but never started", trace_port_, data_entry_);
+                return;
+            }
+            if (loop->remaining == kNone) {
+                loop->remaining = static_cast<std::uint8_t>(value);
+            }
+            if (value != 0 && loop->remaining == 0) {
+                loop->remaining = kNone;
+                return;
+            }
+            Trace("port %d: tick %llu loop %d back (%d more)", trace_port_, Ticks(),
+                  data_entry_, value == 0 ? -1 : loop->remaining);
+            reader_.Restore(loop->resume);
+            if (value != 0) {
+                loop->remaining--;
+            }
+            return;
+        }
+        default:
+            return;
     }
 }
 
@@ -69,6 +143,8 @@ void Sequencer::Handle(const SqEvent &event, MidiSink &sink) {
             const std::uint32_t tempo = (event.payload[0] << 16) | (event.payload[1] << 8) | event.payload[2];
             if (tempo != 0) {
                 tempo_ = tempo;
+                Trace("port %d: tick %llu tempo %u us per beat", trace_port_, Ticks(),
+                      tempo);
             }
         }
         return;
@@ -76,31 +152,9 @@ void Sequencer::Handle(const SqEvent &event, MidiSink &sink) {
     if (event.kind != SqEventKind::Channel) {
         return;
     }
+    // The IOP sequencer passes the loop markers on to the synth too.
     if ((event.status & 0xF0) == 0xB0) {
-        if (event.data[0] == 99 && event.data[1] == kLoopStart) {
-            loop_position_ = reader_.Position();
-            loop_running_ = reader_.RunningStatus();
-            loop_count_ = kLoopEndless;
-            loop_entry_ = true;
-            return;
-        }
-        if (event.data[0] == 6 && loop_entry_) {
-            loop_count_ = (event.data[1] == 0 || event.data[1] == 127) ? kLoopEndless : event.data[1];
-            loop_entry_ = false;
-            return;
-        }
-        loop_entry_ = false;
-        if (event.data[0] == 99 && event.data[1] == kLoopEnd) {
-            if (loop_count_ == kNoLoop) {
-                return;
-            }
-            if (loop_count_ != kLoopEndless && --loop_count_ == 0) {
-                loop_count_ = kNoLoop;
-                return;
-            }
-            reader_.Seek(loop_position_, loop_running_);
-            return;
-        }
+        Controller(event.data[0], event.data[1]);
     }
     sink.ChannelMessage(event.status, event.data[0], event.data[1]);
 }

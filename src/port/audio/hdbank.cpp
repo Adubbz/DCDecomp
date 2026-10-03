@@ -144,6 +144,7 @@ std::optional<HdBank> HdBank::Parse(std::span<const std::uint8_t> hd) {
         if (p.size() < 4) {
             return;
         }
+        set.vel_curve = ReadU8(p, 0);
         set.vel_low = ReadU8(p, 1);
         set.vel_high = ReadU8(p, 2);
         const int n = ReadU8(p, 3);
@@ -166,6 +167,7 @@ std::optional<HdBank> HdBank::Parse(std::span<const std::uint8_t> hd) {
         sample.volume = ReadU8(p, 0x10);
         sample.adsr1 = ReadU16(p, 0x12);
         sample.adsr2 = ReadU16(p, 0x14);
+        sample.spu_attr = ReadU8(p, hd::kSampleSpuAttr);
     });
     ForEachEntry(vagi, [&](std::size_t, std::span<const std::uint8_t> p) {
         HdVagInfo &info = bank.vags.emplace_back();
@@ -178,6 +180,25 @@ std::optional<HdBank> HdBank::Parse(std::span<const std::uint8_t> hd) {
         info.attr = ReadU8(p, 6);
     });
     return bank;
+}
+
+int ApplyVelocityCurve(int curve, int velocity) {
+    const auto square = [](int v) { return std::max(1, v * v / 127); };
+    // A curve whose high nibble names a velocity table comes with banks the game does not have.
+    switch (static_cast<VelocityCurve>(curve & 0x0F)) {
+        case VelocityCurve::Inverse:
+            return 128 - velocity;
+        case VelocityCurve::Square:
+            return square(velocity);
+        case VelocityCurve::InverseSquare:
+            return 128 - square(velocity);
+        case VelocityCurve::SquareFromTop:
+            return 128 - square(128 - velocity);
+        case VelocityCurve::SquareOfInverse:
+            return square(128 - velocity);
+        default:
+            return velocity;
+    }
 }
 
 std::shared_ptr<Bank> Bank::Create(std::span<const std::uint8_t> hd, std::span<const std::uint8_t> bd) {
@@ -206,6 +227,7 @@ const HdProgram *Bank::Program(int program) const {
 }
 
 int Bank::AddSampleSet(const HdSplit &split, int velocity, std::span<Layer> out, int count) const {
+    int  curve = 0;
     auto add = [&](int index) {
         if (index < 0 || index >= static_cast<int>(header_.samples.size()) || count >= static_cast<int>(out.size())) {
             return;
@@ -221,7 +243,7 @@ int Bank::AddSampleSet(const HdSplit &split, int velocity, std::span<Layer> out,
         if (vag.pcm.empty() || header_.vags[sample.vag].rate == 0) {
             return;
         }
-        out[count++] = Layer{&split, &sample, &vag, header_.vags[sample.vag].rate};
+        out[count++] = Layer{&split, &sample, &vag, header_.vags[sample.vag].rate, curve};
     };
     // A bank without sample sets addresses samples directly through the split's set index.
     if (header_.sample_sets.empty()) {
@@ -235,6 +257,7 @@ int Bank::AddSampleSet(const HdSplit &split, int velocity, std::span<Layer> out,
     if (velocity < set.vel_low || velocity > set.vel_high) {
         return count;
     }
+    curve = set.vel_curve;
     for (int index : set.samples) {
         add(index);
     }

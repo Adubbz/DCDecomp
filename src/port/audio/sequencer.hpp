@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <memory>
 
@@ -16,15 +17,15 @@ protected:
 };
 
 // Plays one SQ song on one port in output samples, so its timing follows the audio clock.
-// Loops are Sony's NRPN markers: controller 99 = 20 opens a loop (a data entry right after it
-// sets the count, 0 or 127 for endless) and 99 = 30 closes it.
+// Loops are Sony's NRPN markers, as the IOP sequencer reads them: NRPN 0 (controller 99 = 0)
+// with a data entry (6) of n opens loop n just after that data entry; NRPN 1 with a data entry
+// of n and a data entry LSB (38) of c closes it, jumping back c more times, or forever for 0.
+// Every disc sequence has one endless loop, 99=0 6=0 ... 99=1 6=0 38=0.
 class Sequencer {
 public:
-    static constexpr int    kLoopStart = 20;
-    static constexpr int    kLoopEnd = 30;
     static constexpr double kIdle = 1e30;
-    static constexpr int    kNoLoop = 0;
-    static constexpr int    kLoopEndless = -1;
+    static constexpr int    kNrpnLoopStart = 0;
+    static constexpr int    kNrpnLoopEnd = 1;
 
     void SetSequence(std::shared_ptr<const SqFile> file);
 
@@ -51,10 +52,30 @@ public:
 
     std::uint32_t Tempo() const { return tempo_; }
 
+    // Sequence ticks dispatched since the rewind, loops included.
+    std::uint64_t Tick() const { return tick_; }
+
+    void SetTraceName(int port) { trace_port_ = port; }
+
 private:
+    static constexpr int          kLoops = 8;
+    static constexpr std::uint8_t kNone = 0xFF;
+
+    struct Loop {
+        std::uint8_t    id = kNone;
+        std::uint8_t    remaining = kNone;
+        SqReader::State resume;
+    };
+
     bool Fetch(int rate);
 
     void Handle(const SqEvent &event, MidiSink &sink);
+
+    void Controller(int controller, int value);
+
+    Loop *FindLoop(std::uint8_t id);
+
+    unsigned long long Ticks() const;
 
     std::shared_ptr<const SqFile> file_;
     const SqSong                 *song_ = nullptr;
@@ -65,11 +86,12 @@ private:
     double                        due_ = 0.0;
     std::uint32_t                 tempo_ = 500000;
     int                           division_ = 480;
+    std::uint64_t                 tick_ = 0;
+    int                           trace_port_ = -1;
 
-    std::size_t  loop_position_ = 0;
-    std::uint8_t loop_running_ = 0;
-    int          loop_count_ = kNoLoop;
-    bool         loop_entry_ = false;
+    std::uint8_t             nrpn_ = kNone;
+    std::uint8_t             data_entry_ = kNone;
+    std::array<Loop, kLoops> loops_;
 };
 
 } // namespace audio

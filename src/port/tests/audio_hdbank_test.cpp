@@ -20,7 +20,7 @@ DC_TEST(audio_hd_parse) {
     DC_CHECK(header->programs[2].present);
     DC_CHECK(header->programs[2].splits.size() == 1);
     DC_CHECK(header->programs[2].splits[0].key_high == 127);
-    DC_CHECK(header->programs[2].splits[0].bend_low == 2);
+    DC_CHECK(header->programs[2].splits[0].bend_low == 2 * audio::kFinePerSemitone);
     DC_CHECK(header->sample_sets.size() == 1);
     DC_CHECK(header->samples.size() == 1);
     DC_CHECK(header->samples[0].base_note == 57);

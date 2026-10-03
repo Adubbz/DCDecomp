@@ -55,7 +55,7 @@ build/pc/darkcloud --data data --save save
 | `--display-per-tick N` | headless test aid: render N interpolated display frames per tick (offscreen, not presented) before presenting the tick's canonical image |
 
 Environment: `DC_DATA` and `DC_SAVE` (above), `DC_INPUT` (above), `DC_AUDIO=off` (no audio
-device), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
+device), `DC_AUDIO_WAV` and `DC_AUDIO_TRACE` (see "Audio"), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
 release build; a debug build always asks for it), `DC_PRESENT_STATS=1` (print
 draws per tick and render times at exit), and SDL's own variables.
 
@@ -467,6 +467,55 @@ stop, fades, volumes, effect messages) on that mixer, and
 `gameutil_midi.cpp` answers the EZMIDI RPC commands for anything that still
 sends them. `main` starts the output; `CSound::Init` starts it too if it is
 not running.
+
+The formats and the synth's arithmetic were checked against every bank and
+sequence on the PAL disc and against the IOP modules the game loads
+(`EZMIDI.IRX`, `MODMIDI.IRX`, `MODHSYN.IRX`):
+
+- **SQ** (`sq.cpp`): `SCEIVers`, `SCEISequ`, then `SCEIMidi` with a song table
+  (offsets from the chunk) whose blocks start with a 32-bit data offset (always
+  6) and a 16-bit division (always 480). The events are SMF-like with running
+  status, but a note-off carries only its note number, and bit 7 on a channel
+  message's last data byte means the next event has no delta. All 93
+  sequences parse to their end-of-track meta exactly at the chunk's end.
+- **Loops** (`sequencer.cpp`): NRPN 0 (`B0 63 00`) with data entry `n` opens loop
+  `n` just after that data entry; NRPN 1 with data entry `n` and data entry LSB
+  (controller 38) `c` jumps back `c` more times, forever for 0. Every sequence
+  on the disc has one endless loop.
+- **HD** (`hdbank.cpp`): the `SCEIHead` addresses, 36-byte programs, 20-byte
+  splits, 4+2n-byte sample sets, 42-byte samples and 8-byte VAG entries as
+  laid out there. Split bend ranges and every detune are in 128ths of a
+  semitone (most splits say 0x600, an octave). A sample set's first byte picks
+  a velocity curve (linear, inverse, squared and their mirrors). A sample's
+  last byte is its SPU attribute: bits 4-5 pin its voices to core 0 or 1 (or
+  either, whichever has more free voices), bits 0-3 are its dry left/right and
+  effect-send left/right switches, so only those samples feed the core's reverb.
+- **Volume**: a voice sounds at velocity (through the curve) x program x split
+  x sample volume, each a fraction of 128, x channel volume x expression, each
+  a fraction of 128, x port volume / 256 (`ezMidi(0xB0 + port)`, so the SE
+  ports' 256 is unity and a sequence plays at its `sqtbl.txt` volume over 256).
+  The pan law keeps the near side at full scale and fades the far side to
+  silence 63 steps from the centre.
+- **Pitch**: 4096 x rate / 48000 x 2^((note + transposes - base note + fine / 128
+  + bend x range / 8192 / 128) / 12), at most 0x3FFF, as the SPU2 pitch register.
+
+`DC_AUDIO_TRACE=1` prints every `CSound` call (bank and sequence loads with
+their names, `SQ_Play` with its table volume, `SetVol`, `SE_Play`, fades,
+reverb), every `ezMidi` command, every channel message a sequence sends with
+its output time, every key-on's resolved sample, pitch, gain and core, and the
+sequencer's tempo and loop events. `DC_AUDIO_WAV=<path>` opens no device and
+instead pulls the mixer on the game thread as the clock ticks, writing 16-bit
+stereo at 48 kHz: N ticks write N/50 s whatever the run's real speed, so
+`DC_AUDIO_WAV=title.wav darkcloud --headless --jump title --fast-load --frames
+600` records what the title would have played. `audio_real_title_*` render the
+title pack's music on the real data (`DC_DATA`); with `DC_AUDIO_TEST_WAV=<dir>`
+they also write what they rendered there.
+
+What still differs from the PS2: the reverb is a generic room, not the SPU2's
+effect programs and work area; core 0's output does not pass through core 1;
+the ADSR runs at the SPU's rate but key follow of the envelope, LFOs, velocity
+crossfades and per-key pan follow are not applied; effect messages resolve
+their tone by key range, then split index.
 
 ## Saves and host files
 

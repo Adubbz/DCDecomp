@@ -34,9 +34,9 @@ std::shared_ptr<audio::SqFile> TwoNotes() {
         .Event(0, {0xC0, 0})
         .Event(0, {0xB0, 7, 127})
         .Event(0, {0x90, 60, 127})
-        .Event(480, {0x80, 60, 0})
+        .Event(480, {0x80, 60})
         .Event(0, {0x90, 72, 127})
-        .Event(480, {0x80, 72, 0})
+        .Event(480, {0x80, 72})
         .End(0);
     return audio::SqFile::Create(BuildSq(track.events));
 }
@@ -78,11 +78,13 @@ DC_TEST(audio_sequence_tempo_and_loop) {
     audio::Mixer mixer(kRate);
     Track        track;
     track.Tempo(0, 250000)
-        .Event(0, {0xB0, 99, audio::Sequencer::kLoopStart})
+        .Event(0, {0xB0, 99, audio::Sequencer::kNrpnLoopStart})
         .Event(0, {0xB0, 6, 0})
         .Event(0, {0x90, 60, 127})
-        .Event(480, {0x80, 60, 0})
-        .Event(0, {0xB0, 99, audio::Sequencer::kLoopEnd})
+        .Event(480, {0x80, 60})
+        .Event(0, {0xB0, 99, audio::Sequencer::kNrpnLoopEnd})
+        .Event(0, {0xB0, 6, 0})
+        .Event(0, {0xB0, 38, 0})
         .End(0);
     StartSong(mixer, 1, audio::SqFile::Create(BuildSq(track.events)));
     // At 240 bpm the note lasts a quarter second; the loop keeps restarting it.
@@ -97,14 +99,16 @@ DC_TEST(audio_sequence_tempo_and_loop) {
     Pull(mixer, 0.1);
     DC_CHECK(Rms(Pull(mixer, 0.05), 0) < 1e-6);
 
-    // A counted loop plays its body that many times, then the song ends.
+    // A counted loop jumps back that many times, then the song ends.
     Track counted;
     counted.Tempo(0, 250000)
-        .Event(0, {0xB0, 99, audio::Sequencer::kLoopStart})
-        .Event(0, {0xB0, 6, 2})
+        .Event(0, {0xB0, 99, audio::Sequencer::kNrpnLoopStart})
+        .Event(0, {0xB0, 6, 3})
         .Event(0, {0x90, 60, 127})
-        .Event(480, {0x80, 60, 0})
-        .Event(0, {0xB0, 99, audio::Sequencer::kLoopEnd})
+        .Event(480, {0x80, 60})
+        .Event(0, {0xB0, 99, audio::Sequencer::kNrpnLoopEnd})
+        .Event(0, {0xB0, 6, 3})
+        .Event(0, {0xB0, 38, 1})
         .End(0);
     StartSong(mixer, 2, audio::SqFile::Create(BuildSq(counted.events)));
     Pull(mixer, 0.45);
@@ -148,7 +152,7 @@ DC_TEST(audio_reverb_tail) {
     auto tail = [](bool reverb) {
         audio::Mixer mixer(kRate);
         Track        track;
-        track.Event(0, {0x90, 60, 127}).Event(96, {0x80, 60, 0}).End(9600);
+        track.Event(0, {0x90, 60, 127}).Event(96, {0x80, 60}).End(9600);
         StartSong(mixer, 0, audio::SqFile::Create(BuildSq(track.events)));
         mixer.SetReverb(0, 5, reverb ? 100 : 0);
         Pull(mixer, 0.2);

@@ -3,12 +3,15 @@
 #include <algorithm>
 #include <cmath>
 
+#include "trace.hpp"
+
 namespace audio {
 
 Mixer::Mixer(int rate) : rate_(rate), synth_(rate), reverbs_{Reverb(rate), Reverb(rate)} {
     for (int i = 0; i < kPorts; i++) {
         ports_[i].mixer = this;
         ports_[i].index = i;
+        ports_[i].sequencer.SetTraceName(i);
     }
     for (auto &buffer : core_buffers_) {
         buffer.assign(kBlock * 2, 0.0f);
@@ -16,6 +19,10 @@ Mixer::Mixer(int rate) : rate_(rate), synth_(rate), reverbs_{Reverb(rate), Rever
 }
 
 namespace {
+
+// The synth scales by each 7-bit volume as a fraction of 128, so the banks' 128 is unity and 127
+// a hair under it.
+constexpr float kVolumeUnit = 1.0f / 128.0f;
 
 bool ValidPort(int port) {
     return port >= 0 && port < kPorts;
@@ -249,7 +256,11 @@ void Mixer::Port::ChannelMessage(std::uint8_t status, std::uint8_t data1, std::u
 
 void Mixer::Message(Port &port, std::uint8_t status, std::uint8_t data1, std::uint8_t data2) {
     const int channel = status & 0x0F;
-    Channel  &state = port.channels[channel];
+    if (TraceEnabled()) {
+        Trace("t=%.3f port %d %02X %d %d", static_cast<double>(rendered_) / rate_, port.index, status, data1,
+              data2);
+    }
+    Channel &state = port.channels[channel];
     switch (status & 0xF0) {
         case 0x90:
             if (data2 != 0) {
@@ -346,7 +357,10 @@ void Mixer::NoteOn(Port &port, int channel, int note, int velocity) {
               [&](Voice &v) { ReleaseVoice(v); });
     std::array<Layer, kMaxLayers> layers;
     const int                     count = port.bank->Resolve(port.channels[channel].program, note, velocity, layers);
-    Voice                         prototype;
+    if (count == 0) {
+        Trace("  program %d note %d velocity %d: no layer", port.channels[channel].program, note, velocity);
+    }
+    Voice prototype;
     prototype.port = port.index;
     prototype.channel = channel;
     prototype.note = note;
@@ -391,17 +405,38 @@ void Mixer::StartLayer(Port &port, const Layer &layer, int note, int velocity, V
     const HdSplit   &split = *layer.split;
     const HdSample  &sample = *layer.sample;
 
+    // Bits 4 and 5 of the sample's attribute pin it to core 0 or 1; neither or both let the synth
+    // take the core with more free voices.
+    switch (sample.spu_attr & 0x30) {
+        case 0x10:
+            prototype.core = 0;
+            break;
+        case 0x20:
+            prototype.core = 1;
+            break;
+        default:
+            prototype.core = synth_.FreeVoices(1) > synth_.FreeVoices(0) ? 1 : 0;
+            break;
+    }
+    prototype.mix = sample.spu_attr & kMixAll;
     Voice &voice = synth_.Allocate(prototype.Core());
     voice = prototype;
     voice.note = note;
     voice.sample = layer.vag;
     voice.rate = layer.rate;
     voice.base_pitch = note - sample.base_note + program.transpose + split.transpose +
-                       (program.detune + split.detune + sample.detune) / 128.0;
-    voice.base_gain = velocity / 127.0f * program.volume / 127.0f * split.volume / 127.0f * sample.volume / 127.0f;
+                       (program.detune + split.detune + sample.detune) / double(kFinePerSemitone);
+    voice.base_gain = ApplyVelocityCurve(layer.vel_curve, velocity) * kVolumeUnit * program.volume *
+                      kVolumeUnit * split.volume * kVolumeUnit * sample.volume * kVolumeUnit;
     voice.base_pan = program.pan + split.pan + sample.pan - 3 * 64;
     voice.bend_low = split.bend_low;
     voice.bend_high = split.bend_high;
+    if (TraceEnabled()) {
+        Trace("  program %d note %d -> sample %d (vag %d, %d Hz, base %d%s): %+.2f st, gain %.3f, core %d",
+              prototype.program, note, static_cast<int>(&sample - port.bank->Header().samples.data()),
+              sample.vag, layer.rate, sample.base_note, layer.vag->loops ? ", loops" : "", voice.base_pitch,
+              voice.base_gain, voice.core);
+    }
     synth_.Start(voice, sample.adsr1, sample.adsr2);
 }
 
@@ -416,23 +451,25 @@ void Mixer::UpdateVoices() {
         double      pitch = voice.base_pitch;
         int         pan = voice.base_pan;
         if (voice.effect) {
-            gain *= voice.effect_volume / 127.0f;
+            gain *= voice.effect_volume * kVolumeUnit;
             pan += voice.effect_pan;
         } else {
             const Channel &channel = port.channels[voice.channel];
-            gain *= channel.volume / 127.0f * channel.expression / 127.0f;
+            gain *= channel.volume * kVolumeUnit * channel.expression * kVolumeUnit;
             pan += channel.pan;
             const int bend = channel.bend - 8192;
             // The split's own bend range wins; a split without one follows the channel's RPN.
             int range = bend < 0 ? voice.bend_low : voice.bend_high;
             if (voice.bend_low == 0 && voice.bend_high == 0) {
-                range = channel.bend_range;
+                range = channel.bend_range * kFinePerSemitone;
             }
-            pitch += bend / 8192.0 * range;
+            pitch += bend / 8192.0 * range / kFinePerSemitone;
         }
-        pan = std::clamp(pan, 0, 127);
-        const float left = std::min(1.0f, 2.0f * (127 - pan) / 127.0f);
-        const float right = std::min(1.0f, 2.0f * pan / 127.0f);
+        // The synth's pan law: the near side stays at full scale, the far one falls linearly to
+        // silence 63 steps from the centre.
+        const int   offset = std::clamp(pan - 64, -63, 63);
+        const float left = offset > 0 ? (63 - offset) / 63.0f : 1.0f;
+        const float right = offset < 0 ? (63 + offset) / 63.0f : 1.0f;
         voice.gain_l = gain * left;
         voice.gain_r = gain * right;
         voice.step = std::min(max_step, voice.rate * std::exp2(pitch / 12.0) / rate_);
@@ -442,7 +479,7 @@ void Mixer::UpdateVoices() {
 void Mixer::Render(float *out, int frames) {
     std::lock_guard lock(mutex_);
     std::fill(out, out + frames * 2, 0.0f);
-    float *cores[kCores] = {core_buffers_[0].data(), core_buffers_[1].data()};
+    float *sends[kCores] = {core_buffers_[0].data(), core_buffers_[1].data()};
     while (frames > 0) {
         int block = std::min(frames, kBlock);
         for (Port &port : ports_) {
@@ -453,16 +490,13 @@ void Mixer::Render(float *out, int frames) {
             }
         }
         UpdateVoices();
-        for (float *core : cores) {
-            std::fill(core, core + block * 2, 0.0f);
+        for (float *send : sends) {
+            std::fill(send, send + block * 2, 0.0f);
         }
-        synth_.Render(block, cores);
-        for (int core = 0; core < kCores; core++) {
-            for (int i = 0; i < block * 2; i++) {
-                out[i] += cores[core][i];
-            }
-            if (reverb_enabled_) {
-                reverbs_[core].Process(cores[core], out, block);
+        synth_.Render(block, out, sends);
+        if (reverb_enabled_) {
+            for (int core = 0; core < kCores; core++) {
+                reverbs_[core].Process(sends[core], out, block);
             }
         }
         if (!stereo_) {
@@ -476,6 +510,7 @@ void Mixer::Render(float *out, int frames) {
         for (Port &port : ports_) {
             port.sequencer.Elapse(block);
         }
+        rendered_ += block;
         out += block * 2;
         frames -= block;
     }

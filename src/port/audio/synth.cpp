@@ -104,14 +104,20 @@ void Synth::Start(Voice &voice, std::uint16_t adsr1, std::uint16_t adsr2) {
     voice.envelope.KeyOn(adsr1, adsr2);
 }
 
+int Synth::FreeVoices(int core) const {
+    const auto first = voices_.begin() + core * kCoreVoices;
+    return static_cast<int>(
+        std::count_if(first, first + kCoreVoices, [](const Voice &v) { return !v.active; }));
+}
+
 int Synth::ActiveVoices() const {
     return static_cast<int>(std::count_if(voices_.begin(), voices_.end(), [](const Voice &v) { return v.active; }));
 }
 
-void Synth::Render(int frames, float *const out[kCores]) {
+void Synth::Render(int frames, float *dry, float *const send[kCores]) {
     for (Voice &voice : voices_) {
         if (voice.active) {
-            RenderVoice(voice, frames, out[voice.Core()]);
+            RenderVoice(voice, frames, dry, send[voice.Core()]);
         }
     }
 }
@@ -135,7 +141,7 @@ float Fetch(const VagSample &sample, std::int64_t index) {
 
 } // namespace
 
-void Synth::RenderVoice(Voice &voice, int frames, float *out) {
+void Synth::RenderVoice(Voice &voice, int frames, float *dry, float *send) {
     const VagSample &sample = *voice.sample;
     const auto       size = static_cast<double>(sample.pcm.size());
     const double     loop = sample.loops ? size - sample.loop_start : 0.0;
@@ -147,6 +153,10 @@ void Synth::RenderVoice(Voice &voice, int frames, float *out) {
     }
     // A one-pole glide of a few milliseconds keeps volume and pan changes from clicking.
     const float glide = std::min(1.0f, 240.0f / rate_);
+    const float dry_l = (voice.mix & kMixDryLeft) ? 1.0f : 0.0f;
+    const float dry_r = (voice.mix & kMixDryRight) ? 1.0f : 0.0f;
+    const float wet_l = (voice.mix & kMixWetLeft) ? 1.0f : 0.0f;
+    const float wet_r = (voice.mix & kMixWetRight) ? 1.0f : 0.0f;
 
     for (int i = 0; i < frames; i++) {
         voice.ticks += tick;
@@ -170,8 +180,12 @@ void Synth::RenderVoice(Voice &voice, int frames, float *out) {
 
         voice.current_l += (voice.gain_l - voice.current_l) * glide;
         voice.current_r += (voice.gain_r - voice.current_r) * glide;
-        out[i * 2] += level * voice.current_l;
-        out[i * 2 + 1] += level * voice.current_r;
+        const float left = level * voice.current_l;
+        const float right = level * voice.current_r;
+        dry[i * 2] += left * dry_l;
+        dry[i * 2 + 1] += right * dry_r;
+        send[i * 2] += left * wet_l;
+        send[i * 2 + 1] += right * wet_r;
 
         voice.position += voice.step;
         if (voice.position >= size) {

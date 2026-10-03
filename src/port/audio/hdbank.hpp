@@ -33,15 +33,20 @@ constexpr std::size_t kTableOffsets = 0x10;
 constexpr std::size_t kProgramParamSize = 0x24;
 constexpr std::size_t kSplitSize = 0x14;
 constexpr std::size_t kSampleParamSize = 0x2A;
+constexpr std::size_t kSampleSpuAttr = 0x29;
 constexpr std::size_t kVagInfoSize = 8;
 } // namespace hd
+
+// Pitches below a semitone (detunes, bend ranges) are in 128ths of a semitone, as the synth adds
+// them: a full bend moves the pitch by exactly the split's range.
+constexpr int kFinePerSemitone = 128;
 
 struct HdSplit {
     int          sample_set = 0;
     std::uint8_t key_low = 0;
     std::uint8_t key_high = 127;
-    int          bend_low = 2;
-    int          bend_high = 2;
+    int          bend_low = 2 * kFinePerSemitone;
+    int          bend_high = 2 * kFinePerSemitone;
     std::uint8_t volume = 127;
     int          pan = 64;
     int          transpose = 0;
@@ -57,7 +62,20 @@ struct HdProgram {
     std::vector<HdSplit> splits;
 };
 
+// How a sample set maps key-on velocity before it scales the volume, as the synth's curves 0 to 5.
+enum class VelocityCurve : std::uint8_t {
+    Linear,
+    Inverse,
+    Square,
+    InverseSquare,
+    SquareFromTop,
+    SquareOfInverse,
+};
+
+int ApplyVelocityCurve(int curve, int velocity);
+
 struct HdSampleSet {
+    std::uint8_t     vel_curve = 0;
     std::uint8_t     vel_low = 0;
     std::uint8_t     vel_high = 127;
     std::vector<int> samples;
@@ -73,6 +91,8 @@ struct HdSample {
     std::uint8_t  volume = 127;
     std::uint16_t adsr1 = 0x80FF;
     std::uint16_t adsr2 = 0x5FC0;
+    // Bits 0-3: VMIXL, VMIXR, VMIXEL, VMIXER; bits 4-5: core 0 (0x10), core 1 (0x20) or either.
+    std::uint8_t spu_attr = 0x0F;
 };
 
 struct HdVagInfo {
@@ -98,6 +118,7 @@ struct Layer {
     const HdSample  *sample;
     const VagSample *vag;
     int              rate;
+    int              vel_curve;
 };
 
 // A bank as the synth plays it: the HD tables and every VAG of the BD decoded up front, so the
