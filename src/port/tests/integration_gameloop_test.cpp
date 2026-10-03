@@ -5,9 +5,9 @@
 #include "dataset.hpp"
 #include "ebattle.hpp"
 #include "editpartsdata.hpp"
-#include "gameutil.hpp"
 #include "gameloop.hpp"
 #include "gamemode.hpp"
+#include "gameutil.hpp"
 #include "main.hpp"
 #include "mainselect.hpp"
 #include "menu_save.hpp"
@@ -76,26 +76,27 @@ DC_TEST(integration_loop_results) {
         int next_map_no;
         int map_jump;
     };
+
     const Case cases[] = {
-        {GAME_MODE_LANGUAGE, 0, GAME_MODE_LANGUAGE, 7, -1},
-        {GAME_MODE_LANGUAGE, 1, GAME_MODE_MEMORY_CHECK, -1, -1},
-        {GAME_MODE_MEMORY_CHECK, 1, GAME_MODE_RUSH_MOVIE, 801, -1},
-        {GAME_MODE_RUSH_MOVIE, 1, GAME_MODE_RUSH_MOVIE, 7, 800},
-        {GAME_MODE_TITLE, 3, GAME_MODE_DUNGEON, 7, -1},
-        {GAME_MODE_TITLE, 4, GAME_MODE_TITLE, 7, 801},
-        {GAME_MODE_TITLE, 5, GAME_MODE_OPENING, 7, -1},
-        {GAME_MODE_EDIT, 1, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_EDIT, 2, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_EDIT, 3, GAME_MODE_DUNGEON, 7, -1},
-        {GAME_MODE_EDIT, 4, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_SAVE, 1, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_TRIAL_END, 1, GAME_MODE_TITLE, 800, -1},
-        {GAME_MODE_OPENING, 1, GAME_MODE_TITLE, 7, 0},
-        {GAME_MODE_LOADER, 1, GAME_MODE_DUNGEON, 7, -1},
-        {GAME_MODE_DUNGEON, 1, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_UNUSED_4, 1, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_MENU, 1, GAME_MODE_MENU, 7, -1},
-        {GAME_MODE_UNUSED_12, 0, GAME_MODE_UNUSED_12, 7, -1},
+        {GAME_MODE_LANGUAGE,     0, GAME_MODE_LANGUAGE,     7,   -1 },
+        {GAME_MODE_LANGUAGE,     1, GAME_MODE_MEMORY_CHECK, -1,  -1 },
+        {GAME_MODE_MEMORY_CHECK, 1, GAME_MODE_RUSH_MOVIE,   801, -1 },
+        {GAME_MODE_RUSH_MOVIE,   1, GAME_MODE_RUSH_MOVIE,   7,   800},
+        {GAME_MODE_TITLE,        3, GAME_MODE_DUNGEON,      7,   -1 },
+        {GAME_MODE_TITLE,        4, GAME_MODE_TITLE,        7,   801},
+        {GAME_MODE_TITLE,        5, GAME_MODE_OPENING,      7,   -1 },
+        {GAME_MODE_EDIT,         1, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_EDIT,         2, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_EDIT,         3, GAME_MODE_DUNGEON,      7,   -1 },
+        {GAME_MODE_EDIT,         4, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_SAVE,         1, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_TRIAL_END,    1, GAME_MODE_TITLE,        800, -1 },
+        {GAME_MODE_OPENING,      1, GAME_MODE_TITLE,        7,   0  },
+        {GAME_MODE_LOADER,       1, GAME_MODE_DUNGEON,      7,   -1 },
+        {GAME_MODE_DUNGEON,      1, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_UNUSED_4,     1, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_MENU,         1, GAME_MODE_MENU,         7,   -1 },
+        {GAME_MODE_UNUSED_12,    0, GAME_MODE_UNUSED_12,    7,   -1 },
     };
     for (const Case &c : cases) {
         Reset(c.mode);

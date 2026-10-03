@@ -139,7 +139,7 @@ void RenderAudio(void *, float *out, int frames) {
 }
 
 void ReportShaderProgress(uint32_t done, uint32_t total) {
-    static uint32_t reported = 0;
+    static uint32_t    reported = 0;
     constexpr uint32_t kSteps = 4;
     if (total == 0) {
         return;

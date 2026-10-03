@@ -2,13 +2,12 @@
 
 #include <cstring>
 
-#include "exitcodes.hpp"
-
 #include "battle_globals.hpp"
 #include "btsysscript.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
 #include "dun/gameloop.hpp"
+#include "exitcodes.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
 #include "langset.hpp"

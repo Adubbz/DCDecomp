@@ -1,6 +1,5 @@
-#include <sifdev.h>
-
 #include <fcntl.h>
+#include <sifdev.h>
 #include <unistd.h>
 
 #include <algorithm>

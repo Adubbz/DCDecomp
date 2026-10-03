@@ -1,10 +1,10 @@
+#include <sifdev.h>
+
 #include <cerrno>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <string>
-
-#include <sifdev.h>
 
 #include "platform/paths.hpp"
 #include "test.hpp"

@@ -1,42 +1,329 @@
 # PC port
 
-`PLATFORM=PC` builds the game's code as an x64 Linux program with clang, as
-C++26. The port is always the PAL release; there is no region setting.
+`PLATFORM=PC` builds the game's code as a native x64 Linux program with clang
+20, as C++26, on SDL3 and Vulkan 1.4. The port is always the PAL release;
+there is no region setting. `docs/PC_PORT_PLAN.md` is the plan it was built
+to and records the phases; this document describes what is built.
+
+## Building and running
 
 ```sh
-./dev.sh cmake -S . -B build/pc -G Ninja -DPLATFORM=PC
-./dev.sh ninja -C build/pc
+cmake -S . -B build/pc -G Ninja -DPLATFORM=PC -DCMAKE_CXX_COMPILER=clang++-20
+ninja -C build/pc
+(cd build/pc && ctest --output-on-failure -j4)
 ```
 
-The result is `build/pc/darkcloud`. It links against SDL3 and the Vulkan loader
-(`libsdl3-dev` and `libvulkan-dev` in the dev image) and needs a GPU with
-Vulkan 1.4 to run.
+It needs clang 20 with lld and `llvm-objcopy`, CMake 3.28, Ninja,
+`glslangValidator`, SDL3 (3.2) and the Vulkan 1.4 headers and loader, and at
+run time a device with Vulkan 1.4, `dualSrcBlend` and `shaderClipDistance`
+(any desktop driver; Mesa's lavapipe in CI). `.github/workflows/pc.yml` is a
+complete recipe on Ubuntu 24.04.
 
-The game's start-up still reaches PlayStation 2 code the port does not
-implement, so for now `main` only opens the window and presents cleared frames
-until it is closed. Every other piece of PlayStation 2 code is a stub that
-asserts.
+The game's files come from the disc (see "Game data"):
+
+```sh
+build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
+build/pc/darkcloud --data data --save save
+```
+
+`darkcloud` takes:
+
+| Option | Meaning |
+|---|---|
+| `--data DIR` | the extracted data (default: `DC_DATA`, then `./data`, then `data/` beside the executable) |
+| `--save DIR` | memory cards, `config.ini`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable); created on first use |
+| `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
+| `--frames N` | stop after N frames of the game's main loop |
+| `--screenshot PATH` | after the run, write the last presented frame to PATH as a PNG |
+| `--width W`, `--height H` | window size in pixels, over `config.ini` |
+
+Environment: `DC_DATA` and `DC_SAVE` (above), `DC_AUDIO=off` (no audio
+device), `DC_VULKAN_VALIDATION` (enable the Khronos validation layer in a
+release build; a debug build always asks for it), and SDL's own variables.
+
+Exit statuses (`src/port/exitcodes.hpp`): 0 when the window was closed or
+`--frames` ran out, 1 when the window, the renderer or the screenshot failed,
+2 for bad arguments, 3 when the data directory is missing or holds no file
+(one line names it and the `dcdata` command; checked before any window
+opens), 4 for a failed game assertion (retail's `__assert`, after the game's
+own message: `LoadFile` prints `File open error "<path>"`). A `PS2_UNIMPLEMENTED`
+stub aborts (SIGABRT) so a debugger or a core dump stops at it.
+
+`<save>/config.ini` (`src/port/platform/config.cpp`; unknown keys and bad
+values are reported and ignored):
+
+```ini
+[game]
+tick_rate = 50          ; logic ticks (the game's VSyncs) per second
+[video]
+present_mode = fifo     ; fifo, mailbox or immediate (immediate presents as mailbox)
+vsync = true            ; shorthand: true is fifo, false immediate
+width = 1280
+height = 960
+fullscreen = false
+[audio]
+master_volume = 1.0     ; 0 to 1
+[input]
+cross = Z, Space        ; an action = SDL key names; replaces that action's keys
+```
+
+The keyboard drives pad 1 next to the first gamepad: arrows (D-pad),
+Z cross, X circle, C square, V triangle, Q/E L1/R1, 1/3 L2/R2, F/H L3/R3,
+Return start, Backspace select, WASD the left stick and IJKL the right. The
+actions are `up down left right cross circle square triangle l1 r1 l2 r2 l3
+r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+`. A second gamepad is pad 2.
+
+## Start-up and the main loop
+
+`src/port/main.cpp` is the executable's `main`. In order: `PathsConsumeArgs`
+takes `--data`/`--save` out of argv; the other options are parsed; the data
+directory is checked; `ConfigLoad` reads `config.ini`; `WindowInit` opens the
+window (size and fullscreen from the config, offscreen when headless);
+`InputInit`; `gfx::RendererInit` with the config's present mode, the pipeline
+cache at `<save>/pipeline_cache.bin` and a progress callback that prints
+`compiling shaders n/total` at quarters; `AudioOutputStart` pulls
+`audio::DefaultMixer()` at its rate with the config's master gain; the clock
+gets the config's tick rate (unbounded when headless); a pump hook is
+installed that pumps window events (a close request stops the game) and
+samples input; then `RunGame`. After it returns: the screenshot, then
+`AudioOutputStop`, `InputShutdown`, `RendererShutdown`, `WindowShutdown`.
+`main.cpp` also forwards the names MWCC gives the calls in retail `main`
+(below).
+
+`RunGame` (`src/port/gameloop.cpp`) is retail `main` (`src/ps2/main.cpp`)
+with the hardware taken out, line for line otherwise:
+
+- `init_all` is reduced to `InitCDFile`, `MGInit`, `InitMemoryFile`,
+  `BufferAllClear`, `InitReadBG`: no IOP reboot or module loads, no
+  `sceCdInit`/`sceCdMmode`/`sceFsReset`, no `DevInit` DMA reset or channel
+  handles. `mwInit` is not called; the host has run the static constructors.
+- Every `sceGsSyncV` wait is `ClockSyncV()`; Timer 0, the DMA channel kick,
+  `sceGsSyncPath` and the `FlushCache` calls go.
+- The two uploads of `My_dma_start0` (the GS environment chain) and
+  `Vu_progmain` (VU1 microcode) around a mode's `Init` become `LoadDrawEnv`,
+  which sets the one register of `My_DrawEnv` the renderer still reads,
+  TEXA (TA0 0x80, AEM 1, TA1 0x80).
+- Per frame, `SetEnv` (replaced in `gameloop.cpp`) resets TEST, ZBUF and
+  ALPHA to mglib's shadows as retail's A+D packet did, and the window
+  rectangle to the full frame, which `sceGsSwapDBuff`'s draw environment did;
+  TEX1 is read where a texture is bound and CLAMP is the sampler's.
+  `sceVif1PkCall(Vu_prog0f)` goes.
+- `save_data` and `config_data` are static in retail's unit, so `RunGame` has
+  its own and reaches the rest through `SaveData`, as retail does.
+- Mode 12's loop reads a register nothing set; the port's zero keeps it
+  running.
+- The transitions are `GameApplyLoopResult` (what each mode's loop result
+  does) and `GameFollowMapJump` (`NextMapNo` into the next mode), exported for
+  the tests.
+- `--frames` counts frames of this loop (one per `MGEndFrame` it calls);
+  `RunGame` returns `kExitOk` at the top of the next frame once the budget
+  is spent or a stop was requested, outside any frame, so the last frame can
+  be read back. Presents a mode makes itself (`EditLoop`'s fades) and the
+  loading screen's are not counted.
+
+Overlays are not re-initialised: `TITLE.BIN` and `DUN.BIN` are linked in
+once and `LoadOverlay` does nothing, where retail reloaded the overlay's
+data, zeroed its `.bss` and re-ran its static constructors on every switch
+between the title and the dungeon. A mode that relies on fresh overlay
+globals is a known gap (below).
 
 ## Platform
 
-`src/port/platform` and `src/port/gfx` are the host side. They build without
-`port.h` or the game's include paths, so no game header or SDK type can reach
-them:
+`src/port/platform`, `src/port/gfx` and `src/port/audio` are the host side.
+They build as `dc_host` without `port.h` or the game's include paths, so no
+game header or SDK type reaches them. Game types meet them only in the
+replacement units.
 
-- `platform/window.cpp` starts SDL3, opens a resizable window (1280x960 unless
-  `--width`/`--height` say otherwise; `--headless` uses SDL's offscreen
-  driver) and pumps its events.
-- `gfx/` is a Vulkan 1.4 renderer: one graphics queue that presents, two
-  frames in flight, dynamic rendering, synchronization2, bindless textures,
-  every pipeline created at start-up against `save/pipeline_cache.bin`, and an
-  immediate draw API in the game's 640x480 logical space and in 3D.
-  `src/port/gfx/README.md` is its contract.
+- **Window** (`platform/window`): SDL3 window, resizable, high pixel density,
+  optionally fullscreen; `WindowPollEvents` pumps events, reports a close,
+  and forwards pixel-size changes to the renderer. `WindowAddEventHook` lets
+  input see every event.
+- **Input** (`platform/input`, `sce/libpad.cpp`): two DualShock 2-shaped
+  pads from SDL gamepads and the keyboard, with rumble. libpad's nine
+  functions read them: buttons active-low in bytes 2-3, sticks in 4-7,
+  `scePadGetState` stable, `scePadInfoMode` DualShock. `InputSetOverride`
+  replaces a pad for tests.
+- **Clock** (`platform/clock`): the stand-in for the VSync interrupt. One
+  tick is one VSync, the count is the number of tick periods since the
+  anchor, and the game's tick callback (`PlayTimeCount` or the loading
+  screen) runs inside `ClockPump`, once per elapsed tick. Every retail spin
+  on the interrupt pumps (`sceGsSyncV`, `WaitVSync`, `check_now_loading`,
+  `wait_now_loading_vsync`, `ReadBGSync`, `MGEndFrame`). After the ticks a
+  pump runs the pump hooks (the host's, added with `ClockAddPumpHook`: the
+  window and input) and then the single idle hook (the game side's,
+  `ClockSetIdleHook`: the loading screen's presenter), so spin-waits keep the
+  window alive and the pads fresh whatever the loading screen does.
+  `sceGsSyncV` returns the parity of the tick, as the interlaced field
+  alternated: `CGamePad::Init` and `main` spin until it reads 1. The tick
+  rate is a setting (50 Hz by default); presentation runs at it.
+- **Config** (`platform/config`) and **paths** (`platform/paths`): above.
+- **Audio output** (`platform/audio`): an SDL3 float stereo stream that pulls
+  frames from a render callback on SDL's audio thread; `DC_AUDIO=off` or no
+  device leaves the game silent.
 
-`MGBeginFrame` and `MGEndFrame` (`src/port/mglib.cpp`) begin and present a
-frame. `--frames N` exits after N frames and `--screenshot PATH` writes the
-last one as a PNG. The Khronos validation layer is enabled when it is
-installed, always in a build without `NDEBUG` and otherwise when
-`DC_VULKAN_VALIDATION` is set.
+## Rendering
+
+`src/port/gfx` is a Vulkan 1.4 renderer: one graphics queue that presents,
+two frames in flight, dynamic rendering, synchronization2, a bindless texture
+array, all 504 pipelines created at start-up against the on-disk pipeline
+cache, reverse-Z D32 depth, an immediate 2D API in the game's 640x480 logical
+space (letterboxed on the window) and a mesh API in 3D, named render targets,
+copies, blits, depth readback and screenshots. `src/port/gfx/README.md` is its
+contract: spaces, colour and alpha units, how the GS blend equation maps to
+Vulkan blending and where it does not.
+
+The game's drawing reaches it through replacement units, in four groups that
+share small internal headers:
+
+- **`mglib_port.hpp`** (`mglib.cpp`, `mglib_port.cpp`, `mglib_math.cpp`):
+  every `MG*` function. The GS register shadows the game sets
+  (`MGSetGsTEST/ZBUF/ALPHA/TEXA`, `MGSetWindowRect`, and the clears, fills
+  and stretches that leave them set) become the current `gfx::DrawState`
+  (`MGPortDrawState`); GS 12.4 coordinates and 24-bit Z convert into logical
+  space and reverse-Z (`MGPortLogicalX/Y`, `MGPortDepth`); TBP0 0 and 0xFFF
+  stand for the frame and the previous frame. The VSync group (`MGInit`,
+  `MGInitVSyncCallBack`, `MGGetVSyncCount`, `MGBeginFrame`, `MGEndFrame`,
+  `MGFlipWaitVSync`) sits on the clock; `MGEndFrame` presents and keeps
+  retail's "do not wait twice" rule. Pick-Z reads the depth buffer.
+  `MGSetRenderInfo` keeps retail's matrices; the field squeeze is undone
+  where the game's rects reach the renderer.
+- **`texture_port.hpp`** (`texture.cpp`, `texture_port.cpp`,
+  `textureanime.cpp`, `nowload.cpp`): TIM2 (IDTEX4, IDTEX8, RGB16/24/32,
+  mip levels, the IM2 swizzle undone) decoded into renderer textures with
+  index textures and 256-entry palettes; a registry keyed by unique TBP0/CBP
+  values so any TEX0 the game hands around resolves to one image;
+  placeholder names (`#name#w#h#bpp`) become named render targets; texture
+  animation and CLUT swaps are copies. The loading screen draws from the
+  idle hook, never inside a frame the game has open.
+- **`draw2d_port.hpp`** (`snd.cpp`, `gameutil_sprite.cpp`, `clsmes.cpp`,
+  `spritetable.cpp`, `dispctrl.cpp`, `editloop_sprite.cpp`): the sprite
+  primitives, `SetClut`, message windows, sprite tables and the debug font
+  as glyph quads, mapped into the current target (render targets hold field
+  rows).
+- **`draw3d.hpp`** (`frame_draw.cpp`, `visualvu1.cpp`, `visualshadow.cpp`,
+  `cloth_draw.cpp`, `water_draw.cpp`, the `*_math.cpp` units): MDT data built
+  into meshes keyed by the game's vu_data block (the record dies with the
+  block), `DrawVu1` submitting meshes with the constants the VU1 header
+  carried (matrices, four lights, ambient, material, fog), shadows into
+  `shadow_buf` and composited, cloth rebuilt per draw, water sampling the
+  last frame copy. The assembly functions (`MulMatrix`, `MotionProc2`,
+  `CCloth::Step`, the shadow CLIP builder and the rest) are C++ with the
+  lanes retail writes.
+- The long tail on top of those: `dun/gameloop.cpp` (`DunMainDraw`,
+  `LoaderLoop`), `effectmacro.cpp`, `runeffect.cpp`, `fireomni.cpp`,
+  `fishing.cpp`, `shot_freefuncs.cpp`, `battlemenu.cpp`, `clothread.cpp`,
+  `langset.cpp`.
+
+## Audio
+
+All music and effects are sequenced. `src/port/audio` decodes VAG ADPCM,
+parses HD banks and SQ sequences, and runs a sixteen-port MIDI player into a
+48-voice synth with envelopes and an approximated reverb (`audio::Mixer`).
+`src/port/sound.cpp` replaces `CSound` (bank and sequence transfers, play,
+stop, fades, volumes, effect messages) on that mixer, and
+`gameutil_midi.cpp` answers the EZMIDI RPC commands for anything that still
+sends them. `main` starts the output; `CSound::Init` starts it too if it is
+not running.
+
+## Saves and host files
+
+`sce/libmc.cpp` implements libmc on `<save>/mc0/` and `<save>/mc1/`, a
+directory per card, with the game's own directory and file names. Every
+command finishes inside the call that issues it, and the next `sceMcSync`
+reports the function number and result the game checks. The save itself is
+retail's 0x136A7-byte image. `sce/sifdev.cpp` implements `sceOpen`,
+`sceRead`, `sceWrite`, `sceLseek` and `sceClose` on `<save>/host0/` with the
+device prefix stripped (the debug dump `edit.cpp` writes to `host0:`), and
+`WriteFile` writes there too.
+
+## Arenas
+
+`CDataAlloc2<1>::Alloc/Alloc64/Align64` and the carving in
+`InitializeDataBuffer`, `BufferAllClear`, `SetDataBuffer` and
+`SetPacketReadBuffer` (`dataset.cpp`, `dataalloc2_1.cpp`) give each arena its
+own block below 2 GiB (the game casts arena pointers to `int`) sized at four
+times the quadwords retail asked for (`kArenaHeadroom`, `src/port/arena.hpp`),
+because the game sizes allocations with the host's larger `sizeof`s. A guard
+page follows each block, and an overflow aborts naming the arena instead of
+retail's endless loop.
+
+## What is still a stub
+
+`src/port/stubs/sce/` holds the only stubs left: libdma, libgraph (all but
+`sceGsSyncV`, which is `src/port/sce/libgraph.cpp`) and libpkt. Each calls
+`PS2_UNIMPLEMENTED()` (`include/port/port.h`), which prints the function,
+file and line and aborts. They stay stubs by design: the port does not
+emulate DMA chains, VIF/GIF packets or the GS, so a call that reaches one
+is a drawing path no replacement unit covers yet.
+
+Everything else from the SDK is implemented in `src/port/sce/`: libvu0 in
+C++ (static constructors call it before `main`), libpad, libmc, sifdev,
+eekernel (`FlushCache` and friends do nothing, `Exit` exits), libcdvd's
+`sceCdInit`/`sceCdMmode` and sifrpc's IOP boot and module loads (no-ops).
+The Metrowerks runtime calls are in `src/port/runtime.cpp`: `mwInit` and
+`LoadOverlay` do nothing, `mwLoadOverlay` succeeds, `__assert` prints and
+exits with status 4, `exit__2` exits.
+
+Of the 39 stubbed functions, 8 are still linked into `darkcloud`
+(`--gc-sections` keeps only what `main` reaches): `sceVif1PkAddGsAD`,
+`sceVif1PkCall`, `sceVif1PkCloseDirectCode`, `sceVif1PkCloseGifTag`,
+`sceVif1PkCnt`, `sceVif1PkOpenDirectCode`, `sceVif1PkOpenGifTag`,
+`sceVif1PkTerminate`. These are the functions in the final link that call
+one of them directly (from `llvm-objdump -d build/pc/darkcloud`, callers
+mapped to their source with `llvm-addr2line`):
+
+- `src/ps2/edit.cpp`: `DrawLine(int*, int*, unsigned char, unsigned char, unsigned char, unsigned char)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
+- `src/ps2/editloop.cpp`: `EditLoop()` -> sceVif1PkCall
+- `src/ps2/title/op_a.cpp`: `setCloudTexScroll()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
+- `src/ps2/title/op_b.cpp`: `FaceChange(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
+- `src/ps2/title/op_b.cpp`: `setTexAnime()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
+- `src/ps2/title/op_c.cpp`: `FaceChangeC(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
+- `src/ps2/title/op_c.cpp`: `setTexAnim()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
+- `src/ps2/title/op_c.cpp`: `setTexScroll()` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag, sceVif1PkTerminate
+- `src/ps2/title/op_d.cpp`: `FaceChangeD(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
+- `src/ps2/title/rushmovi.cpp`: `DrawProcess()` -> sceVif1PkCall, sceVif1PkTerminate
+- `src/ps2/title/rushmovi.cpp`: `FaceChangeMovie(int)` -> sceVif1PkAddGsAD, sceVif1PkCloseDirectCode, sceVif1PkCloseGifTag, sceVif1PkCnt, sceVif1PkOpenDirectCode, sceVif1PkOpenGifTag
+- `src/ps2/title/titleloop.cpp`: `TitleLoop()` -> sceVif1PkCall
+Static helpers inlined into a caller are listed under that caller. To
+recompute the list, disassemble `build/pc/darkcloud`, collect the functions
+with a `call` to a stub's address, and map them back to their source.
+
+At the last count the final link held 198 `src/ps2` definitions displaced
+by a strong one in `src/port` and 3,982 that survive as the game's own
+(`nm` of `dc_ps2.o`'s weak definitions against the port's objects and the
+executable's symbols).
+
+## Known gaps
+
+- **Rendering approximations.** Shadows are drawn flat into `shadow_buf` and
+  composited, not depth-tested volumes. DATE/DATM (destination alpha test,
+  `MakeFukidashi`'s mask) has no equivalent without a stencil. TEX1 LOD (L,
+  K) is ignored in favour of standard trilinear filtering. The GS blends that
+  need a factor above 1 or a destination scaled past 1 are approximated
+  (`src/port/gfx/README.md`, "Blending").
+- **Overlay re-initialisation.** Retail reloads `TITLE.BIN` or `DUN.BIN` and
+  re-runs its constructors on every switch; the port links both once and
+  runs nothing again. Globals a mode expects fresh keep the previous visit's
+  values.
+- **Arena headroom** is four times retail's request across the board, a
+  stopgap rather than measured peaks.
+- **Title overlay layouts.** Some title units declare another unit's class
+  themselves with the PS2 layout: rushmovi's `OBJ_ANIME_SEQ` is 0x90 bytes
+  while `objanime.hpp`'s holds ten `CFrame *` and grows on the host, so
+  `ObjAnimePlay(&OP_AnimeSeq[i])` strides wrongly and faults; op_c's `CWater`
+  is smaller than the host's. These need the units' callers replaced.
+- `InitCDFile`'s check of the files against `data.hd2` stops at record 5425
+  of the PAL index ("unusable path") and so checks nothing on real data.
+- The stub list above: every function in it aborts the first time it runs.
+
+## How far the game runs
+
+With the PAL data extracted and no input, `darkcloud --headless --frames 120`
+boots, compiles the pipelines, runs the 60-tick warm-up and the loading
+screen, draws the language select (English highlighted) and exits 0 with
+that frame in the screenshot. With Cross pressed it goes on through the
+memory card check to the attract movie, whose first frame faults in
+`ObjAnimePlay` on rushmovi's `OBJ_ANIME_SEQ` layout (above).
 
 ## Layout
 
@@ -48,7 +335,14 @@ The root `CMakeLists.txt` only picks the platform:
   assembly (below).
   `src/ps2/CMakeLists.txt` (with `src/ps2/cmake/`) is the PS2 build.
 - `src/port` is code only the port compiles. `src/port/CMakeLists.txt` is the
-  port's build.
+  port's build. `main.cpp` and `gameloop.cpp` start the game;
+  `platform/`, `gfx/` and `audio/` are the host side; `sce/` implements the
+  SDK; `stubs/sce/` holds the stubs left; `<unit>.cpp` (and `dun/`) replace
+  functions of `src/ps2/<unit>.cpp`, sometimes split as `<unit>_math.cpp`,
+  `<unit>_draw.cpp` or `<unit>_port.cpp`; `linknames.cpp` supplies link-time
+  names (below); `tests/` is `darkcloud_tests`, one ctest case per
+  `DC_TEST`.
+- `tools/dcdata` is the data extraction tool.
 - `include/ps2` holds the game's headers and, under `include/ps2/sce` and
   `include/ps2/std`, the SDK and standard headers MWCC compiles against. Both
   builds use them.
@@ -76,60 +370,18 @@ convention it goes in the file that mirrors its unit: `src/port/mglib.cpp`
 holds the replacements for `src/ps2/mglib.cpp`. A `static` function cannot be
 replaced this way; it keeps the body `src/ps2` gives it.
 
-## What is stubbed
-
-A stub calls `PS2_UNIMPLEMENTED()` (`include/port/port.h`), which
-prints the function, file and line, then aborts. Every stub the port defines
-is in `src/port/stubs/`, in the file named after the source it replaces:
-`src/port/stubs/<unit>.cpp` for a unit of `src/ps2`, and
-`src/port/stubs/sce/<library>.cpp` for a library of `include/ps2/sce`. The
-stubs are:
-
-- **The SDK.** Every function declared in `include/ps2/sce`, except libvu0,
-  which is implemented (below).
-- **The hardware.** Functions that read or write PS2 registers or the
-  scratchpad directly: `VSyncCallBack_Load` and
-  `CVisualShadow::CreateVUdataShadowCLIP`. `main`, `MGBeginFrame` and
-  `MGEndFrame` are replaced by the platform layer instead.
-- **The Metrowerks runtime.** The C++ runtime and overlay loader at the top of
-  `src/ps2/mathutil.cpp` compile, but `mwInit`, the one entry point the game
-  calls, is stubbed.
-
-- **MWCC inline assembly.** Every function in `src/ps2` that is written in
-  MIPS assembly, in whole or in part: `VectorMax`, `MulMatrix`,
-  `InitializeDataBuffer`, the `Align64` functions, `vuabs`, the frame matrix
-  helpers and the rest.
-
-Clang cannot compile MWCC's MIPS `asm {}` blocks, so each function that uses
-one sits behind `#ifndef PORT` in `src/ps2`; the port defines `PORT` and gets
-the function from `src/port/stubs/<unit>.cpp` instead. The directives take the place of the
-blank lines around the function, so no line in the unit moves. A `static` one
-is still called from its own unit, so `include/port/stubs/<unit>.hpp` declares
-it (below).
-Two that share a name across units (`vuabs`, `StretchBind2`, `vu_hold_box`,
-`vu_box_missed`) share one stub. `CDataAlloc2<1>::CDataAlloc2()`, which only
-delegates, is implemented in `src/port/dataalloc.cpp` rather than stubbed.
-
-`src/port/runtime.cpp` implements, rather than stubs, the runtime calls with a
-host equivalent: `__assert` (in its Metrowerks argument order) and `exit__2`.
-
-`src/port/sce/libvu0.cpp` implements libvu0 in C++, since static constructors
-call it before `main`. Each function writes the lanes the library's VU0 code
-writes (`sceVu0Normalize` and `sceVu0OuterProduct` zero w, the `XYZ` variants
-keep it, `sceVu0RotMatrix` applies Z, then Y, then X). The rotations use the
-host's `sin` and `cos` rather than the library's polynomial, and
-`sceVpu0Reset` does nothing.
 
 ## Per-unit adjustments
 
 `include/port/stubs/<unit>.hpp`, if it exists, is included ahead of
-`src/ps2/<unit>.cpp`, after `port.h`, and nothing else. It declares what the
-port defines in place of code `PORT` leaves out, and supplies or renames what
-the unit takes from MWCC alone:
+`src/ps2/<unit>.cpp`, after `port.h`, and nothing else. Only the port's build
+sees `include/port`; the PS2 build compiles nothing differently. It declares
+what the port defines in place of code `PORT` leaves out, and supplies or
+renames what the unit takes from MWCC or from the PS2 link alone:
 
 - `bound`, `cloth`, `collisionmdt`, `frame`, `gameutil`, `mglib`, `visualvu1`
   and `water` get declarations of their `static` assembly functions, which
-  `src/port/stubs/` defines.
+  the port defines.
 - `battlemenu` and `editground` pass each temporary `CRect_i_` as an lvalue
   (`Ps2Lvalue`, `include/port/port.h`): MWCC binds a temporary to the non-const
   references of `DrawMenuColorGradation` and `CEditGround::CheckPartsRect`.
@@ -138,6 +390,57 @@ the unit takes from MWCC alone:
 - `mathutil` gets the Metrowerks runtime's own `std::exception` and
   `std::bad_exception` renamed apart from the host library's, and
   `__exception_magic`, which MWCC provides inside an exception handler.
+- `menu_save` and `memcard` export statics the other calls: memcard's
+  `SaveMenuFunc` table names menu_save's eighteen `SaveMenuKey*` steps and
+  menu_save calls memcard's `ExitSaveSelect`. Each header defines a global
+  forwarder under the external name (an asm label), which also keeps clang
+  from dropping the unused static.
+- `title/rushmovi` declares title.cpp's `DataLoad`, `DrawProcA`..`I` and
+  `DrawProcTitle` static; its header defines those statics as forwarders to
+  the global ones.
+- The per-object renames below.
+
+## Names the PS2 build renames
+
+`main.cpp` calls other units through the names MWCC gives them
+(`init_all__Fv`) and calls the overlays' entry points through their retail
+addresses (`func_01DAC1C0`). `src/port/main.cpp` forwards each one to the real
+function.
+
+The PS2 link binds some names through `config/pal/object_fixups.json` and the
+linker script rather than through the source. The port reproduces each:
+
+- **Per-object renames**, by `#define` in the unit's header: the opening
+  scenes' four `FaceChange(int)` become op_b's `FaceChange`, op_c's
+  `FaceChangeC`, op_d's `FaceChangeD` and rushmovi's `FaceChangeMovie`, the
+  names their neighbours call them by; the dungeon's `MainDraw` and
+  `MoveChara` become `DunMainDraw` and `DunMoveChara`, apart from editloop's
+  (`src/port/dun/gameloop.cpp` replaces `DunMainDraw`); edit_in's `Chara`,
+  `MainCamera`, `NowCamera`, `TalkCamera`, `NowTime`, `TexAnimeData`,
+  `camera_dist_mode`, `door_open_cnt`, `fix_chara_pos`, `fix_chara_rot`,
+  `goto_menu`, `goto_return_menu`, `key_counter` and `loop_counter`, which it
+  redeclares `static` after a header declares them `extern` (MWCC makes them
+  file-local, clang's `-fms-extensions` keeps them global), become
+  `EditIn_*`.
+- **Pooled literals under extern names** (`BtAtraShortCharaFile`,
+  `MdsExtension`, `gamemode_empty_string`, `allmenu_mes` and six more) and
+  **the title overlay's own `CRect<int>`** spelling of the rectangle in
+  `MGFillBox`, `MGMoveImage`, `MGStretchMoveImage`, `MoveImageTest` and the
+  `set2DSprite` overloads, plus op_c's `CWater::DrawVu1` and main's
+  `MAP_NPC_MODEL::operator=`: weak definitions and forwarders in
+  `src/port/linknames.cpp`.
+- **Aliases**, by `--defsym` in `src/port/CMakeLists.txt`:
+  `ItemPutListTbl12_bytes` = `ItemPutListTbl12`, `draw_rect` =
+  `draw_rect_store`, `WorkBuffer__2` = `WorkBuffer`, and `EditGaijiTbl` =
+  `GaijiDataTbl + 0x601C`. The linker script places `EditGaijiTbl` inside
+  `EditPartsData`, but the codes `clsmes.cpp` indexes it with (-0x300 and
+  up) only ever land on the last word of a `GaijiDataTbl` entry, and
+  `GaijiDataTbl` keeps its layout on the host where `EditPartsData`'s
+  pointers grow.
+
+Data the title overlay's units type themselves with PS2 layouts (op_c's own
+`CWater`, rushmovi's own `OBJ_ANIME_SEQ`) is not reconciled: see the known
+gaps.
 
 ## Game headers
 
@@ -149,27 +452,6 @@ the unit takes from MWCC alone:
 - `common.h` defines `STATIC_ASSERT`, which checks the PS2's layouts. `port.h`
   includes it and redefines the macro to check nothing.
 
-## Names the PS2 build renames
-
-`main.cpp` calls other units through the names MWCC gives them
-(`init_all__Fv`) and calls the overlays' entry points through their retail
-addresses (`func_01DAC1C0`). `src/port/main.cpp` forwards each one to the real
-function. `ItemPutListTbl12_bytes` is a second name for `ItemPutListTbl12`,
-given at link time with `--defsym`.
-
-The PS2 build tells apart a few same-named definitions in different units by
-renaming them per object (`config/*/object_fixups.json`). The port has no
-equivalent yet, so the merge keeps the first definition of each name:
-
-- `FaceChange(int)` in title's op_b, op_c, op_d and rushmovi.
-- `MainDraw()` and `MoveChara()` in editloop and in the DUN overlay's
-  gameloop.
-- `Chara`, `MainCamera`, `NowCamera`, `TalkCamera`, `NowTime`, `TexAnimeData`,
-  `camera_dist_mode`, `door_open_cnt`, `fix_chara_pos`, `fix_chara_rot`,
-  `goto_menu`, `goto_return_menu`, `key_counter` and `loop_counter` in edit_in
-  and editloop. edit_in redeclares them `static` after a header declares them
-  `extern`. MWCC makes them file-local; clang's `-fms-extensions` keeps them
-  global.
 
 ## Keeping the PS2 build matching
 
@@ -250,7 +532,10 @@ as the game's `strcasecmp` does, so the case on disk does not matter.
 `src/port/platform/paths.cpp` finds the data directory from `--data <dir>`,
 then `DC_DATA`, then `data/` in the working directory, then `data/` beside
 the executable. The save directory comes from `--save`, `DC_SAVE`, or
-`save/` in the same places, and is created when first used. `InitCDFile`
-stops the game, naming the directory and the `dcdata` command, when the
-data directory is missing or empty, and warns when `data.hd2` lists a file
-that is missing or the wrong size. `WriteFile` writes under `save/host0/`.
+`save/` in the same places, and is created when first used. `main` stops
+with status 3 and one line naming the directory and the `dcdata` command
+when the data directory is missing or holds no file, before anything else
+starts; `InitCDFile` would abort on the same conditions. `InitCDFile` warns
+when `data.hd2` lists a file that is missing or the wrong size. Files the
+game looks for and does not find behave as on the disc: `LoadFile2` returns
+0 and `LoadFile` asserts, naming the file (status 4).
