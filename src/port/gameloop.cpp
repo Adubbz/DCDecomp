@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <charconv>
+#include <cstdio>
 #include <cstring>
 #include <string_view>
 #include <thread>
@@ -23,6 +24,7 @@
 #include "nowload.hpp"
 #include "platform/clock.hpp"
 #include "platform/config.hpp"
+#include "platform/input.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "title/opening.hpp"
@@ -435,6 +437,23 @@ bool GameSetJump(const char *spec) {
     return true;
 }
 
+// Retail PAL: pad 2's four shoulder buttons held at any tick of the warm-up.
+bool GameDebugRequestedAtBoot() {
+    bool key = InputHostPressed(InputHostAction::DebugToggle);
+    return DebugButtonsHeld() || InputHostHeld(InputHostAction::DebugToggle) || key;
+}
+
+// Retail PAL tests pad 2's four shoulder buttons with R3's press edge after every frame. The host key
+// is not pad 2, so it works where KeyLock2 has blanked pad 2 (a boot without debug mode).
+void GameCheckDebugToggle() {
+    bool pad2 = DebugButtonsHeld() && GamePad.Down2(PAD_R3) != 0;
+    if (!pad2 && !InputHostPressed(InputHostAction::DebugToggle)) {
+        return;
+    }
+    DebugMode = !DebugMode;
+    std::fprintf(stderr, "debug mode %s\n", DebugMode ? "on" : "off");
+}
+
 void GameSetFastLoad(bool fast) {
     g_fast_load = fast;
 }
@@ -572,12 +591,13 @@ int RunGame(int argc, char **argv) {
     for (int tick = 0; tick < kWarmUpTicks && !g_jump.set; ++tick) {
         ClockSyncV();
         GamePad.UpDate();
-        // Holding the four shoulder buttons on pad 2 through the first second turns on debug mode.
-        if (DebugButtonsHeld()) {
+        if (GameDebugRequestedAtBoot()) {
             DebugMode = 1;
         }
     }
-    if (!DebugMode) {
+    if (DebugMode) {
+        std::fprintf(stderr, "debug mode on: the developer menu\n");
+    } else {
         MapNo = -1;
         mode = GAME_MODE_LANGUAGE;
         GamePad.KeyLock2(1);
@@ -659,9 +679,7 @@ int RunGame(int argc, char **argv) {
             MGEndFrame();
             ++g_frames;
 
-            if (DebugButtonsHeld() && GamePad.Down2(PAD_R3) != 0) {
-                DebugMode = !DebugMode;
-            }
+            GameCheckDebugToggle();
         } while (result == 0);
 
         MGBeginFrame();

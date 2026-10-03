@@ -27,6 +27,14 @@ bool GameSetJump(const char *spec);
 void GameSetFastLoad(bool fast);
 bool GameFastLoad();
 
+// DebugMode from the pads and the host's debug key ([input] debug_toggle), factored out of RunGame
+// for the tests. GameDebugRequestedAtBoot is the warm-up's test, once per tick: pad 2's L1+R1+L2+R2
+// held, as retail PAL, or the key held or pressed since the last test. GameCheckDebugToggle runs after
+// every frame of the main loop and flips DebugMode on pad 2's L1+R1+L2+R2 held with R3 pressed, as
+// retail PAL, or on a press of the key.
+bool GameDebugRequestedAtBoot();
+void GameCheckDebugToggle();
+
 // Honoured at the next frame boundary of the main loop.
 void GameRequestStop();
 
