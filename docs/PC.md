@@ -69,14 +69,81 @@ fullscreen = false
 [audio]
 master_volume = 1.0     ; 0 to 1
 [input]
-cross = Z, Space        ; an action = SDL key names; replaces that action's keys
+cross = Mouse1, Space   ; an action = its keys and mouse buttons; replaces the defaults
+ry = -MouseY            ; lx ly rx ry take MouseX or MouseY, with a sign and a scale (MouseX*0.5)
+mouse_sensitivity = 0.1 ; right-stick deflection (1 = full) per pixel moved in one tick
+mouse_invert_y = false
+mouse_capture = true    ; SDL relative mouse mode while the window has focus
+mouse_release = Escape  ; keys that give the cursor back in a window (empty: none)
 ```
 
-The keyboard drives pad 1 next to the first gamepad: arrows (D-pad),
-Z cross, X circle, C square, V triangle, Q/E L1/R1, 1/3 L2/R2, F/H L3/R3,
-Return start, Backspace select, WASD the left stick and IJKL the right. The
-actions are `up down left right cross circle square triangle l1 r1 l2 r2 l3
-r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+`. A second gamepad is pad 2.
+### Keyboard and mouse
+
+The keyboard and the mouse drive pad 1 next to the first gamepad
+(`src/port/platform/input.cpp`, `mouse.cpp`); a second gamepad is pad 2.
+The defaults, and what the game does with each button (PAL, English: the
+dungeon's `PadInput_OK` is cross and `PadInput_NO` circle,
+`src/ps2/dun/gameloop.cpp:1666`):
+
+| Input | Pad | What the game does with it |
+|---|---|---|
+| WASD | left stick | walk (`dun/gameloop.cpp:3006`, the town's `EdMoveChara`); menus with `MenuModeOn` turn it into the d-pad; d-pad as well where nothing reads the stick (below) |
+| mouse motion | right stick | camera: `AddAngle(0.04 * -GetRXf())`, `AddHeight(-GetRYf())` (`dun/gameloop.cpp:4327`; the town's `MoveCamera`, `editloop.cpp:3793`) |
+| left click, Space | cross | attack, open, talk (`dun/gameloop.cpp:3585`, `editloop.cpp:3885`); confirm |
+| right click, X | R1 | held while locked on: guard (`dun/gameloop.cpp:3347`, `guard_mode = 5` at :3374); unlocked, turns the camera (:4338) |
+| F | circle | lock on to the nearest enemy or let go; with none in range, swing the camera behind the character (`dun/gameloop.cpp:3243`); back in menus |
+| E | square | use the active item (`dun/gameloop.cpp:3775`); held, a feather's speed boost (:3745) |
+| Tab | triangle | the menu (`dun/gameloop.cpp:3134`, `editloop.cpp:1824`) |
+| Z | L1 | next lock-on target while locked on (`dun/gameloop.cpp:3260`); otherwise turns the camera (:4342) |
+| Q | L2 | held, the camera behind the character (`dun/gameloop.cpp:4347`) |
+| R | R2 | first-person look (`dun/gameloop.cpp:4354`) |
+| C, Backspace | select | switch character (`dun/gameloop.cpp:3185`) |
+| Return | start | pause (`dun/gameloop.cpp:3045`); the title's prompts |
+| arrows | d-pad | left and right pick the active item in the dungeon (`dun/gameloop.cpp:3218`); menus |
+| V; middle click, B | L3; R3 | debug and editor functions only |
+| IJKL | right stick | the camera from the keyboard |
+
+The square button is not a guard in this game: the guard is R1 held while
+locked on, so right click is R1. The camera turns the way the view moves on
+PC: the follow camera sits at `follow + distance * (sin a, cos a)`
+(`camerafollow.cpp`) and the stick's right is the screen's right
+(`move_x = lx cos a + ly sin a`), so a positive RX, which lowers `a`, turns
+the view right; a positive RY lowers the camera, which looks up, so the
+default `ry = -MouseY` makes mouse up look up and `mouse_invert_y` flips it.
+
+The actions are `up down left right cross circle square triangle l1 r1 l2
+r2 l3 r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+ lx ly rx ry`. Keys are
+SDL names (any case, `_` for a space); `Mouse1` to `Mouse5` are left, right,
+middle and the two side buttons. A gamepad axis deflected past the game's
+dead zone wins over the keyboard and mouse on that axis; buttons add.
+
+- **Sticks.** A key is full deflection; two keys at right angles make a
+  diagonal of the same length. Values go through the inverse of the game's
+  `AxisCalibration` (a dead zone of 49 above and 50 below the centre, then
+  78 steps for 128), so a deflection reaches the game exactly and small
+  mouse motion is not lost in the dead zone.
+- **Mouse.** The right stick at each pad read is the motion since the
+  previous read, divided by the ticks between them, times
+  `mouse_sensitivity` (0.1: ten pixels in one tick is full deflection,
+  0.04 radians of dungeon camera per frame). A mouse that stops reads
+  centred at the next read; motion during a load does not land at once.
+- **Capture.** With `mouse_capture`, SDL relative mode holds the cursor
+  while the window has focus. Losing focus releases it, and so does
+  `mouse_release` (Escape) when the window is not fullscreen; a click in
+  the window captures again and does nothing else. While released, motion
+  and clicks do not reach the game. Without capture they always do.
+- **WASD on the d-pad.** The developer menu (`MenuLoop`) and the dungeon
+  loader read only the d-pad and never call `MenuModeOn`; the dungeon reads
+  the d-pad to pick the active item while WASD walks. So the movement keys
+  also press the d-pad exactly when the game did not read pad 1's left
+  stick (`CGamePad::GetLX`/`GetLY`, also called by `GetLXf`, `AllOn` and
+  `UpDate`'s menu mode) between its last two pad reads.
+  `src/port/gamepad.cpp` replaces `pad_button_read` and `GetLX`/`GetLY`
+  with retail's bodies plus the notes the host needs. Menus with
+  `MenuModeOn(120)` (the title, the language select, the save screens, the
+  dungeon and town menus) read the stick, so the game's own conversion
+  turns a full WASD deflection (128) into the d-pad; a diagonal (91 per
+  axis) stays under their threshold, as a gamepad's does.
 
 ### Scripted input
 
@@ -84,13 +151,16 @@ r3 start select lx- lx+ ly- ly+ rx- rx+ ry- ry+`. A second gamepad is pad 2.
 a script, through `InputSetOverride`. Each line is
 
 ```
-<frame> [pad1|pad2] [button ...] [lx ly rx ry]
+<frame> [pad1|pad2] [button ...] [key:NAME ...] [mouseN ...] [mouse:DX,DY] [lx ly rx ry]
 ```
 
 and holds the named buttons (`cross circle square triangle start select l1
 r1 l2 r2 l3 r3 up down left right`, any case) and the four stick bytes
 (0-255, centred at 128 when left out) on that pad, pad 1 unless the line
-says `pad2`, from that frame until the pad's next line. A line with no
+says `pad2`, from that frame until the pad's next line. On pad 1 lines,
+`key:NAME` (an SDL key name, `_` for a space), `mouse1` to `mouse5` and
+`mouse:DX,DY` (pixels per tick) go through the keyboard and mouse bindings
+as live input does, d-pad rule included. A line with no
 button releases everything. Frames count the game's main loop as
 `--frames` does; frame 0 also covers the 60-tick warm-up and the loading
 screens before the first frame. `#` starts a comment; a pad's frames must
@@ -217,8 +287,9 @@ replacement units.
   optionally fullscreen; `WindowPollEvents` pumps events, reports a close,
   and forwards pixel-size changes to the renderer. `WindowAddEventHook` lets
   input see every event.
-- **Input** (`platform/input`, `sce/libpad.cpp`): two DualShock 2-shaped
-  pads from SDL gamepads and the keyboard, with rumble. libpad's nine
+- **Input** (`platform/input`, `platform/mouse`, `sce/libpad.cpp`,
+  `gamepad.cpp`): two DualShock 2-shaped pads from SDL gamepads, the
+  keyboard and the mouse, with rumble. libpad's nine
   functions read them: buttons active-low in bytes 2-3, sticks in 4-7,
   `scePadGetState` stable, `scePadInfoMode` DualShock. `InputSetOverride`
   replaces a pad for tests.
