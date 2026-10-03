@@ -17,13 +17,15 @@ namespace dc::test {
 
 // A headless window and renderer with validation on. Any validation message fails the test.
 struct GfxFixture {
-    explicit GfxFixture(int width = 640, int height = 480, float render_scale = 1.0f) {
+    explicit GfxFixture(int width = 640, int height = 480, float render_scale = 1.0f,
+                        bool dynamic_color_write_mask = true) {
         // Synchronization validation too, unless the environment already chose layer features.
         setenv("VK_LAYER_ENABLES", "VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT", 0);
         WindowInit(WindowConfig{width, height, true});
         gfx::RendererConfig config;
         config.validation = true;
         config.render_scale = render_scale;
+        config.dynamic_color_write_mask = dynamic_color_write_mask;
         config.pipeline_cache = std::filesystem::temp_directory_path() / "dc_gfx_test" / "pipeline_cache.bin";
         config.progress = [this](uint32_t done, uint32_t total) {
             progress_calls++;

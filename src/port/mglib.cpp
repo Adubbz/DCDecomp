@@ -48,10 +48,15 @@ u_long128          g_null_packet_words[4];
 unsigned int       g_draw_cursor[64];
 std::optional<int> g_pick_pending[16];
 
-gfx::TextureHandle g_shadow_target = gfx::kNullTexture;
-gfx::TextureHandle g_last_frame_copy = gfx::kNullTexture;
-gfx::TextureHandle g_shadow_previous = gfx::kMainTarget;
-u_long             g_shadow_tex0;
+gfx::TextureHandle  g_shadow_target = gfx::kNullTexture;
+gfx::TextureHandle  g_last_frame_copy = gfx::kNullTexture;
+gfx::TextureHandle  g_shadow_previous = gfx::kMainTarget;
+Draw3DShadowProgram g_shadow_program = Draw3DShadowProgram::Every;
+
+// Retail retargets FRAME_1 to the game's shadow_buf and keeps ZBUF, so the volumes count against
+// the scene's depth. The port's equivalent is a target of its own that shares the main depth
+// buffer; the game's shadow_buf is only ever read back by MGEndDrawShadow, which reads this.
+constexpr const char *kShadowTargetName = "shadow volumes";
 
 Draw3DTex0Resolver   g_tex0_resolver = nullptr;
 Draw3DHandleResolver g_handle_resolver = nullptr;
@@ -182,10 +187,11 @@ float Fog(float w) {
     return std::min(density, mgRenderInfo.fog_near);
 }
 
-void DrawShadowPass(CFrame *frame, float *position, float *normal, int pass) {
+void DrawShadowPass(CFrame *frame, float *position, float *normal, int pass, Draw3DShadowProgram program) {
     if (!frame) {
         return;
     }
+    g_shadow_program = program;
     sceVu0CopyVector(mgRenderInfo.shadow_point, position);
     sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
 
@@ -234,6 +240,10 @@ gfx::TextureHandle Draw3DLastFrameCopy() {
 
 bool Draw3DShadowTargetActive() {
     return g_shadow_target != gfx::kNullTexture;
+}
+
+Draw3DShadowProgram Draw3DCurrentShadowProgram() {
+    return g_shadow_program;
 }
 
 void Draw3DMul(float out[4][4], const float a[4][4], const float b[4][4]) {
@@ -949,15 +959,15 @@ void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
 // ---- Shadows ---------------------------------------------------------------------------------
 
 void MGDrawShadowFast(CFrame *frame, float *position, float *normal) {
-    DrawShadowPass(frame, position, normal, 1);
+    DrawShadowPass(frame, position, normal, 1, Draw3DShadowProgram::Every);
 }
 
 void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
-    DrawShadowPass(frame, position, normal, 1);
+    DrawShadowPass(frame, position, normal, 1, Draw3DShadowProgram::AwayFromLight);
 }
 
 void MGDrawShadow(CFrame *frame, float *position, float *normal) {
-    DrawShadowPass(frame, position, normal, 2);
+    DrawShadowPass(frame, position, normal, 2, Draw3DShadowProgram::Clipped);
 }
 
 void MGDrawShade(CFrame *frame) {
@@ -983,24 +993,9 @@ void MGDrawShade(CFrame *frame) {
     mgRenderInfo.shadow_pass = 0;
 }
 
-// The shadows go into the target the game names (a 24-bit copy of the frame's field), cleared
-// black; MGEndDrawShadow darkens the frame wherever they left anything that is not black.
+// Retail points FRAME_1 at shadow_buf and clears it black with a sprite, Z untouched; the volumes
+// then count into it against the scene's depth.
 void MGBeginDrawShadow(sceGsTex0 tex0) {
-    gfx::TextureHandle target = gfx::kNullTexture;
-    PortTextureRef     ref = Draw3DResolveTex0(*reinterpret_cast<u_long *>(&tex0));
-    if (ref.valid) {
-        std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(ref.binding.texture);
-        if (info && info->render_target && ref.binding.texture != gfx::kMainTarget &&
-            ref.binding.texture != gfx::kPreviousFrame) {
-            target = ref.binding.texture;
-        }
-    }
-    for (const char *name : {"shadow_buf", "shadow_buff"}) {
-        if (target == gfx::kNullTexture) {
-            target = gfx::FindNamedRenderTarget(name);
-        }
-    }
-
     sceGsTest test = mgPixelTest;
     test.bits.ate = 1;
     test.bits.aref = 0;
@@ -1013,23 +1008,25 @@ void MGBeginDrawShadow(sceGsTex0 tex0) {
     current.alpha = mgAlpha;
     current.test = test;
     current.zbuf = zbuf;
+    (void) tex0;
 
-    tex0.PSM = SCE_GS_PSMCT24;
-    g_shadow_tex0 = *reinterpret_cast<u_long *>(&tex0);
+    gfx::TextureHandle target = gfx::NamedRenderTarget(kShadowTargetName, 640, SCREEN_HEIGHT, false, true);
     if (target == gfx::kNullTexture) {
         g_shadow_target = gfx::kNullTexture;
         return;
     }
-    g_shadow_previous = gfx::CurrentRenderTarget();
+    if (g_shadow_target == gfx::kNullTexture) {
+        g_shadow_previous = gfx::CurrentRenderTarget();
+    }
     g_shadow_target = target;
     gfx::SetRenderTarget(target);
-    // An alpha-carrying target keeps the shadows in alpha too, as TEXA does for a 24-bit one.
-    uint8_t black[4] = {0, 0, 0, 0};
-    gfx::Clear(true, black, true, 0.0f);
+    uint8_t black[4] = {0, 0, 0, 0x80};
+    gfx::Clear(true, black, false, 0.0f);
 }
 
-// Retail draws the target over the frame with ALPHA (0 - Cd) * As + Cd and TEXA AEM 1, TA0 alpha:
-// black texels get alpha 0 and leave the frame, the rest darken it by alpha / 128.
+// Retail draws shadow_buf over the frame as a 24-bit texture with TEXA AEM 1, TA0 alpha and ALPHA
+// (0 - Cd) * As + Cd: a black texel (no volume covered it) gets alpha 0 and leaves the frame, any
+// other darkens it by alpha / 128 once, however many volumes counted there.
 void MGEndDrawShadow(u_char alpha) {
     gfx::TextureHandle target = g_shadow_target;
     g_shadow_target = gfx::kNullTexture;
@@ -1042,38 +1039,28 @@ void MGEndDrawShadow(u_char alpha) {
 
     if (target != gfx::kNullTexture) {
         gfx::SetRenderTarget(g_shadow_previous);
-        std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(target);
-        if (info) {
-            gfx::DrawState state;
-            state.blend = true;
-            state.alpha = {2, 1, 0, 1, 64};
-            state.depth_test = gfx::DepthTest::Always;
-            state.depth_write = false;
-            state.texa_aem = true;
-            state.texa_ta0 = alpha;
-            state.scissor = true;
-            state.scissor_rect = current.window;
-            float         rows = MGPortTargetRowScale(target);
-            uint8_t       vertex_alpha = info->has_alpha ? alpha : 0x80;
-            float         u1 = gfx::kLogicalWidth;
-            float         v1 = gfx::kLogicalHeight * rows;
-            float         us[4] = {0.0f, u1, u1, 0.0f};
-            float         vs[4] = {0.0f, 0.0f, v1, v1};
-            gfx::Vertex2D quad[4] = {};
-            for (int i = 0; i < 4; i++) {
-                quad[i].x = us[i];
-                quad[i].y = vs[i] / rows;
-                quad[i].u = us[i];
-                quad[i].v = vs[i];
-                quad[i].color[0] = quad[i].color[1] = quad[i].color[2] = 0x80;
-                quad[i].color[3] = vertex_alpha;
-                quad[i].fog = 0xFF;
-            }
-            gfx::TextureBinding binding;
-            binding.texture = target;
-            binding.filter = gfx::Filter::Nearest;
-            gfx::Draw2D(gfx::Primitive::Quads, quad, binding, state);
+        gfx::DrawState state;
+        state.blend = true;
+        state.alpha = {2, 1, 0, 1, 64};
+        state.depth_test = gfx::DepthTest::Always;
+        state.depth_write = false;
+        state.texa_aem = true;
+        state.texa_ta0 = alpha;
+        state.scissor = true;
+        state.scissor_rect = current.window;
+        float         xs[4] = {0.0f, gfx::kLogicalWidth, gfx::kLogicalWidth, 0.0f};
+        float         ys[4] = {0.0f, 0.0f, gfx::kLogicalHeight, gfx::kLogicalHeight};
+        gfx::Vertex2D quad[4] = {};
+        for (int i = 0; i < 4; i++) {
+            quad[i].x = quad[i].u = xs[i];
+            quad[i].y = quad[i].v = ys[i];
+            quad[i].color[0] = quad[i].color[1] = quad[i].color[2] = quad[i].color[3] = 0x80;
+            quad[i].fog = 0xFF;
         }
+        gfx::TextureBinding binding;
+        binding.texture = target;
+        binding.filter = gfx::Filter::Nearest;
+        gfx::Draw2D(gfx::Primitive::Quads, quad, binding, state);
     }
 
     MGPortRestoreRegisters();

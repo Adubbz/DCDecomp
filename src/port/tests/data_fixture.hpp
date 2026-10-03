@@ -91,8 +91,10 @@ inline Bytes MakePack(const std::vector<File> &files) {
 inline Disc MakeDisc(std::vector<File> files) {
     Disc disc;
     disc.files = std::move(files);
+    // The retail index counts one all-zero record after the last file, whose name offset
+    // lands on the NUL that ends the name block.
     std::size_t count = disc.files.size();
-    disc.hd2.assign(32 * count, 0);
+    disc.hd2.assign(32 * (count + 1), 0);
     disc.dat.assign(dcdata::kSector, 0xCD);
     for (std::size_t i = 0; i < count; i++) {
         const File   &file = disc.files[i];
@@ -109,6 +111,7 @@ inline Disc MakeDisc(std::vector<File> files) {
         Put32(disc.hd2, 32 * i + 24, sector);
         Put32(disc.hd2, 32 * i + 28, static_cast<std::uint32_t>(dcdata::SectorsFor(file.data.size())));
     }
+    Put32(disc.hd2, 32 * count, static_cast<std::uint32_t>(disc.hd2.size() - 1));
     return disc;
 }
 
