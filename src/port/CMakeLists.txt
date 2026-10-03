@@ -244,6 +244,9 @@ add_executable(darkcloud ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 set_target_properties(darkcloud PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 dc_link_game(darkcloud)
 
+include(GNUInstallDirs)
+install(TARGETS darkcloud RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 enable_testing()
 add_subdirectory(tests)
 add_subdirectory(${CMAKE_SOURCE_DIR}/tools/dcdata ${CMAKE_BINARY_DIR}/tools/dcdata)

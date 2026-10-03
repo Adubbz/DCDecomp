@@ -29,7 +29,9 @@ run time a device with Vulkan 1.3 or later, `dualSrcBlend` and `shaderClipDistan
 (any desktop driver; Mesa's lavapipe in CI; `src/port/gfx/README.md`, "Device", has the whole list). `.github/workflows/pc.yml` is a
 complete recipe on Ubuntu 24.04.
 
-The game's files come from the disc (see "Game data"):
+The game's files come from the disc (see "Game data"). Without them a
+windowed start asks for the disc image and extracts it; `dcdata` does the
+same from a shell:
 
 ```sh
 build/pc/dcdata extract "rom/Dark Cloud (PAL).iso" data
@@ -40,8 +42,8 @@ build/pc/darkcloud --data data --save save
 
 | Option | Meaning |
 |---|---|
-| `--data DIR` | the extracted data (default: `DC_DATA`, then `./data`, then `data/` beside the executable) |
-| `--save DIR` | memory cards, `config.ini`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable); created on first use |
+| `--data DIR` | the extracted data (default: `DC_DATA`, then `./data`, then `data/` beside the executable, then `$XDG_DATA_HOME/chronicle/data`) |
+| `--save DIR` | memory cards, `config.ini`, the pipeline cache and host files (default: `DC_SAVE`, then `./save`, then `save/` beside the executable, then `save/` beside a local `data/`, then `$XDG_DATA_HOME/chronicle/save`); created on first use |
 | `--headless` | SDL's offscreen video driver with `VK_EXT_headless_surface`, SDL's dummy audio driver, and the game clock unbounded (one tick per pump, no sleeping) |
 | `--offscreen` | `--headless` without a Vulkan surface: frames are drawn to an image only (what `--headless` does by itself when the loader has no `VK_EXT_headless_surface`) |
 | `--frames N` | stop after N frames of the game's main loop |
@@ -56,8 +58,8 @@ release build; a debug build always asks for it), and SDL's own variables.
 Exit statuses (`src/port/exitcodes.hpp`): 0 when the window was closed or
 `--frames` ran out, 1 when the window, the renderer or the screenshot failed,
 2 for bad arguments, 3 when the data directory is missing or holds no file
-(one line names it and the `dcdata` command; checked before any window
-opens), 4 for a failed game assertion (retail's `__assert`, after the game's
+and no disc was given at the first-run prompt (one line names it and the
+`dcdata` command; a headless run checks before any window opens), 4 for a failed game assertion (retail's `__assert`, after the game's
 own message: `LoadFile` prints `File open error "<path>"`). A `PS2_UNIMPLEMENTED`
 stub aborts (SIGABRT) so a debugger or a core dump stops at it.
 
@@ -777,11 +779,38 @@ as the game's `strcasecmp` does, so the case on disk does not matter.
 
 `src/port/platform/paths.cpp` finds the data directory from `--data <dir>`,
 then `DC_DATA`, then `data/` in the working directory, then `data/` beside
-the executable. The save directory comes from `--save`, `DC_SAVE`, or
-`save/` in the same places, and is created when first used. `main` stops
-with status 3 and one line naming the directory and the `dcdata` command
-when the data directory is missing or holds no file, before anything else
-starts; `InitCDFile` would abort on the same conditions. `InitCDFile` warns
+the executable, and failing all of those `$XDG_DATA_HOME/chronicle/data`
+(`~/.local/share/chronicle/data` when `XDG_DATA_HOME` is unset or relative),
+where an installed copy keeps it. The save directory comes from `--save`,
+`DC_SAVE`, or `save/` in the same two places; without one, saves go beside a
+local `data/` if there is one, so a checkout or an unpacked copy stays
+self-contained, and otherwise to `$XDG_DATA_HOME/chronicle/save`. It is
+created when first used.
+
+When the data directory is missing or holds no file and the run is not
+headless, `FirstRunIfNoData` (`src/port/platform/firstrun.cpp`) opens the
+window and asks for the disc: a disc image through SDL's file dialog (the
+file-chooser portal under Flatpak, zenity elsewhere), or a folder holding
+`DATA.DAT` and `DATA.HD2`. It extracts with `dcdata`'s core on a worker
+thread into `<data>.partial`, drawing the file and byte counts through
+`gfx::Draw2D` while the main thread pumps events, checks every file and
+renames the directory into place, then closes its window and `main` goes
+on. Escape or closing the window stops it (a later start resumes from the
+partial directory); a failed extraction shows the extractor's message in a
+message box and exits with status 1. `FirstRunSetChooser` replaces the
+dialog, which is how the tests drive the flow headless. Declined, or
+headless, `main` stops with status 3 and one line naming the directory and
+the `dcdata` command, before anything else starts; `InitCDFile` would abort
+on the same conditions. `InitCDFile` warns
 when `data.hd2` lists a file that is missing or the wrong size. Files the
 game looks for and does not find behave as on the disc: `LoadFile2` returns
 0 and `LoadFile` asserts, naming the file (status 4).
+
+## Packaging
+
+`cmake --install build/pc --prefix <dir>` installs `darkcloud` and `dcdata`
+to `<dir>/bin`; an installed copy finds its data and saves under
+`$XDG_DATA_HOME/chronicle` (above). The Linux release is a Flatpak,
+`org.themoonpeople.Chronicle`, built from `flatpak/` by
+`.github/workflows/flatpak.yml`; `docs/FLATPAK.md` covers building,
+installing, the first start and where the data and saves live.

@@ -181,6 +181,13 @@ void Draw3DDrawVisual(const Draw3DVisual &visual, const float model[4][4], const
     }
 
     gfx::DrawState state = Draw3DState(info, fog);
+    // Clip flag 4 (the 'S' frame-name code, program_option) sends the vertices through Vu_prog0f's
+    // culling outputs (OUTPUTCN, OUTPUTCN_STR and the scissored kick): a triangle whose screen
+    // cross product has negative z, clockwise on the y-down GS window, is kicked with ADC set and
+    // not drawn. The title's sky dome is one; drawn two-sided, its near half hides the clouds.
+    if (!projected && (info.clip_flags & 4) != 0) {
+        state.cull = gfx::CullMode::Back;
+    }
     if (projected) {
         // The first of the two passes SetShadowData hands VU1: Cs * 0x80 / 128 + Cd, so whatever
         // the projection covers turns the black target non-black.

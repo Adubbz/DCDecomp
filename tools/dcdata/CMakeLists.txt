@@ -5,3 +5,6 @@ add_executable(dcdata ${DCDATA_SOURCES})
 set_target_properties(dcdata PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 target_compile_options(dcdata PRIVATE -Wall -Wextra)
 target_link_options(dcdata PRIVATE -fuse-ld=lld)
+
+include(GNUInstallDirs)
+install(TARGETS dcdata RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

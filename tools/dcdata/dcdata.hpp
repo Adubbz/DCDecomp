@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <functional>
 #include <optional>
 #include <span>
 #include <stdexcept>
@@ -354,6 +355,18 @@ struct Summary {
     std::uint64_t written_bytes = 0;
 };
 
+// Reachable files and their bytes, kept files counting as done.
+struct Progress {
+    std::size_t   files = 0;
+    std::size_t   total_files = 0;
+    std::uint64_t bytes = 0;
+    std::uint64_t total_bytes = 0;
+};
+
+// Called after each file and each chunk written; false stops the extraction with an Error, leaving
+// what was written so far for a later run to keep.
+using ProgressCallback = std::function<bool(const Progress &)>;
+
 template <class... Args>
 void Log(std::FILE *log, std::format_string<Args...> format, Args &&...args) {
     if (log) {
@@ -399,13 +412,23 @@ inline bool IsCurrent(const fs::path &path, std::uint64_t size) {
     return fs::is_regular_file(path, error) && fs::file_size(path, error) == size && !error;
 }
 
-inline Summary Extract(const Archive &archive, const fs::path &out, std::FILE *log) {
+inline Summary Extract(const Archive &archive, const fs::path &out, std::FILE *log,
+                       const ProgressCallback &progress = {}) {
     std::vector<unsigned char> hd2 = ReadExtent(archive.hd2);
     std::vector<Record>        records = ParseIndex(hd2);
     Summary                    summary;
     summary.records = records.size();
     CheckFits(records, archive, log, &summary.warnings);
     std::vector<const Record *> reachable = Reachable(records, log, &summary.duplicates);
+    Progress                    done{.total_files = reachable.size()};
+    for (const Record *record : reachable) {
+        done.total_bytes += record->size;
+    }
+    auto report = [&] {
+        if (progress && !progress(done)) {
+            Fail("extraction cancelled");
+        }
+    };
 
     fs::create_directories(out);
     Reader                     dat(archive.dat.file);
@@ -415,6 +438,9 @@ inline Summary Extract(const Archive &archive, const fs::path &out, std::FILE *l
         summary.bytes += record->size;
         if (IsCurrent(target, record->size)) {
             summary.kept++;
+            done.files++;
+            done.bytes += record->size;
+            report();
             continue;
         }
         fs::create_directories(target.parent_path());
@@ -429,6 +455,8 @@ inline Summary Extract(const Archive &archive, const fs::path &out, std::FILE *l
             file.write(reinterpret_cast<const char *>(chunk.data()), static_cast<std::streamsize>(step));
             offset += step;
             left -= step;
+            done.bytes += step;
+            report();
         }
         file.close();
         if (!file) {
@@ -436,6 +464,8 @@ inline Summary Extract(const Archive &archive, const fs::path &out, std::FILE *l
         }
         summary.written++;
         summary.written_bytes += record->size;
+        done.files++;
+        report();
     }
 
     fs::path      index_copy = out / "data.hd2";

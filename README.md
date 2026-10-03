@@ -23,6 +23,13 @@ This project produces 100% matching text and data sections for the main executab
 
 `build.sh` builds only the game.
 
+## The PC port
+
+`PLATFORM=PC` builds the game's code as a native Linux and macOS program on SDL3 and Vulkan
+(`docs/PC.md`, `docs/MACOS.md`). On Linux it is packaged as a Flatpak, built by CI as
+`chronicle.flatpak`; `docs/FLATPAK.md` covers installing it. It needs your own PAL disc: the first
+start asks for the disc image and extracts the game's files from it.
+
 ## Diffing
 
 `diff.sh <symbol>` compares a function against the retail original with

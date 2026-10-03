@@ -1,0 +1,125 @@
+# The PC port (docs/PC.md) as a Flatpak. docs/FLATPAK.md has the commands to build, install and run
+# it and to put the game's data where it looks.
+#
+# C++26 needs clang 20, which only the llvm20 SDK extension has. The 24.08 runtime's Vulkan loader
+# is 1.3.290: that is enough at run time (the renderer takes a 1.3 device), but the build wants the
+# 1.4 headers, and the SDK's glslang 14 has no --target-env vulkan1.4, so both are built here and
+# dropped from the result. SDL3 is not in the runtime at all.
+id: org.themoonpeople.Chronicle
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.llvm20
+command: darkcloud
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  # X11 shared memory, which fallback-x11 needs to be usable.
+  - --share=ipc
+  # The GPU, for Vulkan.
+  - --device=dri
+  # Playback through PipeWire's or PulseAudio's PulseAudio socket.
+  - --socket=pulseaudio
+  # Gamepads (/dev/input). Flatpak before 1.15.6 ignores it and the keyboard still works; see
+  # docs/FLATPAK.md for the override on those.
+  - --device=input
+
+modules:
+  - name: vulkan-headers
+    buildsystem: cmake-ninja
+    cleanup:
+      - '*'
+    sources:
+      - type: git
+        url: https://github.com/KhronosGroup/Vulkan-Headers.git
+        tag: v1.4.321
+        commit: 4c8aa84a61c12cab9780fa44298617666b491d71
+
+  - name: glslang
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_OPT=OFF
+      - -DGLSLANG_TESTS=OFF
+      - -DBUILD_SHARED_LIBS=OFF
+    cleanup:
+      - '*'
+    sources:
+      - type: git
+        url: https://github.com/KhronosGroup/glslang.git
+        tag: 15.1.0
+        commit: 1062752a891c95b2bfeed9e356562d88f9df84ac
+
+  # Wayland, X11, PipeWire and PulseAudio come from the runtime and are loaded when SDL starts.
+  - name: sdl3
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      # GNUInstallDirs picks lib64 here, which is not on the app's library path.
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DSDL_STATIC=OFF
+      - -DSDL_TEST_LIBRARY=OFF
+      - -DSDL_TESTS=OFF
+      - -DSDL_EXAMPLES=OFF
+      - -DSDL_WAYLAND=ON
+      - -DSDL_X11=ON
+      - -DSDL_PIPEWIRE=ON
+      - -DSDL_PULSEAUDIO=ON
+      - -DSDL_ALSA=OFF
+      - -DSDL_JACK=OFF
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+      - /share/licenses
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL/releases/download/release-3.2.24/SDL3-3.2.24.tar.gz
+        sha256: 81cc0fc17e5bf2c1754eeca9af9c47a76789ac5efdd165b3b91cbbe4b90bfb76
+
+  - name: chronicle
+    buildsystem: cmake-ninja
+    builddir: true
+    build-options:
+      append-path: /usr/lib/sdk/llvm20/bin
+      prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
+      env:
+        CC: clang
+        CXX: clang++
+        LD: ld.lld
+      # The SDK's default flags turn on _GLIBCXX_ASSERTIONS, -Werror=format-security and -g, none of
+      # which the game's code is built with anywhere else; Release supplies the optimisation.
+      cflags: ''
+      cflags-override: true
+      cxxflags: ''
+      cxxflags-override: true
+    config-opts:
+      - -DPLATFORM=PC
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/app
+      - -DCMAKE_PREFIX_PATH=/app
+      - -DCMAKE_CXX_COMPILER=/usr/lib/sdk/llvm20/bin/clang++
+      - -DGLSLANG_VALIDATOR=/app/bin/glslangValidator
+    # post-install runs in the build directory, not the source.
+    post-install:
+      - install -Dm644 -t ${FLATPAK_DEST}/share/applications ${FLATPAK_BUILDER_BUILDDIR}/flatpak/${FLATPAK_ID}.desktop
+      - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo ${FLATPAK_BUILDER_BUILDDIR}/flatpak/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 ${FLATPAK_BUILDER_BUILDDIR}/flatpak/icon.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
+    sources:
+      # chronicle-source: the CI job swaps this for a git source at the commit under test.
+      - type: dir
+        path: ..
+        skip:
+          - .git
+          - .flatpak-builder
+          - build
+          - build-dir
+          - repo
+          - rom
+          - data
+          - save
+          - asm
+          - .private
+          - chronicle.flatpak
+      # chronicle-source-end

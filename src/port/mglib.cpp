@@ -877,8 +877,72 @@ void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x
     (void) direction;
 }
 
+// The sprite of a stretch whose source TEX0 says PSMCT24: the source is sampled through a target
+// without alpha, so TEXA supplies each texel's alpha before filtering, and written with blending
+// off (retail's ALPHA there is (0 - 0) * FIX + Cs).
+static void StretchColour24(gfx::TextureHandle src, gfx::Rect src_rect, gfx::TextureHandle dst, gfx::Rect dst_rect,
+                            const sceGsTexa &texa) {
+    uint32_t width = static_cast<uint32_t>(gfx::kLogicalWidth);
+    uint32_t height = static_cast<uint32_t>(gfx::kLogicalHeight);
+    if (src != gfx::kMainTarget) {
+        std::optional<gfx::TextureInfo> info = gfx::GetTextureInfo(src);
+        if (!info) {
+            return;
+        }
+        width = info->width;
+        height = info->height;
+    }
+    gfx::TextureHandle colour = gfx::NamedRenderTarget("stretch source PSMCT24", width, height, false);
+    if (colour == gfx::kNullTexture) {
+        return;
+    }
+    gfx::Rect whole = {0, 0, static_cast<int32_t>(width), static_cast<int32_t>(height)};
+    if (src == gfx::kMainTarget ? !gfx::SnapshotFrame(colour)
+                                : !gfx::BlitTexture(src, whole, colour, whole, gfx::Filter::Nearest)) {
+        return;
+    }
+
+    gfx::DrawState state;
+    state.texa_aem = texa.AEM != 0;
+    state.texa_ta0 = static_cast<uint8_t>(texa.TA0);
+    gfx::TextureBinding binding;
+    binding.texture = colour;
+    binding.filter = gfx::Filter::Linear;
+
+    float         left = static_cast<float>(dst_rect.x);
+    float         top = static_cast<float>(dst_rect.y);
+    float         right = left + static_cast<float>(dst_rect.w);
+    float         bottom = top + static_cast<float>(dst_rect.h);
+    float         u0 = static_cast<float>(src_rect.x);
+    float         v0 = static_cast<float>(src_rect.y);
+    float         u1 = u0 + static_cast<float>(src_rect.w);
+    float         v1 = v0 + static_cast<float>(src_rect.h);
+    gfx::Vertex2D corners[4] = {};
+    float         xs[4] = {left, right, right, left};
+    float         ys[4] = {top, top, bottom, bottom};
+    float         us[4] = {u0, u1, u1, u0};
+    float         vs[4] = {v0, v0, v1, v1};
+    for (int i = 0; i < 4; i++) {
+        corners[i].x = xs[i];
+        corners[i].y = ys[i];
+        corners[i].u = us[i];
+        corners[i].v = vs[i];
+        std::memset(corners[i].color, 0x80, sizeof(corners[i].color));
+    }
+
+    gfx::TextureHandle previous = gfx::CurrentRenderTarget();
+    gfx::SetRenderTarget(dst);
+    gfx::Draw2D(gfx::Primitive::Quads, corners, binding, state);
+    gfx::SetRenderTarget(previous);
+}
+
 // One textured sprite in retail, so the source is sampled linearly; the half-pixel and field
 // offsets (dx, dyy) existed only for interlacing.
+//
+// Both callers hand the frame over as PSMCT24, so the sprite reads no alpha from it: TEXA (AEM 1,
+// TA0 0x80) makes every texel 0x80 but pure black, which is 0, and that is the alpha the copy
+// carries. The title's smoke and the depth of field blend the copy back by it; a raw copy carries
+// whatever the frame's last draw left, which feeds the title's trail its own decaying alpha.
 void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst, const CRect_i_ &dst_rect) {
     std::optional<ResolvedRect> from =
         ResolveRect(*src, src_rect.x / 16, src_rect.y / 16, src_rect.width / 16, src_rect.height / 16);
@@ -886,7 +950,17 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
         ResolveRect(*dst, dst_rect.x / 16, dst_rect.y / 16, dst_rect.width / 16, dst_rect.height / 16);
     if (from && to && from->rect.w != 0 && from->rect.h != 0 && to->rect.w != 0 && to->rect.h != 0 &&
         to->texture != gfx::kPreviousFrame) {
-        Blit(*from, *to, gfx::Filter::Linear);
+        if (src->PSM == SCE_GS_PSMCT24 && to->texture != gfx::kMainTarget && from->texture != to->texture) {
+            sceGsTexa texa = MGPortCurrent().texa;
+            texa.AEM = 1;
+            texa.TA0 = 128;
+            StretchColour24(from->texture, from->rect, to->texture, to->rect, texa);
+            if (from->texture == gfx::kMainTarget) {
+                g_last_frame_copy = to->texture;
+            }
+        } else {
+            Blit(*from, *to, gfx::Filter::Linear);
+        }
     }
     MGPortRestoreRegisters();
     MGPortCurrent().texa.AEM = 1;

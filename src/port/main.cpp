@@ -22,6 +22,7 @@
 #include "platform/audio.hpp"
 #include "platform/clock.hpp"
 #include "platform/config.hpp"
+#include "platform/firstrun.hpp"
 #include "platform/input.hpp"
 #include "platform/input_script.hpp"
 #include "platform/paths.hpp"
@@ -201,6 +202,7 @@ int Screenshot(const char *path) {
 int main(int argc, const char **argv, const char **envp) {
     argc = PathsConsumeArgs(argc, argv);
     Options options = ParseOptions(argc, argv);
+    FirstRunIfNoData(options.headless);
     RequireData();
     LoadInputScript(options.input);
 
