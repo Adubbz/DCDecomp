@@ -16,7 +16,7 @@
 using namespace dc::test;
 using namespace texfix;
 
-// The title units' own rectangle and their MoveImageTest spelling (src/port/title/title_port.cpp).
+// The title units' own rectangle and their MoveImageTest spelling (src/port/clothread.cpp).
 template <class T>
 class CRect {
 public:

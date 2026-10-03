@@ -9,11 +9,10 @@
 #include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
-#include "texture_port.hpp"
 
 // The title units declare their own rectangle template where every other unit takes CRect_i_.
 // MWCC mangled both the same, so retail linked the title's calls to the shared definitions; clang
-// mangles CRect<int> apart, so these give the title's spelling a body.
+// mangles CRect<int> apart, so these give the title's spelling a body (clothread.cpp has MoveImageTest's).
 template <class T>
 class CRect {
 public:
@@ -65,14 +64,6 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *d
 }
 
 void MGFillBox(const CRect<int> &rect, u_char r, u_char g, u_char b, u_char a) { MGFillBox(Rect(rect), r, g, b, a); }
-
-// A local-to-local GS transfer between two of the texture manager's images, which the registry keys
-// by the TBP0 the game read back out of their TEX0. The buffer widths only placed the rect in VRAM.
-void MoveImageTest(sceVif1Packet *packet, int src_base, int src_width, int src_format, const CRect<int> &rect,
-                   int dst_base, int dst_width, int dst_format, int dst_x, int dst_y, int direction) {
-    PortMoveImage(static_cast<unsigned>(src_base), static_cast<unsigned>(src_format), rect.x, rect.y, rect.w, rect.h,
-                  static_cast<unsigned>(dst_base), static_cast<unsigned>(dst_format), dst_x, dst_y);
-}
 
 // The title's own CWater declares DrawVu1 with a u_long128 * where water.hpp has a RenderInfo *;
 // both reach the one body retail has.
